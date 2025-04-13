@@ -6,6 +6,16 @@ in
 {
   programs.tmux = {
     enable = true;
+    baseIndex = 1;
+    terminal = "tmux-256color";
+    keyMode = "vi";
+    mouse = true;
+    clock24 = false;
+    focusEvents = true;
+    historyLimit = 10000;
+    escapeTime = 0;
+    aggressiveResize = true;
+    extraConfig = builtins.readFile "${tmuxConfigDir}/tmux.conf";
     plugins = with pkgs.tmuxPlugins; [
       yank
       sensible
@@ -36,7 +46,5 @@ in
         '';
       }
     ];
-
-    extraConfig = builtins.readFile "${tmuxConfigDir}/tmux.conf";
   };
 }
