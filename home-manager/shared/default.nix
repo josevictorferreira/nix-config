@@ -18,6 +18,7 @@ in
       # Desktop tools
       brave
       vlc
+      spotify
 
       # Dev tools
       curl

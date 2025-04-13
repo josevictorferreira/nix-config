@@ -5,9 +5,9 @@ secrets: ## Edit the secrets file
 
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
-		darwin-rebuild switch --flake .#josevictorferreira-macos --impure; \
+		darwin-rebuild switch --flake .#macos-macbook --impure; \
 	else \
-		nixos-rebuild --use-remote-sudo switch --flake .#josevictor-nixos --impure; \
+		nixos-rebuild --use-remote-sudo switch --flake .#nixos-desktop --impure; \
 	fi
 
 clean: ## Clean up the Nix store.

@@ -15,6 +15,7 @@ in
     "${configRoot}/modules/hardware/vm-guest-services.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
+    "${configRoot}/modules/hardware/shared-storage.nix"
   ];
 
   nixpkgs = {
@@ -179,31 +180,49 @@ in
     mutableUsers = true;
   };
 
-  environment.systemPackages = (with pkgs; [
-    # System Packages
-    baobab
-    btrfs-progs
-    clang
-    cpufrequtils
-    duf
-    glib #for gsettings to work
-    gsettings-qt
-    killall
-    libappindicator
-    libnotify
-    pciutils
-    xdg-user-dirs
-    xdg-utils
+  environment = {
+    shells = with pkgs; [ zsh ];
+    systemPackages = with pkgs; [
+      # System Packages
+      baobab
+      btrfs-progs
+      clang
+      cpufrequtils
+      duf
+      glib #for gsettings to work
+      gsettings-qt
+      killall
+      libappindicator
+      libnotify
+      pciutils
+      xdg-user-dirs
+      xdg-utils
 
-    nfs-utils
+      nfs-utils
 
-    (mpv.override { scripts = [ mpvScripts.mpris ]; }) # with tray
+      (mpv.override { scripts = [ mpvScripts.mpris ]; }) # with tray
 
-    samba
-    sambaFull
-    gvfs
-    hplip
-  ]);
+      samba
+      sambaFull
+      gvfs
+      hplip
+
+      # System Tools
+      easyeffects
+      gparted
+      p7zip
+
+      # Gaming
+      lutris
+      protonup
+      wine64
+      winetricks
+      wine-wayland
+    ];
+    sessionVariables = {
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
+    };
+  };
 
   # Services to start
   services = {
