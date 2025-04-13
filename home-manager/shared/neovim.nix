@@ -1,7 +1,7 @@
 { pkgs, configRoot, ... }:
 
 let
-  neovimConfigDir = "${configRoot}/config/neovim";
+  neovimConfigDir = "${configRoot}/config/nvim";
 in
 {
   programs.neovim = {
