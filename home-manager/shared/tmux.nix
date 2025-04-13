@@ -6,6 +6,7 @@ in
 {
   programs.tmux = {
     enable = true;
+    newSession = false;
     baseIndex = 1;
     terminal = "tmux-256color";
     keyMode = "vi";
