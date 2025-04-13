@@ -4,25 +4,6 @@ let
   inherit (import ./variables.nix) gitUsername keyboardLayout;
 in
 {
-  imports = [
-    "${configRoot}/modules/security/sops.nix"
-    ./hardware.nix
-    "${configRoot}/modules/hardware/amd-drivers.nix"
-    "${configRoot}/modules/hardware/nvidia-drivers.nix"
-    "${configRoot}/modules/hardware/nvidia-prime-drivers.nix"
-    "${configRoot}/modules/hardware/intel-drivers.nix"
-    "${configRoot}/modules/hardware/vm-guest-services.nix"
-    "${configRoot}/modules/hardware/local-hardware-clock.nix"
-    "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/hardware/shared-storage.nix"
-  ];
-
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
-
   users = {
     users."${username}" = {
       homeMode = "755";
@@ -42,6 +23,25 @@ in
     };
 
     defaultUserShell = pkgs.zsh;
+  };
+
+  imports = [
+    "${configRoot}/modules/security/sops.nix"
+    "${configRoot}/modules/hardware/amd-drivers.nix"
+    "${configRoot}/modules/hardware/nvidia-drivers.nix"
+    "${configRoot}/modules/hardware/nvidia-prime-drivers.nix"
+    "${configRoot}/modules/hardware/intel-drivers.nix"
+    "${configRoot}/modules/hardware/vm-guest-services.nix"
+    "${configRoot}/modules/hardware/local-hardware-clock.nix"
+    "${configRoot}/modules/hardware/hp-1020-drivers.nix"
+    "${configRoot}/modules/hardware/shared-storage.nix"
+    ./hardware.nix
+  ];
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
   };
 
   # BOOT related stuff
