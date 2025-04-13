@@ -59,6 +59,7 @@ in
       btop
       fastfetch
       ffmpeg
+      kitty
     ];
 
     stateVersion = "24.05";

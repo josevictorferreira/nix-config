@@ -11,13 +11,13 @@ let
   );
 in
 {
-  fonts.fontconfig.enable = true;
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     xwayland.enable = true;
     extraConfig = builtins.readFile "${hyprlandConfig}/hyprland.conf";
   };
+  fonts.fontconfig.enable = true;
   home.file = {
     ".config/hypr" = {
       source = "${hyprlandConfig}";
