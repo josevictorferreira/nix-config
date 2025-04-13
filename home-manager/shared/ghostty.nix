@@ -9,6 +9,7 @@ in
       ".config/ghostty" = {
         source = "${ghosttyConfigDir}";
         recursive = true;
+        executable = false;
       };
     };
     packages = with pkgs; [

@@ -7,11 +7,17 @@ in
   programs.zsh = {
     enable = true;
     initExtra = ''
-      source ${zshConfigDir}/init.zsh
+      source $HOME/.config/zsh/init.zsh
     '';
   };
 
-  home.file = {
-    ".config/zsh".source = "${zshConfigDir}";
+  home = {
+    file = {
+      ".config/zsh" = {
+        source = "${zshConfigDir}";
+        recursive = true;
+        executable = false;
+      };
+    };
   };
 }
