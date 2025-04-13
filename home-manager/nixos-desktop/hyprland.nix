@@ -1,4 +1,4 @@
-{ pkgs, username, inputs, configRoot, ... }:
+{ config, pkgs, username, inputs, configRoot, ... }:
 
 let
   hyprlandConfig = "${configRoot}/config/hypr";
@@ -11,6 +11,7 @@ let
   );
 in
 {
+  fonts.fontconfig.enable = true;
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -63,46 +64,20 @@ in
     swappy
     yad
     yt-dlp
-  ] ++ [
-    python-packages
-  ];
-
-  fonts.packages = with pkgs; [
     noto-fonts
+
+    # Fonts
     fira-code
     noto-fonts-cjk-sans
     jetbrains-mono
     font-awesome
     terminus_font
+  ] ++ [
+    python-packages
   ];
 
   programs = {
     waybar.enable = true;
     hyprlock.enable = true;
-  };
-
-  xdg.portal = {
-    enable = true;
-    wlr.enable = false;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-    ];
-    configPackages = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal
-    ];
-  };
-
-  services = {
-    greetd = {
-      enable = true;
-      vt = 3;
-      settings = {
-        default_session = {
-          user = username;
-          command = "Hyprland";
-        };
-      };
-    };
   };
 }

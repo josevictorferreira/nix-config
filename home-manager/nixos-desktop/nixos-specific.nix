@@ -1,7 +1,7 @@
-{ pkgs, username, ... }:
+{ pkgs, username, host, configRoot, ... }:
 
 let
-  inherit (import ./variables.nix) gitUsername;
+  inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername;
 in
 {
   imports = [
@@ -10,32 +10,6 @@ in
     ./hyprland.nix
   ];
 
-  users = {
-    users."${username}" = {
-      homeMode = "755";
-      isNormalUser = true;
-      description = "${gitUsername}";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "libvirtd"
-        "scanner"
-        "lp"
-        "video"
-        "input"
-        "audio"
-      ];
-      packages = [ ]; # Packages handled by Home Manager
-    };
-
-    defaultUserShell = pkgs.zsh;
-  };
-
-  programs.zsh = {
-    enable = true;
-    promptInit = "";
-  };
-
   xdg = {
     enable = true;
     userDirs = {
@@ -43,6 +17,4 @@ in
       createDirectories = true;
     };
   };
-
-  system.activationScripts = { };
 }

@@ -1,7 +1,7 @@
-{ pkgs, username, host, isDarwin, ... }:
+{ pkgs, username, host, isDarwin, configRoot, ... }:
 let
   homeDirPrefix = if isDarwin then "/Users" else "/home";
-  inherit (import ./../hosts/${host}/variables.nix) gitUsername gitEmail keyboardLayout;
+  inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername gitEmail keyboardLayout;
 in
 {
   imports = [
@@ -13,6 +13,10 @@ in
   home = {
     username = "${username}";
     homeDirectory = "${homeDirPrefix}/${username}";
+
+    keyboard = {
+      layout = "${keyboardLayout}";
+    };
 
     packages = with pkgs; [
       # Desktop tools
@@ -60,14 +64,11 @@ in
     stateVersion = "24.05";
   };
 
-  keyboard = {
-    layout = "${keyboardLayout}";
-  };
-
   programs = {
     home-manager = {
       enable = true;
     };
+
     git = {
       enable = true;
       userName = "${gitUsername}";
@@ -79,17 +80,10 @@ in
     };
     direnv = {
       enable = true;
-      promptMode = "nix";
       nix-direnv = {
         enable = true;
       };
     };
   };
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enabled = true;
-  };
 }

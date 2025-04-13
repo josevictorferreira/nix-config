@@ -13,9 +13,8 @@ in
     };
     packages = with pkgs; [
       ghostty
-    ];
-    fonts.packages = with pkgs; [
       nerd-fonts.jetbrains-mono
     ];
   };
+  fonts.fontconfig.enable = true;
 }

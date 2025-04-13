@@ -1,8 +1,7 @@
-{ config, pkgs, host, options, configRoot, ... }:
+{ config, pkgs, host, options, configRoot, username, ... }:
 let
 
-  inherit (import ./variables.nix) keyboardLayout;
-
+  inherit (import ./variables.nix) gitUsername keyboardLayout;
 in
 {
   imports = [
@@ -22,6 +21,27 @@ in
     config = {
       allowUnfree = true;
     };
+  };
+
+  users = {
+    users."${username}" = {
+      homeMode = "755";
+      isNormalUser = true;
+      description = "${gitUsername}";
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "libvirtd"
+        "scanner"
+        "lp"
+        "video"
+        "input"
+        "audio"
+      ];
+      packages = [ ]; # Packages handled by Home Manager
+    };
+
+    defaultUserShell = pkgs.zsh;
   };
 
   # BOOT related stuff
@@ -144,6 +164,7 @@ in
       libraries = options.programs.nix-ld.libraries.default;
     };
 
+    zsh.enable = true;
     firefox.enable = true;
     git.enable = true;
     nm-applet.indicator = true;
@@ -226,6 +247,17 @@ in
 
   # Services to start
   services = {
+    greetd = {
+      enable = true;
+      vt = 3;
+      settings = {
+        default_session = {
+          user = username;
+          command = "Hyprland";
+        };
+      };
+    };
+
     pulseaudio.enable = false;
 
     xserver = {
@@ -376,6 +408,20 @@ in
     };
   };
 
+  xdg = {
+    portal = {
+      enable = true;
+      wlr.enable = false;
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+      ];
+      configPackages = [
+        pkgs.xdg-desktop-portal-gtk
+        pkgs.xdg-desktop-portal
+      ];
+    };
+  };
+
   # OpenGL
   hardware.graphics = {
     enable = true;
@@ -391,5 +437,13 @@ in
     allowedTCPPorts = [ 8888 ];
   };
 
+  virtualisation.libvirtd.enable = true;
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    defaultNetwork.settings.dns_enabled = true;
+  };
+
+  system.activationScripts = { };
   system.stateVersion = "24.05";
 }
