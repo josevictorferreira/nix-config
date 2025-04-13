@@ -261,7 +261,7 @@ in
     pulseaudio.enable = false;
 
     xserver = {
-      enable = false;
+      enable = true;
       xkb.options = "repeat:delay=250,rate=40";
       xkb = {
         layout = "${keyboardLayout}";
