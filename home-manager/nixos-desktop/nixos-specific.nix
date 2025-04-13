@@ -1,4 +1,4 @@
-{ pkgs, username, host, configRoot, ... }:
+{ host, configRoot, ... }:
 
 let
   inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername;

@@ -1,4 +1,4 @@
-{ config, pkgs, username, inputs, configRoot, ... }:
+{ pkgs, inputs, configRoot, ... }:
 
 let
   hyprlandConfig = "${configRoot}/config/hypr";
