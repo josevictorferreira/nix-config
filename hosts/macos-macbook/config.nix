@@ -5,6 +5,12 @@
   networking.computerName = "${host}";
   networking.localHostName = "${host}";
 
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+  };
+
   system.defaults = {
     finder = {
       AppleShowAllExtensions = true;

@@ -21,7 +21,6 @@ in
     packages = with pkgs; [
       # Desktop tools
       brave
-      vlc
       spotify
 
       # Dev tools

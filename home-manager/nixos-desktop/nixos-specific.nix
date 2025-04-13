@@ -1,14 +1,17 @@
-{ host, configRoot, ... }:
+{ pkgs, ... }:
 
-let
-  inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername;
-in
 {
   imports = [
     ../shared/default.nix
     ../shared/ghostty.nix
     ./hyprland.nix
   ];
+
+  home = {
+    packages = with pkgs; [
+      vlc
+    ];
+  };
 
   xdg = {
     enable = true;
