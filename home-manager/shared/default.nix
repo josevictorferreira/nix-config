@@ -8,6 +8,7 @@ in
     ./zsh.nix
     ./neovim.nix
     ./tmux.nix
+    ./weechat.nix
   ];
 
   home = {
