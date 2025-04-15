@@ -60,6 +60,9 @@ in
       fastfetch
       ffmpeg
       kitty
+
+      podman
+      podman-compose
     ];
 
     stateVersion = "24.05";

@@ -36,6 +36,7 @@ opt.clipboard = "unnamedplus"
 opt.completeopt = { "menu", "menuone", "noselect" }
 
 local current_time = tonumber(vim.fn.strftime("%H"))
+vim.print("Current time: " .. current_time)
 if current_time < 6 then
 	opt.background = "dark"
 elseif current_time < 17 then

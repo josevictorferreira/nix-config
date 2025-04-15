@@ -239,6 +239,9 @@ in
       wine64
       winetricks
       wine-wayland
+
+      # LLM
+      ollama
     ];
     sessionVariables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
@@ -257,6 +260,13 @@ in
         };
       };
     };
+
+    ollama = {
+      enable = true;
+      loadModels = [ "mistral:7b" "phi3:mini-4k" ];
+    };
+
+    open-webui.enable = true;
 
     pulseaudio.enable = false;
 
@@ -434,7 +444,8 @@ in
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 8888 ];
+    # Ollama port
+    allowedTCPPorts = [ 11434 ];
   };
 
   virtualisation.libvirtd.enable = true;
