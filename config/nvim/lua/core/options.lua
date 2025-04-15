@@ -35,7 +35,12 @@ opt.backspace = { "eol", "start", "indent" }
 opt.clipboard = "unnamedplus"
 opt.completeopt = { "menu", "menuone", "noselect" }
 
-opt.background = "light"
+local current_time = tonumber(vim.fn.strftime("%H"))
+if current_time < 6 then
+	opt.background = "dark"
+elseif current_time < 17 then
+	opt.background = "light"
+end
 
 opt.smartindent = true
 opt.tabstop = 2
