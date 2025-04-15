@@ -35,7 +35,7 @@ opt.backspace = { "eol", "start", "indent" }
 opt.clipboard = "unnamedplus"
 opt.completeopt = { "menu", "menuone", "noselect" }
 
-opt.background = "dark"
+opt.background = "light"
 
 opt.smartindent = true
 opt.tabstop = 2
