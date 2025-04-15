@@ -65,6 +65,13 @@ in
     stateVersion = "24.05";
   };
 
+  modules = {
+    weechat = {
+      enable = true;
+      additionalScripts = [ ];
+    };
+  };
+
   programs = {
     home-manager = {
       enable = true;

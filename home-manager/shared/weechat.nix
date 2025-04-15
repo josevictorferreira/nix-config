@@ -34,6 +34,7 @@ in
             scripts = cfg.additionalScripts ++ defaultScripts;
             init = ''
               /script install vimode.py
+
               /set irc.look.server_buffer independent
               /set buflist.format.buffer ''${format_number}''${indent}''${cut:20,...,}''${format_nick_prefix}''${color_hotlist}''${format_name}
 
@@ -42,8 +43,6 @@ in
               /set plugins.var.python.slack.auto_open_threads true
               /set plugins.var.python.slack.never_away false
               /set plugins.var.python.slack.render_emoji_as_string true
-
-
 
               /alias add open_url /url_hint_replace /exec -bg xdg-open {url$1}
               /key bind meta2-11~ /open_url 1
