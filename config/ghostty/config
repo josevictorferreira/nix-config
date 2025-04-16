@@ -7,6 +7,6 @@ font-family-bold = "JetBrains Mono Bold"
 font-family-italic = "JetBrains Mono Italic"
 font-family-bold-italic = "JetBrains Mono Bold Italic"
 
-theme = "dark:tokyonight_night,light:tokyonight_day"
+theme = "tokyonight_night"
 
 command = "for s in work main projects monitoring; do tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"; done; tmux has-session -t chat 2>/dev/null || tmux new-session -d -s chat 'weechat'; tmux attach -t main"
