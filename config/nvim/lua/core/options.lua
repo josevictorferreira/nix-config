@@ -41,6 +41,8 @@ if current_time < 6 then
 	opt.background = "dark"
 elseif current_time < 12 then
 	opt.background = "light"
+else
+	opt.background = "dark"
 end
 
 opt.smartindent = true

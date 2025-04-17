@@ -10,6 +10,8 @@ let
     url_hint
     edit
     highmon
+    colorize_nicks
+    url_hint
   ];
 in
 {
@@ -34,6 +36,7 @@ in
             scripts = cfg.additionalScripts ++ defaultScripts;
             init = ''
               /script install vimode.py
+              /script install emoji_aliases.py
 
               /set irc.look.server_buffer independent
               /set buflist.format.buffer ''${format_number}''${indent}''${cut:20,...,}''${format_nick_prefix}''${color_hotlist}''${format_name}
