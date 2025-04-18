@@ -35,15 +35,21 @@ in
             scripts = cfg.additionalScripts ++ defaultScripts;
             init = ''
               /script install vimode.py
-              /script install emoji_aliases.py
+              /script install emoji.lua
 
               /set irc.look.server_buffer independent
               /set buflist.format.buffer ''${format_number}''${indent}''${cut:20,...,}''${format_nick_prefix}''${color_hotlist}''${format_name}
+
+              /set weechat.look.eat_newline_glitch on
+              /set weechat.look.prefix_align_more right
 
               /set plugins.var.python.urlserver.http_port "60211"
               /set plugins.var.python.slack.files_download_location "~/Downloads/weeslack"
               /set plugins.var.python.slack.auto_open_threads true
               /set plugins.var.python.slack.never_away true
+              /set plugins.var.python.slack.render_emoji_as_string false
+              /set plugins.var.python.slack.render_bold_as bold
+              /set plugins.var.python.slack.render_italic_as italic
 
               /alias add open_url /url_hint_replace /exec -bg xdg-open {url$1}
               /key bind meta2-11~ /open_url 1
@@ -53,13 +59,13 @@ in
           };
         })
       ];
-      # file = {
-      #   ".config/weechat" = {
-      #     source = "${configRoot}/config/weechat";
-      #     recursive = true;
-      #     executable = false;
-      #   };
-      # };
+      file = {
+        ".config/weechat" = {
+          source = "${configRoot}/config/weechat";
+          recursive = true;
+          executable = false;
+        };
+      };
     };
   };
 }

@@ -28,6 +28,7 @@ in
         wayland_enable_ime = false;
         term = "tmux-256color";
         background_opacity = 0.95;
+        symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
       };
       font = {
         package = pkgs.nerd-fonts.jetbrains-mono;
@@ -44,6 +45,8 @@ in
         pkgs.kitty-themes
         pkgs.nerd-fonts.fira-code
         pkgs.nerd-fonts.jetbrains-mono
+        pkgs.noto-fonts
+        pkgs.noto-fonts-emoji
       ];
       file = {
         ".config/kitty/mocha.conf" = {
