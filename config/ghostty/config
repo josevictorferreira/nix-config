@@ -2,7 +2,7 @@ gtk-titlebar = false
 gtk-single-instance = true
 window-decoration = false
 
-font-family = "JetBrainsMono Nerd Font Mono Medium"
+font-family = "JetBrainsMono Nerd Font Mono Regular"
 font-family-bold = "JetBrainsMono Nerd Font Mono Bold"
 font-family-italic = "JetBrainsMono Nerd Font Mono Italic"
 font-family-bold-italic = "JetBrainsMono Nerd Font Mono Bold Italic"
