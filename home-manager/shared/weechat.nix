@@ -11,7 +11,6 @@ let
     edit
     highmon
     colorize_nicks
-    url_hint
   ];
 in
 {
@@ -44,8 +43,7 @@ in
               /set plugins.var.python.urlserver.http_port "60211"
               /set plugins.var.python.slack.files_download_location "~/Downloads/weeslack"
               /set plugins.var.python.slack.auto_open_threads true
-              /set plugins.var.python.slack.never_away false
-              /set plugins.var.python.slack.render_emoji_as_string true
+              /set plugins.var.python.slack.never_away true
 
               /alias add open_url /url_hint_replace /exec -bg xdg-open {url$1}
               /key bind meta2-11~ /open_url 1
@@ -55,13 +53,13 @@ in
           };
         })
       ];
-      file = {
-        ".config/weechat" = {
-          source = "${configRoot}/config/weechat";
-          recursive = true;
-          executable = false;
-        };
-      };
+      # file = {
+      #   ".config/weechat" = {
+      #     source = "${configRoot}/config/weechat";
+      #     recursive = true;
+      #     executable = false;
+      #   };
+      # };
     };
   };
 }

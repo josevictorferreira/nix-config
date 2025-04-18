@@ -39,6 +39,7 @@ in
     home = {
       packages = [
         pkgs.kitty
+        pkgs.timg
         pkgs.kitty-img
         pkgs.kitty-themes
         pkgs.nerd-fonts.fira-code
