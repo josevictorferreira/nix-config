@@ -15,6 +15,7 @@ in
     packages = with pkgs; [
       ghostty
       nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
     ];
   };
   fonts.fontconfig.enable = true;

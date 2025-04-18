@@ -2,10 +2,10 @@ gtk-titlebar = false
 gtk-single-instance = true
 window-decoration = false
 
-font-family = "JetBrains Mono Medium"
-font-family-bold = "JetBrains Mono Bold"
-font-family-italic = "JetBrains Mono Italic"
-font-family-bold-italic = "JetBrains Mono Bold Italic"
+font-family = "JetBrainsMono Nerd Font Mono Medium"
+font-family-bold = "JetBrainsMono Nerd Font Mono Bold"
+font-family-italic = "JetBrainsMono Nerd Font Mono Italic"
+font-family-bold-italic = "JetBrainsMono Nerd Font Mono Bold Italic"
 
 theme = "tokyonight_night"
 
