@@ -9,6 +9,7 @@ in
     ./neovim.nix
     ./tmux.nix
     ./weechat.nix
+    ./kitty.nix
   ];
 
   home = {
@@ -59,7 +60,6 @@ in
       btop
       fastfetch
       ffmpeg
-      kitty
 
       podman
       podman-compose
@@ -72,6 +72,9 @@ in
     weechat = {
       enable = true;
       additionalScripts = [ ];
+    };
+    kitty = {
+      enable = true;
     };
   };
 

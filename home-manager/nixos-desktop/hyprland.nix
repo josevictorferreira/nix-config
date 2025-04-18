@@ -66,6 +66,9 @@ in
     yt-dlp
     noto-fonts
 
+    # Programs
+    kitty
+
     # Fonts
     fira-code
     noto-fonts-cjk-sans
