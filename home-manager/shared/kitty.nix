@@ -12,8 +12,8 @@ in
     programs.kitty = {
       enable = true;
       settings = {
-        include = "${config.home.homeDirectory}/.config/kitty/mocha.conf";
-        shell = "${config.home.homeDirectory}/.config/kitty/tmux_session";
+        include = "${config.home.homeDirectory}/.config/kitty/themes/mocha.conf";
+        shell = "${config.home.homeDirectory}/.config/kitty/scripts/tmux_session";
         disable_ligadures = "never";
         window_border_width = 0;
         window_margin_width = 0;
@@ -27,7 +27,7 @@ in
         sync_to_monitor = false;
         wayland_enable_ime = false;
         term = "tmux-256color";
-        background_opacity = 0.98;
+        background_opacity = 0.99;
         symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
       };
       font = {
@@ -49,18 +49,13 @@ in
         pkgs.noto-fonts-emoji
       ];
       file = {
-        ".config/kitty/mocha.conf" = {
-          source = "${configRoot}/config/kitty/mocha.conf";
+        ".config/kitty/themes/" = {
+          source = "${configRoot}/config/kitty/themes/";
           recursive = true;
           executable = false;
         };
-        ".config/kitty/latte.conf" = {
-          source = "${configRoot}/config/kitty/latte.conf";
-          recursive = true;
-          executable = false;
-        };
-        ".config/kitty/tmux_session" = {
-          source = "${configRoot}/config/kitty/tmux_session";
+        ".config/kitty/scripts/" = {
+          source = "${configRoot}/config/kitty/scripts/";
           recursive = true;
           executable = false;
         };
