@@ -12,7 +12,7 @@ in
     programs.kitty = {
       enable = true;
       settings = {
-        include = "${config.home.homeDirectory}/.config/kitty/latte.conf";
+        include = "${config.home.homeDirectory}/.config/kitty/mocha.conf";
         shell = "${config.home.homeDirectory}/.config/kitty/tmux_session";
         disable_ligadures = "never";
         window_border_width = 0;
@@ -27,7 +27,7 @@ in
         sync_to_monitor = false;
         wayland_enable_ime = false;
         term = "tmux-256color";
-        background_opacity = 0.95;
+        background_opacity = 0.98;
         symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
       };
       font = {
