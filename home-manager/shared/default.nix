@@ -23,6 +23,7 @@ in
     packages = with pkgs; [
       # Desktop tools
       brave
+      spotify
 
       # Dev tools
       curl
@@ -86,9 +87,24 @@ in
       enable = true;
       userName = "${gitUsername}";
       userEmail = "${gitEmail}";
+      difftastic = {
+        enable = true;
+      };
+
       extraConfig = {
         init.defaultBranch = "main";
-        pull.rebase = "true";
+        push.autoSetupRemote = true;
+        push.followTags = true;
+        pull.rebase = true;
+        url = {
+          "ssh://git@github.com/" = {
+            insteadOf = "https://github.com/";
+          };
+        };
+        fetch = {
+          prune = true;
+          tags = true;
+        };
       };
     };
     direnv = {
