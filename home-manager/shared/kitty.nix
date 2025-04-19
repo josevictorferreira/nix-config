@@ -12,7 +12,7 @@ in
     programs.kitty = {
       enable = true;
       settings = {
-        include = "${config.home.homeDirectory}/.config/kitty/mocha.conf";
+        include = "${config.home.homeDirectory}/.config/kitty/latte.conf";
         shell = "${config.home.homeDirectory}/.config/kitty/tmux_session";
         disable_ligadures = "never";
         window_border_width = 0;
@@ -51,6 +51,11 @@ in
       file = {
         ".config/kitty/mocha.conf" = {
           source = "${configRoot}/config/kitty/mocha.conf";
+          recursive = true;
+          executable = false;
+        };
+        ".config/kitty/latte.conf" = {
+          source = "${configRoot}/config/kitty/latte.conf";
           recursive = true;
           executable = false;
         };
