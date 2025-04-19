@@ -1,3 +1,9 @@
 #!/bin/zsh
 
-for s in work main projects monitoring; do tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"; done; tmux has-session -t chat 2>/dev/null || tmux new-session -d -s chat '$SHELL -c weechat'; tmux attach -t main
+for s in work main projects monitoring chat; do
+  tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"
+done
+
+$(which zsh) -c 'tmux send-keys -t chat "weechat" C-m'
+
+tmux attach -t main
