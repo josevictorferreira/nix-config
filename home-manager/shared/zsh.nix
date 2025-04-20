@@ -1,4 +1,4 @@
-{ configRoot, ... }:
+{ configRoot, pkgs, ... }:
 
 let
   zshConfigDir = "${configRoot}/config/zsh";
@@ -12,6 +12,11 @@ in
   };
 
   home = {
+    packages = with pkgs; [
+      zsh
+      fzf
+      ripgrep
+    ];
     file = {
       ".config/zsh" = {
         source = "${zshConfigDir}";

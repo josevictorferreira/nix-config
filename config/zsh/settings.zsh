@@ -6,8 +6,6 @@ export PATH=/opt/homebrew/bin:$PATH
 export PODMAN_COLOR=true
 export COLORTERM=truecolor
 
-zle -N fzf_history_search_prefix_widget
-
 ## Autocomplete Settings
 HISTSIZE=10000
 HISTFILE=~/.zsh_history
@@ -22,6 +20,7 @@ bindkey '^n' history-beginning-search-forward
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 bindkey '^[[A' forward-char
+# Custom plugin
 bindkey '^ ' fzf_history_search_prefix_widget
 
 setopt appendhistory
