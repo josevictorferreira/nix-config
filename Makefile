@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+.PHONY: help secrets rebuild clean push_configs
+
 SUBTREES := nvim tmux zsh ghostty hypr kitty
 
 secrets: ## Edit the secrets file

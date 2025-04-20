@@ -71,3 +71,23 @@ function conn() {
   esac
 }
 
+function fzf_history_search_prefix_widget() {
+  local prefix="${LBUFFER}"
+  local selected_command
+
+  if [[ -z $prefix ]]; then
+    selected_command=$(fc -l 1 | awk '{$1=""; print substr($0,2)}' | fzf --exact --reverse --prompt="history> ")
+  else
+    selected_command=$(fc -l 1 | awk '{$1=""; print substr($0,2)}' | grep -i ^${prefix} | fzf --no-sort --reverse --prompt="history> ")
+  fi
+  
+  if  [[ -n $selected_command ]]; then
+    BUFFER="${selected_command}"
+    CURSOR=${#BUFFER}
+  else
+    zle reset-prompt
+  fi
+  
+  zle redisplay
+}
+

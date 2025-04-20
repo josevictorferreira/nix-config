@@ -92,7 +92,7 @@ in
               /set weechat.look.mouse on
               /set weechat.look.prefix_same_nick "⤷"
               /set weechat.look.color_nick_offline yes
-              /set weechat.look.align_end_of_lines time
+              /set weechat.look.align_end_of_lines message
               /set weechat.look.align_multiline_words on
 
               /set weechat.bar.nicklist.conditions "$${info:term_width} > 100"
@@ -108,10 +108,6 @@ in
               /set spell.enable "true"
               /set spell.check.default_dict "en,pt_BR"
               /set spell.option.ignore-case "true"
-              /set aspell.check.default_dict pt_BR
-              /set aspell.check.suggestions 3
-              /set aspell.color.suggestions *green
-              /set aspell enable
 
               /set plugins.var.python.slack.files_download_location "~/Downloads/weeslack"
               /set plugins.var.python.slack.auto_open_threads true
@@ -126,7 +122,7 @@ in
               /alias add open /url_hint_replace /exec -bg xdg-open  {url$1}
 
               /key bind ctrl-G /go
-              /key bind ctrl-F /open_url
+              /key bind ctrl-F /open
               
               /autojoin
             '';
