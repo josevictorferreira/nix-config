@@ -8,7 +8,7 @@ in
     enable = true;
     newSession = true;
     baseIndex = 1;
-    terminal = "tmux-256color";
+    terminal = "xterm-kitty";
     keyMode = "vi";
     mouse = true;
     clock24 = false;

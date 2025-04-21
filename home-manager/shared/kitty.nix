@@ -26,9 +26,15 @@ in
         input_delay = 0;
         sync_to_monitor = false;
         wayland_enable_ime = false;
-        term = "tmux-256color";
+        term = "xterm-kitty";
         background_opacity = 0.99;
         symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
+        cursor = "#FF9800";
+        cursor_text_color = "#1E1E2E";
+        cursor_shape = "block";
+        cursor_blink_interval = "0.5";
+        cursor_stop_blinking_after = "0";
+        cursor_trail = "1";
       };
       font = {
         package = pkgs.nerd-fonts.jetbrains-mono;

@@ -67,3 +67,6 @@ opt.splitright = true
 
 opt.wrap = true
 opt.linebreak = true
+
+-- enable cursor blink
+opt.guicursor = "n-v-c-sm:block-blinkwait175-blinkoff150-blinkon175"
