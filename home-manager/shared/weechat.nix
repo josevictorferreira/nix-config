@@ -87,7 +87,7 @@ in
             ];
             scripts = cfg.additionalScripts ++ defaultScripts;
 
-            init = builtins.readFile "${configRoot}/config/weechat/weechat_init";
+            init = builtins.readFile "${configRoot}/config/weechat/init";
           };
         })
       ];
