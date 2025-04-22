@@ -87,10 +87,17 @@ in
             ];
             scripts = cfg.additionalScripts ++ defaultScripts;
 
-            init = builtins.readFile "${configRoot}/config/weechat/init";
+            init = ''
+              /exec -sh -oc cat weechatrc
+            '';
           };
         })
       ];
+      file."${configRoot}/config/weechat/weechatrc" = {
+        source = "${configRoot}/config/weechat/weechatrc";
+        recursive = true;
+        executable = false;
+      };
     };
   };
 }

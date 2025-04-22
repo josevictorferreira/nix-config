@@ -95,8 +95,6 @@
 /set plugins.var.python.vimode.mode_indicator_suffix "]"
 /set plugins.var.python.vimode.search_vim on
 
-# Buflist
-
 # Slack Plugin Settings
 /set plugins.var.python.slack.files_download_location "~/Downloads/weeslack"
 /set plugins.var.python.slack.auto_open_threads true
@@ -111,6 +109,22 @@
 /alias add open /url_hint_replace /exec -bg xdg-open {url$1}
 /key bind ctrl-G /go
 /key bind ctrl-F /open
+
+# Buflist
+/set irc.look.server_buffer independent
+
+# Buflist
+/set irc.look.server_buffer independent
+/set buflist.look.sort number
+/set buflist.format.buffer "${color_hotlist}${format_number}${if:${buffer.name}=~^server?${if:${buffer.prev_buffer.number}==${buffer.number}?├:┬}:${if:${type}==channel||${type}==private?: }}${indent}${color_hotlist}${format_nick_prefix}${cut:15,…,${name}} ${hotlist}"
+/set buflist.format.buffer_current "${color:magenta}>>${if:${type}==server?${color:brown,default}:${color:cyan,default}}${if:${buffer.name}=~^server?${if:${buffer.prev_buffer.number}==${buffer.number}?├:┬}:${if:${type}==channel||${type}==private?: }}${indent}${color_hotlist}${format_nick_prefix}${cut:15,…,${name}} ${hotlist}"
+/set buflist.format.indent "${color:brown}${if:${merged}?${if:${buffer.prev_buffer.number}!=${buffer.number}?│┌:${if:${buffer.next_buffer.number}==${buffer.number}?│├:${if:${buffer.next_buffer.name}=~^server||${buffer.next_buffer.number}<0?└┴:├┴}}}:${if:${buffer.active}>0?${if:${buffer.next_buffer.name}=~^server?└:${if:${buffer.next_buffer.number}>0?├:└}}:${if:${buffer.next_buffer.name}=~^server? :│}}}─"
+/set buflist.format.number "${if:${number}<10||${number}>20?${number}:${if:${number}==10? 0:${if:${number}==11? Q:${if:${number}==12? W:${if:${number}==13? E:${if:${number}==14? R:${if:${number}==15? T:${if:${number}==16? Y:${if:${number}==17? U:${if:${number}==18? I:${if:${number}==19? O:${if:${number}==20? P}}}}}}}}}}}}"
+/set buflist.format.hotlist_highlight ${color:148}
+/set buflist.format.hotlist_low ${color:white}
+/set buflist.format.hotlist_message ${color:magenta}
+/set buflist.format.hotlist_none ${if:${type}==server?${color:brown}:${color:cyan}}
+/set buflist.format.hotlist_private ${color:226}
 
 # Autojoin
 /autojoin
