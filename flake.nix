@@ -44,7 +44,7 @@
         inherit isDarwin isNixOS;
       };
 
-      homeManagerConfig = { inputs, config, options, modulesPath, systemArc, os, host, username, isDarwin, isNixOS, configRoot, lib, specialArgs, _class }: {
+      homeManagerConfig = { systemArc, os, host, username, isDarwin, isNixOS, ... }: {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.backupFileExtension = "backup";

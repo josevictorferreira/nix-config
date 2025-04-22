@@ -4,6 +4,12 @@ for s in work main projects monitoring chat; do
   tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"
 done
 
-$(which zsh) -c 'tmux send-keys -t chat "weechat" C-m'
+if [[ -z $(pgrep -x "weechat") ]]; then
+  $(which zsh) -c 'tmux send-keys -t chat "weechat" C-m'
+fi
+
+if [[ -z $(pgrep -x "btop" ) ]]; then
+  $(which zsh) -c 'tmux send-keys -t monitoring "btop" C-m'
+fi
 
 tmux attach -t main

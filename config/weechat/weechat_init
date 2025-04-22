@@ -1,0 +1,116 @@
+# Basic Settings
+/set weechat.look.mouse on
+/set weechat.look.prefix_same_nick "⤷"
+/set weechat.look.prefix_align_min 0
+/set weechat.look.prefix_align_max 0
+/set weechat.look.prefix_join "→"
+/set weechat.look.prefix_quit "←"
+/set weechat.look.prefix_suffix " "
+/set weechat.look.prefix_buffer_align_max 0
+/set weechat.look.nick_prefix ""
+/set weechat.look.nick_suffix ""
+/set weechat.look.align_end_of_lines prefix
+/set weechat.look.color_nick_offline yes
+/set weechat.look.align_multiline_words on
+/set weechat.look.bar_more_down ""
+/set weechat.look.bar_more_up ""
+/set weechat.look.bar_more_left "…"
+/set weechat.look.bar_more_right "…"
+/set weechat.look.buffer_notify_default message
+/set weechat.look.buffer_time_format "%H:%M"
+/set weechat.look.color_inactive_message off
+/set weechat.look.color_inactive_prefix off
+/set weechat.look.color_inactive_prefix_buffer off
+/set weechat.look.color_inactive_window off
+/set weechat.look.hotlist_add_conditions "''${away} || ''${buffer.num_displayed} == 0"
+/set weechat.look.item_buffer_filter "•"
+/set weechat.look.read_marker_string "─"
+/set weechat.look.separator_horizontal ""
+/set weechat.history.max_buffer_lines_number 1024
+/set weechat.buffer.core.weechat.notify 3
+/set weechat.buffer.irc.server.*.notify 3
+
+# Bar Settings
+/set weechat.bar.input.items "[mode_indicator]+[input_prompt]+(away),[input_search], [input_paste],input_text,[vi_buffer]"
+/set weechat.bar.vi_line_numbers.hidden off
+/set weechat.bar.nicklist.conditions ""
+/set weechat.bar.nicklist.hidden on
+/set weechat.bar.title.color_fg white
+/set weechat.bar.title.color_bg 56
+
+# Buflist
+/set buflist.format.indent "├"
+
+# Color Settings (Tokyo Night Theme)
+/set weechat.color.bar_more 183
+/set weechat.color.chat_highlight lightblue
+/set weechat.color.chat_highlight_bg default
+/set weechat.color.chat_host 57
+/set weechat.color.chat_nick_colors "cyan,lightcyan,blue,lightblue,magenta,lightmagenta,26,27,56,57,62,63,68,69,98,99,105,135,141,177,183"
+/set weechat.color.chat_prefix_join 141
+/set weechat.color.chat_prefix_more 57
+/set weechat.color.chat_prefix_quit 135
+/set weechat.color.chat_prefix_suffix 57
+/set weechat.color.chat_read_marker 57
+/set weechat.color.chat_time 239
+/set weechat.color.chat_delimiters 57
+/set weechat.color.eval_syntax_colors "183,177,141,98"
+/set weechat.color.separator 57
+/set weechat.color.status_data_highlight 141
+/set weechat.color.status_data_msg 183
+/set weechat.color.status_data_private 141
+/set weechat.color.status_more *white
+/set weechat.color.status_name 141
+/set weechat.color.status_name_tls 141
+/set weechat.color.status_more lightblue
+/set weechat.color.status_name white
+/set weechat.color.status_time cyan
+/set weechat.color.status_nicklist_count white
+/set weechat.color.status_number white
+/set weechat.color.chat_nick default
+/set weechat.color.chat_nick_self lightmagenta
+/set weechat.color.chat_prefix_more lightblue
+/set weechat.color.chat_prefix_suffix blue
+/set weechat.color.chat_text_found lightmagenta
+/set weechat.color.input_text_not_found magenta
+
+# Spell Settings
+/set spell.check.default_dict "en,pt_BR"
+/set spell.check.suggestions 3
+/set spell.option.ignore-case "true"
+/spell enable
+
+# VI Mode Settings
+/set plugins.var.python.vimode.mode_indicator_cmd_color "white"
+/set plugins.var.python.vimode.mode_indicator_insert_color "white"
+/set plugins.var.python.vimode.mode_indicator_normal_color "white"
+/set plugins.var.python.vimode.mode_indicator_replace_color "white"
+/set plugins.var.python.vimode.mode_indicator_search_color "white"
+/set plugins.var.python.vimode.mode_indicator_cmd_color_bg "141"
+/set plugins.var.python.vimode.mode_indicator_insert_color_bg "69"
+/set plugins.var.python.vimode.mode_indicator_normal_color_bg "56"
+/set plugins.var.python.vimode.mode_indicator_replace_color_bg "196"
+/set plugins.var.python.vimode.mode_indicator_search_color_bg "27"
+/set plugins.var.python.vimode.mode_indicator_prefix "["
+/set plugins.var.python.vimode.mode_indicator_suffix "]"
+/set plugins.var.python.vimode.search_vim on
+
+# Buflist
+
+# Slack Plugin Settings
+/set plugins.var.python.slack.files_download_location "~/Downloads/weeslack"
+/set plugins.var.python.slack.auto_open_threads true
+/set plugins.var.python.slack.never_away true
+/set plugins.var.python.slack.render_emoji_as_string false
+/set plugins.var.python.slack.show_buflist_presense true
+/set plugins.var.python.slack.show_emoji true
+/set plugins.var.python.slack.show_emoji_reactions true
+/set plugins.var.python.slack.show_emoji_reactions_in_threads true
+
+# Aliases and Key Bindings
+/alias add open /url_hint_replace /exec -bg xdg-open {url$1}
+/key bind ctrl-G /go
+/key bind ctrl-F /open
+
+# Autojoin
+/autojoin
