@@ -88,14 +88,14 @@ in
             scripts = cfg.additionalScripts ++ defaultScripts;
 
             init = ''
-              /exec -sh -oc cat ${config.home.homeDirectory}/.config/weechat/.weechatrc
+              /exec -sh -oc cat ${config.home.homeDirectory}/.config/weechat/weechatrc
             '';
           };
         })
       ];
       file = {
-        ".config/weechat/.weechatrc" = {
-          source = "${configRoot}/config/weechat/.weechatrc";
+        ".config/weechat/weechatrc" = {
+          source = "${configRoot}/config/weechat/weechatrc";
           recursive = true;
           executable = false;
         };
