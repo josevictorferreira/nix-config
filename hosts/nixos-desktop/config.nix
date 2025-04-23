@@ -104,13 +104,16 @@ in
     };
 
     # Appimage Support
-    binfmt.registrations.appimage = {
-      wrapInterpreterInShell = false;
-      interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-      recognitionType = "magic";
-      offset = 0;
-      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-      magicOrExtension = ''\x7fELF....AI\x02'';
+    binfmt = {
+      emulatedSystems = [ "aarch64-linux" ];
+      registrations.appimage = {
+        wrapInterpreterInShell = false;
+        interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+        recognitionType = "magic";
+        offset = 0;
+        mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+        magicOrExtension = ''\x7fELF....AI\x02'';
+      };
     };
 
     plymouth.enable = true;
@@ -239,6 +242,12 @@ in
       wine64
       winetricks
       wine-wayland
+
+      # Containers
+      podman
+      buildah
+      qemu
+      qemu_kvm
 
       # LLM
       ollama
@@ -447,7 +456,8 @@ in
   networking.firewall = {
     enable = true;
     # Ollama port
-    allowedTCPPorts = [ 11434 ];
+    allowedTCPPorts = [ 11434 57621 ];
+    allowedUDPPorts = [ 5353 ];
   };
 
   virtualisation.libvirtd.enable = true;

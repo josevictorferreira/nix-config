@@ -39,7 +39,7 @@ in
       font = {
         package = pkgs.nerd-fonts.jetbrains-mono;
         name = "JetBrainsMono Nerd Font Mono";
-        size = 14;
+        size = 12;
       };
     };
     fonts.fontconfig.enable = true;

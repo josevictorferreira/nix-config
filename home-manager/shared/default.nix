@@ -23,7 +23,6 @@ in
     packages = with pkgs; [
       # Desktop tools
       brave
-      spotify
 
       # Dev tools
       curl
