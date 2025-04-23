@@ -4,6 +4,7 @@
   imports = [
     ../shared/default.nix
     ../shared/ghostty.nix
+    ../shared/chat.nix
     ./hyprland.nix
   ];
 
