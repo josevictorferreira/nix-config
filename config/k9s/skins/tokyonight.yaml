@@ -85,7 +85,7 @@ k9s:
     table:
       fgColor: *foreground
       bgColor: default
-      cursorFgColor: *white
+      cursorFgColor: *black
       cursorBgColor: *background
       markColor: darkgoldenrod
       # Header row styles.
@@ -99,7 +99,7 @@ k9s:
       bgColor: default
       cursorColor: *current_line
       graphicColor: *blue
-      showIcons: false
+      showIcons: true
     # YAML info styles.
     yaml:
       keyColor: *magenta

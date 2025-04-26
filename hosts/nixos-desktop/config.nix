@@ -200,14 +200,6 @@ in
       enable = true;
       enableSSHSupport = true;
     };
-
-    ssh = {
-      startAgent = true;
-      agentTimeout = "4h";
-      extraConfig = ''
-        AddKeysToAgent yes
-      '';
-    };
   };
 
   users = {
@@ -428,10 +420,14 @@ in
     };
   };
 
-  # Swaylock security config
-  security.pam.services.swaylock = {
-    text = ''
-      auth include login
+  security = {
+    pam.services.swaylock = {
+      text = ''
+        auth include login
+      '';
+    };
+    sudo.extraConfig = ''
+      Defaults pwfeedback
     '';
   };
 
