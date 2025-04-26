@@ -10,6 +10,7 @@ in
     ./tmux.nix
     ./weechat.nix
     ./kitty.nix
+    ./k9s.nix
   ];
 
   home = {

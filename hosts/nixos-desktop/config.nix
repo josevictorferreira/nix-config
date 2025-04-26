@@ -106,6 +106,7 @@ in
     # Appimage Support
     binfmt = {
       emulatedSystems = [ "aarch64-linux" ];
+      preferStaticEmulators = true;
       registrations.appimage = {
         wrapInterpreterInShell = false;
         interpreter = "${pkgs.appimage-run}/bin/appimage-run";
