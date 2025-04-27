@@ -8,6 +8,7 @@ in
     enable = true;
     newSession = true;
     baseIndex = 1;
+    shell = "${pkgs.zsh}/bin/zsh";
     terminal = "xterm-kitty";
     keyMode = "vi";
     mouse = true;

@@ -11,6 +11,14 @@
     };
   };
 
+  security.sudo.extraConfig = ''
+    Defaults pwfeedback
+  '';
+
+  security.pam.services.sudo_local.enable = true; # manage the file
+  security.pam.services.sudo_local.reattach = true; # install pam_reattach
+  security.pam.services.sudo_local.touchIdAuth = true; # install pam_tid
+
   system.defaults = {
     finder = {
       AppleShowAllExtensions = true;
@@ -42,11 +50,16 @@
     NSGlobalDomain.ApplePressAndHoldEnabled = false;
   };
 
-  environment.shells = with pkgs; [ zsh bash ];
+  environment.shells = with pkgs; [ zsh ];
+
+  environment.variables = {
+    K9S_CONFIG_DIR = "$HOME/.config/k9s";
+  };
 
   environment.systemPackages = with pkgs; [
     m-cli
     mas
+    pam-reattach
   ];
 
   programs.zsh.enable = true;

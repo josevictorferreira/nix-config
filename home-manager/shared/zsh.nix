@@ -7,6 +7,7 @@ in
   programs.zsh = {
     enable = true;
     initExtra = ''
+      export K9S_CONFIG_DIR="$HOME/.config/k9s"
       source $HOME/.config/zsh/init.zsh
     '';
   };

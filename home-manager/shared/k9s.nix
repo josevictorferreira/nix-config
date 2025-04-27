@@ -1,4 +1,4 @@
-{ pkgs, configRoot, ... }:
+{ pkgs, config, configRoot, ... }:
 
 let
   k9sConfigDir = "${configRoot}/config/k9s";
@@ -15,5 +15,8 @@ in
     packages = with pkgs; [
       k9s
     ];
+    sessionVariables = {
+      K9S_CONFIG_DIR = "${config.home.homeDirectory}/.config/k9s";
+    };
   };
 }
