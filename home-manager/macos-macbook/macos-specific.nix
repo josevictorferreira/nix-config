@@ -3,6 +3,7 @@
 {
   imports = [
     ../shared/default.nix
+    ./notify-send.nix
   ];
 
   home.packages = with pkgs; [
