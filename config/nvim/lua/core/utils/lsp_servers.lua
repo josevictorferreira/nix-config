@@ -49,7 +49,6 @@ return {
 	ts_ls = { filetypes = { "typescript", "javascript", "jsx", "tsx", "typescriptreact" } },
 	emmet_ls = { filetypes = { "vue", "html" } },
 	nixd = { filetypes = { "nix" }, auto_install = false },
-	nixfmt = { filetypes = { "nix" }, auto_install = false },
 	elixirls = {
 		filetypes = { "elixir" },
 		cmd = { elixirls_path },
