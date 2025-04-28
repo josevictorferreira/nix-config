@@ -273,8 +273,8 @@ in
     };
 
     ollama = {
-      enable = true;
-      loadModels = [ "mistral:7b" "phi3:mini-4k" ];
+      enable = false;
+      loadModels = [ ];
       host = "0.0.0.0";
       port = 11434;
     };
