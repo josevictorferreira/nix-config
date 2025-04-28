@@ -6,7 +6,7 @@ k9s:
   readOnly: false
   noExitOnCtrlC: false
   ui:
-    enableMouse: false
+    enableMouse: true
     headless: false
     logoless: false
     crumbsless: false
@@ -28,8 +28,8 @@ k9s:
       namespaces: []
       labels: {}
   logger:
-    tail: 100
-    buffer: 5000
+    tail: 150
+    buffer: 10000
     sinceSeconds: -1
     textWrap: false
     showTime: false
