@@ -67,7 +67,7 @@ alias geo="cd $BOOSTER_AGRO_FOLDER/georef-measures-service"
 alias map="cd $BOOSTER_AGRO_FOLDER/weather-map-service"
 alias weat="cd $BOOSTER_AGRO_FOLDER/weather-forecast-service"
 alias inf="cd $BOOSTER_AGRO_FOLDER/booster-infra"
-alias kong="cd $BOOSTER_AGRO_FOLDER/kong-api-gateway"
+alias kong="cd $BOOSTER_AGRO_FOLDER/booster-api-gateway"
 
 alias nexapi="cd $AGROSMART_FOLDER/nexus-api-gateway"
 
