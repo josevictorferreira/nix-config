@@ -40,7 +40,7 @@ return {
 	sorbet = {
 		filetypes = { "ruby" },
 		root_markers = { "Gemfile", ".git" },
-		cmd = { "bundle", "exec", "srb", "tc", "--stdio" },
+		cmd = { "bundle", "exec", "srb", "typecheck", "--lsp" },
 		auto_install = false,
 	},
 	buf_ls = { filetypes = { "proto", "protobuf" } },
