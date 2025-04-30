@@ -32,14 +32,15 @@ return {
 	tailwindcss = {
 		filetypes = { "html", "css", "scss", "javascriptreact", "typescriptreact", "vue", "typescript.tsx" },
 	},
-	solargraph = {
-		filetypes = { "ruby" },
-		cmd = { "bundle", "exec", "solargraph", "stdio" },
-		auto_install = false,
-	},
 	ruby_lsp = {
 		filetypes = { "ruby" },
 		cmd = { "bundle", "exec", "ruby-lsp", "stdio" },
+		auto_install = false,
+	},
+	sorbet = {
+		filetypes = { "ruby" },
+		root_markers = { "Gemfile", ".git" },
+		cmd = { "bundle", "exec", "srb", "tc", "--stdio" },
 		auto_install = false,
 	},
 	buf_ls = { filetypes = { "proto", "protobuf" } },
