@@ -10,6 +10,13 @@ return {
 		end
 
 		require("copilot").setup({
+			server_opts_overrides = {
+				settings = {
+					telemetry = {
+						telemetryLevel = "off",
+					},
+				},
+			},
 			panel = {
 				enabled = true,
 				auto_refresh = false,
