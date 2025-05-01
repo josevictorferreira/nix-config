@@ -15,5 +15,5 @@ in
     mode = "0400";
   };
 
-  environment.sessionVariables.SOPS_AGE_KEY_FILE = ageKeyFilePath;
+  environment.variables.SOPS_AGE_KEY_FILE = ageKeyFilePath;
 }
