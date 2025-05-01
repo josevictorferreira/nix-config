@@ -9,7 +9,7 @@ in
     newSession = true;
     baseIndex = 1;
     shell = "${pkgs.zsh}/bin/zsh";
-    terminal = "xterm-kitty";
+    terminal = "tmux-256color";
     keyMode = "vi";
     mouse = true;
     clock24 = false;

@@ -29,7 +29,7 @@ in
         input_delay = 0;
         sync_to_monitor = false;
         wayland_enable_ime = false;
-        term = "xterm-kitty";
+        term = "tmux-256color";
         background_opacity = 0.99;
         symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
         cursor = "#FF9800";
