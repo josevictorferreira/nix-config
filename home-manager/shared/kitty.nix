@@ -11,6 +11,9 @@ in
   config = mkIf cfg.enable {
     programs.kitty = {
       enable = true;
+      darwinLaunchOptions = [
+        "--single-instance"
+      ];
       settings = {
         include = "${config.home.homeDirectory}/.config/kitty/themes/mocha.conf";
         shell = "${config.home.homeDirectory}/.config/kitty/scripts/tmux_session";
@@ -35,6 +38,9 @@ in
         cursor_blink_interval = "0.5";
         cursor_stop_blinking_after = "0";
         cursor_trail = "1";
+        enable_audio_bell = "no";
+        visual_bell_duration = "0.1";
+        window_alert_on_bell = "yes";
       };
       font = {
         package = pkgs.nerd-fonts.jetbrains-mono;
