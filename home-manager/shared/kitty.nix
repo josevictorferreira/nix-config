@@ -52,6 +52,7 @@ in
     home = {
       packages = [
         pkgs.kitty
+        pkgs.kitty.terminfo
         pkgs.timg
         pkgs.kitty-img
         pkgs.kitty-themes
