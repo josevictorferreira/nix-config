@@ -19,6 +19,7 @@ in
       ripgrep
       nodejs_22 # Unfortunately needed dependency for copilot neovim plugin
       cargo
+      rustc
       nixd
       nixfmt-rfc-style
     ];

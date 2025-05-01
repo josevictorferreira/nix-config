@@ -7,6 +7,9 @@ SUBTREES := nvim tmux zsh ghostty hypr kitty
 secrets: ## Edit the secrets file
 	sops secrets/secrets.enc.yaml
 
+update: ## Update flake
+	sudo nix flake update
+
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
 		darwin-rebuild switch --flake .#macos-macbook --impure; \
