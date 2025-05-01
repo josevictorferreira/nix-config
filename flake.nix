@@ -67,6 +67,7 @@
         specialArgs = specialArgsFor (systems.macos);
         system = systemArc;
         modules = [
+          sops-nix.darwinModules.sops
           ./hosts/${host}/config.nix
           home-manager.darwinModules.home-manager
           homeManagerConfig
