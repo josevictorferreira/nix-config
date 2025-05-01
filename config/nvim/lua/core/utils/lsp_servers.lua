@@ -7,7 +7,6 @@ return {
 	cssls = { filetypes = { "css" } },
 	dockerls = { filetypes = { "Dockerfile", "dockerfile" } },
 	docker_compose_language_service = { filetypes = { "yaml.docker-compose", "docker-compose" } },
-	gopls = { filetypes = { "go" } },
 	html = { filetypes = { "html" } },
 	jsonls = { filetypes = { "json" } },
 	ruff = { filetypes = { "python" } },
