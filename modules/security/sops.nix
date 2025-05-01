@@ -1,7 +1,8 @@
-{ config, username, configRoot, ... }:
+{ config, username, configRoot, isDarwin, ... }:
 
 let
-  ageKeyFilePath = "${config.users.users.${username}.home}/.config/sops/age/keys.txt";
+  userHomeDir = if isDarwin then "/Users/${username}" else "/home/${username}";
+  ageKeyFilePath = "${userHomeDir}/.config/sops/age/keys.txt";
 in
 {
   sops = {
@@ -14,9 +15,5 @@ in
     mode = "0400";
   };
 
-  environment = {
-    variables = {
-      SOPS_AGE_KEY_FILE = ageKeyFilePath;
-    };
-  };
+  environment.sessionVariables.SOPS_AGE_KEY_FILE = "1";
 }
