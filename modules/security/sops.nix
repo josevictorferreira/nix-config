@@ -7,10 +7,6 @@ in
   sops = {
     defaultSopsFile = "${configRoot}/secrets/secrets.enc.yaml";
     age.keyFile = "${homeDirPrefix}/${username}/.config/sops/age/keys.txt";
-    age.sshKeyPaths = [
-      "${homeDirPrefix}/${username}/.ssh/id_ed25519"
-      "${homeDirPrefix}/${username}/.ssh/id_ed25519.pub"
-    ];
   };
 
   sops.secrets."anthropic_api_key" = {
