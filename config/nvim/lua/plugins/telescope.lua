@@ -37,12 +37,6 @@ return {
 						vertical = { mirror = false },
 					},
 				},
-				border = {},
-				borderchars = {
-					prompt = { "═", "║", "═", "║", "╔", "╗", "╝", "╚" },
-					results = { "═", "║", "═", "║", "╔", "╗", "╝", "╚" },
-					preview = { "═", "║", "═", "║", "╔", "╗", "╝", "╚" },
-				},
 				color_devicons = true,
 				use_less = true,
 				find_command = {
