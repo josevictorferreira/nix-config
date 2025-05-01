@@ -4,6 +4,9 @@
 
 SUBTREES := nvim tmux zsh ghostty hypr kitty
 
+up_keys: ## Update keys for secrets files
+	sops updatekeys secrets/secrets.enc.yaml
+
 secrets: ## Edit the secrets file
 	sops secrets/secrets.enc.yaml
 
