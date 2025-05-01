@@ -13,12 +13,4 @@ in
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
-  sops.secrets."printer_username" = {
-    owner = config.users.users.${username}.name;
-    mode = "0400";
-  };
-  sops.secrets."printer_password" = {
-    owner = config.users.users.${username}.name;
-    mode = "0400";
-  };
 }

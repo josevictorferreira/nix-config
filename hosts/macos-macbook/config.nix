@@ -1,4 +1,4 @@
-{ pkgs, username, host, ... }:
+{ pkgs, username, host, configRoot, ... }:
 
 {
   networking.hostName = "${host}";
@@ -82,6 +82,10 @@
     home = "/Users/${username}";
     shell = pkgs.zsh;
   };
+
+  imports = [
+    "${configRoot}/modules/security/sops.nix"
+  ];
 
   nix.enable = true;
 
