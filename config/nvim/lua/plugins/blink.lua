@@ -2,11 +2,12 @@ return {
 	"saghen/blink.cmp",
 	dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
 	version = "1.*",
+	lazy = false,
 	opts = {
 		keymap = {
 			["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
 			["<C-e>"] = { "hide" },
-			["<Tab>"] = { "select_and_accept" },
+			["<C-y>"] = { "select_and_accept" },
 			["<Up>"] = { "select_prev", "fallback" },
 			["<Down>"] = { "select_next", "fallback" },
 			["<C-p>"] = { "select_prev", "fallback_to_mappings" },
@@ -24,7 +25,7 @@ return {
 			documentation = {
 				auto_show = true,
 				window = {
-					border = "double",
+					border = "single",
 				},
 			},
 			menu = { border = "single" },

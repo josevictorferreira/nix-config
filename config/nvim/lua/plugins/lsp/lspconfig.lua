@@ -20,7 +20,7 @@ local function on_attach(_, bufnr)
 		callback = function()
 			vim.diagnostic.open_float(nil, {
 				focusable = false,
-				border = "double",
+				border = "single",
 				style = "minimal",
 				source = "always",
 				max_width = 100,
