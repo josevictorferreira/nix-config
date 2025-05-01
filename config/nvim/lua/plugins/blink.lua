@@ -24,7 +24,9 @@ return {
 		completion = {
 			documentation = {
 				auto_show = true,
-				border = { "double" },
+				window = {
+					border = "double",
+				},
 			},
 			menu = { border = "single" },
 		},
