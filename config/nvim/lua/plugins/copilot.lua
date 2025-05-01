@@ -16,6 +16,9 @@ return {
 					},
 				},
 			},
+			server = {
+				type = "binary",
+			},
 			panel = {
 				enabled = true,
 				auto_refresh = false,
@@ -87,7 +90,6 @@ return {
 					return true
 				end,
 			},
-			copilot_node_command = "node", -- Node.js version must be > 18.x
 			copilot_model = "gpt-4o-copilot",
 			sherver_opts_overrides = {},
 		})
