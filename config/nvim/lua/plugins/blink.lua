@@ -5,9 +5,19 @@ return {
 	lazy = false,
 	opts = {
 		keymap = {
+			preset = "none",
 			["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
 			["<C-e>"] = { "hide" },
-			["<C-y>"] = { "select_and_accept", "fallback" },
+			["<C-y>"] = {
+				function(cmp)
+					if require("copilot.suggestion").is_visible() then
+						return require("copilot.suggestion").accept()
+					else
+						return cmp.mapping.confirm({ select = true })
+					end
+				end,
+			},
+			["<Tab>"] = { "select_and_accept", "fallback" },
 			["<Up>"] = { "select_prev", "fallback" },
 			["<Down>"] = { "select_next", "fallback" },
 			["<C-p>"] = { "select_prev", "fallback_to_mappings" },
