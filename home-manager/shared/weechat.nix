@@ -54,7 +54,6 @@ let
     weechat-autosort
     weechat-go
     weechat-notify-send
-    weechat-matrix
     url_hint
     edit
     multiline
@@ -85,6 +84,7 @@ in
               lua
               perl
               (python.withPackages (p: with p; [ websocket-client ]))
+              ((import "${configRoot}/pkgs/weechat-matrix-rs.nix") lib pkgs)
             ];
             scripts = cfg.additionalScripts ++ defaultScripts;
 
