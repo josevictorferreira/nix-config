@@ -13,7 +13,6 @@
       vlc
       font-manager
       obsidian
-      wgnord
     ];
   };
 
