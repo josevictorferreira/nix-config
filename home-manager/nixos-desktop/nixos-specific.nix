@@ -13,6 +13,7 @@
       vlc
       font-manager
       obsidian
+      spotify
     ];
   };
 

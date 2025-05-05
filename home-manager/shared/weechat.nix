@@ -54,6 +54,7 @@ let
     weechat-autosort
     weechat-go
     weechat-notify-send
+    weechat-matrix
     url_hint
     edit
     multiline
