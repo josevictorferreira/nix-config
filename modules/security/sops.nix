@@ -15,5 +15,10 @@ in
     mode = "0400";
   };
 
+  sops.secrets."nordvpn_access_token" = {
+    owner = config.users.users.${username}.name;
+    mode = "0400";
+  };
+
   environment.variables.SOPS_AGE_KEY_FILE = ageKeyFilePath;
 }
