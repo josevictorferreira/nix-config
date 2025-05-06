@@ -5,18 +5,20 @@ let
 in
 rustPlatform.buildRustPackage {
   pname = "weechat-matrix-rs";
-  version = "master";
-  src = builtins.fetchFromGitHub {
+  version = "0.1.0";
+  src = pkgs.fetchFromGitHub {
     owner = "poljar";
     repo = "weechat-matrix-rs";
     rev = "2b093a7ff1c75650467d61335b90e4a6ce1fa210";
     sha256 = "P9SLZ2EefZ+ITYV3BRvtVsdbZaGeLZI0k67TdtGQMgs=";
   };
   nativeBuildInputs = [ pkgs.pkg-config pkgs.cmake ];
-  buildInputs = [ pkgs.weechat pkgs.openssl pkgs.libclang pkgs.libcxx pkgs.glibc ];
-  cargoSha256 = "gwUBpSBCLDYiXtkFdeDBQDqfInY/ZVK3tP5V3CZEzD0=";
+  buildInputs = [ pkgs.openssl pkgs.libclang ];
+  cargoHash = "sha256-WJ9/Rj9KuKhGORsZf7fugTq3zOF5b0q8uA/VhqYpYos=";
   PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
-  LIBCLANG_PATH = "${lib.getLib pkgs.libclang}/lib";
-  BINDGEN_EXTRA_CLANG_ARGS = "-isystem ${pkgs.llvmPackages.libclang.lib}/lib/clang/${lib.getVersion pkgs.clang}/include";
-  WEECHAT_BUNDLED = true;
+  buildPhase = ''
+    export HOME=/tmp
+    export CARGO_HOME=~/.cargo
+    make install
+  '';
 }
