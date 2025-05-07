@@ -3,10 +3,6 @@
 with lib;
 let
   cfg = config.modules.weechat;
-  weechat-matrix-rs-pkg = import ("${configRoot}/pkgs/weechat-matrix-rs.nix") {
-    inherit lib;
-    inherit pkgs;
-  };
   weechat-vimode = pkgs.stdenv.mkDerivation {
     name = "weechat-vimode";
     version = "0.1.0";
@@ -82,7 +78,6 @@ in
         pkgs.aspell
         pkgs.aspellDicts.en
         pkgs.aspellDicts.pt_BR
-        weechat-matrix-rs-pkg
         (pkgs.weechat.override {
           configure = { availablePlugins, ... }: {
             plugins = with availablePlugins; [

@@ -3,5 +3,4 @@
 
 # For Hyprlock
 
-pidof hyprlock || hyprlock -q 
-
+pidof hyprlock || hyprlock -c $XDG_CONFIG_HOME/hypr/hyprlock-2k.conf -q 

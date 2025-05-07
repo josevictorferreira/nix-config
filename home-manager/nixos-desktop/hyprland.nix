@@ -29,7 +29,6 @@ in
     waybar
     rofi-wayland
     swaynotificationcenter
-    grim
     slurp
     wlogout
     wl-clipboard
@@ -47,7 +46,6 @@ in
     gnome-system-monitor
     file-roller
     gtk-engine-murrine #for gtk themes
-    hypridle # requires unstable channel
     inxi
     libsForQt5.qtstyleplugin-kvantum #kvantum
     networkmanagerapplet
@@ -66,8 +64,13 @@ in
     yt-dlp
     noto-fonts
 
-    # Programs
+    # GUI Apps
     kitty
+
+    # Screenshot tools
+    grim
+    grimblast
+    hyprshot
 
     # Fonts
     fira-code
