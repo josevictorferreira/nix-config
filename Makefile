@@ -32,7 +32,7 @@ subtree_sync: subtree_clean_check ## Add or sync subtrees to the config director
 		name=$$(echo $$entry | cut -d= -f1); \
 		repo=$$(echo $$entry | cut -d= -f2 | cut -d@ -f1,2); \
 		branch=$$(echo $$entry | cut -d@ -f3); \
-		echo -e " $(GREEN)--- SYNC $$name ---$(RESET)"; \
+		echo -e "$(GREEN)--- 🔁 SYNC $$name ---$(RESET)"; \
 		if [ ! -d "config/$$name" ]; then \
 			echo -e "$(CYAN)Adding$(RESET) $(BOLD)$$repo$(RESET) -> config/$$name (branch: $$branch) \uf149\n"; \
 			git subtree add --prefix=config/$$name $$repo $$branch --squash; \
