@@ -32,7 +32,7 @@ subtree_sync: ## Add or sync subtrees to the config directory.
 			echo -e "$(CYAN)Pulling$(RESET) from $$repo (branch: $$branch) \uf149\n"; \
 			git subtree pull --prefix=config/$$name $$repo $$branch --rebase --squash || true; \
 			echo -e "$(CYAN)Pushing$(RESET) config/$$name to $$repo (branch: $$branch) \uf149\n"; \
-			git subtree push --prefix=config/$$name $$repo $$branch; || true \
+			git subtree push --prefix=config/$$name $$repo $$branch; || true; \
 		fi; \
 		echo -e "$(GREEN)Done.$(RESET) \n"; \
 	done
