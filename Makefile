@@ -1,6 +1,11 @@
+GREEN=\033[0;32m
+CYAN=\033[0;36m
+BOLD=\033[1m
+RESET=\033[0m
+
 .DEFAULT_GOAL := help
 
-.PHONY: help secrets rebuild clean push_configs
+.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys
 
 GIT_BASE_ADDRESS := git@github.com:josevictorferreira
 SUBTREES := nvim tmux zsh ghostty hypr kitty waybar
@@ -19,13 +24,17 @@ subtree_sync: ## Add or sync subtrees to the config directory.
 		name=$$(echo $$entry | cut -d= -f1); \
 		repo=$$(echo $$entry | cut -d= -f2 | cut -d@ -f1,2); \
 		branch=$$(echo $$entry | cut -d@ -f3); \
+		echo -e "$(GREEN)--- SYNC $$name ---$(RESET)"; \
 		if [ ! -d "config/$$name" ]; then \
-			echo "Adding $$repo -> config/$$name (branch $$branch)..."; \
+			echo -e "$(CYAN)Adding$(RESET) $(BOLD)$$repo$(RESET) -> config/$$name (branch: $$branch) \uf149\n"; \
 			git subtree add --prefix=config/$$name $$repo $$branch --squash; \
 		else \
-			echo "Syncing config/$$name with $$repo (branch $$branch)..."; \
+			echo -e "$(CYAN)Pulling$(RESET) from $$repo (branch: $$branch) \uf149\n"; \
+			git subtree pull --prefix=config/$$name $$repo $$branch --squash || true; \
+			echo -e "$(CYAN)Pushing$(RESET) config/$$name to $$repo (branch: $$branch) \uf149\n"; \
 			git subtree push --prefix=config/$$name $$repo $$branch; \
 		fi; \
+		echo -e "$(GREEN)Done.$(RESET) \n"; \
 	done
 
 up_keys: ## Update keys for secrets files
