@@ -19,7 +19,15 @@ SUBTRESS := \
 	kitty=$(GIT_BASE_ADDRESS)/.kitty.git@main \
 	waybar=$(GIT_BASE_ADDRESS)/.waybar.git@main
 
-subtree_sync: ## Add or sync subtrees to the config directory.
+check_clean: ## Check if the git working tree is clean.
+	@if ! git diff --quiet || ! git diff --cached --quiet; then \
+		echo "❌ Git working tree is dirty. Please commit or stash your changes."; \
+		exit 1; \
+	else \
+		echo "✅ Git working tree is clean."; \
+	fi
+
+subtree_sync: check_clean ## Add or sync subtrees to the config directory.
 	@for entry in $(SUBTRESS); do \
 		name=$$(echo $$entry | cut -d= -f1); \
 		repo=$$(echo $$entry | cut -d= -f2 | cut -d@ -f1,2); \
@@ -30,11 +38,11 @@ subtree_sync: ## Add or sync subtrees to the config directory.
 			git subtree add --prefix=config/$$name $$repo $$branch --squash; \
 		else \
 			echo -e "$(CYAN)Pulling$(RESET) from $$repo (branch: $$branch) \uf149\n"; \
-			git subtree pull --prefix=config/$$name $$repo $$branch --squash || true; \
+			git subtree pull --prefix=config/$$name $$repo $$branch || true; \
 			echo -e "$(CYAN)Pushing$(RESET) config/$$name to $$repo (branch: $$branch) \uf149\n"; \
 			git subtree push --prefix=config/$$name $$repo $$branch || true; \
 		fi; \
-		echo -e "$(GREEN)Done.$(RESET) \n"; \
+		echo -e "$(GREEN)DONE.$(RESET)\n"; \
 	done
 
 up_keys: ## Update keys for secrets files
