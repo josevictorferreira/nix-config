@@ -64,7 +64,7 @@
 
 // This is a custom screenshot module
 "custom/screenshot": {
-  "exec": "echo"
+  "exec": "echo",
   "format": "",
   "exec": "grimblast copy area",
   "tooltip": false,
