@@ -40,7 +40,7 @@ subtree_sync: subtree_clean_check ## Add or sync subtrees to the config director
 			echo -e "$(CYAN) Pulling from $$repo (branch: $$branch)$(RESET)"; \
 			git subtree pull --prefix=config/$$name $$repo $$branch --squash || true; \
 			echo -e "$(CYAN) Pushing config/$$name to $$repo (branch: $$branch)$(RESET)"; \
-			git subtree push --prefix=config/$$name $$repo $$branch --squash || true; \
+			git subtree push --prefix=config/$$name $$repo $$branch || true; \
 		fi; \
 		echo -e "✅ $(GREEN)DONE.$(RESET)\n"; \
 	done
