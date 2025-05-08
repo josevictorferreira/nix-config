@@ -4,3 +4,5 @@ secrets/*.yaml
 secrets/*.yml
 !secrets/*.enc.yaml
 !secrets/*.enc.yml
+*.orig
+*/**/*.orig
