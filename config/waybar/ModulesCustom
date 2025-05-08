@@ -64,10 +64,9 @@
 
 // This is a custom screenshot module
 "custom/screenshot": {
-  "exec": "echo",
-  "format": "",
-  "exec": "grimblast copy area",
-  "tooltip": false,
+  "format": "  ",
+  "tooltip": true,
+  "tooltip-format": "Left Click: Screenshot Select",
   "on-click": "grimblast copy area"
 },
 
