@@ -24,7 +24,7 @@ subtree_clean_check: ## Check if the git working tree is clean.
 		echo "❌ Git working tree is dirty. Please commit or stash your changes."; \
 		exit 1; \
 	else \
-		echo "✅ Git working tree is clean."; \
+		echo "✅ Git working tree is clean.\n"; \
 	fi
 
 subtree_sync: subtree_clean_check ## Add or sync subtrees to the config directory.
