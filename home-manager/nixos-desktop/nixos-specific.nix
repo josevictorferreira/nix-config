@@ -3,9 +3,9 @@
 {
   imports = [
     ../shared/default.nix
+    ../shared/hyprland/default.nix
     ../shared/ghostty.nix
     ../shared/chat.nix
-    ./hyprland.nix
   ];
 
   home = {

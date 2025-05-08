@@ -11,6 +11,9 @@ let
   );
 in
 {
+  imports = [
+    ./waybar.nix
+  ];
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -26,7 +29,6 @@ in
   };
   home.packages = with pkgs; [
     swww
-    waybar
     rofi-wayland
     swaynotificationcenter
     slurp
@@ -83,7 +85,6 @@ in
   ];
 
   programs = {
-    waybar.enable = true;
     hyprlock.enable = true;
   };
 }
