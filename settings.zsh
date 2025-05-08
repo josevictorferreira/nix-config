@@ -20,6 +20,8 @@ bindkey '^n' history-beginning-search-forward
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 bindkey '^[[A' forward-char
+# Custom plugin
+bindkey '^ ' fzf_history_search_prefix_widget
 
 setopt appendhistory
 setopt sharehistory
@@ -28,6 +30,9 @@ setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
+
+# Enable cursor blinking
+echo -e '\e[5 q'
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"

@@ -30,8 +30,8 @@ alias notes="nvim $NOTETAKING_FOLDER/notes/Notes.md"
 alias prompts="nvim $NOTETAKING_FOLDER/notes/Prompts.md"
 alias sht="nvim $NOTETAKING_FOLDER/notes/CheatSheets.md"
 alias sheet="nvim $NOTETAKING_FOLDER/notes/CheatSheets.md"
+alias plan="sops --config=$SHARED_FOLDER/.sops.yaml $NOTETAKING_FOLDER/notes/plan.enc.md"
 
-alias plan="nvim $WORKSPACE/plan.md"
 alias buy="nvim $WORKSPACE/buy.md"
 alias zshrc="nvim $HOME/.config/zsh/init.zsh"
 alias aliases="nvim $HOME/.config/zsh/aliases.zsh"
@@ -67,7 +67,7 @@ alias geo="cd $BOOSTER_AGRO_FOLDER/georef-measures-service"
 alias map="cd $BOOSTER_AGRO_FOLDER/weather-map-service"
 alias weat="cd $BOOSTER_AGRO_FOLDER/weather-forecast-service"
 alias inf="cd $BOOSTER_AGRO_FOLDER/booster-infra"
-alias kong="cd $BOOSTER_AGRO_FOLDER/kong-api-gateway"
+alias kong="cd $BOOSTER_AGRO_FOLDER/booster-api-gateway"
 
 alias nexapi="cd $AGROSMART_FOLDER/nexus-api-gateway"
 
