@@ -34,12 +34,12 @@ subtree_sync: subtree_clean_check ## Add or sync subtrees to the config director
 		branch=$$(echo $$entry | cut -d@ -f3); \
 		echo -e "$(GREEN)--- 🔁 SYNC $$name ---$(RESET)"; \
 		if [ ! -d "config/$$name" ]; then \
-			echo -e "\uf149 $(CYAN)Adding$(RESET) $(BOLD)$$repo$(RESET) -> config/$$name (branch: $$branch)"; \
+			echo -e "\uf149 $(CYAN)Adding $(BOLD)$$repo$(RESET) -> config/$$name (branch: $$branch)$(RESET)"; \
 			git subtree add --prefix=config/$$name $$repo $$branch --squash; \
 		else \
-			echo -e "$(CYAN)\uf149 Pulling$(RESET) from $$repo (branch: $$branch)"; \
+			echo -e "$(CYAN)\uf149 Pulling$(RESET) from $$repo (branch: $$branch)$(RESET)"; \
 			git subtree pull --prefix=config/$$name $$repo $$branch || true; \
-			echo -e "$(CYAN)\uf149 Pushing$(RESET) config/$$name to $$repo (branch: $$branch)"; \
+			echo -e "$(CYAN)\uf149 Pushing$(RESET) config/$$name to $$repo (branch: $$branch)$(RESET)"; \
 			git subtree push --prefix=config/$$name $$repo $$branch || true; \
 		fi; \
 		echo -e "✅ $(GREEN)DONE.$(RESET)\n"; \
