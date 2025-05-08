@@ -2,11 +2,11 @@ gtk-titlebar = false
 gtk-single-instance = true
 window-decoration = false
 
-font-family = "JetBrains Mono Medium"
-font-family-bold = "JetBrains Mono Bold"
-font-family-italic = "JetBrains Mono Italic"
-font-family-bold-italic = "JetBrains Mono Bold Italic"
+font-family = "JetBrainsMono Nerd Font Mono Regular"
+font-family-bold = "JetBrainsMono Nerd Font Mono Bold"
+font-family-italic = "JetBrainsMono Nerd Font Mono Italic"
+font-family-bold-italic = "JetBrainsMono Nerd Font Mono Bold Italic"
 
 theme = "tokyonight_night"
 
-command = "tmux new -A -s main"
+command = "for s in work main projects monitoring; do tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"; done; tmux has-session -t chat 2>/dev/null || tmux new-session -d -s chat 'weechat'; tmux attach -t main"
