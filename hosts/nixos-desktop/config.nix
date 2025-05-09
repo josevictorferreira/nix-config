@@ -279,8 +279,6 @@ in
       port = 11434;
     };
 
-    open-webui.enable = true;
-
     pulseaudio.enable = false;
 
     xserver = {

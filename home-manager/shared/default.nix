@@ -61,6 +61,9 @@ in
       fastfetch
       ffmpeg
 
+      nettools
+      lsof
+
       podman
       podman-compose
     ];
