@@ -1,5 +1,5 @@
 {
   gitUsername = "Jose Victor Ferreira";
-  gitEmail = "josevictorferreira@outlook.com";
+  gitEmail = "root@josevictor.me";
   keyboardLayout = "us";
 }

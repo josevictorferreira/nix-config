@@ -1,12 +1,12 @@
 {
   gitUsername = "Jose Victor Ferreira";
-  gitEmail = "josevictorferreira@outlook.com";
+  gitEmail = "root@josevictor.me";
 
   extraMonitorSettings = "";
 
   clock24h = true;
 
   browser = "brave";
-  terminal = "ghostty";
+  terminal = "kitty";
   keyboardLayout = "us";
 }

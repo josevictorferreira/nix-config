@@ -63,6 +63,8 @@ in
 
       nettools
       lsof
+      jq
+      yq
 
       podman
       podman-compose

@@ -14,6 +14,7 @@
       font-manager
       obsidian
       spotify
+      koreader
     ];
   };
 
