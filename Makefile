@@ -8,7 +8,6 @@ RESET=\033[0m
 .PHONY: help secrets rebuild clean push_configs subtree_sync up_keys
 
 GIT_BASE_ADDRESS := git@github.com:josevictorferreira
-SUBTREES := nvim tmux zsh ghostty hypr kitty waybar
 
 SUBTRESS := \
 	nvim=$(GIT_BASE_ADDRESS)/.nvim.git@main \
@@ -17,7 +16,8 @@ SUBTRESS := \
 	ghostty=$(GIT_BASE_ADDRESS)/.ghostty.git@main \
 	hypr=$(GIT_BASE_ADDRESS)/.hypr.git@main \
 	kitty=$(GIT_BASE_ADDRESS)/.kitty.git@main \
-	waybar=$(GIT_BASE_ADDRESS)/.waybar.git@main
+	waybar=$(GIT_BASE_ADDRESS)/.waybar.git@main \
+	easyeffects=$(GIT_BASE_ADDRESS)/.easyeffects.git@main
 
 subtree_clean_check: ## Check if the git working tree is clean.
 	@if ! git diff --quiet || ! git diff --cached --quiet; then \
