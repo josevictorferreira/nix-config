@@ -52,7 +52,7 @@
         home-manager.users.${username} = import ./home-manager/${host}/${os}-specific.nix;
       };
 
-      nixosModule = { systemArc, os, host, username, isDarwin, isNixOS }: nixpkgs.lib.nixosSystem {
+      nixosModule = { systemArc, host, ... }: nixpkgs.lib.nixosSystem {
         specialArgs = specialArgsFor (systems.nixos);
         modules = [
           sops-nix.nixosModules.sops
@@ -63,7 +63,7 @@
         ];
       };
 
-      darwinModule = { systemArc, os, host, username, isDarwin, isNixOS }: darwin.lib.darwinSystem {
+      darwinModule = { systemArc, host, ... }: darwin.lib.darwinSystem {
         specialArgs = specialArgsFor (systems.macos);
         system = systemArc;
         modules = [
