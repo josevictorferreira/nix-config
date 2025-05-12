@@ -6,6 +6,7 @@
     ../shared/hyprland/default.nix
     ../shared/ghostty.nix
     ../shared/chat.nix
+    ../shared/easyeffects.nix
   ];
 
   home = {
@@ -16,6 +17,12 @@
       spotify
       koreader
     ];
+  };
+
+  modules = {
+    easyeffects = {
+      enable = true;
+    };
   };
 
   xdg = {

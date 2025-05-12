@@ -234,7 +234,6 @@ in
       hplip
 
       # System Tools
-      easyeffects
       gparted
       p7zip
 
