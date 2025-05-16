@@ -12,6 +12,7 @@ let
 in
 {
   imports = [
+    ./rofi.nix
     ./waybar.nix
   ];
   wayland.windowManager.hyprland = {
@@ -29,7 +30,6 @@ in
   };
   home.packages = with pkgs; [
     swww
-    rofi-wayland
     swaynotificationcenter
     slurp
     wlogout
