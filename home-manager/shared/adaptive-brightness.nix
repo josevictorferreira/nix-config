@@ -4,10 +4,12 @@
     packages = with pkgs; [
       ddcutil
     ];
-    file."bin/adaptive-brightness.sh" = {
+    file."${config.home.homeDirectory}/.local/bin/adaptive-brightness.sh" = {
       executable = true;
       text = ''
         #!/usr/bin/env bash
+
+        hour=$(LC_ALL=C date +'%H')
 
         if [ "$hour" -lt 6 ]; then
           brightness=10
@@ -37,7 +39,7 @@
     };
     Service = {
       Type = "oneshot";
-      ExecStart = "${config.home.homeDirectory}/bin/adaptive-brightness.sh";
+      ExecStart = "${config.home.homeDirectory}/.local/bin/adaptive-brightness.sh";
     };
   };
   systemd.user.timers."adaptive-brightness" = {
