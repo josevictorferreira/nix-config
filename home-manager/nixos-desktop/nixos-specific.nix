@@ -18,8 +18,6 @@
       spotify
       koreader
       dbeaver-bin
-      # Control monitor brightness
-      ddcutil
     ];
   };
 
