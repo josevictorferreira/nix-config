@@ -7,6 +7,7 @@
     ../shared/ghostty.nix
     ../shared/chat.nix
     ../shared/easyeffects.nix
+    ../shared/adaptive-brightness.nix
   ];
 
   home = {
@@ -17,6 +18,8 @@
       spotify
       koreader
       dbeaver-bin
+      # Control monitor brightness
+      ddcutil
     ];
   };
 
