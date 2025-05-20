@@ -30,7 +30,7 @@ in
         sync_to_monitor = false;
         wayland_enable_ime = false;
         term = "tmux-256color";
-        background_opacity = 0.99;
+        background_opacity = 0.999;
         symbol_map = "U+1F000-U+1F999 Noto Color Emoji";
         cursor = "#FF9800";
         cursor_text_color = "#1E1E2E";
