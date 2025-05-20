@@ -12,19 +12,19 @@
         hour=$(LC_ALL=C date +'%H')
 
         if [ "$hour" -lt 6 ]; then
-          brightness=10
+          brightness=13
         elif [ "$hour" -lt 9 ]; then
-          brightness=30
+          brightness=21
         elif [ "$hour" -lt 12 ]; then
-          brightness=60
+          brightness=34
         elif [ "$hour" -lt 15 ]; then
-          brightness=80
+          brightness=55
         elif [ "$hour" -lt 18 ]; then
-          brightness=60
+          brightness=34
         elif [ "$hour" -lt 21 ]; then
-          brightness=40
+          brightness=21
         else
-          brightness=20
+          brightness=13
         fi
 
         for display in $(ddcutil detect --brief | grep -o 'Display [0-9]' | awk '{print $2}'); do
