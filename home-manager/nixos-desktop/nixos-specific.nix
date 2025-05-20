@@ -16,6 +16,7 @@
       obsidian
       spotify
       koreader
+      dbeaver-bin
     ];
   };
 
