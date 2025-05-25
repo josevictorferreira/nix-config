@@ -55,6 +55,7 @@ in
       xsel
       sops
       age
+      zip
       unzip
       imagemagick
       btop

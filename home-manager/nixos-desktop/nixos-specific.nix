@@ -18,6 +18,7 @@
       spotify
       koreader
       dbeaver-bin
+      libreoffice
     ];
   };
 
