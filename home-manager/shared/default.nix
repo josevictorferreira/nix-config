@@ -67,6 +67,9 @@ in
       jq
       yq
 
+      # Find large files
+      ncdu
+
       podman
       podman-compose
     ];
