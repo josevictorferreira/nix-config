@@ -240,6 +240,7 @@ in
       # Gaming
       lutris
       protonup
+      protonup-qt
       wine64
       winetricks
       wine-wayland
