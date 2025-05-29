@@ -43,8 +43,8 @@ in
         window_alert_on_bell = "yes";
       };
       font = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font Mono";
+        package = pkgs.commit-mono;
+        name = "CommitMono";
         size = 11;
       };
     };
@@ -60,6 +60,8 @@ in
         pkgs.nerd-fonts.jetbrains-mono
         pkgs.noto-fonts
         pkgs.noto-fonts-emoji
+        pkgs.maple-mono.truetype
+        pkgs.commit-mono
       ];
       file = {
         ".config/kitty/themes/" = {

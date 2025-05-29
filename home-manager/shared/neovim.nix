@@ -20,6 +20,8 @@ in
       cargo
       rustc
       nixd
+      # Needed by some lsp servers
+      nodejs_22
     ];
 
     file = {
