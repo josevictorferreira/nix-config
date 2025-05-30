@@ -7,8 +7,8 @@ in
   programs.neovim = {
     enable = true;
     defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
+    viAlias = false;
+    vimAlias = false;
     extraLuaConfig = builtins.readFile "${neovimConfigDir}/init.lua";
   };
 
