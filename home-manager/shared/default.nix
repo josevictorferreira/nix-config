@@ -66,6 +66,7 @@ in
       lsof
       jq
       yq
+      dig
 
       # Find large files
       ncdu

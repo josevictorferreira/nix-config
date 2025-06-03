@@ -41,11 +41,13 @@ in
         enable_audio_bell = "no";
         visual_bell_duration = "0.1";
         window_alert_on_bell = "yes";
+        bold_font = "auto";
+        italic_font = "auto";
       };
       font = {
-        package = pkgs.commit-mono;
-        name = "CommitMono";
-        size = 11;
+        package = pkgs.nerd-fonts.fira-code;
+        name = "FiraCode Nerd Font";
+        size = 13;
       };
     };
     fonts.fontconfig.enable = true;
