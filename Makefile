@@ -18,7 +18,8 @@ SUBTRESS := \
 	kitty=$(GIT_BASE_ADDRESS)/.kitty.git@main \
 	waybar=$(GIT_BASE_ADDRESS)/.waybar.git@main \
 	easyeffects=$(GIT_BASE_ADDRESS)/.easyeffects.git@main \
-	rofi=$(GIT_BASE_ADDRESS)/.rofi.git@main
+	rofi=$(GIT_BASE_ADDRESS)/.rofi.git@main \
+	alacritty=$(GIT_BASE_ADDRESS)/.alacritty.git@main
 
 subtree_clean_check: ## Check if the git working tree is clean.
 	@if ! git diff --quiet || ! git diff --cached --quiet; then \
