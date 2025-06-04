@@ -28,6 +28,7 @@ in
       insomnia
 
       # Cli tools
+      home-manager
       curl
       git
       gnupg
