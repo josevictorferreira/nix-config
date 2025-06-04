@@ -11,6 +11,7 @@ in
     ./weechat.nix
     ./kitty.nix
     ./k9s.nix
+    ./alacritty.nix
   ];
 
   home = {
@@ -78,9 +79,8 @@ in
       enable = true;
       additionalScripts = [ ];
     };
-    kitty = {
-      enable = true;
-    };
+    kitty.enable = true;
+    alacritty.enable = true;
   };
 
   programs = {
