@@ -24,18 +24,17 @@ in
     packages = with pkgs; [
       # Desktop tools
       brave
+      insomnia
 
-      # Dev tools
+      # Cli tools
       curl
       git
       gnupg
       gnumake
       coreutils
-      insomnia
       gh
       awscli
       kubectl
-      k9s
       kubernetes-helm
       helmfile
       htop-vim
@@ -61,16 +60,12 @@ in
       btop
       fastfetch
       ffmpeg
-
       nettools
       lsof
       jq
       yq
       dig
-
-      # Find large files
-      ncdu
-
+      ncdu # Find large files
       podman
       podman-compose
     ];
