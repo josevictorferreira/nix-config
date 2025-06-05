@@ -43,12 +43,12 @@ in
           recursive = true;
           executable = false;
         };
-      ".config/nvim/snippets" =
-        {
-          source = "${neovimConfigDir}/snippets";
-          recursive = true;
-          executable = false;
-        };
+      # ".config/nvim/snippets" =
+      #   {
+      #     source = "${neovimConfigDir}/snippets";
+      #     recursive = true;
+      #     executable = false;
+      #   };
     };
   };
 }
