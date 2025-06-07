@@ -22,6 +22,7 @@ in
     ./kvantum.nix
     ./ags.nix
     ./cava.nix
+    ./wlogout.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -38,7 +39,6 @@ in
   };
   home.packages = with pkgs; [
     slurp
-    wlogout
     wl-clipboard
     hypridle
     hyprcursor
