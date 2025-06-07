@@ -17,6 +17,8 @@ in
     ./wallust.nix
     ./swaync.nix
     ./screenshot.nix
+    ./qt5.nix
+    ./qt6.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -45,7 +47,6 @@ in
     file-roller
     gtk-engine-murrine #for gtk themes
     inxi
-    libsForQt5.qtstyleplugin-kvantum #kvantum
     networkmanagerapplet
     nwg-look # requires unstable channel
     nvtopPackages.full
@@ -53,10 +54,6 @@ in
     pavucontrol
     playerctl
     polkit_gnome
-    libsForQt5.qt5ct
-    qt6ct
-    qt6.qtwayland
-    qt6Packages.qtstyleplugin-kvantum #kvantum
     yad
     yt-dlp
     noto-fonts
