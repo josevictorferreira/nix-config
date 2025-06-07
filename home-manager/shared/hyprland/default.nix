@@ -20,6 +20,7 @@ in
     ./qt5.nix
     ./qt6.nix
     ./kvantum.nix
+    ./ags.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
