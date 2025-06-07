@@ -16,6 +16,7 @@ in
     ./waybar.nix
     ./wallust.nix
     ./swaync.nix
+    ./screenshot.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -56,18 +57,12 @@ in
     qt6ct
     qt6.qtwayland
     qt6Packages.qtstyleplugin-kvantum #kvantum
-    swappy
     yad
     yt-dlp
     noto-fonts
 
     # GUI Apps
     kitty
-
-    # Screenshot tools
-    grim
-    grimblast
-    hyprshot
 
     # Fonts
     fira-code
