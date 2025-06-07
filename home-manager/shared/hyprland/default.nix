@@ -15,6 +15,7 @@ in
     ./rofi.nix
     ./waybar.nix
     ./wallust.nix
+    ./swaync.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -30,7 +31,6 @@ in
     };
   };
   home.packages = with pkgs; [
-    swaynotificationcenter # Notification center tool
     slurp
     wlogout
     wl-clipboard

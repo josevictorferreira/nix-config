@@ -7,6 +7,7 @@ in
   programs.wallust.enable = true;
   home = {
     packages = with pkgs; [
+      swww
       wallust
     ];
     file = {
