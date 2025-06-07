@@ -14,6 +14,7 @@ in
   imports = [
     ./rofi.nix
     ./waybar.nix
+    ./wallust.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -29,8 +30,6 @@ in
     };
   };
   home.packages = with pkgs; [
-    swww # Wallpaper tool
-    wallust # Wallpaper tool
     swaynotificationcenter # Notification center tool
     slurp
     wlogout

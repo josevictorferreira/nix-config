@@ -1,18 +1,17 @@
 { configRoot, pkgs, ... }:
 
 let
-  waybarConfigDir = "${configRoot}/config/waybar";
+  wallustConfigDir = "${configRoot}/config/wallust";
 in
 {
-  programs.waybar.enable = true;
+  programs.wallust.enable = true;
   home = {
     packages = with pkgs; [
-      swww
       wallust
     ];
     file = {
-      ".config/waybar" = {
-        source = "${waybarConfigDir}";
+      ".config/wallust" = {
+        source = "${wallustConfigDir}";
         recursive = true;
         executable = false;
       };
