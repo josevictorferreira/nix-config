@@ -19,6 +19,7 @@ in
     ./screenshot.nix
     ./qt5.nix
     ./qt6.nix
+    ./kvantum.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
