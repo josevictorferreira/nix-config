@@ -405,6 +405,21 @@ in
   };
 
   xdg = {
+    mime = {
+      enable = true;
+      defaultApplications = {
+        "application/pdf" = "org.pwmt.zathura.desktop";
+        "application/x-pdf" = "org.pwmt.zathura.desktop";
+        "application/epub+zip" = "org.koreader.koreader.desktop";
+        "application/x-mobipocket-ebook" = "org.koreader.koreader.desktop";
+        "application/x-chrome-extension" = "org.chromium.Chromium.desktop";
+        "application/x-xpinstall" = "org.chromium.Chromium.desktop";
+        "inode/directory" = "thunar.desktop";
+        "text/plain" = "org.xfce.mousepad.desktop";
+        "text/csv" = "calc.desktop";
+        "application/octet-stream" = "vlc.desktop";
+      };
+    };
     portal = {
       enable = true;
       wlr.enable = false;
