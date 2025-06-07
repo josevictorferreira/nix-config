@@ -29,15 +29,15 @@ in
     };
   };
   home.packages = with pkgs; [
-    swww
-    swaynotificationcenter
+    swww # Wallpaper tool
+    wallust # Wallpaper tool
+    swaynotificationcenter # Notification center tool
     slurp
     wlogout
     wl-clipboard
     hypridle
     hyprcursor
     pyprland
-    wallust
     brightnessctl # for brightness control
     cliphist
     eog

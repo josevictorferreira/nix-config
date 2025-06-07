@@ -6,3 +6,4 @@ secrets/*.yml
 !secrets/*.enc.yml
 *.orig
 */**/*.orig
+*.bak
