@@ -19,6 +19,8 @@
   security.pam.services.sudo_local.reattach = true; # install pam_reattach
   security.pam.services.sudo_local.touchIdAuth = true; # install pam_tid
 
+  system.primaryUser = username;
+
   system.defaults = {
     finder = {
       AppleShowAllExtensions = true;
