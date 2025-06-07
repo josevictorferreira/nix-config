@@ -4,7 +4,6 @@ let
   swayncConfigDir = "${configRoot}/config/swaync";
 in
 {
-  programs.swaync.enable = true;
   home = {
     packages = with pkgs; [
       swaynotificationcenter
