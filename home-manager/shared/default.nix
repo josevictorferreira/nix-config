@@ -12,6 +12,7 @@ in
     ./kitty.nix
     ./k9s.nix
     ./alacritty.nix
+    ./btop.nix
   ];
 
   home = {
