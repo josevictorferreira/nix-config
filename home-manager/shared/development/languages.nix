@@ -3,8 +3,10 @@
 {
   home = {
     packages = with pkgs; [
-      luajit
-      luajitPackages.luarocks
+      lua51Packages.lua
+      lua51Packages.luarocks
+      cargo
+      rustc
     ];
   };
 }

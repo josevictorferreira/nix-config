@@ -22,8 +22,7 @@ in
     packages = with pkgs; [
       fzf
       ripgrep
-      cargo
-      rustc
+      fd
     ];
 
     file = {
