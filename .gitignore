@@ -7,3 +7,4 @@ secrets/*.yml
 *.orig
 */**/*.orig
 *.bak
+.ruff-cache/
