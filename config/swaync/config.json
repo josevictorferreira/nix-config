@@ -1,5 +1,5 @@
 {
-  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "$schema": "/nix/store/04k180dxms5qn4lxap8xgws5jfwxjmfz-SwayNotificationCenter-0.11.0/etc/xdg/swaync/configSchema.json",
   "positionX": "center",
   "positionY": "top",
   "layer": "overlay",
@@ -29,7 +29,9 @@
   "hide-on-action": true,
   "script-fail-notify": true,
   "scripts": {
-    "on-notification": "bash -c $HOME/.config/swaync/scripts/on-notification.sh"
+    "on-notification": {
+      "exec": "bash -c $HOME/.config/hypr/scripts/Notification.sh"
+    }
   },
   "widgets": [
     "dnd",
