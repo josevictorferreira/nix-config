@@ -6,9 +6,9 @@
       rust-analyzer
       bash-language-server
       lua-language-server
-      make-language-server
+      autotools-language-server
       vscode-langservers-extracted # cssls, html, jsonls, eslint, markdown
-      docker-language-server
+      dockerfile-language-server-nodejs
       docker-compose-language-service
       ruff
       vim-language-server
@@ -21,7 +21,7 @@
       ruby-lsp
       protols
       typescript-language-server
-      emmet-language-server
+      emmet-ls
       nixd
       helm-ls
     ];
