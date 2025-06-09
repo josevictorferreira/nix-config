@@ -5,7 +5,8 @@ let
 in
 {
   imports = [
-    ./lsp-servers.nix
+    ./development/lsp-servers.nix
+    ./development/formatters.nix
   ];
 
   programs.neovim = {
