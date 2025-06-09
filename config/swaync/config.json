@@ -30,11 +30,11 @@
   "script-fail-notify": true,
   "scripts": {
     "on-low-notification": {
-      "exec": "bash -c $HOME/.config/swaync/scripts/on-notification.sh",
+      "exec": "bash -c $HOME/.config/swaync/scripts/on-normal-notification.sh",
       "urgency": "Low"
     },
     "on-normal-notification": {
-      "exec": "bash -c $HOME/.config/swaync/scripts/on-notification.sh",
+      "exec": "bash -c $HOME/.config/swaync/scripts/on-normal-notification.sh",
       "urgency": "Normal"
     },
     "on-critical-notification": {
