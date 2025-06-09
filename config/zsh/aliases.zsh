@@ -45,6 +45,8 @@ alias vista="cd $WORKSPACE/vista-valor"
 alias real="cd $WORKSPACE/realiza-monorepo"
 alias nix-shell='nix-shell --run zsh'
 
+alias nixc="cd $HOME/.config/nix"
+
 # K8s
 alias prod="k9s -n production -c pods"
 alias stag="k9s -n staging -c pods"
