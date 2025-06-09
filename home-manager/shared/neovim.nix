@@ -7,6 +7,7 @@ in
   imports = [
     ./development/lsp-servers.nix
     ./development/formatters.nix
+    ./development/languages.nix
   ];
 
   programs.neovim = {
