@@ -4,6 +4,10 @@ let
   neovimConfigDir = "${configRoot}/config/nvim";
 in
 {
+  imports = [
+    ./lsp-servers.nix
+  ];
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -13,15 +17,11 @@ in
   };
 
   home = {
-    # Neovim External Dependencies By Some Plugins
     packages = with pkgs; [
       fzf
       ripgrep
       cargo
       rustc
-      nixd
-      # Needed by some lsp servers
-      nodejs_22
     ];
 
     file = {
@@ -43,12 +43,6 @@ in
           recursive = true;
           executable = false;
         };
-      # ".config/nvim/snippets" =
-      #   {
-      #     source = "${neovimConfigDir}/snippets";
-      #     recursive = true;
-      #     executable = false;
-      #   };
     };
   };
 }
