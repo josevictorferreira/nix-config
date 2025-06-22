@@ -15,10 +15,11 @@
       vlc
       font-manager
       obsidian
-      spotify
       koreader
       dbeaver-bin
       libreoffice
+
+      inkscape-with-extensions
     ];
   };
 
