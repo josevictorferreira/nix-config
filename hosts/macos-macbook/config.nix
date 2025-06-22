@@ -62,7 +62,6 @@
     m-cli
     mas
     pam-reattach
-    firefox
   ];
 
   programs.zsh.enable = true;
