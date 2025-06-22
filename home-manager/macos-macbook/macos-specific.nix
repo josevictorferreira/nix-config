@@ -8,6 +8,7 @@
 
   home.packages = with pkgs; [
     mas
+    firefox
   ];
 
   targets.darwin = {
