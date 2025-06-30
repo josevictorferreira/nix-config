@@ -33,6 +33,10 @@
       "exec": "bash -c $HOME/.config/swaync/scripts/on-low-notification.sh",
       "urgency": "Low"
     },
+    "on-spotify-notification": {
+      "exec": "bash -c $HOME/.config/swaync/scripts/on-low-notification.sh",
+      "app-name": "Spotify"
+    },
     "on-normal-notification": {
       "exec": "bash -c $HOME/.config/swaync/scripts/on-normal-notification.sh",
       "urgency": "Normal"
