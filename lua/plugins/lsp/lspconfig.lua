@@ -29,16 +29,18 @@ local function on_attach(_, bufnr)
 	})
 end
 
-local function setup_lsp_servers(lspconfig, servers)
+local function setup_lsp_servers(servers)
 	for server, config in pairs(servers) do
 		local success, result = pcall(function()
 			config.on_attach = on_attach
 			config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
-			lspconfig[server].setup(config)
+
+			vim.lsp.config(server, config)
+			vim.lsp.enable(server)
 		end)
 		if not success then
-			print("LSP: " .. server .. " has failed to load")
-			print(result)
+			vim.print("LSP: " .. server .. " has failed to load")
+			vim.print(result)
 		end
 	end
 end
@@ -48,10 +50,9 @@ return {
 	dependencies = { "saghen/blink.cmp" },
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		local lspconfig = require("lspconfig")
 		local lsp_servers = require("core.utils.lsp_servers")
 
-		setup_lsp_servers(lspconfig, lsp_servers)
+		setup_lsp_servers(lsp_servers)
 
 		vim.o.updatetime = 300
 	end,

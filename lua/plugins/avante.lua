@@ -1,16 +1,28 @@
 return {
 	"yetone/avante.nvim",
-	opts = {
-		provider = "claude",
-	},
 	event = "VeryLazy",
-	lazy = true,
 	version = false,
+	opts = {
+		endpoint = "claude",
+		claude = {
+			endpoint = "https://api.anthropic.com",
+			model = "claude-sonnet-4-20250514",
+			timeout = 30000,
+			temperature = 0,
+			max_tokens = 20480,
+			disable_tools = true,
+		},
+	},
 	build = "make",
 	dependencies = {
+		"nvim-treesitter/nvim-treesitter",
 		"stevearc/dressing.nvim",
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
+		"echasnovski/mini.pick",
+		"nvim-telescope/telescope.nvim",
+		"hrsh7th/nvim-cmp",
+		"ibhagwan/fzf-lua",
 		"nvim-tree/nvim-web-devicons",
 		"zbirenbaum/copilot.lua",
 		{
@@ -23,6 +35,7 @@ return {
 					drag_and_drop = {
 						insert_mode = true,
 					},
+					use_absolute_path = true,
 				},
 			},
 		},
