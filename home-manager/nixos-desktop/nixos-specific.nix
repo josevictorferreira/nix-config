@@ -19,7 +19,7 @@
       dbeaver-bin
       libreoffice
 
-      spotify
+      spotifywm
 
       inkscape-with-extensions
     ];

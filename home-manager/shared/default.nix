@@ -71,6 +71,8 @@ in
       ncdu # Find large files
       podman
       podman-compose
+
+      claude-code
     ];
 
     stateVersion = "24.05";
