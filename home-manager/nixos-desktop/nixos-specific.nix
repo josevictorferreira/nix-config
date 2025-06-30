@@ -19,6 +19,8 @@
       dbeaver-bin
       libreoffice
 
+      spotify
+
       inkscape-with-extensions
     ];
   };

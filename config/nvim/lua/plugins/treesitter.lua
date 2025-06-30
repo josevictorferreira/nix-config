@@ -67,6 +67,10 @@ return {
 				vim.treesitter.start()
 				vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				vim.opt.shiftwidth = 2
+				vim.opt.tabstop = 2
+				vim.opt.softtabstop = 2
+				vim.opt.expandtab = true
 			end,
 		})
 	end,
