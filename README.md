@@ -41,5 +41,12 @@ In case you receive the error similar to `error: Build user group has mismatchin
 $ sudo dscl . -change /Groups/nixbld PrimaryGroupID 350 30000
 ```
 
+## Known Issues
+
+- Sometimes spotify stops working, the solution is simply remove the cache folder:
+```console
+$ rm -rf ~/.cache/spotify
+```
+
 ## Aknowledgements
 Based on [KooL's NixOS-Hyprland](https://github.com/JaKooLit/NixOS-Hyprland)
