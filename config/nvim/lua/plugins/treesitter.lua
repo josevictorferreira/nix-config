@@ -54,7 +54,7 @@ return {
 			},
 			indent = {
 				enable = true,
-				disable = { "python", "ruby" },
+				disable = { "ruby" },
 			},
 			autotag = {
 				enable = true,

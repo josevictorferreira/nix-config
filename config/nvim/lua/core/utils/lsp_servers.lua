@@ -7,7 +7,12 @@ return {
 	docker_compose_language_service = { filetypes = { "yaml.docker-compose", "docker-compose" } },
 	html = { filetypes = { "html" } },
 	jsonls = { filetypes = { "json" } },
-	ruff = { filetypes = { "python" } },
+	ruff = {
+		filetypes = { "python" },
+		root_markers = { "pyproject.toml" },
+		cmd = { "uv", "run", "ruff", "server" },
+		auto_install = false,
+	},
 	pylsp = {
 		filetypes = { "python" },
 		root_markers = { "pyproject.toml" },
