@@ -14,6 +14,9 @@ alias v=nvim
 alias d=docker
 alias be="bundle exec "
 alias ber="bundle exec rspec "
+alias uvr="uv run "
+alias uvrp="uv run pytest "
+alias uvrd="uv run python manage.py "
 alias m="make "
 
 alias ls='eza -a --icons'
@@ -71,6 +74,6 @@ alias weat="cd $BOOSTER_AGRO_FOLDER/weather-forecast-service"
 alias inf="cd $BOOSTER_AGRO_FOLDER/booster-infra"
 alias kong="cd $BOOSTER_AGRO_FOLDER/booster-api-gateway"
 
-alias nexapi="cd $AGROSMART_FOLDER/nexus-api-gateway"
+alias nexapi="cd $AGROSMART_FOLDER/nexus/nexus-api-gateway"
 
 alias key="cd $BOOSTER_AGRO_FOLDER/keycloak"
