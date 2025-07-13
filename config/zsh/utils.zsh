@@ -31,42 +31,25 @@ function als() {
   fi
 }
 
-# Homeserver SSH Connect Machines/VMs
 function conn() {
-  case $1 in
-    pve1)
-      ssh root@10.10.10.200
-      ;;
-    pve2)
-      ssh root@10.10.10.201
-      ;;
-    pve3)
-      ssh root@10.10.10.202
-      ;;
-    vm10)
-      ssh josevictor@10.10.10.210
-      ;;
-    vm11)
-      ssh josevictor@10.10.10.211
-      ;;
-    vm20)
-      ssh josevictor@10.10.10.220
-      ;;
-    vm21)
-      ssh josevictor@10.10.10.221
-      ;;
-    vm22)
-      ssh josevictor@10.10.10.222
-      ;;
-    vm30)
-      ssh josevictor@10.10.10.230
-      ;;
-    vm31)
-      ssh josevictor@10.10.10.231
-      ;;
+	local selection=$(cat <<EOF | fzf --prompt="Choose a machine: "
+PVE 1     -> root@10.10.10.200
+PVE 2     -> root@10.10.10.201
+PVE 3     -> root@10.10.10.202
+PVE 9(Pi) -> josevictor@10.10.10.209
+VM 100    -> josevictor@10.10.10.210
+VM 101    -> josevictor@10.10.10.211
+VM 200    -> josevictor@10.10.10.220
+VM 201    -> josevictor@10.10.10.221
+VM 202    -> josevictor@10.10.10.222
+VM 300    -> josevictor@10.10.10.230
+VM 301    -> josevictor@10.10.10.231
+EOF
+)
+	# Exist if nothing selected
+	[[ -z "$selection" ]] && return
 
-    *)
-      echo "Invalid machine. \n Usage: conn [pve1|pve2|pve3|vm10|vm11|vm20|vm21|vm22|vm30|vm31]"
-      ;;
-  esac
+	# Extract the user and IP
+	local ssh_target=$(echo "$selection" | awk -F'->' '{print $2}' | xargs)
+	ssh "$ssh_target"
 }
