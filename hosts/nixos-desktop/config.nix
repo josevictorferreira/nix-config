@@ -19,6 +19,9 @@ in
         "input"
         "audio"
       ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
+      ];
       packages = [ ]; # Packages handled by Home Manager
     };
 
