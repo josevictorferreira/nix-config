@@ -18,6 +18,8 @@
       koreader
       dbeaver-bin
       libreoffice
+      unetbootin
+      nixos-generators
 
       spotifywm
 

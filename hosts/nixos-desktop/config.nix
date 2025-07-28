@@ -460,7 +460,7 @@ in
   networking.firewall = {
     enable = true;
     # Ollama port
-    allowedTCPPorts = [ 11434 57621 ];
+    allowedTCPPorts = [ 11434 57621 8000 ];
     allowedUDPPorts = [ 5353 ];
   };
 
