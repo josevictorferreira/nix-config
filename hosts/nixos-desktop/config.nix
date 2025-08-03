@@ -61,7 +61,7 @@ in
 
     # This is for OBS Virtual Cam Support
     kernelModules = [ "v4l2loopback" "i2c-dev" "i2c-piix4" ];
-    supportedFilesystems = [ "btrfs" "zfs" ];
+    supportedFilesystems = [ "btrfs" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
 
     initrd = {
