@@ -38,7 +38,6 @@ in
     "${configRoot}/modules/hardware/vm-guest-services.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/hardware/shared-storage.nix"
     ./hardware.nix
   ];
 
@@ -62,6 +61,7 @@ in
 
     # This is for OBS Virtual Cam Support
     kernelModules = [ "v4l2loopback" "i2c-dev" "i2c-piix4" ];
+    supportedFilesystems = [ "btrfs" "zfs" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
 
     initrd = {
