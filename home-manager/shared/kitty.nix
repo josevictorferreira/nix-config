@@ -50,7 +50,6 @@ in
         size = 13;
       };
     };
-    fonts.fontconfig.enable = true;
     home = {
       packages = [
         pkgs.kitty

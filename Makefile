@@ -58,9 +58,9 @@ update: ## Update flake
 
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
-		sudo darwin-rebuild switch --flake .#macos-macbook --impure; \
+		sudo darwin-rebuild switch --flake .#macos-macbook --show-trace; \
 	else \
-		sudo nixos-rebuild switch --flake .#nixos-desktop --impure; \
+		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace; \
 	fi
 
 clean: ## Clean up the Nix store.

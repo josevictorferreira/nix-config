@@ -6,7 +6,6 @@
       rust-analyzer
       bash-language-server
       lua-language-server
-      autotools-language-server
       vscode-langservers-extracted # cssls, html, jsonls, eslint, markdown
       dockerfile-language-server-nodejs
       docker-compose-language-service

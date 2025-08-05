@@ -12,7 +12,6 @@ in
     programs.alacritty = {
       enable = true;
     };
-    fonts.fontconfig.enable = true;
     home = {
       packages = [
         pkgs.alacritty

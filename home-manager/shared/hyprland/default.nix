@@ -30,7 +30,6 @@ in
     xwayland.enable = true;
     extraConfig = builtins.readFile "${hyprlandConfig}/hyprland.conf";
   };
-  fonts.fontconfig.enable = true;
   home.file = {
     ".config/hypr" = {
       source = "${hyprlandConfig}";
