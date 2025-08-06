@@ -53,6 +53,9 @@ up_keys: ## Update keys for secrets files
 secrets: ## Edit the secrets file
 	sops secrets/secrets.enc.yaml
 
+check: ## Check if the flake is valid.
+	@bash -c "nix flake check --show-trace"
+
 update: ## Update flake
 	sudo nix flake update
 

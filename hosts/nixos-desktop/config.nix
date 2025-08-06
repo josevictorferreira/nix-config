@@ -253,9 +253,6 @@ in
       buildah
       qemu
       qemu_kvm
-
-      # LLM
-      ollama
     ];
     sessionVariables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
@@ -272,13 +269,6 @@ in
           command = "Hyprland";
         };
       };
-    };
-
-    ollama = {
-      enable = false;
-      loadModels = [ ];
-      host = "0.0.0.0";
-      port = 11434;
     };
 
     pulseaudio.enable = false;
@@ -458,9 +448,7 @@ in
 
   networking.firewall = {
     enable = true;
-    # Ollama port
-    allowedTCPPorts = [ 11434 57621 8000 ];
-    allowedUDPPorts = [ 5353 ];
+    allowedTCPPorts = [ 8000 ];
   };
 
   virtualisation.libvirtd.enable = true;
