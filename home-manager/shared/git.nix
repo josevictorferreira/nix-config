@@ -4,27 +4,26 @@ let
   inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername gitEmail;
   preCommit = pkgs.writeShellScript "pre-commit-secrets-check" ''
     #!/usr/bin/env bash
+
     set -euo pipefail
 
     fail=0
-    YQ="\$\{YQ:-${pkgs.yq-go}/bin/yq\}"
 
-    mapfile -t files < <(git diff --cached --name-only -- '*.enc.yaml' '*.enc.yml' || true)
-    for file in "\$\{files[@]\}"; do
-      if ! "$YQ" -e 'has("sops") and (.sops.mac // "" != "")' "$file" >/dev/null 2>&1; then
+    for file in $(${pkgs.git}/bin/git diff --cached --name-only -- '*.enc.yaml' '*.enc.yml'); do
+      if ! ${pkgs.yq}/bin/yq -e 'has("sops") and (.sops.mac // "" != "")' "$file" >/dev/null 2>&1; then
         echo "❌ ERROR: $file is not encrypted with sops!"
         fail=1
       fi
     done
 
-    if [ "$fail" -eq 1 ]; then
+    if [ $fail -eq 1 ]; then
       echo "Commit aborted. Please encrypt files with: make emanifests"
       exit 1
     fi
   '';
 in
 {
-  home.packages = [ pkgs.git pkgs.yq-go ];
+  home.packages = [ pkgs.git pkgs.yq ];
 
   programs = {
     git = {
