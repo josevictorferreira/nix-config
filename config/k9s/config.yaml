@@ -3,6 +3,7 @@ k9s:
   screenDumpDir: /home/josevictor/.local/state/k9s/screen-dumps
   refreshRate: 2
   maxConnRetry: 5
+  defaultView: "pods"
   readOnly: false
   noExitOnCtrlC: false
   ui:
@@ -31,7 +32,7 @@ k9s:
     tail: 150
     buffer: 10000
     sinceSeconds: -1
-    textWrap: false
+    textWrap: true
     showTime: false
   thresholds:
     cpu:
