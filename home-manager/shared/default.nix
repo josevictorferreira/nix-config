@@ -1,10 +1,11 @@
 { pkgs, username, host, isDarwin, configRoot, ... }:
 let
   homeDirPrefix = if isDarwin then "/Users" else "/home";
-  inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername gitEmail keyboardLayout;
+  inherit (import "${configRoot}/hosts/${host}/variables.nix") keyboardLayout;
 in
 {
   imports = [
+    ./git.nix
     ./zsh.nix
     ./neovim.nix
     ./tmux.nix
@@ -91,31 +92,6 @@ in
     home-manager = {
       enable = true;
     };
-
-    git = {
-      enable = true;
-      userName = "${gitUsername}";
-      userEmail = "${gitEmail}";
-      difftastic = {
-        enable = true;
-      };
-
-      extraConfig = {
-        init.defaultBranch = "main";
-        push.autoSetupRemote = true;
-        push.followTags = true;
-        pull.rebase = true;
-        url = {
-          "ssh://git@github.com/" = {
-            insteadOf = "https://github.com/";
-          };
-        };
-        fetch = {
-          prune = true;
-          tags = true;
-        };
-      };
-    };
     direnv = {
       enable = true;
       nix-direnv = {
@@ -123,5 +99,4 @@ in
       };
     };
   };
-
 }
