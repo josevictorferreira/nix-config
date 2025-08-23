@@ -38,6 +38,7 @@ in
     "${configRoot}/modules/hardware/vm-guest-services.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
+    "${configRoot}/modules/hardware/homelab-storage.nix"
     ./hardware.nix
   ];
 
