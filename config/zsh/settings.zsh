@@ -5,6 +5,7 @@ export BROWSER='brave'
 export PATH=/opt/homebrew/bin:$PATH
 export PODMAN_COLOR=true
 export COLORTERM=truecolor
+export DIRENV_DISABLE=1
 
 ## Autocomplete Settings
 HISTSIZE=10000
