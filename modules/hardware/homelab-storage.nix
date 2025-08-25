@@ -1,6 +1,6 @@
 { lib, username, isDarwin, ... }:
 
-let mnt = "/mnt/homelab"; in
+let mnt = "/mnt/homelab-storage"; in
 {
   fileSystems = {
     "${mnt}" = lib.mkIf (!isDarwin) {
@@ -12,8 +12,8 @@ let mnt = "/mnt/homelab"; in
 
   system.activationScripts.homelabLink = ''
     install -d -o ${username} -g users /home/${username}
-    ln -snf ${mnt} /home/${username}/homelab
-    chown -h ${username}:users /home/${username}/homelab
+    ln -snf ${mnt} /home/${username}
+    chown -h ${username}:users /home/${username}/homelab-storage
   '';
 
   users.groups.homelab.gid = 2002;
