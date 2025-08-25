@@ -53,7 +53,6 @@ in
       nmap
       arp-scan
       tree
-      direnv
       clang
       xsel
       sops
@@ -91,12 +90,6 @@ in
   programs = {
     home-manager = {
       enable = true;
-    };
-    direnv = {
-      enable = true;
-      nix-direnv = {
-        enable = true;
-      };
     };
   };
 }
