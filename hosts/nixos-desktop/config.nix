@@ -254,6 +254,8 @@ in
       buildah
       qemu
       qemu_kvm
+
+      ntfs3g
     ];
     sessionVariables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
