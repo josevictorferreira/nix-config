@@ -18,6 +18,7 @@ in
         "video"
         "input"
         "audio"
+        "homelab"
       ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
@@ -37,7 +38,7 @@ in
     "${configRoot}/modules/hardware/intel-drivers.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    # "${configRoot}/modules/hardware/homelab-storage.nix"
+    "${configRoot}/modules/hardware/homelab-storage.nix"
     ./hardware.nix
   ];
 
