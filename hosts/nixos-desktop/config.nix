@@ -35,10 +35,9 @@ in
     "${configRoot}/modules/hardware/nvidia-drivers.nix"
     "${configRoot}/modules/hardware/nvidia-prime-drivers.nix"
     "${configRoot}/modules/hardware/intel-drivers.nix"
-    "${configRoot}/modules/hardware/vm-guest-services.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/hardware/homelab-storage.nix"
+    # "${configRoot}/modules/hardware/homelab-storage.nix"
     ./hardware.nix
   ];
 
@@ -61,9 +60,9 @@ in
     ];
 
     # This is for OBS Virtual Cam Support
-    kernelModules = [ "v4l2loopback" "i2c-dev" "i2c-piix4" ];
+    # kernelModules = [ "v4l2loopback" "i2c-dev" "i2c-piix4" ];
     supportedFilesystems = [ "btrfs" ];
-    extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
+    # extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
 
     initrd = {
       availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
@@ -108,20 +107,6 @@ in
       tmpfsSize = "30%";
     };
 
-    # Appimage Support
-    binfmt = {
-      emulatedSystems = [ "aarch64-linux" ];
-      preferStaticEmulators = true;
-      registrations.appimage = {
-        wrapInterpreterInShell = false;
-        interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-        recognitionType = "magic";
-        offset = 0;
-        mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-        magicOrExtension = ''\x7fELF....AI\x02'';
-      };
-    };
-
     plymouth.enable = true;
   };
 
@@ -141,7 +126,6 @@ in
     intelBusID = "";
     nvidiaBusID = "";
   };
-  vm.guest-services.enable = false;
   local.hardware-clock.enable = false;
 
   # networking
@@ -251,9 +235,6 @@ in
 
       # Containers
       podman
-      buildah
-      qemu
-      qemu_kvm
 
       ntfs3g
     ];
