@@ -1,4 +1,4 @@
-{ config, pkgs, host, options, configRoot, username, ... }:
+{ pkgs, host, options, configRoot, username, ... }:
 let
 
   inherit (import ./variables.nix) gitUsername keyboardLayout;
@@ -18,7 +18,6 @@ in
         "video"
         "input"
         "audio"
-        "homelab"
       ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
