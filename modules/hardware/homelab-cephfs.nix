@@ -13,6 +13,11 @@ in
       example = [ "10.10.10.200:6789" "10.10.10.201:6789" "10.10.10.203:6789" ];
       description = "Ceph MON endpoints host:port.";
     };
+    clusterFsId = mkOption {
+      type = types.str;
+      example = "a0b1c2d3-e4f5-6789-abcd-ef0123456789";
+      description = "Ceph cluster FSID.";
+    };
     fsName = mkOption {
       type = types.str;
       default = "cephfs";
@@ -44,12 +49,25 @@ in
     boot.supportedFilesystems = [ "ceph" ];
     environment.systemPackages = [ pkgs.ceph ];
 
+    sops.secrets.ceph_client_keyring = {
+      path = "/etc/ceph/ceph.keyring";
+    };
+
     sops.secrets.ceph_client_secret = { };
+
+    environment.etc."ceph/ceph.conf".text = ''
+      [global]
+      fsid = ${cfg.clusterFsId}
+      mon_host = ${mons}
+    '';
+
+    users.users."${cfg.username}".extraGroups = lib.mkAfter [ "homelab" ];
 
     users.groups.homelab.gid = 2002;
 
     fileSystems."${cfg.mountPoint}" =
       let
+        keyringFile = config.sops.secrets.ceph_client_keyring.path;
         secretFile = config.sops.secrets.ceph_client_secret.path;
       in
       lib.mkForce {
@@ -63,11 +81,18 @@ in
           "x-systemd.automount"
           "x-systemd.requires=network-online.target"
           "x-systemd.after=network-online.target"
-          "credentials=${secretFile}"
         ];
         neededForBoot = false;
-        depends = [ secretFile ];
+        depends = [ keyringFile secretFile ];
       };
+
+    fileSystems."/home/${cfg.username}/homelabfs" = {
+      device = cfg.mountPoint;
+      fsType = "none";
+      options = [ "bind" ];
+      neededForBoot = false;
+      depends = [ cfg.mountPoint ];
+    };
 
   };
 }
