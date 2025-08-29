@@ -1,6 +1,6 @@
 { lib, username, isDarwin, ... }:
 
-let mnt = "/mnt/homelab-nfs"; in
+let mnt = "/home/${username}/homelab-nfs"; in
 {
   fileSystems = {
     "${mnt}" = lib.mkIf (!isDarwin) {

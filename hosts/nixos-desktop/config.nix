@@ -38,6 +38,7 @@ in
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/hardware/homelab-storage.nix"
+    "${configRoot}/modules/hardware/homelab-cephfs.nix"
     ./hardware.nix
   ];
 
