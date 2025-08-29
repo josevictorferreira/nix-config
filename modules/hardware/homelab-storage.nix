@@ -10,12 +10,6 @@ let mnt = "/mnt/homelab-nfs"; in
     };
   };
 
-  system.activationScripts.homelabLink = ''
-    install -d -o ${username} -g users /home/${username} || true
-    ln -snf ${mnt} /home/${username} || true
-    chown -h ${username}:users /home/${username}/homelab-nfs || true
-  '';
-
   users.groups.homelab.gid = 2002;
 
   users.users.${username}.extraGroups = lib.mkAfter [ "homelab" ];
