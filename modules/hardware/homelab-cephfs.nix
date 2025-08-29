@@ -48,11 +48,11 @@ in
 
     users.groups.homelab.gid = 2002;
 
-    fileSystems.${cfg.mountPoint} =
+    fileSystems."${cfg.mountPoint}" =
       let
         secretFile = config.sops.secrets.ceph_client_secret.path;
       in
-      {
+      lib.mkForce {
         device = "${mons}:${cfg.subvolumePath}";
         fsType = "ceph";
         options = [
