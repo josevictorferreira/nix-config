@@ -42,6 +42,16 @@ in
     ./hardware.nix
   ];
 
+  homelab.cephfs = {
+    enable = true;
+    mountPoint = "/mnt/homelabfs";
+    clientId = "josevictor";
+    username = username;
+    monHosts = [ "10.10.10.200:6789" "10.10.10.201:6789" "10.10.10.203:6789" ];
+    fsName = "ceph-filesystem";
+    subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
+  };
+
   nixpkgs = {
     config = {
       allowUnfree = true;
