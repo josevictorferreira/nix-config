@@ -5,16 +5,6 @@ let
   cfg = config.homelab.nfs;
 
   optsList = [
-    "vers=${cfg.nfsVersion}"
-    "rw"
-    "hard"
-    "timeo=${toString cfg.timeo}"
-    "retrans=${toString cfg.retrans}"
-    "rsize=${toString cfg.rsize}"
-    "wsize=${toString cfg.wsize}"
-    "nfc"
-    "nosuid"
-    "nodev"
   ] ++ lib.optionals cfg.resvport [ "resvport" ] ++ cfg.extraOptions;
 
   optsText = lib.concatStringsSep "," optsList;
@@ -30,54 +20,59 @@ in
     remotePath = mkOption { type = types.str; example = "/homelab-nfs"; description = "Remote export path on the NFS server."; };
     mountPoint = mkOption { type = types.str; default = "/Volumes/homelab-nfs"; description = "Local mount point."; };
 
-    nfsVersion = mkOption { type = types.enum [ "4" "4.1" "4.2" ]; default = "4.1"; };
+    nfsVersion = mkOption { type = types.enum [ "4" "4.1" "4.2" ]; default = "4.2"; };
     rsize = mkOption { type = types.int; default = 1048576; };
     wsize = mkOption { type = types.int; default = 1048576; };
     timeo = mkOption { type = types.int; default = 600; description = "Tenths of a second."; };
     retrans = mkOption { type = types.int; default = 2; };
-    resvport = mkOption { type = types.bool; default = false; description = "Some NASes still require reserved ports."; };
+    resvport = mkOption { type = types.bool; default = false; description = "Enable if your NAS requires reserved ports."; };
     extraOptions = mkOption { type = types.listOf types.str; default = [ ]; description = "Any extra raw mount options."; };
   };
 
   config = mkIf cfg.enable {
     users.groups.homelab = {
       gid = 2002;
-      members = [
-        cfg.username
-      ];
+      members = [ cfg.username ];
     };
 
-    system.activationScripts.homelab-autofs-map.text = ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-      tmp="$(mktemp)"
-      printf '%s\n' '${mapLine}' > "$tmp"
-      install -m 0644 "$tmp" '${mapPath}'
-      rm -f "$tmp"
-      chgrp homelab '${cfg.mountPoint}' || true
-      chmod 775 '${cfg.mountPoint}' || true
-    '';
-
-    system.activationScripts.homelab-autofs-master.text = ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-      master="/etc/auto_master"
-      touch "$master"
-      if ! grep -Fqx -- '${autoMasterLine}' "$master"; then
-        cp -a "$master" "$master.nixbak.$(date +%Y%m%d%H%M%S)" || true
-        printf '%s\n' '${autoMasterLine}' >> "$master"
-      fi
+    system.activationScripts.homelab-nfs-automount-reload.text = ''
       /usr/sbin/automount -cv >/dev/null 2>&1 || true
     '';
 
-    launchd.daemons.homelab-nfs-touch = {
+    system.activationScripts.homelab-nfs-init.text = ''
+      set -eu
+      mkdir -p "${cfg.mountPoint}"
+      chgrp -f homelab "${cfg.mountPoint}" || true
+      chmod 775 "${cfg.mountPoint}" || true
+    '';
+
+    system.activationScripts.homelab-fstab-append.text = ''
+      #!${pkgs.bash}/bin/bash
+      set -euo pipefail
+      file="/etc/fstab"
+      line='${cfg.server}:${cfg.remotePath} ${cfg.mountPoint} nfs ${optsText} 0 0'
+      touch "$file"
+      if ! grep -Fqx -- "$line" "$file"; then
+        cp -a "$file" "$file.nixbak.$(date +%Y%m%d%H%M%S)" || true
+        printf '%s\n' "$line" >> "$file"
+      fi
+    '';
+
+    launchd.daemons.homelab-nfs-mount = {
       serviceConfig = {
-        Label = "org.nix-darwin.homelab-nfs-touch";
-        ProgramArguments = [ "/bin/ls" cfg.mountPoint ];
+        Label = "org.nix-darwin.homelab-nfs-mount";
+        ProgramArguments = [
+          "/sbin/mount"
+          "-t"
+          "nfs"
+          "-o"
+          "${optsText}"
+          "${cfg.server}:${cfg.remotePath}"
+          "${cfg.mountPoint}"
+        ];
         RunAtLoad = true;
-        StandardOutPath = "/var/log/homelab-nfs-touch.log";
-        StandardErrorPath = "/var/log/homelab-nfs-touch.err";
       };
     };
+
   };
 }
