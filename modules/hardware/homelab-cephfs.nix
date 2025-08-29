@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.homelab.cephfs;
   inherit (lib) mkEnableOption mkOption types concatStringsSep;
   mons = concatStringsSep "," cfg.monHosts;
+  cfg = config.homelab.cephfs;
 in
 {
   options.homelab.cephfs = {
@@ -40,7 +40,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf config.homelab.cephfs.enable {
     boot.supportedFilesystems = [ "ceph" ];
     environment.systemPackages = [ pkgs.ceph ];
 
@@ -68,7 +68,6 @@ in
         neededForBoot = false;
         depends = [ secretFile ];
       };
-
 
   };
 }
