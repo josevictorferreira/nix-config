@@ -100,7 +100,7 @@
     server = "nfs.josevictor.me";
     remotePath = "/homelab-nfs";
     mountPoint = "/Volumes/homelab";
-    nfsVersion = "4.0";
+    nfsVersion = "4.1";
     resvport = true;
     extraOptions = [ "acregmax=30" "acdirmax=30" ];
   };

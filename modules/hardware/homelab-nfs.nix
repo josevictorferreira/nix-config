@@ -40,23 +40,33 @@ in
   };
 
   config = mkIf cfg.enable {
-    users.groups.homelab = { };
-    users.users.${cfg.username}.extraGroups = [ "homelab" ];
+    users.groups.homelab = {
+      gid = 2002;
+      members = [
+        cfg.username
+      ];
+    };
 
-    system.activationScripts.homelab-nfs-init.text = ''
+    system.activationScripts.homelab-autofs-map.text = ''
       #!${pkgs.bash}/bin/bash
-      set -eu
-      mkdir -p "${cfg.mountPoint}"
-      chgrp -f homelab "${cfg.mountPoint}" || true
-      chmod 775 "${cfg.mountPoint}" || true
+      set -euo pipefail
+      tmp="$(mktemp)"
+      printf '%s\n' '${mapLine}' > "$tmp"
+      install -m 0644 "$tmp" '${mapPath}'
+      rm -f "$tmp"
+      chgrp homelab '${cfg.mountPoint}' || true
+      chmod 775 '${cfg.mountPoint}' || true
     '';
 
-    environment.etc."fstab".text = ''
-      ${fstabLine}
-    '';
-
-    system.activationScripts.homelab-nfs-automount-reload.text = ''
+    system.activationScripts.homelab-autofs-master.text = ''
       #!${pkgs.bash}/bin/bash
+      set -euo pipefail
+      master="/etc/auto_master"
+      touch "$master"
+      if ! grep -Fqx -- '${autoMasterLine}' "$master"; then
+        cp -a "$master" "$master.nixbak.$(date +%Y%m%d%H%M%S)" || true
+        printf '%s\n' '${autoMasterLine}' >> "$master"
+      fi
       /usr/sbin/automount -cv >/dev/null 2>&1 || true
     '';
 
