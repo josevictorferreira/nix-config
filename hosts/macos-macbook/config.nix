@@ -90,7 +90,20 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
+    "${configRoot}/modules/hardware/homelab-nfs.nix"
   ];
+
+
+  homelab.nfs = {
+    enable = true;
+    username = username;
+    server = "nfs.josevictor.me";
+    remotePath = "/homelab-nfs";
+    mountPoint = "/Volumes/homelab";
+    nfsVersion = "4.0";
+    resvport = true;
+    extraOptions = [ "acregmax=30" "acdirmax=30" ];
+  };
 
   nix.enable = true;
 
