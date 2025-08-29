@@ -15,13 +15,17 @@ in
 {
   boot.supportedFilesystems = [ "ceph" ];
 
+  users.groups.homelab.gid = 2002;
+
+  users.users.${username}.extraGroups = lib.mkAfter [ "homelab" ];
+
   systemd.tmpfiles.rules = [
     "d ${mountPoint} 0755 root root -"
   ];
 
   sops.secrets."ceph_client_secret" = {
-    owner = username;
-    group = username;
+    owner = "root";
+    group = "root";
     mode = "0400";
   };
 
@@ -56,7 +60,7 @@ in
 
       # Fix ownership if needed
       if [ "$(stat -c %U ${mountPoint})" != "${username}" ]; then
-        chown -R ${username}:${username} "${mountPoint}" || true
+        chown -R ${username}:homelab "${mountPoint}" || true
       fi
 
       chmod 700 "${mountPoint}" || true
