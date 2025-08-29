@@ -6,14 +6,14 @@ let mnt = "/mnt/homelab-nfs"; in
     "${mnt}" = lib.mkIf (!isDarwin) {
       device = "10.10.10.150:/homelab-nfs";
       fsType = "nfs4";
-      options = [ "minorversion=2" "sec=sys" "hard" "noresvport" "nconnect=8" "_netdev" "noatime" "timeo=600" "actimeo=60" "retrans=2" "x-systemd.automount" ];
+      options = [ "vers=4.2" "sec=sys" "hard" "noresvport" "nconnect=8" "_netdev" "rsize=1048576" "wsize=1048576" "async" "noatime" "timeo=600" "actimeo=60" "retrans=2" "x-systemd.automount" ];
     };
   };
 
   system.activationScripts.homelabLink = ''
-    install -d -o ${username} -g users /home/${username}
-    ln -snf ${mnt} /home/${username}
-    chown -h ${username}:users /home/${username}/homelab-nfs
+    install -d -o ${username} -g users /home/${username} || true
+    ln -snf ${mnt} /home/${username} || true
+    chown -h ${username}:users /home/${username}/homelab-nfs || true
   '';
 
   users.groups.homelab.gid = 2002;
