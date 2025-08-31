@@ -83,7 +83,7 @@ in
           "x-systemd.after=network-online.target"
         ];
         neededForBoot = false;
-        depends = [ keyringFile secretFile ];
+        depends = [ keyringFile secretFile "/etc/ceph/ceph.conf" ];
       };
 
     fileSystems."/home/${cfg.username}/homelabfs" = {
