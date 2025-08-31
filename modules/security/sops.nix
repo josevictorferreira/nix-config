@@ -1,8 +1,7 @@
-{ config, username, configRoot, isDarwin, ... }:
+{ config, username, configRoot, ... }:
 
 let
-  userHomeDir = if isDarwin then "/Users/${username}" else "/home/${username}";
-  ageKeyFilePath = "${userHomeDir}/.config/sops/age/keys.txt";
+  ageKeyFilePath = "/etc/sops/age/keys.txt";
 in
 {
   sops = {
