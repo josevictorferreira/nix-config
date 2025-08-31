@@ -68,8 +68,6 @@ in
     nvidiaBusID = "";
   };
   local.hardware-clock.enable = false;
-  
-  programs.hyprland.enable = true;
 
   # networking
   networking.networkmanager.enable = true;

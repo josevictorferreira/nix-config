@@ -92,6 +92,11 @@ in
       options = [
         "force-user=2002"
         "force-group=2002"
+        "perms=700"
+        "create-for-user=2002"
+        "create-for-group=2002"
+        "create-with-perms=644"
+        "chmod-ignore"
       ];
       neededForBoot = false;
       depends = [ cfg.mountPoint ];

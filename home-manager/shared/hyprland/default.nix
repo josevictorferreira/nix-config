@@ -24,12 +24,12 @@ in
     ./cava.nix
     ./wlogout.nix
   ];
-  # wayland.windowManager.hyprland = {
-  #   enable = true;
-  #   package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-  #   xwayland.enable = true;
-  #   extraConfig = builtins.readFile "${hyprlandConfig}/hyprland.conf";
-  # };
+  wayland.windowManager.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    xwayland.enable = true;
+    extraConfig = builtins.readFile "${hyprlandConfig}/hyprland.conf";
+  };
   home.file = {
     ".config/hypr" = {
       source = "${hyprlandConfig}";

@@ -62,27 +62,6 @@
     theme = "nixos";
   };
 
-  fileSystems."/" =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@root" "compress=zstd:3" "noatime" ];
-    };
-
-  fileSystems."/home" =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@home" "compress=zstd:5" "noatime" "autodefrag" ];
-    };
-
-  fileSystems."/nix"  =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" "compress=zstd:3" "noatime" ];
-    };
-
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-partlabel/boot";
@@ -91,10 +70,37 @@
       neededForBoot = true;
     };
 
+  fileSystems."/" =
+    {
+      device = "/dev/disk/by-partlabel/nixos-root";
+      fsType = "btrfs";
+      options = [ "subvol=@root" "compress=zstd:3" "noatime" ];
+      neededForBoot = true;
+    };
+
+  fileSystems."/nix"  =
+    {
+      device = "/dev/disk/by-partlabel/nixos-root";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "compress=zstd:3" "noatime" ];
+      depends = [ "/" ];
+    };
+
+  fileSystems."/home" =
+    {
+      device = "/dev/disk/by-partlabel/nixos-root";
+      fsType = "btrfs";
+      options = [ "subvol=@home" "compress=zstd:5" "noatime" "autodefrag" ];
+      depends = [ "/" ];
+      neededForBoot = false;
+    };
+
   fileSystems."/mnt/external_storage" = {
     device = "/dev/disk/by-partlabel/file-storage";
     fsType = "btrfs";
     options = [ "defaults" "noatime" "compress=zstd" "noatime" "autodefrag" ];
+    depends = [ "/" ];
+    neededForBoot = false;
   };
 
   swapDevices =
