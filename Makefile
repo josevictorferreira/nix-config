@@ -59,6 +59,9 @@ check: ## Check if the flake is valid.
 update: ## Update flake
 	sudo nix flake update
 
+upgrade: ## Rebuild NixOS configuration without cache.
+	sudo nixos-rebuild boot --flake .#nixos-desktop --rebuild
+
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
 		sudo darwin-rebuild switch --flake .#macos-macbook --show-trace; \
