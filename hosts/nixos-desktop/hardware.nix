@@ -1,4 +1,4 @@
-{ config, pkgs, lib, modulesPath, configRoot, ... }:
+{ pkgs, lib, modulesPath, configRoot, ... }:
 
 {
   imports =
@@ -13,7 +13,8 @@
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];
     supportedFilesystems = [ "btrfs" ];
-    kernelPackages = pkgs.linuxPackages_latest; # Kernel
+    # kernelPackages = pkgs.linuxPackages_latest; # Kernel
+    kernelPackages = pkgs.linuxPackages_6_12;
 
     kernelParams = [
       "systemd.mask=systemd-vconsole-setup.service"
