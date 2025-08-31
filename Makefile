@@ -59,8 +59,8 @@ check: ## Check if the flake is valid.
 update: ## Update flake
 	sudo nix flake update
 
-upgrade: ## Rebuild NixOS configuration without cache.
-	sudo nixos-rebuild boot --flake .#nixos-desktop --rebuild
+boot: ## Rebuild boot NixOS configuration.
+	sudo nixos-rebuild boot --upgrade --flake .#nixos-desktop
 
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
@@ -68,9 +68,6 @@ rebuild: ## Rebuild NixOS configuration.
 	else \
 		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace --verbose; \
 	fi
-
-boot: ## Rebuild NixOS configuration and set it to boot on next restart.
-	sudo nixos-rebuild boot --flake .#nixos-desktop --show-trace
 
 clean: ## Clean up the Nix store.
 	nix-collect-garbage -d

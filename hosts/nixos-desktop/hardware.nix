@@ -13,10 +13,10 @@
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];
     supportedFilesystems = [ "btrfs" ];
-    # kernelPackages = pkgs.linuxPackages_latest; # Kernel
-    kernelPackages = pkgs.linuxPackages_6_12;
+    kernelPackages = pkgs.linuxPackages_latest; # Kernel
 
     kernelParams = [
+      "amdgpu"
       "systemd.mask=systemd-vconsole-setup.service"
       "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
       "nowatchdog"
@@ -25,7 +25,7 @@
     ];
 
     initrd = {
-      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" "btrfs" ];
+      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" "amdgpu" ];
       kernelModules = [ "amdgpu" ];
     };
 
@@ -121,7 +121,13 @@
 
   networking.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.enableRedistributableFirmware = true;
+
+  hardware.firmware = [
+    pkgs.linux-firmware
+  ];
 
   hardware.i2c.enable = true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
