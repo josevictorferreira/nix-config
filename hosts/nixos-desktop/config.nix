@@ -37,97 +37,14 @@ in
     "${configRoot}/modules/hardware/intel-drivers.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/hardware/homelab-storage.nix"
-    "${configRoot}/modules/hardware/homelab-cephfs.nix"
     ./hardware.nix
   ];
-
-  homelab.cephfs = {
-    enable = true;
-    mountPoint = "/mnt/homelabfs";
-    clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
-    clientId = "josevictor";
-    username = username;
-    monHosts = [ "10.10.10.200:6789" "10.10.10.201:6789" "10.10.10.203:6789" ];
-    fsName = "ceph-filesystem";
-    subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
-  };
 
   nixpkgs = {
     config = {
       allowUnfree = true;
     };
   };
-
-  # BOOT related stuff
-  boot = {
-    kernelPackages = pkgs.linuxPackages_latest; # Kernel
-
-    kernelParams = [
-      "systemd.mask=systemd-vconsole-setup.service"
-      "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
-      "nowatchdog"
-      "modprobe.blacklist=sp5100_tco" #watchdog for AMD
-      "modprobe.blacklist=iTCO_wdt" #watchdog for Intel
-    ];
-
-    # This is for OBS Virtual Cam Support
-    # kernelModules = [ "v4l2loopback" "i2c-dev" "i2c-piix4" ];
-    supportedFilesystems = [ "btrfs" ];
-    # extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
-
-    initrd = {
-      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
-      kernelModules = [ ];
-    };
-
-    # Needed For Some Steam Games
-    kernel.sysctl = {
-      "vm.max_map_count" = 2147483642;
-    };
-
-    ## BOOT LOADERS: NOT USE ONLY 1. either systemd or grub  
-    # Bootloader SystemD
-    loader.systemd-boot.enable = false;
-
-    loader.efi = {
-      #efiSysMountPoint = "/efi"; #this is if you have separate /efi partition
-      canTouchEfiVariables = true;
-    };
-
-    loader.timeout = 1;
-
-    # Bootloader GRUB
-    loader.grub = {
-      enable = true;
-      devices = [ "nodev" ];
-      efiSupport = true;
-      gfxmodeBios = "auto";
-      memtest86.enable = true;
-      extraGrubInstallArgs = [ "--bootloader-id=${host}" ];
-      configurationName = "${host}";
-      useOSProber = true;
-    };
-
-    # Bootloader GRUB theme, configure below
-
-    ## -end of BOOTLOADERS----- ##
-
-    # Make /tmp a tmpfs
-    tmp = {
-      useTmpfs = false;
-      tmpfsSize = "30%";
-    };
-
-    plymouth.enable = true;
-  };
-
-  # GRUB Bootloader theme. Of course you need to enable GRUB above.. duh!
-  distro-grub-themes = {
-    enable = true;
-    theme = "nixos";
-  };
-
 
   # Extra Module Options
   drivers.amdgpu.enable = true;
@@ -139,6 +56,8 @@ in
     nvidiaBusID = "";
   };
   local.hardware-clock.enable = false;
+  
+  programs.hyprland.enable = true;
 
   # networking
   networking.networkmanager.enable = true;
@@ -385,6 +304,7 @@ in
       substituters = [ "https://hyprland.cachix.org" ];
       trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
     };
+    optimise.automatic = true;
     gc = {
       automatic = true;
       dates = "weekly";

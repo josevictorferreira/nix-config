@@ -46,8 +46,8 @@ in
   };
 
   config = lib.mkIf config.homelab.cephfs.enable {
-    boot.supportedFilesystems = [ "ceph" ];
-    environment.systemPackages = [ pkgs.ceph ];
+    environment.systemPackages = [ pkgs.ceph-client ];
+    system.fsPackages = [ pkgs.bindfs ];
 
     sops.secrets.ceph_client_keyring = {
       path = "/etc/ceph/ceph.keyring";
@@ -70,7 +70,7 @@ in
         keyringFile = config.sops.secrets.ceph_client_keyring.path;
         secretFile = config.sops.secrets.ceph_client_secret.path;
       in
-      lib.mkForce {
+      {
         device = "${mons}:${cfg.subvolumePath}";
         fsType = "ceph";
         options = [
@@ -88,12 +88,18 @@ in
 
     fileSystems."/home/${cfg.username}/homelabfs" = {
       device = cfg.mountPoint;
-      fsType = "none";
-      options = [ "bind" ];
+      fsType = "fuse.bindfs";
+      options = [
+        "force-user=2002"
+        "force-group=2002"
+      ];
       neededForBoot = false;
       depends = [ cfg.mountPoint ];
     };
 
+    systemd.tmpfiles.rules = [
+      "d /home/${cfg.username}/homelabfs 0755 ${cfg.username} users -"
+    ];
+
   };
 }
-

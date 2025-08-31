@@ -4,9 +4,12 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "nixpkgs/nixpkgs-unstable";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.inputs.nixpkgs.follows = "nixpkgs";
     distro-grub-themes.url = "github:AdisonCavani/distro-grub-themes";
+    distro-grub-themes.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
