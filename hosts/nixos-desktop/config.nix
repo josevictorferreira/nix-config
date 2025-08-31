@@ -31,10 +31,6 @@ in
   imports = [
     "${configRoot}/modules/security/sops.nix"
     "${configRoot}/modules/security/polkit.nix"
-    "${configRoot}/modules/hardware/amd-drivers.nix"
-    "${configRoot}/modules/hardware/nvidia-drivers.nix"
-    "${configRoot}/modules/hardware/nvidia-prime-drivers.nix"
-    "${configRoot}/modules/hardware/intel-drivers.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/hardware/homelab-cephfs.nix"
@@ -42,7 +38,7 @@ in
   ];
 
   homelab.cephfs = {
-    enable = true;
+    enable = false;
     mountPoint = "/mnt/homelabfs";
     clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
     clientId = "josevictor";
@@ -59,14 +55,6 @@ in
   };
 
   # Extra Module Options
-  drivers.amdgpu.enable = true;
-  drivers.intel.enable = false;
-  drivers.nvidia.enable = false;
-  drivers.nvidia-prime = {
-    enable = false;
-    intelBusID = "";
-    nvidiaBusID = "";
-  };
   local.hardware-clock.enable = false;
 
   # networking
@@ -362,14 +350,8 @@ in
     '';
   };
 
-  # OpenGL
-  hardware.graphics = {
-    enable = true;
-  };
-
   console.keyMap = "${keyboardLayout}";
 
-  # For Electron apps to use wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   networking.firewall = {

@@ -66,6 +66,9 @@ rebuild: ## Rebuild NixOS configuration.
 		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace --verbose; \
 	fi
 
+boot: ## Rebuild NixOS configuration and set it to boot on next restart.
+	sudo nixos-rebuild boot --flake .#nixos-desktop --show-trace
+
 clean: ## Clean up the Nix store.
 	nix-collect-garbage -d
 

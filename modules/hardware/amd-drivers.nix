@@ -12,11 +12,18 @@ in
     systemd.tmpfiles.rules = [ "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}" ];
     services.xserver.videoDrivers = [ "amdgpu" ];
 
-    # OpenGL
+    hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
     hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [
+        amdvlk
         libva
         libva-utils
+      ];
+      extraPackages32 = with pkgs; [
+        driversi686Linux.amdvlk
       ];
     };
   };
