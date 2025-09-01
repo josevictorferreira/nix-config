@@ -11,7 +11,7 @@ let
           mkdir -p "${cfg.mountPoint}"
           chown ${cfg.username}:homelab "${cfg.mountPoint}" || true
           chmod 2775 "${cfg.mountPoint}" || true
-          /sbin/mount_smbfs -N ${cfg.device} ${cfg.mountPoint}
+          /sbin/mount_smbfs -N ${cfg.server} ${cfg.mountPoint}
         ''
       ];
       RunAtLoad = true;
