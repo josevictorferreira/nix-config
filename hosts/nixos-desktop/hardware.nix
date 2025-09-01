@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, configRoot, ... }:
+{ pkgs, username, lib, modulesPath, configRoot, ... }:
 
 {
   imports =
@@ -110,10 +110,39 @@
   fileSystems."/mnt/external_storage" = {
     device = "/dev/disk/by-partlabel/file-storage";
     fsType = "btrfs";
-    options = [ "defaults" "noatime" "compress=zstd" "noatime" "autodefrag" ];
+    options = [
+      "defaults"
+      "noatime"
+      "compress=zstd"
+      "autodefrag"
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=380"
+      "noauto"
+    ];
     depends = [ "/" ];
     neededForBoot = false;
   };
+
+  fileSystems."/home/${username}/Downloads" = {
+    device = "/mnt/external_storage/Downloads";
+    fsType = "none";
+    options = [
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=380"
+      "create-for-user=${username}"
+      "create-for-group=users"
+      "force-user=${username}"
+      "force-group=users"
+      "noauto"
+      "nofail"
+    ];
+    neededForBoot = false;
+    depends = [ "/mnt/external_storage/Downloads" ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /home/${username}/Downloads 0755 ${username} users -"
+  ];
 
   swapDevices =
     [{ device = "/dev/disk/by-partlabel/swap"; }];
