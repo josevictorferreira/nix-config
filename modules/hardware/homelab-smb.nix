@@ -3,10 +3,6 @@
 let
   inherit (lib) mkEnableOption mkOption types concatStringsSep;
   cfg = config.homelab.smb;
-  # mountOptions = [
-  #   "automounted"
-  #   "nonotification"
-  # ];
   smbMount = name: device: mountPoint: {
     serviceConfig = {
       ProgramArguments = [
@@ -63,6 +59,14 @@ in
       owner = cfg.username;
       group = "homelab";
     };
+
+    system.activationScripts.homelab-smb = lib.stringAfter [ "users" ] ''
+      if [ ! -d "${cfg.mountPoint}" ]; then
+        mkdir -p "${cfg.mountPoint}"
+        chown ${cfg.username}:homelab "${cfg.mountPoint}"
+        chmod 2775 "${cfg.mountPoint}"
+      fi
+    '';
 
     users.groups.homelab = {
       members = [ cfg.username ];
