@@ -90,19 +90,15 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
-    "${configRoot}/modules/hardware/homelab-nfs.nix"
+    "${configRoot}/modules/hardware/homelab-smb.nix"
   ];
 
-
-  homelab.nfs = {
+  homelab.smb = {
     enable = true;
+    isDarwin = true;
     username = username;
-    server = "nfs.josevictor.me";
-    remotePath = "/homelab-nfs";
-    mountPoint = "/Volumes/homelab";
-    nfsVersion = "4.1";
-    resvport = true;
-    extraOptions = [ "acregmax=30" "acdirmax=30" ];
+    server = "//10.10.10.124/homelab-smb";
+    mountPoint = "/Users/${username}/homelab-smb";
   };
 
   nix.enable = true;
