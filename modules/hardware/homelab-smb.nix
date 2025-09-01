@@ -6,10 +6,13 @@ let
   smbMount = name: device: mountPoint: {
     serviceConfig = {
       ProgramArguments = [
-        "/sbin/mount_smbfs"
-        "-N"
-        device
-        mountPoint
+        "/bin/sh" "-c"
+        ''
+          mkdir -p "${cfg.mountPoint}"
+          chown ${cfg.username}:homelab "${cfg.mountPoint}" || true
+          chmod 2775 "${cfg.mountPoint}" || true
+          /sbin/mount_smbfs -N ${cfg.device} ${cfg.mountPoint}
+        ''
       ];
       RunAtLoad = true;
       StandardErrorPath = "/var/log/mount-${name}.err.log";
@@ -40,11 +43,6 @@ in
       type = types.str;
       default = "/mnt/homelab-smb";
       description = "Local mountpoint.";
-    };
-    additionalMountOptions = mkOption {
-      type = types.listOf types.str;
-      default = [];
-      description = "Additional mount options to pass to mount_smbfs.";
     };
   };
 
