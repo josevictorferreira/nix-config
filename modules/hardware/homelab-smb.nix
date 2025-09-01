@@ -57,7 +57,7 @@ in
   };
 
   config = lib.mkIf config.homelab.smb.enable {
-    launchd.daemons = lib.mkId cfg.isDarwin {
+    launchd.daemons = lib.mkIf cfg.isDarwin {
       "homelab-smb" = smbMount "homelab-smb" cfg.server cfg.mountPoint;
     };
 
