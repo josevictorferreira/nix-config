@@ -4,8 +4,8 @@ let
   inherit (lib) mkEnableOption mkOption types concatStringsSep;
   cfg = config.homelab.smb;
   mountOptions = [
-    "file_mode=0644"
-    "dir_mode=0775"
+    "filemode=0644"
+    "dirmode=0775"
     "nobrowse"
     "automounted"
     "nonotification"
