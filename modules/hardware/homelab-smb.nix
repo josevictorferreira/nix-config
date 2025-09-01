@@ -3,19 +3,15 @@
 let
   inherit (lib) mkEnableOption mkOption types concatStringsSep;
   cfg = config.homelab.smb;
-  mountOptions = [
-    "filemode=0644"
-    "dirmode=0775"
-    "nobrowse"
-    "automounted"
-    "nonotification"
-    "nopassprompt"
-  ];
+  # mountOptions = [
+  #   "automounted"
+  #   "nonotification"
+  # ];
   smbMount = name: device: mountPoint: {
     serviceConfig = {
       ProgramArguments = [
         "/sbin/mount_smbfs"
-        "-o ${concatStringsSep "," (mountOptions ++ cfg.additionalMountOptions)}" 
+        "-N"
         device
         mountPoint
       ];
