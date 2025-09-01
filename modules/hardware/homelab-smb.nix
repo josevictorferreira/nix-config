@@ -64,7 +64,7 @@ in
     sops.secrets.smb_credentials = lib.mkIf cfg.isDarwin {
       path = "/Users/${cfg.username}/Library/Preferences/nsmb.conf";
       mode = "0600";
-      user = cfg.username;
+      owner = cfg.username;
       group = "homelab";
     };
 
