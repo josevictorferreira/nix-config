@@ -13,19 +13,18 @@
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];
     supportedFilesystems = [ "btrfs" ];
-    kernelPackages = pkgs.linuxPackages_latest; # Kernel
+    # kernelPackages = pkgs.linuxPackages_latest; # Kernel
+    kernelPackages = pkgs.linuxPackages_zen;
 
     kernelParams = [
-      "amdgpu"
-      "systemd.mask=systemd-vconsole-setup.service"
-      "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
-      "nowatchdog"
-      "modprobe.blacklist=sp5100_tco" #watchdog for AMD
-      "modprobe.blacklist=iTCO_wdt" #watchdog for Intel
+      # "systemd.mask=systemd-vconsole-setup.service"
+      # "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
+      # "nowatchdog"
+      # "modprobe.blacklist=sp5100_tco" #watchdog for AMD
     ];
 
     initrd = {
-      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" "amdgpu" ];
+      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
       kernelModules = [ "amdgpu" ];
     };
 

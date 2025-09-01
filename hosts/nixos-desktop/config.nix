@@ -220,7 +220,7 @@ in
 
     udev = {
       enable = true;
-      packages = [ pkgs.openrgb-with-all-plugins ];
+      packages = [ ];
     };
 
     envfs.enable = true;
@@ -241,9 +241,6 @@ in
     flatpak.enable = false;
 
     blueman.enable = true;
-
-    hardware.openrgb.enable = true;
-    hardware.openrgb.motherboard = "amd";
 
     fwupd.enable = true;
 
