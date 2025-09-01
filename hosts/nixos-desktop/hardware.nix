@@ -127,12 +127,9 @@
     device = "/mnt/external_storage/Downloads";
     fsType = "none";
     options = [
+      "bind"
       "x-systemd.automount"
       "x-systemd.idle-timeout=380"
-      "create-for-user=${username}"
-      "create-for-group=users"
-      "force-user=${username}"
-      "force-group=users"
       "noauto"
       "nofail"
     ];

@@ -1,5 +1,5 @@
 WORKSPACE="$HOME/Workspace"
-SHARED_FOLDER="$HOME/homelab-nfs"
+SHARED_FOLDER="$HOME/homelabfs"
 NOTETAKING_FOLDER="$SHARED_FOLDER/notetaking"
 AGROSMART_FOLDER="~/Workspace/agrosmart"
 BOOSTER_AGRO_FOLDER="$AGROSMART_FOLDER/booster/"
