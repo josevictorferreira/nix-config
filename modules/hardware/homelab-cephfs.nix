@@ -79,6 +79,7 @@ in
           "fs=${cfg.fsName}"
           "_netdev"
           "x-systemd.automount"
+          "x-systemd.idle-timeout=60"
           "x-systemd.requires=network-online.target"
           "x-systemd.after=network-online.target"
         ];
@@ -92,11 +93,19 @@ in
       options = [
         "force-user=2002"
         "force-group=2002"
-        "perms=700"
+        "perms=g+w:u+rwX:g+rwX:o=rD"
         "create-for-user=2002"
         "create-for-group=2002"
-        "create-with-perms=644"
-        "chmod-ignore"
+        "create-with-perms=u=rwX:g=rwXs:o=rx"
+        "chown-ignore"
+        "chgrp-ignore"
+        "allow_other"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=60"
+        "x-systemd.requires=network-online.target"
+        "x-systemd.after=network-online.target"
+        "noauto"
+        "nofail"
       ];
       neededForBoot = false;
       depends = [ cfg.mountPoint ];
