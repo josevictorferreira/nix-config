@@ -21,7 +21,7 @@ let
       ];
       RunAtLoad = true;
       StandardErrorPath = "/var/log/mount-${name}.err.log";
-      StandarrdOutPath = "/var/log/mount-${name}.out.log";
+      StandardOutPath = "/var/log/mount-${name}.out.log";
       StartInterval = 30;
     };
   };
