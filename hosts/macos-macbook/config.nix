@@ -97,8 +97,9 @@
     enable = true;
     isDarwin = true;
     username = username;
-    server = "//10.10.10.124/homelab-smb";
-    mountPoint = "/Users/${username}/homelab-smb";
+    serverAddress = "10.10.10.124";
+    exportedName = "homelab-smb";
+    mountPoint = "/Users/${username}/Homelab";
   };
 
   nix.enable = true;
