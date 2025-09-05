@@ -31,6 +31,53 @@ function als() {
   fi
 }
 
+function notes() {
+	NOTES_DIR="$HOME/homelabfs/notetaking/"
+  emulate -L zsh -o pipefail
+
+  if [[ -z "$NOTES_DIR" || ! -d "$NOTES_DIR" ]]; then
+    print -u2 "NOTES_DIR is not set to a readable directory. Current: ${NOTES_DIR:-<unset>}"
+    return 1
+  fi
+  command -v fzf  >/dev/null || { print -u2 "fzf is required (brew install fzf / pacman -S fzf / apt install fzf)"; return 1; }
+  command -v nvim >/dev/null || { print -u2 "neovim is required (brew install neovim, etc.)"; return 1; }
+
+  local -a LIST_CMD
+  if command -v fd >/dev/null; then
+    LIST_CMD=(fd --hidden --follow --absolute-path -t f -e md . "$NOTES_DIR")
+  elif command -v rg >/dev/null; then
+    LIST_CMD=(rg --hidden -uu -g '**/*.md' -l --no-messages "$NOTES_DIR")
+  else
+    LIST_CMD=(find "$NOTES_DIR" -type f -name '*.md' -print)
+  fi
+
+  local PREVIEW_CMD
+  if command -v glow >/dev/null; then
+    PREVIEW_CMD='glow --style dark --width 120 {}'
+  elif command -v bat >/dev/null; then
+    PREVIEW_CMD='bat --style=numbers --color=always --line-range=:500 {}'
+  else
+    PREVIEW_CMD='sed -n "1,200p" -- {}'
+  fi
+
+  local -a picks
+  picks=("${(@f)$(
+    "${LIST_CMD[@]}" \
+      | sort -f \
+      | fzf --multi \
+            --height=80% \
+            --reverse \
+            --prompt='notes> ' \
+            --preview="$PREVIEW_CMD" \
+            --preview-window=right,60%,border \
+            --bind='ctrl-a:toggle-all'
+  )}")
+
+  (( ${#picks} )) || return 0
+
+  nvim -- "${picks[@]}"
+}
+
 function conn() {
 	local selection=$(cat <<EOF | fzf --prompt="Choose a machine: "
 PVE 1     -> root@10.10.10.200

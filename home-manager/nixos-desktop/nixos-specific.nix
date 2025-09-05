@@ -24,8 +24,6 @@
       spotifywm
 
       inkscape-with-extensions
-
-      protontricks
     ];
   };
 

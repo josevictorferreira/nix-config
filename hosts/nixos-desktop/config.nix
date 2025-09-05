@@ -1,4 +1,4 @@
-{ pkgs, host, options, configRoot, username, ... }:
+{ pkgs, lib, host, options, configRoot, username, ... }:
 let
 
   inherit (import ./variables.nix) gitUsername keyboardLayout;
@@ -51,6 +51,12 @@ in
   nixpkgs = {
     config = {
       allowUnfree = true;
+      allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+        "steam"
+        "steam-original"
+        "steam-unwrapped"
+        "steam-run"
+      ];
     };
   };
 
@@ -104,9 +110,9 @@ in
 
     steam = {
       enable = true;
-      gamescopeSession.enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
+      localNetworkGameTransfers.openFirewall = true;
     };
 
     dconf.enable = true;
@@ -156,7 +162,7 @@ in
 
       # Gaming
       lutris
-      protonup
+      # protonup
       protonup-qt
       wine64
       winetricks
@@ -334,6 +340,11 @@ in
         pkgs.xdg-desktop-portal
       ];
     };
+  };
+
+  services.ollama = {
+    enable = true;
+    acceleration = "rocm";
   };
 
   security = {

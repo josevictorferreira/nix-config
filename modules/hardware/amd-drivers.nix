@@ -31,5 +31,10 @@ in
         driversi686Linux.amdvlk
       ];
     };
+
+    hardware.amdgpu.amdvlk = {
+      enable = true;
+      support32Bit.enable = true;
+    };
   };
 }
