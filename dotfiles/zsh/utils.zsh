@@ -78,25 +78,109 @@ function notes() {
   nvim -- "${picks[@]}"
 }
 
-function conn() {
-	local selection=$(cat <<EOF | fzf --prompt="Choose a machine: "
-PVE 1     -> root@10.10.10.200
-PVE 2     -> root@10.10.10.201
-PVE 3     -> root@10.10.10.202
-PVE 9(Pi) -> josevictor@10.10.10.209
-VM 100    -> josevictor@10.10.10.210
-VM 101    -> josevictor@10.10.10.211
-VM 200    -> josevictor@10.10.10.220
-VM 201    -> josevictor@10.10.10.221
-VM 202    -> josevictor@10.10.10.222
-VM 300    -> josevictor@10.10.10.230
-VM 301    -> josevictor@10.10.10.231
+function git_commit_message() {
+    local MODEL_NAME="openai/gpt-4.1-nano"
+    local BASE_PROMPT="With the project README.md in mind: \"{README_CONTENT}\", the following changes were made to the repository: \"{STAGED_CHANGES}\", generate a commit message to the repository as if the coder would commit those changes right now."
+		local BASE_PROMPT=$(cat <<EOF
+
+With the project README.md in mind:
+\`\`\`
+{README_CONTENT}
+\`\`\`
+
+And with the directory tree structure is: 
+\`\`\`
+{DIRECTORY_TREE}
+\`\`\`
+
+The following changes were made to the repository:
+\`\`\`
+{STAGED_CHANGES}
+\`\`\`
+
+Generate a commit message to the repository as if the coder would commit those changes right now.
+Use the imperative mood in the subject line.
+Make sure the commit message is concise and descriptive.
 EOF
 )
-	# Exist if nothing selected
-	[[ -z "$selection" ]] && return
+		local log_file="/tmp/git_commit_message.log"
+    
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+				if [[ "$DEBUG" == true ]]; then
+					echo "[ERROR] Not a git repository." >> $log_file
+				fi
+        return 1
+    fi
+    
+    local staged_changes
+    staged_changes=$(git diff --cached --no-color)
+    
+    if [[ -z "$staged_changes" ]]; then
+				if [[ "$DEBUG" == true ]]; then
+					echo "[ERROR] No staged changes were found." >> $log_file
+				fi
+        return 1
+    fi
+    
+    local readme_content=""
+    if [[ -f "README.md" ]]; then
+        readme_content=$(cat README.md)
+    fi
+    
+    local directory_tree
+    directory_tree=$(tree)
 
-	# Extract the user and IP
-	local ssh_target=$(echo "$selection" | awk -F'->' '{print $2}' | xargs)
-	ssh "$ssh_target"
+		local prompt="${BASE_PROMPT//\{README_CONTENT\}/${readme_content//\#/\\#}}"
+		prompt="${prompt//\{STAGED_CHANGES\}/${staged_changes//\#/\\#}}"
+		prompt="${prompt//\{DIRECTORY_TREE\}/${directory_tree//\#/\\#}}"
+    
+		if [[ "$DEBUG" == true ]]; then
+			echo "[INFO] OPENROUTER_API_KEY: $OPENROUTER_API_KEY" >> $log_file
+			echo "[INFO] MODEL_NAME: $MODEL_NAME" >> $log_file
+			echo "[INFO] PROMPT: $prompt\n\n" >> $log_file
+		fi
+
+		local payload
+		payload=$(jq -n \
+			--arg model "$MODEL_NAME" \
+			--arg content "$prompt" \
+			'{model: $model, messages: [{role:"user", content: $content }]}' )
+		
+		local response
+		response=$(curl -sS -w "%{http_code}" \
+			-H "Authorization: Bearer $OPENROUTER_API_KEY" \
+			-H "Content-Type: application/json" \
+			-X POST https://openrouter.ai/api/v1/chat/completions \
+			--data-binary "$payload" 2>&1)
+
+		local http_status="${response: -3}"
+    local response_body="${response%???}"
+    
+    if [[ "$DEBUG" == true ]]; then
+        echo "[INFO] HTTP Status Code: $http_status" >> $log_file
+        echo "[INFO] Raw Response: $response_body" >> $log_file
+    fi
+
+		local commit_message=$(printf '%s' "$response_body" | jq -r '.choices[0].message.content' 2>/dev/null)
+
+    echo "$commit_message"
 }
+
+gai() {
+  local msg
+  if ! msg=$(git_commit_message); then
+    echo "[ERROR] Failed to generate commit message." >&2
+    return 1
+  fi
+  [[ -z "$msg" ]] && { echo "[ERROR] Empty commit message." >&2; return 1; }
+
+  git commit -F - <<< "$msg"
+}
+
+gaim() {
+  local msg
+  msg=$(git_commit_message) || return
+  [[ -z "$msg" ]] && { echo "[ERROR] Empty commit message." >&2; return 1; }
+  git commit --edit -m "$msg"
+}
+
