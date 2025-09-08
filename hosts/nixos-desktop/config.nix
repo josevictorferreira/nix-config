@@ -168,8 +168,6 @@ in
       winetricks
       wine-wayland
 
-      open-webui
-
       # Containers
       podman
 
