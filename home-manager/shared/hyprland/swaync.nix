@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  swayncConfigDir = "${configRoot}/config/swaync";
+  swayncConfigDir = "${configRoot}/dotfiles/swaync";
 in
 {
   home = {

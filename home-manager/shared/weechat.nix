@@ -95,7 +95,7 @@ in
       ];
       file = {
         ".config/weechat/weechatrc" = {
-          source = "${configRoot}/config/weechat/weechatrc";
+          source = "${configRoot}/dotfiles/weechat/weechatrc";
           recursive = true;
           executable = false;
         };

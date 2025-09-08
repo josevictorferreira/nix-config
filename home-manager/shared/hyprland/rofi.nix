@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  rofiConfigDir = "${configRoot}/config/rofi";
+  rofiConfigDir = "${configRoot}/dotfiles/rofi";
 in
 {
   home = {

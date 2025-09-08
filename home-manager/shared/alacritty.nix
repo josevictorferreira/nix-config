@@ -24,7 +24,7 @@ in
       ];
       file = {
         ".config/alacritty/" = {
-          source = "${configRoot}/config/alacritty/";
+          source = "${configRoot}/dotfiles/alacritty/";
         };
       };
     };

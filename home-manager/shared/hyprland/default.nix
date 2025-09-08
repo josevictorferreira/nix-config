@@ -1,7 +1,7 @@
 { pkgs, inputs, configRoot, ... }:
 
 let
-  hyprlandConfig = "${configRoot}/config/hypr";
+  hyprlandConfig = "${configRoot}/dotfiles/hypr";
   python-packages = pkgs.python3.withPackages (
     ps:
       with ps; [

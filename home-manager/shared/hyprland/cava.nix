@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  cavaConfigDir = "${configRoot}/config/cava";
+  cavaConfigDir = "${configRoot}/dotfiles/cava";
 in
 {
   home = {

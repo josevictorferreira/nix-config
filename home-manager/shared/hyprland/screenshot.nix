@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  swappyConfigDir = "${configRoot}/config/swappy";
+  swappyConfigDir = "${configRoot}/dotfiles/swappy";
 in
 {
   home = {

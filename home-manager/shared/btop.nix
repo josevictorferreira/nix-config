@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  btopConfigDir = "${configRoot}/config/btop";
+  btopConfigDir = "${configRoot}/dotfiles/btop";
 in
 {
   home = {

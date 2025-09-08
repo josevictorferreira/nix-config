@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  agsConfigDir = "${configRoot}/config/ags";
+  agsConfigDir = "${configRoot}/dotfiles/ags";
 in
 {
   home = {

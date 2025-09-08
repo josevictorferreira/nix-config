@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  wallustConfigDir = "${configRoot}/config/wallust";
+  wallustConfigDir = "${configRoot}/dotfiles/wallust";
 in
 {
   programs.wallust.enable = true;

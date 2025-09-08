@@ -66,12 +66,12 @@ in
       ];
       file = {
         ".config/kitty/themes/" = {
-          source = "${configRoot}/config/kitty/themes/";
+          source = "${configRoot}/dotfiles/kitty/themes/";
           recursive = true;
           executable = false;
         };
         ".config/kitty/scripts/" = {
-          source = "${configRoot}/config/kitty/scripts/";
+          source = "${configRoot}/dotfiles/kitty/scripts/";
           recursive = true;
           executable = false;
         };

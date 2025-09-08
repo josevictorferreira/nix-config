@@ -1,7 +1,7 @@
 { pkgs, configRoot, ... }:
 
 let
-  ghosttyConfigDir = "${configRoot}/config/ghostty";
+  ghosttyConfigDir = "${configRoot}/dotfiles/ghostty";
 in
 {
   home = {

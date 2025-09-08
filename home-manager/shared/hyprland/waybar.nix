@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  waybarConfigDir = "${configRoot}/config/waybar";
+  waybarConfigDir = "${configRoot}/dotfiles/waybar";
 in
 {
   programs.waybar.enable = true;

@@ -15,7 +15,7 @@ in
       ];
       file = {
         ".config/easyeffects/" = {
-          source = "${configRoot}/config/easyeffects/";
+          source = "${configRoot}/dotfiles/easyeffects/";
           recursive = true;
           executable = false;
         };

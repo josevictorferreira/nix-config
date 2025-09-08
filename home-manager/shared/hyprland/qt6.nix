@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  qt6ctConfigDir = "${configRoot}/config/qt6ct";
+  qt6ctConfigDir = "${configRoot}/dotfiles/qt6ct";
 in
 {
   home = {

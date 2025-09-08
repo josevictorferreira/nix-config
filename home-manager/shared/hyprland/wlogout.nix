@@ -1,7 +1,7 @@
 { configRoot, pkgs, ... }:
 
 let
-  wlogoutConfigDir = "${configRoot}/config/wlogout";
+  wlogoutConfigDir = "${configRoot}/dotfiles/wlogout";
 in
 {
   home = {

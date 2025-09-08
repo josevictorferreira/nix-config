@@ -1,7 +1,7 @@
 { configRoot, ... }:
 
 let
-  kvantumConfigDir = "${configRoot}/config/Kvantum";
+  kvantumConfigDir = "${configRoot}/dotfiles/Kvantum";
 in
 {
   home = {
