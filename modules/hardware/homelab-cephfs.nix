@@ -87,7 +87,7 @@ in
         depends = [ keyringFile secretFile "/etc/ceph/ceph.conf" ];
       };
 
-    fileSystems."/home/${cfg.username}/homelabfs" = {
+    fileSystems."/home/${cfg.username}/Homelab" = {
       device = cfg.mountPoint;
       fsType = "fuse.bindfs";
       options = [
@@ -112,7 +112,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /home/${cfg.username}/homelabfs 0755 ${cfg.username} users -"
+      "d /home/${cfg.username}/Homelab 0755 ${cfg.username} users -"
     ];
 
   };
