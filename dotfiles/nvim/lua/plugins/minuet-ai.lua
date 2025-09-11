@@ -3,6 +3,7 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 	},
+	event = "InsertEnter",
 	opts = {
 		provider = "openai_compatible",
 		request_timeout = 2.5,
@@ -29,11 +30,11 @@ return {
 			auto_trigger_ft = { "*" },
 			keymap = {
 				accept = "<C-y>",
-				accept_line = "<A-l>",
-				accept_n_lines = "<A-s>",
-				prev = "<C-[>",
-				next = "<C-]>",
-				dismiss = "<A-e>",
+				accept_line = "<C-l>",
+				accept_n_lines = "<C-j>",
+				prev = "<C-k>",
+				next = "<C-n>",
+				dismiss = "<C-d>",
 			},
 		},
 	},
