@@ -39,7 +39,6 @@ local function setup_lsp_servers(servers)
 		end)
 		if not success then
 			vim.print("LSP: " .. server .. " has failed to load")
-			vim.print(result)
 		end
 	end
 end
