@@ -5,8 +5,9 @@ return {
 	},
 	config = function()
 		require("minuet").setup({
+			provider = "openai_compatible",
 			provider_options = {
-				operai_compatible = {
+				openai_compatible = {
 					model = "qwen/qwen3-coder",
 					stream = true,
 					end_point = "https://openrouter.ai/api/v1/chat/completions",

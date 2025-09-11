@@ -32,9 +32,8 @@ local parsers = {
 	"yaml",
 	"gleam",
 	"nix",
-	"helm",
-	"gotmpl",
 	"elixir",
+	"latex",
 }
 
 return {
