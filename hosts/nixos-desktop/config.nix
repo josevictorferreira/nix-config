@@ -347,7 +347,6 @@ in
     acceleration = "rocm";
     loadModels = [
       "deepseek-r1:1.5b"
-      "survival-uncensored-gemma-270m-v2"
     ];
   };
 

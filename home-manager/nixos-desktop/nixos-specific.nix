@@ -22,6 +22,7 @@
       nixos-generators
 
       spotifywm
+      postman
 
       inkscape-with-extensions
     ];
