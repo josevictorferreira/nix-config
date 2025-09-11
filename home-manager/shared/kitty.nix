@@ -45,9 +45,9 @@ in
         italic_font = "auto";
       };
       font = {
-        package = pkgs.nerd-fonts.fira-code;
-        name = "FiraCode Nerd Font";
-        size = 13;
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
+        size = 12;
       };
     };
     home = {
