@@ -17,7 +17,6 @@ return {
 				end_point = "https://openrouter.ai/api/v1/chat/completions",
 				model = "qwen/qwen3-coder",
 				name = "openrouter",
-				stream = true,
 				optional = {
 					max_tokens = 56,
 					top_p = 0.95,
