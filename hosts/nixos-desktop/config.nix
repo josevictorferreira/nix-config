@@ -347,7 +347,7 @@ in
     acceleration = "rocm";
     loadModels = [
       "deepseek-r1:1.5b"
-      "thirdeyeai/DeepSeek-R1-Distill-Qwen-7B-uncensored:latest"
+      "dolphin-mixtral:8x7b"
     ];
   };
 
