@@ -68,6 +68,7 @@
   "tooltip": true,
   "tooltip-format": "Left Click: Screenshot Select",
   "on-click": "grimblast copy area"
+  "on-click-right": "grimblast copysave area"
 },
 
 // Hypridle inhibitor
