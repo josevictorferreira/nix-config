@@ -24,6 +24,8 @@
       spotifywm
       postman
 
+      lmstudio
+
       inkscape-with-extensions
     ];
   };
