@@ -135,7 +135,6 @@ in
       # System Packages
       baobab
       btrfs-progs
-      clang
       cpufrequtils
       duf
       glib #for gsettings to work
@@ -169,6 +168,8 @@ in
       wine-wayland
 
       # Containers
+			gcc
+			gnumake
       podman
 
       ntfs3g

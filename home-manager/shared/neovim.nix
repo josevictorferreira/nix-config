@@ -23,7 +23,8 @@ in
       fzf
       ripgrep
       fd
-      cmake
+			gcc
+			tree-sitter
     ];
 
     file = {

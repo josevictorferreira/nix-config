@@ -60,17 +60,6 @@ vim.opt.relativenumber = false
 vim.opt.backspace = { "eol", "start", "indent" }
 vim.opt.clipboard = "unnamedplus"
 
-local current_time = tonumber(vim.fn.strftime("%H"))
-if current_time < 6 then
-	vim.opt.background = "dark"
-	vim.cmd.colorscheme("gruvdark")
-elseif current_time < 12 then
-	vim.cmd.colorscheme("gruvdark-light")
-else
-	vim.cmd.colorscheme("gruvdark")
-	vim.opt.background = "dark"
-end
-
 vim.opt.hidden = true
 vim.opt.bomb = true
 vim.opt.binary = true

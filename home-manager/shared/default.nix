@@ -53,7 +53,6 @@ in
       nmap
       arp-scan
       tree
-      clang
       xsel
       sops
       age
