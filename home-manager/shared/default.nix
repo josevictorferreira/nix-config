@@ -69,8 +69,8 @@ in
       yq
       dig
       ncdu # Find large files
-      podman
-      podman-compose
+      # podman
+      # podman-compose
 
       claude-code
     ];

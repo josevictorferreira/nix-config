@@ -1,4 +1,4 @@
-{ pkgs, configRoot, ... }:
+{ pkgs, configRoot, isDarwin, ... }:
 
 let
   ghosttyConfigDir = "${configRoot}/dotfiles/ghostty";
@@ -13,9 +13,8 @@ in
       };
     };
     packages = with pkgs; [
-      ghostty
       nerd-fonts.jetbrains-mono
       nerd-fonts.fira-code
-    ];
+    ] ++ lib.optional (!isDarwin) ghostty;
   };
 }
