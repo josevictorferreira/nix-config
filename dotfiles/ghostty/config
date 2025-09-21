@@ -14,7 +14,7 @@ cursor-style-blink = true
 cursor-invert-fg-bg
 mouse-hide-while-typing
 custom-shader-animation = true
-custom-shader = shaders/cursor_blaze.glsl
+custom-shader = /home/josevictor/.config/ghostty/shaders/cursor_blaze.glsl
 
 confirm-close-surface = false
 
