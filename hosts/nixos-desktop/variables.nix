@@ -7,6 +7,6 @@
   clock24h = true;
 
   browser = "brave";
-  terminal = "kitty";
+  terminal = "ghostty";
   keyboardLayout = "us";
 }

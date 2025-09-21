@@ -1,4 +1,4 @@
 FileManager=Thunar
-TerminalEmulator=kitty
+TerminalEmulator=ghostty
 #WebBrowser=firefox
 #MailReader=evolution

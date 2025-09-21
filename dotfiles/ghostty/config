@@ -1,11 +1,9 @@
 gtk-titlebar = false
 gtk-single-instance = true
 window-decoration = false
-window-padding-x = 7
-window-padding-y = 7
 window-padding-balance = true
 
-font-family = "JetBrainsMono Nerd Font"
+font-family = "JetBrainsMonoNL Nerd Font"
 font-style = SemiBold
 font-size = 13
 
@@ -14,7 +12,7 @@ cursor-style-blink = true
 cursor-invert-fg-bg
 mouse-hide-while-typing
 custom-shader-animation = true
-custom-shader = /home/josevictor/.config/ghostty/shaders/cursor_blaze.glsl
+custom-shader = shaders/cursor_blaze.glsl
 
 confirm-close-surface = false
 
