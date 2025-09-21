@@ -184,3 +184,78 @@ gaim() {
   git commit --edit -m "$msg"
 }
 
+__ai_cmd_require() {
+  local missing=()
+  command -v curl >/dev/null 2>&1 || missing+=(curl)
+  command -v jq   >/dev/null 2>&1 || missing+=(jq)
+  command -v fzf  >/dev/null 2>&1 || missing+=(fzf)
+  if [ ${#missing[@]} -gt 0 ]; then
+    printf 'Missing dependencies: %s\n' "${missing[*]}" >&2
+    return 1
+  fi
+  if [ -z "$OPENROUTER_API_KEY" ]; then
+    printf 'OPENROUTER_API_KEY is not set.\n' >&2
+    return 1
+  fi
+}
+
+__ai_cmd_core() {
+  __ai_cmd_require || return 1
+
+	local MODEL_NAME="openai/gpt-4.1-nano"
+	local BASE_PROMPT=$'You are a Linux shell assistant.\nReturn ONLY runnable commands, one per line, no prose.'
+
+  local user_prompt="$*"
+  local merged
+  merged=$(printf '%s\n\nUser request:\n%s\n\nRules:\n- Output only commands.\n- One command per line.\n- No explanations.' "$BASE_PROMPT" "$user_prompt")
+
+  local payload
+  payload=$(jq -nc \
+    --arg model "$MODEL_NAME" \
+    --arg content "$merged" \
+    '{model:$model, messages:[{role:"user", content:$content}], temperature: 0}')
+
+	local response
+	response=$(curl -sS -w "%{http_code}" \
+		-H "Authorization: Bearer $OPENROUTER_API_KEY" \
+		-H "Content-Type: application/json" \
+		-X POST https://openrouter.ai/api/v1/chat/completions \
+		--data-binary "$payload" 2>&1)
+
+	local http_status="${response: -3}"
+	local response_body="${response%???}"
+	
+	if [[ "$DEBUG" == true ]]; then
+		echo "[INFO] HTTP Status Code: $http_status" >> $log_file
+		echo "[INFO] Raw Response: $response_body" >> $log_file
+	fi
+
+	local list=$(printf '%s' "$response_body" | jq -r '.choices[0].message.content' 2>/dev/null)
+
+  if [ -z "$list" ]; then
+    printf 'The model returned no commands.\n' >&2
+    return 1
+  fi
+
+  local choice
+  choice=$(printf '%s\n' "$list" | fzf --prompt="Pick command > " --height=40% --border --ansi) || return 1
+
+  printf '%s' "$choice"
+}
+
+aicmd() {
+  local prefix="${LBUFFER}"
+	local choice
+	choice=$(__ai_cmd_core "$prefix") || return
+
+	if [[ -n $choice ]]; then
+		BUFFER="${choice}"
+		CURSOR=${#BUFFER}
+	else
+		zle reset-prompt
+	fi
+
+	zle redisplay
+}
+
+zle -N aicmd

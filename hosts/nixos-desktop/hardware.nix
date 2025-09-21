@@ -9,23 +9,32 @@
 
   drivers.amdgpu.enable = true;
 
+  console = {
+    # useXkbConfig = true;
+    earlySetup = false;
+  };
+
   boot = {
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];
     supportedFilesystems = [ "btrfs" ];
-    # kernelPackages = pkgs.linuxPackages_latest; # Kernel
     kernelPackages = pkgs.linuxPackages_zen;
 
     kernelParams = [
-      # "systemd.mask=systemd-vconsole-setup.service"
-      "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
-      "nowatchdog"
-      "modprobe.blacklist=sp5100_tco" #watchdog for AMD
+      "quiet"
+      "loglevel=3"
+      "systemd.show_status=auto"
+      "udev.log_level=3"
+      "rd.udev.log_level=3"
+      "vt.global_cursor_default=0"
+      "boot.shell_on_fail"
+      "plymouth.use-simpledrm"
     ];
 
     initrd = {
       availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
       kernelModules = [ "amdgpu" ];
+      verbose = false;
     };
 
     kernel.sysctl = {
@@ -64,7 +73,12 @@
       magicOrExtension = ''\x7fELF....AI\x02'';
     };
 
-    plymouth.enable = true;
+    consoleLogLevel = 0;
+
+    plymouth = {
+      enable = true;
+      theme = "bgrt";
+    };
   };
 
   services.btrfs.autoScrub = { enable = true; interval = "monthly"; fileSystems = [ "/" ]; };

@@ -23,6 +23,7 @@ bindkey -M vicmd 'j' history-substring-search-down
 bindkey '^[[A' forward-char
 # Custom plugin
 bindkey '^ ' fzf_history_search_prefix_widget
+bindkey '^G' aicmd
 
 setopt appendhistory
 setopt sharehistory
