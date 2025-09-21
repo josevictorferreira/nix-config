@@ -1,12 +1,23 @@
 gtk-titlebar = false
 gtk-single-instance = true
 window-decoration = false
+window-padding-x = 7
+window-padding-y = 7
+window-padding-balance = true
 
-font-family = "JetBrainsMono Nerd Font Mono Regular"
-font-family-bold = "JetBrainsMono Nerd Font Mono Bold"
-font-family-italic = "JetBrainsMono Nerd Font Mono Italic"
-font-family-bold-italic = "JetBrainsMono Nerd Font Mono Bold Italic"
+font-family = "JetBrainsMono Nerd Font"
+font-style = SemiBold
+font-size = 13
 
-theme = "tokyonight_night"
+cursor-style = "block_hollow"
+cursor-style-blink = true
+cursor-invert-fg-bg
+mouse-hide-while-typing
+custom-shader-animation = true
+custom-shader = shaders/cursor_blaze.glsl
+
+confirm-close-surface = false
+
+theme = "onedark"
 
 command = "for s in work main projects monitoring; do tmux has-session -t "$s" 2>/dev/null || tmux new-session -d -s "$s"; done; tmux has-session -t chat 2>/dev/null || tmux new-session -d -s chat 'weechat'; tmux attach -t main"

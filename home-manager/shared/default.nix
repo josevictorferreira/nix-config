@@ -11,6 +11,7 @@ in
     ./tmux.nix
     ./weechat.nix
     ./kitty.nix
+    ./ghostty.nix
     ./k9s.nix
     ./alacritty.nix
     ./btop.nix
