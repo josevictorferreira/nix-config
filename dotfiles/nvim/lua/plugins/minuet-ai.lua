@@ -3,23 +3,22 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 	},
-	event = "InsertEnter",
+	event = "BufReadPre",
 	opts = {
 		provider = "openai_compatible",
 		request_timeout = 2.5,
 		context_window = 12000,
 		throttle = 1500,
 		debouce = 600,
-		notify = "debug",
+		notify = "warn",
 		provider_options = {
 			openai_compatible = {
 				api_key = "OPENROUTER_API_KEY",
 				end_point = "https://openrouter.ai/api/v1/chat/completions",
-				model = "google/gemini-2.5-flash",
+				model = "openai/gpt-4.1-mini",
 				name = "Openrouter",
 				optional = {
 					max_tokens = 56,
-					top_p = 0.9,
 					provider = {
 						sort = "throughput",
 					},

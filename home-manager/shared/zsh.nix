@@ -8,6 +8,7 @@ in
     enable = true;
     initContent = ''
       export K9S_CONFIG_DIR="$HOME/.config/k9s"
+      eval "$(direnv hook zsh)"
       source $HOME/.config/zsh/init.zsh
     '';
   };
@@ -17,6 +18,7 @@ in
       zsh
       fzf
       ripgrep
+      direnv
     ];
     file = {
       ".config/zsh" = {
