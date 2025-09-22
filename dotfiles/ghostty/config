@@ -3,7 +3,6 @@ gtk-single-instance = true
 window-decoration = auto
 window-padding-balance = true
 macos-titlebar-style = "transparent"
-macos-window-buttons = "visible"
 
 font-family = "JetBrainsMonoNL Nerd Font"
 font-style = SemiBold
@@ -17,6 +16,6 @@ custom-shader-animation = true
 
 confirm-close-surface = false
 
-theme = "onedark"
+theme = "zenbones_dark"
 
-command = "/etc/profiles/per-user/josevictorferreira/bin/tmux new -A -s main"
+command = "tmux new -A -s main && tmux new -s chat  && tmux new -s work && tmux new -s monitoring && tmux new -s projects"
