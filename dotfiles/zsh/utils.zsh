@@ -88,11 +88,6 @@ With the project README.md in mind:
 {README_CONTENT}
 \`\`\`
 
-And with the directory tree structure is: 
-\`\`\`
-{DIRECTORY_TREE}
-\`\`\`
-
 The following changes were made to the repository:
 \`\`\`
 {STAGED_CHANGES}
@@ -127,12 +122,8 @@ EOF
         readme_content=$(cat README.md)
     fi
     
-    local directory_tree
-    directory_tree=$(tree)
-
 		local prompt="${BASE_PROMPT//\{README_CONTENT\}/${readme_content//\#/\\#}}"
 		prompt="${prompt//\{STAGED_CHANGES\}/${staged_changes//\#/\\#}}"
-		prompt="${prompt//\{DIRECTORY_TREE\}/${directory_tree//\#/\\#}}"
     
 		if [[ "$DEBUG" == true ]]; then
 			echo "[INFO] OPENROUTER_API_KEY: $OPENROUTER_API_KEY" >> $log_file
