@@ -6,7 +6,7 @@ macos-titlebar-style = "transparent"
 
 font-family = "JetBrainsMonoNL Nerd Font"
 font-style = SemiBold
-font-size = 13
+font-size = 14
 
 cursor-style = "block_hollow"
 cursor-style-blink = true
