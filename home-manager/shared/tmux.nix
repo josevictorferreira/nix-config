@@ -4,6 +4,15 @@ let
   tmuxConfigDir = "${configRoot}/dotfiles/tmux";
 in
 {
+  home.sessionVariables = {
+    TMUXP_CONFIGDIR = "$HOME/.config/tmux/tmuxp";
+  };
+
+  home.packages = with pkgs; [
+    tmux
+    tmuxp
+  ];
+
   programs.tmux = {
     enable = true;
     newSession = true;
@@ -29,22 +38,6 @@ in
           set -g @tokyo-night-tmux_window_id_style digital
           set -g @tokyo-night-tmux_pane_id_style hsquare
           set -g @tokyo-night-tmux_zoom_id_style dsquare
-        '';
-      }
-      {
-        plugin = resurrect;
-        extraConfig = ''
-          set -g @resurrect-strategy-vim 'session'
-          set -g @resurrect-strategy-nvim 'session'
-          set -g @resurrect-capture-pane-contents 'on'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-boot 'off'
-          set -g @continuum-save-interval 'on'
         '';
       }
     ];

@@ -1,0 +1,6 @@
+session_name: main
+windows:
+  - window_name: NixConfig
+    panes:
+      - fastfetch
+      - clear

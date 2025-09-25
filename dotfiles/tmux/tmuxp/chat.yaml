@@ -1,0 +1,5 @@
+session_name: chat
+windows:
+  - window_name: Chat
+    panes:
+      - weechat

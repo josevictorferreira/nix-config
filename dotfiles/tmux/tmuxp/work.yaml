@@ -1,0 +1,26 @@
+session_name: work
+start_directory: "$HOME/Workspace/agrosmart/"
+windows:
+  - window_name: BoosterAgro
+    layout: tiled
+    start_directory: booster
+    panes:
+      - tree
+      - clear
+      - clear
+      - clear
+  - window_name: Nexus
+    layout: tiled
+    start_directory: nexus/nexus-backend
+    panes:
+      - tree
+      - clear
+      - clear
+      - clear
+  - window_name: BoosterPro
+    layout: main-vertical
+    start_directory: agrosmart-api
+    panes:
+      - tree
+      - clear
+      - clear

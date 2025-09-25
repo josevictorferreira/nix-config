@@ -18,4 +18,4 @@ confirm-close-surface = false
 
 theme = "zenbones_dark"
 
-command = "tmux new -A -s main && tmux new -s chat  && tmux new -s work && tmux new -s monitoring && tmux new -s projects"
+command = "tmuxp load main.yaml projects.yaml work.yaml chat.yaml monitoring.yaml"

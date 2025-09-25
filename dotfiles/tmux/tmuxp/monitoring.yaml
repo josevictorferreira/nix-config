@@ -1,0 +1,8 @@
+session_name: monitoring
+windows:
+  - window_name: Cluster
+    panes:
+      - k9s
+  - window_name: System
+    panes:
+      - btop
