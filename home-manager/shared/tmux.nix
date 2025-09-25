@@ -2,10 +2,17 @@
 
 let
   tmuxConfigDir = "${configRoot}/dotfiles/tmux";
+  tmuxpConfigDir ="${tmuxConfigDir}/tmuxp";
 in
 {
   home.sessionVariables = {
     TMUXP_CONFIGDIR = "$HOME/.config/tmux/tmuxp";
+  };
+
+  home.file.".config/tmux/tmuxp/" = {
+    source = "${tmuxpConfigDir}";
+    recursive = true;
+    executable = false;
   };
 
   home.packages = with pkgs; [
