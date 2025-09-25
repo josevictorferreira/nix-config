@@ -108,7 +108,7 @@ EOF
     fi
     
     local staged_changes
-    staged_changes=$(git diff --cached --no-color)
+		staged_changes=$(git diff --cached --no-ext-diff --unified=0)
     
     if [[ -z "$staged_changes" ]]; then
 				if [[ "$DEBUG" == true ]]; then
