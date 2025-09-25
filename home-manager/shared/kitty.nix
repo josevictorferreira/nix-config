@@ -16,7 +16,7 @@ in
       ];
       settings = {
         include = "${config.home.homeDirectory}/.config/kitty/themes/mocha.conf";
-        shell = "${config.home.homeDirectory}/.config/kitty/scripts/tmux_session";
+        shell = "${config.home.homeDirectory}/.config/tmux/scripts/sessions.sh";
         disable_ligadures = "never";
         window_border_width = 0;
         window_margin_width = 0;

@@ -20,4 +20,4 @@ theme = "zenbones_dark"
 
 shell-integration = zsh
 
-command = /usr/bin/zsh -c "cd .config/tmux/tmuxp && tmuxp load main.yaml projects.yaml work.yaml chat.yaml monitoring.yaml"
+command = /usr/bin/zsh ~/.config/tmux/scripts/sessions.sh
