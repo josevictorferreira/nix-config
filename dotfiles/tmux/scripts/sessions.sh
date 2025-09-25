@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
 
-export TMUXP_CONFIGDIR=~/.config/tmux/scripts/sessions.sh
+cd $HOME/.config/tmux/tmuxp
 
 tmuxp load main.yaml projects.yaml work.yaml chat.yaml monitoring.yaml
