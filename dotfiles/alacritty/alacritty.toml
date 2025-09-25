@@ -38,22 +38,22 @@ color = '#ff5d62'
 TERM = "tmux-256color"
 
 [font]
-size = 13
+size = 14
 
 [font.bold]
-family = "FiraCode Nerd Font"
-style = "Bold"
-
-[font.bold_italic]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMonoNL Nerd Font"
 style = "SemiBold"
 
+[font.bold_italic]
+family = "JetBrainsMonoNL Nerd Font"
+style = "Bold Italic"
+
 [font.italic]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMonoNL Nerd Font"
 style = "Italic"
 
 [font.normal]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMonoNL Nerd Font"
 style = "Regular"
 
 [scrolling]
