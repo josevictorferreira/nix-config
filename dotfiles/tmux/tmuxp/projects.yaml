@@ -1,4 +1,4 @@
-session_name: work
+session_name: projects
 start_directory: "$HOME/Workspace/"
 windows:
   - window_name: Homelab

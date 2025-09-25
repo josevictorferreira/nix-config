@@ -2,4 +2,4 @@
 
 cd $HOME/.config/tmux/tmuxp
 
-tmuxp load main.yaml projects.yaml work.yaml chat.yaml monitoring.yaml
+tmuxp load monitoring.yaml chat.yaml work.yaml projects.yaml main.yaml
