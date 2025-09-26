@@ -353,6 +353,15 @@ in
     ];
   };
 
+  security.pam.services.hyprlock = {
+    allowNullPassword = false;
+    startSession = false;
+    text = ''
+      auth include login
+      account include login
+    '';
+  };
+
   console.keyMap = "${keyboardLayout}";
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
