@@ -187,7 +187,7 @@ in
       settings = {
         default_session = {
           user = username;
-          command = "/usr/bin/sh -c \"exec $$HOME/.config/hypr/scripts/LockScreen.sh\"";
+          command = "hyprland";
         };
       };
     };
