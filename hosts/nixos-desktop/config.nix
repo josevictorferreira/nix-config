@@ -187,7 +187,7 @@ in
       settings = {
         default_session = {
           user = username;
-          command = "Hyprland";
+          command = "/usr/bin/sh -c \"exec $$HOME/.config/hypr/scripts/LockScreen.sh\"";
         };
       };
     };
@@ -361,12 +361,29 @@ in
     ];
   };
 
-  security.pam.services.hyprlock = {
-    allowNullPassword = false;
-    startSession = false;
+  security = {
+    rtkit.enable = true;
+    polkit.enable = true;
+    polkit.extraConfig = ''
+       polkit.addRule(function(action, subject) {
+         if (
+           subject.isInGroup("users")
+             && (
+               action.id == "org.freedesktop.login1.reboot" ||
+               action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+               action.id == "org.freedesktop.login1.power-off" ||
+               action.id == "org.freedesktop.login1.power-off-multiple-sessions"
+             )
+           )
+         {
+           return polkit.Result.YES;
+         }
+      })
+    '';
+  };
+  security.pam.services.swaylock = {
     text = ''
       auth include login
-      account include login
     '';
   };
 
