@@ -344,6 +344,14 @@ in
     };
   };
 
+  services.logind = {
+    settings.Login = {
+      HandleLidSwitch = "lock";
+      HandleSuspendKey = "lock";
+      HandleHibernateKey = "lock";
+    };
+  };
+
   services.ollama = {
     enable = true;
     acceleration = "rocm";
