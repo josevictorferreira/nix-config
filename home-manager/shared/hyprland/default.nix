@@ -23,6 +23,7 @@ in
     ./ags.nix
     ./cava.nix
     ./wlogout.nix
+    ./hyprlock.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;
@@ -72,8 +73,4 @@ in
   ] ++ [
     python-packages
   ];
-
-  programs = {
-    hyprlock.enable = true;
-  };
 }

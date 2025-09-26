@@ -179,6 +179,7 @@ in
     };
   };
 
+
   # Services to start
   services = {
     greetd = {
@@ -350,17 +351,6 @@ in
       "dolphin-mixtral:8x7b"
       "goekdenizguelmez/JOSIEFIED-Qwen3:14b"
     ];
-  };
-
-  security = {
-    pam.services.swaylock = {
-      text = ''
-        auth include login
-      '';
-    };
-    sudo.extraConfig = ''
-      Defaults pwfeedback
-    '';
   };
 
   console.keyMap = "${keyboardLayout}";

@@ -95,7 +95,7 @@ The following changes were made to the repository:
 
 Generate a commit message to the repository as if the coder would commit those changes right now.
 Use the imperative mood in the subject line.
-Make sure the commit message is concise and descriptive.
+Make sure the commit message is concise and descriptive, explain why the change was made. Avoid the message being too large.
 EOF
 )
 		local log_file="/tmp/git_commit_message.log"
