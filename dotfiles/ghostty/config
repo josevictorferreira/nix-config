@@ -20,4 +20,4 @@ theme = "zenbones_dark"
 
 shell-integration = zsh
 
-command = /usr/bin/zsh ~/.config/tmux/scripts/sessions.sh
+command = /bin/zsh ~/.config/tmux/scripts/sessions.sh
