@@ -45,8 +45,8 @@ in
         italic_font = "auto";
       };
       font = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
+        package = pkgs.inter-nerdfont;
+        name = "Inter";
         size = 12;
       };
     };
@@ -63,6 +63,7 @@ in
         pkgs.noto-fonts-emoji
         pkgs.maple-mono.truetype
         pkgs.commit-mono
+        pkgs.inter-nerdfont
       ];
       file = {
         ".config/kitty/themes/" = {

@@ -28,5 +28,6 @@ vim.filetype.add({
 		[".*ya?ml.gotmpl"] = "helm",
 		["values.ya?ml.tpl"] = "helm",
 		["helmfile.*%.ya?ml"] = "helm",
+		["helmfile.*%ya?ml.tpl"] = "helm",
 	},
 })

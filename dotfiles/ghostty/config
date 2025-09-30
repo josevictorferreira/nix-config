@@ -5,7 +5,7 @@ window-padding-balance = true
 macos-titlebar-style = "transparent"
 
 font-family = "JetBrainsMonoNL Nerd Font"
-font-style = SemiBold
+font-style = Regular
 font-size = 14
 
 cursor-style = "block_hollow"
@@ -16,7 +16,7 @@ custom-shader-animation = true
 
 confirm-close-surface = false
 
-theme = "zenbones_dark"
+theme = "zenbones-zenwritten-dark"
 
 shell-integration = zsh
 

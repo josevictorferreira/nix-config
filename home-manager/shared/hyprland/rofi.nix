@@ -6,7 +6,7 @@ in
 {
   home = {
     packages = with pkgs; [
-      rofi-wayland
+      rofi
     ];
     file = {
       ".config/rofi" = {
