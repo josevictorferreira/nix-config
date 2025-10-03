@@ -171,6 +171,9 @@ in
 			gcc
 			gnumake
       podman
+      podman-compose
+
+      code-cursor
 
       ntfs3g
     ];

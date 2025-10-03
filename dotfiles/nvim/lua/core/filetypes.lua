@@ -9,7 +9,8 @@ vim.filetype.add({
 		ftl = "freemarker",
 		rbi = "ruby",
 		rbs = "ruby",
-		tpl = "gotmpl",
+		tpl = "helm",
+		gotmpl = "helm",
 	},
 	filename = {
 		["nginx.conf"] = "nginx",
@@ -27,7 +28,8 @@ vim.filetype.add({
 		[".*/templates/.*%.tpl"] = "helm",
 		[".*ya?ml.gotmpl"] = "helm",
 		["values.ya?ml.tpl"] = "helm",
-		["helmfile.*%.ya?ml"] = "helm",
-		["helmfile.*%ya?ml.tpl"] = "helm",
+		["helmfile..*%.yaml"] = "helm",
+		["helmfile.*%.yml"] = "helm",
+		["helmfile.*%.tpl"] = "helm",
 	},
 })

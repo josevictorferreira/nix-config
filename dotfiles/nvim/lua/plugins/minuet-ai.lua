@@ -15,10 +15,10 @@ return {
 			openai_compatible = {
 				api_key = "OPENROUTER_API_KEY",
 				end_point = "https://openrouter.ai/api/v1/chat/completions",
-				model = "openai/gpt-4.1-mini",
+				model = "openai/gpt-5-mini",
 				name = "Openrouter",
 				optional = {
-					max_tokens = 56,
+					max_tokens = 128,
 					provider = {
 						sort = "throughput",
 					},
