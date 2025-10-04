@@ -15,6 +15,7 @@ in
     ./k9s.nix
     ./alacritty.nix
     ./btop.nix
+    ./development
   ];
 
   home = {

@@ -10,15 +10,19 @@ return {
 		context_window = 12000,
 		throttle = 1500,
 		debouce = 600,
-		notify = "warn",
+		notify = "debug",
 		provider_options = {
 			openai_compatible = {
 				api_key = "OPENROUTER_API_KEY",
 				end_point = "https://openrouter.ai/api/v1/chat/completions",
-				model = "openai/gpt-5-mini",
+				model = "openai/gpt-5-nano",
+				stream = true,
 				name = "Openrouter",
 				optional = {
-					max_tokens = 128,
+					max_tokens = 256,
+					top_p = 0.9,
+					stop = { "\n", "\r", "}", "end" },
+					reasoning_effort = "minimal",
 					provider = {
 						sort = "throughput",
 					},
