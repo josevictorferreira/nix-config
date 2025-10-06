@@ -12,7 +12,7 @@ Guidelines:
 2) Do NOT close scopes/functions/blocks for the user unless the closing token is the very next token that must appear.
 3) Output raw code only. No explanations, no markdown fences.
 4) Keep each completion minimal and concise: one line or a very short snippet. Stop early when a blank line or a closing token would follow.
-5) Do NOT repeat code that already exists around <cursorPosition>.
+5) Do NOT REPEAT CODE that already exists near <cursorPosition>.
 6) When multiple plausible solutions exist, return multiple options separated by <endCompletion>.
 7) Always follow the best practices recommended for the language and framework used.
     ]]
@@ -97,7 +97,7 @@ return n;
 			context_window = 12000,
 			throttle = 200,
 			debounce = 80,
-			notify = "debug",
+			notify = "warn",
 
 			virtualtext = {
 				auto_trigger_ft = { "*" },
@@ -134,17 +134,18 @@ return n;
 				openai_compatible = {
 					api_key = "OPENROUTER_API_KEY",
 					end_point = "https://openrouter.ai/api/v1/chat/completions",
-					model = "z-ai/glm-4.6",
+					model = "moonshotai/kimi-k2-0905",
 					name = "OpenRouter",
 					system = { prompt = system_prompt },
 					few_shots = few_shots,
 					chat_input = { template = prefix_first_template },
-
+					stream = true,
 					optional = {
 						max_tokens = 256,
 						top_p = 0.9,
 						stop = { "\n\n", "<endCompletion>", "}", "end" },
 						provider = { sort = "throughput" },
+						reasoning_effort = "minimal",
 					},
 				},
 			},
