@@ -61,6 +61,7 @@ return {
 	ts_ls = { filetypes = { "typescript", "javascript", "jsx", "tsx", "typescriptreact" } },
 	emmet_ls = { filetypes = { "vue", "html" } },
 	nixd = { filetypes = { "nix" }, auto_install = false },
+	gopls = { filetypes = { "go", "gomod", "gowork", "gotmpl" }, auto_install = false },
 	helm_ls = {
 		filetypes = { "helm" },
 		settings = {

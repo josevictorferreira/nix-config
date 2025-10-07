@@ -23,6 +23,7 @@
       emmet-ls
       nixd
       helm-ls
+      gopls
     ];
   };
 }
