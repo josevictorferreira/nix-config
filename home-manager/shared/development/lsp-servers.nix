@@ -24,6 +24,7 @@
       nixd
       helm-ls
       gopls
+      autotools-language-server
     ];
   };
 }
