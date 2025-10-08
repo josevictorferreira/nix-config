@@ -55,7 +55,7 @@ vim.opt.title = true
 vim.opt.shortmess:append({ c = true })
 vim.opt.ruler = true
 vim.opt.number = true
-vim.opt.relativenumber = false
+vim.opt.relativenumber = true
 
 vim.opt.backspace = { "eol", "start", "indent" }
 vim.opt.clipboard = "unnamedplus"

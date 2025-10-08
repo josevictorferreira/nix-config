@@ -22,7 +22,6 @@
       nixos-generators
 
       spotifywm
-      postman
 
       lmstudio
 
