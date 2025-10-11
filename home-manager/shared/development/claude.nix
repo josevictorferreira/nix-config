@@ -39,7 +39,7 @@ let
     Router = {
       default = "openrouter,moonshotai/kimi-k2-0905";
       background = "openrouter,moonshotai/kimi-k2-0905";
-      think = "qwen/qwen3-235b-a22b-thinking-2507";
+      think = "openrouter,qwen/qwen3-235b-a22b-thinking-2507";
       longContext = "openrouter,moonshotai/kimi-k2-0905";
       longContextThreshold = 60000;
     };
