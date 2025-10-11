@@ -1,4 +1,9 @@
-{ config, username, configRoot, ... }:
+{
+  config,
+  username,
+  configRoot,
+  ...
+}:
 
 let
   ageKeyFilePath = "/etc/sops/age/keys.txt";

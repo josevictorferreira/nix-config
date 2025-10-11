@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.drivers.amdgpu;
@@ -14,11 +19,10 @@ in
     services.xserver.enable = true;
     services.xserver.videoDrivers = [ "amdgpu" ];
     hardware.cpu.amd.updateMicrocode = true;
-    
+
     hardware.graphics = {
       enable = true;
       extraPackages = with pkgs; [
-        amdvlk
         libva
         libva-utils
         rocmPackages.clr.icd
@@ -27,14 +31,6 @@ in
         rocmPackages.rocm-runtime
       ];
       enable32Bit = true;
-      extraPackages32 = with pkgs; [
-        driversi686Linux.amdvlk
-      ];
-    };
-
-    hardware.amdgpu.amdvlk = {
-      enable = true;
-      support32Bit.enable = true;
     };
   };
 }

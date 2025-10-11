@@ -1,5 +1,4 @@
 {
-  pkgs,
   ...
 }:
 {
@@ -7,11 +6,6 @@
     ./formatters.nix
     ./languages.nix
     ./lsp-servers.nix
+    ./claude.nix
   ];
-
-  home = {
-    packages = with pkgs; [
-      claude-code
-    ];
-  };
 }
