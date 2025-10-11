@@ -28,6 +28,8 @@ let
           "moonshotai/kimi-k2-0905"
           "z-ai/glm-4.6"
           "qwen/qwen3-coder-480b"
+					"google/gemini-2.5-pro"
+					"google/gemini-2.5-flash-image"
         ];
 
         transformer = {
@@ -39,9 +41,11 @@ let
     Router = {
       default = "openrouter,moonshotai/kimi-k2-0905";
       background = "openrouter,moonshotai/kimi-k2-0905";
-      think = "openrouter,qwen/qwen3-235b-a22b-thinking-2507";
+			think = "openrouter,openrouter,google/gemini-2.5-pro";
       longContext = "openrouter,moonshotai/kimi-k2-0905";
-      longContextThreshold = 60000;
+			webSearch = "openrouter,google/gemini-2.5-pro";
+			image = "openrouter,google/gemini-2.5-flash-image";
+      longContextThreshold = 200000;
     };
   };
 in
