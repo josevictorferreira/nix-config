@@ -14,11 +14,6 @@ in
     age.keyFile = ageKeyFilePath;
   };
 
-  sops.secrets."anthropic_api_key" = {
-    owner = config.users.users.${username}.name;
-    mode = "0400";
-  };
-
   sops.secrets."nordvpn_access_token" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
