@@ -1,4 +1,12 @@
-{ pkgs, lib, host, options, configRoot, username, ... }:
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  configRoot,
+  username,
+  ...
+}:
 let
 
   inherit (import ./variables.nix) gitUsername keyboardLayout;
@@ -43,7 +51,11 @@ in
     clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
     clientId = "josevictor";
     username = username;
-    monHosts = [ "10.10.10.200:6789" "10.10.10.201:6789" "10.10.10.203:6789" ];
+    monHosts = [
+      "10.10.10.200:6789"
+      "10.10.10.201:6789"
+      "10.10.10.203:6789"
+    ];
     fsName = "ceph-filesystem";
     subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
   };
@@ -51,12 +63,14 @@ in
   nixpkgs = {
     config = {
       allowUnfree = true;
-      allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-        "steam"
-        "steam-original"
-        "steam-unwrapped"
-        "steam-run"
-      ];
+      allowUnfreePredicate =
+        pkg:
+        builtins.elem (lib.getName pkg) [
+          "steam"
+          "steam-original"
+          "steam-unwrapped"
+          "steam-run"
+        ];
     };
   };
 
@@ -137,7 +151,7 @@ in
       btrfs-progs
       cpufrequtils
       duf
-      glib #for gsettings to work
+      glib # for gsettings to work
       gsettings-qt
       killall
       libappindicator
@@ -168,12 +182,10 @@ in
       wine-wayland
 
       # Containers
-			gcc
-			gnumake
+      gcc
+      gnumake
       podman
       podman-compose
-
-      code-cursor
 
       ntfs3g
     ];
@@ -181,7 +193,6 @@ in
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     };
   };
-
 
   # Services to start
   services = {

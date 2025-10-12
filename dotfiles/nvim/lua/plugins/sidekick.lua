@@ -9,7 +9,7 @@ return {
 			},
 			tools = {
 				ccr = {
-					cmd = { "ccr", "code" },
+					cmd = { "ccr", "code", "--model", "z-ai/glm-4.6" },
 				},
 			},
 		},
@@ -76,7 +76,7 @@ return {
 		{
 			"<leader>ac",
 			function()
-				require("sidekick.cli").toggle({ name = "claude", focus = true })
+				require("sidekick.cli").toggle({ name = "ccr", focus = true })
 			end,
 			desc = "Sidekick Toggle Claude",
 		},

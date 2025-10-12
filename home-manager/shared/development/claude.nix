@@ -55,6 +55,7 @@ in
   home.packages = with pkgs; [
     claude-code
     bun
+    uv
     pipx
     (pkgs.writeShellScriptBin "SuperClaude" ''
       exec "$HOME/.local/bin/SuperClaude" "$@"
@@ -84,7 +85,7 @@ in
     ${pkgs.pipx}/bin/pipx install --include-deps SuperClaude
     ${pkgs.pipx}/bin/pipx upgrade SuperClaude
 
-    "$PIPX_BIN_DIR/SuperClaude" install || true
+    "$PIPX_BIN_DIR/SuperClaude" install -y --force --auto-update --components core mcp mcp_docs modes agents || true
   '';
 
   home.sessionPath = [ "$HOME/.local/bin" ];
