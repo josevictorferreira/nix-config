@@ -8,8 +8,8 @@ return {
 				enabled = true,
 			},
 			tools = {
-				claude = {
-					cmd = { "bunx", "@musistudio/claude-code-router", "code" },
+				ccr = {
+					cmd = { "ccr", "code" },
 				},
 			},
 		},
