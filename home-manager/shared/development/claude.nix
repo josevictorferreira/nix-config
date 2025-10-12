@@ -23,7 +23,7 @@ let
       {
         name = "openrouter";
         api_base_url = "https://openrouter.ai/api/v1/chat/completions";
-        api_key = "$OPENROUTER_API_KEY";
+        api_key = "\${OPENROUTER_API_KEY}";
 
         models = [
           "z-ai/glm-4.6"
