@@ -25,11 +25,11 @@ let
         api_key = "$OPENROUTER_API_KEY";
 
         models = [
-          "moonshotai/kimi-k2-0905"
           "z-ai/glm-4.6"
+          "google/gemini-2.5-pro"
+          "google/gemini-2.5-flash-image"
+          "moonshotai/kimi-k2-0905"
           "qwen/qwen3-coder-480b"
-					"google/gemini-2.5-pro"
-					"google/gemini-2.5-flash-image"
         ];
 
         transformer = {
@@ -39,12 +39,12 @@ let
     ];
 
     Router = {
-      default = "openrouter,moonshotai/kimi-k2-0905";
-      background = "openrouter,moonshotai/kimi-k2-0905";
-			think = "openrouter,openrouter,google/gemini-2.5-pro";
-      longContext = "openrouter,moonshotai/kimi-k2-0905";
-			webSearch = "openrouter,google/gemini-2.5-pro";
-			image = "openrouter,google/gemini-2.5-flash-image";
+      default = "openrouter,z-ai/glm-4.6";
+      background = "openrouter,z-ai/glm-4.6";
+      think = "openrouter,openrouter,google/gemini-2.5-pro";
+      longContext = "openrouter,z-ai/glm-4.6";
+      webSearch = "openrouter,google/gemini-2.5-pro";
+      image = "openrouter,google/gemini-2.5-flash-image";
       longContextThreshold = 200000;
     };
   };
