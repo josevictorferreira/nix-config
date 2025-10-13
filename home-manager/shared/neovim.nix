@@ -23,29 +23,26 @@ in
       fzf
       ripgrep
       fd
-			gcc
-			tree-sitter
+      gcc
+      tree-sitter
     ];
 
     file = {
-      ".config/nvim/lua" =
-        {
-          source = "${neovimConfigDir}/lua";
-          recursive = true;
-          executable = false;
-        };
-      ".config/nvim/schemas" =
-        {
-          source = "${neovimConfigDir}/schemas";
-          recursive = true;
-          executable = false;
-        };
-      ".config/nvim/after" =
-        {
-          source = "${neovimConfigDir}/after";
-          recursive = true;
-          executable = false;
-        };
+      ".config/nvim/lua" = {
+        source = "${neovimConfigDir}/lua";
+        recursive = true;
+        executable = false;
+      };
+      ".config/nvim/schemas" = {
+        source = "${neovimConfigDir}/schemas";
+        recursive = true;
+        executable = false;
+      };
+      ".config/nvim/after" = {
+        source = "${neovimConfigDir}/after";
+        recursive = true;
+        executable = false;
+      };
     };
   };
 }

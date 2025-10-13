@@ -23,14 +23,17 @@ let
       {
         name = "openrouter";
         api_base_url = "https://openrouter.ai/api/v1/chat/completions";
-        api_key = "\${OPENROUTER_API_KEY}";
+        api_key = "\${OPENROUTER_API_KEY_CLAUDE_CODE}";
 
         models = [
           "z-ai/glm-4.6"
           "z-ai/glm-4.6:thinking"
-          "google/gemini-2.5-pro:online"
+          "google/gemini-2.5-flash-lite:online"
+          "anthropic/claude-sonnet-4.5"
+          "anthropic/claude-sonnet-4.5:thinking"
           "google/gemini-2.5-flash-image"
           "moonshotai/kimi-k2-0905"
+          "moonshotai/kimi-k2"
           "qwen/qwen3-coder-480b"
         ];
 
@@ -42,10 +45,10 @@ let
 
     Router = {
       default = "openrouter,z-ai/glm-4.6";
-      background = "openrouter,moonshotai/kimi-k2-0905";
-      think = "openrouter,z-ai/glm-4.6:thinking";
-      longContext = "openrouter,z-ai/glm-4.6";
-      webSearch = "openrouter,google/gemini-2.5-pro:online";
+      background = "openrouter,moonshotai/kimi-k2";
+      think = "openrouter,anthropic/claude-sonnet-4.5:thinking";
+      longContext = "openrouter,anthropic/claude-sonnet-4.5";
+      webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
       image = "openrouter,google/gemini-2.5-flash-image";
       longContextThreshold = 200000;
     };

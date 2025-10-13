@@ -132,7 +132,7 @@ return n;
 
 			provider_options = {
 				openai_compatible = {
-					api_key = "OPENROUTER_API_KEY",
+					api_key = "OPENROUTER_API_KEY_AUTOCOMPLETE",
 					end_point = "https://openrouter.ai/api/v1/chat/completions",
 					model = "moonshotai/kimi-k2-0905",
 					name = "OpenRouter",

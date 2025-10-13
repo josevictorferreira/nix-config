@@ -126,7 +126,7 @@ EOF
 		prompt="${prompt//\{STAGED_CHANGES\}/${staged_changes//\#/\\#}}"
     
 		if [[ "$DEBUG" == true ]]; then
-			echo "[INFO] OPENROUTER_API_KEY: $OPENROUTER_API_KEY" >> $log_file
+			echo "[INFO] OPENROUTER_API_KEY_COMMIT: $OPENROUTER_API_KEY_COMMIT" >> $log_file
 			echo "[INFO] MODEL_NAME: $MODEL_NAME" >> $log_file
 			echo "[INFO] PROMPT: $prompt\n\n" >> $log_file
 		fi
@@ -139,7 +139,7 @@ EOF
 		
 		local response
 		response=$(curl -sS -w "%{http_code}" \
-			-H "Authorization: Bearer $OPENROUTER_API_KEY" \
+			-H "Authorization: Bearer $OPENROUTER_API_KEY_COMMIT" \
 			-H "Content-Type: application/json" \
 			-X POST https://openrouter.ai/api/v1/chat/completions \
 			--data-binary "$payload" 2>&1)
@@ -184,8 +184,8 @@ __ai_cmd_require() {
     printf 'Missing dependencies: %s\n' "${missing[*]}" >&2
     return 1
   fi
-  if [ -z "$OPENROUTER_API_KEY" ]; then
-    printf 'OPENROUTER_API_KEY is not set.\n' >&2
+  if [ -z "$OPENROUTER_API_KEY_TERMINAL" ]; then
+    printf 'OPENROUTER_API_KEY_TERMINAL is not set.\n' >&2
     return 1
   fi
 }
@@ -208,7 +208,7 @@ __ai_cmd_core() {
 
 	local response
 	response=$(curl -sS -w "%{http_code}" \
-		-H "Authorization: Bearer $OPENROUTER_API_KEY" \
+		-H "Authorization: Bearer $OPENROUTER_API_KEY_TERMINAL" \
 		-H "Content-Type: application/json" \
 		-X POST https://openrouter.ai/api/v1/chat/completions \
 		--data-binary "$payload" 2>&1)
