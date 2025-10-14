@@ -19,22 +19,22 @@ in
     mode = "0400";
   };
 
-  sops.secrets."openrouter_api_keys.claude_code" = {
+  sops.secrets."openrouter_claude_code" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
 
-  sops.secrets."openrouter_api_keys.autocomplete" = {
+  sops.secrets."openrouter_autocomplete" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
 
-  sops.secrets."openrouter_api_keys.terminal" = {
+  sops.secrets."openrouter_terminal" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
 
-  sops.secrets."openrouter_api_keys.commits" = {
+  sops.secrets."openrouter_commits" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
