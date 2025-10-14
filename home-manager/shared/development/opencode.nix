@@ -27,7 +27,7 @@
               name = "Grok 4 Fast";
             };
             "moonshotai/kimi-k2-0905" = {
-              name = "Kimi K2";
+              name = "Kimi K2 Instruct 0905";
             };
             "google/gemini-2.5-pro" = {
               name = "Gemini 2.5 Pro";
