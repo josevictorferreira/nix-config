@@ -34,7 +34,7 @@ in
     mode = "0400";
   };
 
-  sops.secrets."openrouter_commits" = {
+  sops.secrets."openrouter_commit" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };
