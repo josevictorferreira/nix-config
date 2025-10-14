@@ -1,4 +1,10 @@
-{ pkgs, lib, config, configRoot, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  configRoot,
+  ...
+}:
 
 with lib;
 let
@@ -16,7 +22,7 @@ in
       ];
       settings = {
         include = "${config.home.homeDirectory}/.config/kitty/themes/mocha.conf";
-        shell = "${config.home.homeDirectory}/.config/tmux/scripts/sessions.sh";
+        shell = "zsh";
         disable_ligadures = "never";
         window_border_width = 0;
         window_margin_width = 0;

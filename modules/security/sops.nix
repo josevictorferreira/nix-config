@@ -19,7 +19,7 @@ in
     mode = "0400";
   };
 
-  sops.secrets."openrouter_claude_code" = {
+  sops.secrets."openrouter_code_agent" = {
     owner = config.users.users.${username}.name;
     mode = "0400";
   };

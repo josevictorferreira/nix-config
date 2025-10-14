@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   ...
 }:
@@ -23,18 +22,20 @@ let
       {
         name = "openrouter";
         api_base_url = "https://openrouter.ai/api/v1/chat/completions";
-        api_key = "\${OPENROUTER_API_KEY_CLAUDE_CODE}";
+        api_key = "\${OPENROUTER_API_KEY_CODE_AGENT}";
 
         models = [
-          "z-ai/glm-4.6"
-          "z-ai/glm-4.6:thinking"
-          "google/gemini-2.5-flash-lite:online"
           "anthropic/claude-sonnet-4.5"
-          "anthropic/claude-sonnet-4.5:thinking"
           "google/gemini-2.5-flash-image"
+          "google/gemini-2.5-flash-lite:online"
+          "google/gemini-2.5-pro"
           "moonshotai/kimi-k2-0905"
           "moonshotai/kimi-k2"
           "qwen/qwen3-coder-480b"
+          "qwen/qwen3-235b-a22b-thinking-2507"
+          "x-ai/grok-4-fast"
+          "z-ai/glm-4.6"
+          "z-ai/glm-4.6:thinking"
         ];
 
         transformer = {
@@ -45,9 +46,9 @@ let
 
     Router = {
       default = "openrouter,z-ai/glm-4.6";
-      background = "openrouter,moonshotai/kimi-k2";
-      think = "openrouter,anthropic/claude-sonnet-4.5:thinking";
-      longContext = "openrouter,anthropic/claude-sonnet-4.5";
+      background = "openrouter,z-ai/glm-4.6";
+      think = "openrouter,qwen/qwen3-235b-a22b-thinking-2507";
+      longContext = "openrouter,google/gemini-2.5-pro";
       webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
       image = "openrouter,google/gemini-2.5-flash-image";
       longContextThreshold = 200000;
@@ -60,12 +61,6 @@ in
     bun
     uv
     pipx
-    (pkgs.writeShellScriptBin "SuperClaude" ''
-      exec "$HOME/.local/bin/SuperClaude" "$@"
-    '')
-    (pkgs.writeShellScriptBin "superclaude" ''
-      exec "$HOME/.local/bin/superclaude" "$@"
-    '')
     (pkgs.writeShellScriptBin "ccr" ''
       ${pkgs.bun}/bin/bunx @musistudio/claude-code-router "$@"
     '')
@@ -77,19 +72,6 @@ in
     ANTHROPIC_BASE_URL = "http://${ccrHost}:${toString ccrPort}";
     ANTHROPIC_AUTH_TOKEN = routerApiKey;
   };
-
-  home.activation.installSuperClaude = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    set -euo pipefail
-
-    export PIPX_HOME="$HOME/.local/share/pipx"
-    export PIPX_BIN_DIR="$HOME/.local/bin"
-    mkdir -p "$PIPX_HOME" "$PIPX_BIN_DIR"
-
-    ${pkgs.pipx}/bin/pipx install --include-deps SuperClaude
-    ${pkgs.pipx}/bin/pipx upgrade SuperClaude
-
-    "$PIPX_BIN_DIR/SuperClaude" install -y --force --auto-update --components core mcp mcp_docs modes agents || true
-  '';
 
   home.sessionPath = [ "$HOME/.local/bin" ];
 }
