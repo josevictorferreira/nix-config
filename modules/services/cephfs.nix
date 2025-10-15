@@ -1,58 +1,86 @@
-{ config, lib, pkgs, ... }:
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  inherit (lib) mkEnableOption mkOption types concatStringsSep;
-  mons = concatStringsSep "," cfg.monHosts;
-  cfg = config.homelab.cephfs;
+  cfg = config.jvf.services.cephFs;
+  mons = lib.concatStringsSep "," cfg.monHosts;
+
+  homeDir = lib.attrByPath [ "users" "users" cfg.username "home" ] "/home/${cfg.username}" config;
 in
 {
-  options.homelab.cephfs = {
-    enable = mkEnableOption "Mount CephFS subvolume via fileSystems";
-    monHosts = mkOption {
-      type = types.listOf types.str;
-      example = [ "10.10.10.200:6789" "10.10.10.201:6789" "10.10.10.203:6789" ];
+  options.jvf.services.cephFs = {
+    enable = lib.mkEnableOption "Mount CephFS subvolume via fileSystems";
+
+    name = lib.mkOption {
+      type = lib.types.str;
+      example = "Homelab";
+      description = "The name of the cephfs folder. It will be used as the name of the symlinked folder. Also it will be used as the group created to handle RWX operations on the folder.";
+    };
+
+    monHosts = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      example = [
+        "10.10.10.200:6789"
+        "10.10.10.201:6789"
+        "10.10.10.203:6789"
+      ];
       description = "Ceph MON endpoints host:port.";
     };
-    clusterFsId = mkOption {
-      type = types.str;
+
+    clusterFsId = lib.mkOption {
+      type = lib.types.str;
       example = "a0b1c2d3-e4f5-6789-abcd-ef0123456789";
       description = "Ceph cluster FSID.";
     };
-    fsName = mkOption {
-      type = types.str;
+
+    fsName = lib.mkOption {
+      type = lib.types.str;
       default = "cephfs";
       description = "CephFS name.";
     };
-    clientId = mkOption {
-      type = types.str;
+
+    clientId = lib.mkOption {
+      type = lib.types.str;
       default = "josevictor";
       description = "CephX client id (without the 'client.' prefix).";
     };
-    username = mkOption {
-      type = types.str;
+
+    username = lib.mkOption {
+      type = lib.types.str;
       default = "";
       description = "Local user to add to the 'homelab' group.";
     };
-    subvolumePath = mkOption {
-      type = types.str;
+
+    subvolumePath = lib.mkOption {
+      type = lib.types.str;
       example = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
       description = "Absolute path to the subvolume on CephFS.";
     };
-    mountPoint = mkOption {
-      type = types.str;
+
+    mountPoint = lib.mkOption {
+      type = lib.types.str;
       default = "/mnt/homelabfs";
       description = "Local mountpoint.";
     };
   };
 
-  config = lib.mkIf config.homelab.cephfs.enable {
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasAttrByPath [ "sops" "secrets" ] config;
+        message = "jvf.cephFs requires sops-nix (sops.secrets.*) or refactor to provide secret files via options.";
+      }
+    ];
+
     environment.systemPackages = [ pkgs.ceph-client ];
     system.fsPackages = [ pkgs.bindfs ];
 
     sops.secrets.ceph_client_keyring = {
       path = "/etc/ceph/ceph.keyring";
     };
-
     sops.secrets.ceph_client_secret = { };
 
     environment.etc."ceph/ceph.conf".text = ''
@@ -61,9 +89,8 @@ in
       mon_host = ${mons}
     '';
 
-    users.users."${cfg.username}".extraGroups = lib.mkAfter [ "homelab" ];
-
-    users.groups.homelab.gid = 2002;
+    users.users."${cfg.username}".extraGroups = lib.mkAfter [ "${lib.strings.toLower cfg.name}" ];
+    users.groups.${lib.strings.toLower cfg.name}.gid = 2002;
 
     fileSystems."${cfg.mountPoint}" =
       let
@@ -84,10 +111,14 @@ in
           "x-systemd.after=network-online.target"
         ];
         neededForBoot = false;
-        depends = [ keyringFile secretFile "/etc/ceph/ceph.conf" ];
+        depends = [
+          keyringFile
+          secretFile
+          "/etc/ceph/ceph.conf"
+        ];
       };
 
-    fileSystems."/home/${cfg.username}/Homelab" = {
+    fileSystems."${homeDir}/${cfg.name}" = {
       device = cfg.mountPoint;
       fsType = "fuse.bindfs";
       options = [
@@ -112,8 +143,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /home/${cfg.username}/Homelab 0755 ${cfg.username} users -"
+      "d ${homeDir}/${cfg.name} 0755 ${cfg.username} users -"
     ];
-
   };
 }

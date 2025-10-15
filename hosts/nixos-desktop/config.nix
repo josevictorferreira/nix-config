@@ -41,24 +41,9 @@ in
     "${configRoot}/modules/security/polkit.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/hardware/homelab-cephfs.nix"
+    "${configRoot}/modules/profiles/homelab-storage.nix"
     ./hardware.nix
   ];
-
-  homelab.cephfs = {
-    enable = true;
-    mountPoint = "/mnt/homelabfs";
-    clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
-    clientId = "josevictor";
-    username = username;
-    monHosts = [
-      "10.10.10.200:6789"
-      "10.10.10.201:6789"
-      "10.10.10.203:6789"
-    ];
-    fsName = "ceph-filesystem";
-    subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
-  };
 
   nixpkgs = {
     config = {
@@ -419,4 +404,12 @@ in
 
   system.activationScripts = { };
   system.stateVersion = "24.05";
+
+  jvf.profiles = {
+    homelabStorage = {
+      enable = true;
+      username = username;
+      isDarwin = false;
+    };
+  };
 }

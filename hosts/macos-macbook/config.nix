@@ -1,4 +1,10 @@
-{ pkgs, username, host, configRoot, ... }:
+{
+  pkgs,
+  username,
+  host,
+  configRoot,
+  ...
+}:
 
 {
   networking.hostName = "${host}";
@@ -90,19 +96,15 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
-    "${configRoot}/modules/hardware/homelab-smb.nix"
   ];
 
-  homelab.smb = {
-    enable = true;
-    isDarwin = true;
-    username = username;
-    serverAddress = "10.10.10.124";
-    exportedName = "homelab-smb";
-    mountPoint = "/Users/${username}/Homelab";
+  jvf.profiles = {
+    homelabStorage = {
+      enable = true;
+      username = username;
+      isDarwin = true;
+    };
   };
-
-  nix.enable = true;
 
   nix.package = pkgs.nix;
 
@@ -116,12 +118,17 @@
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
-    trusted-users = [ "root" username ];
+    trusted-users = [
+      "root"
+      username
+    ];
   };
 
   nix.gc = {
     automatic = true;
-    interval = { Day = 7; };
+    interval = {
+      Day = 7;
+    };
     options = "--delete-older-than 14d";
   };
 
