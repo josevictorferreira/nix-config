@@ -7,8 +7,7 @@
 let
   cfg = config.jvf.services.cephFs;
   mons = lib.concatStringsSep "," cfg.monHosts;
-
-  homeDir = lib.attrByPath [ "users" "users" cfg.username "home" ] "/home/${cfg.username}" config;
+  homeDir = "/home/${cfg.username}";
 in
 {
   options.jvf.services.cephFs = {
@@ -68,13 +67,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = lib.hasAttrByPath [ "sops" "secrets" ] config;
-        message = "jvf.cephFs requires sops-nix (sops.secrets.*) or refactor to provide secret files via options.";
-      }
-    ];
-
     environment.systemPackages = [ pkgs.ceph-client ];
     system.fsPackages = [ pkgs.bindfs ];
 

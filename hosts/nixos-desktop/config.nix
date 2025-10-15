@@ -406,10 +406,6 @@ in
   system.stateVersion = "24.05";
 
   jvf.profiles = {
-    homelabStorage = {
-      enable = true;
-      username = username;
-      isDarwin = false;
-    };
+    homelabStorage.enable = true;
   };
 }

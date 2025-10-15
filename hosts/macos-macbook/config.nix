@@ -99,11 +99,7 @@
   ];
 
   jvf.profiles = {
-    homelabStorage = {
-      enable = true;
-      username = username;
-      isDarwin = true;
-    };
+    homelabStorage.enable = true;
   };
 
   nix.package = pkgs.nix;
