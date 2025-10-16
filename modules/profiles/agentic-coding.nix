@@ -8,6 +8,10 @@ let
   cfg = config.jvf.profiles.agenticCoding;
 in
 {
+  imports = [
+    ../programs/opencode
+  ];
+
   options.jvf.profiles.agenticCoding.enable = lib.mkOption {
     type = lib.types.bool;
     default = false;
