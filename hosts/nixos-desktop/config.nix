@@ -42,6 +42,7 @@ in
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/profiles/homelab-storage.nix"
+    "${configRoot}/modules/profiles/agentic-coding.nix"
     ./hardware.nix
   ];
 
@@ -407,5 +408,6 @@ in
 
   jvf.profiles = {
     homelabStorage.enable = true;
+    agenticCoding.enable = true;
   };
 }

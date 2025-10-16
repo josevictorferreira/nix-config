@@ -8,6 +8,5 @@
     ./lsp-servers.nix
     ./claude.nix
     ./cursor.nix
-    ./opencode.nix
   ];
 }
