@@ -96,11 +96,9 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
+    "${configRoot}/modules/profiles/homelab-storage.nix"
+    "${configRoot}/modules/profiles/agentic-coding.nix"
   ];
-
-  jvf.profiles = {
-    homelabStorage.enable = true;
-  };
 
   nix.package = pkgs.nix;
 
@@ -129,4 +127,9 @@
   };
 
   system.stateVersion = 4;
+
+  jvf.profiles = {
+    homelabStorage.enable = true;
+    agenticCoding.enable = true;
+  };
 }
