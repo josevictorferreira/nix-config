@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -20,5 +21,11 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.opencode.enable = true;
+    jvf.programs.claudecode.enable = true;
+
+    environment.packages = [
+      pkgs.code-cursor
+      pkgs.cursor-cli
+    ];
   };
 }
