@@ -77,7 +77,8 @@ rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
 		sudo darwin-rebuild switch --flake .#macos-macbook --show-trace; \
 	else \
-		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace; \
+		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace && \
+      notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  "; \
 	fi
 
 clean: ## Clean up the Nix store.
