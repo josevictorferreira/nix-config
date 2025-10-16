@@ -18,6 +18,28 @@ let
   '';
 
   configPath = json.generate "ccr-config.json" cfg.settings;
+
+  sanitize = name: lib.replaceStrings [ "/" " " ] [ "_" "-" ] name;
+
+  aiTools = import ../common/ai-tools { inherit lib pkgs; };
+  agentEntries = lib.mapAttrsToList (name: text: {
+    rel = "agents/${sanitize name}.md";
+    src = pkgs.writeText "agent-${sanitize name}.md" text;
+  }) aiTools.agents;
+  commandEntries = lib.mapAttrsToList (name: text: {
+    rel = "commands/${sanitize name}.md";
+    src = pkgs.writeText "command-${sanitize name}.md" text;
+  }) aiTools.commands;
+  installAgents = lib.concatStringsSep "\n" (
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') agentEntries
+  );
+  installCommands = lib.concatStringsSep "\n" (
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') commandEntries
+  );
 in
 {
   options.jvf.programs.claudecode = {
@@ -33,6 +55,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       pkgs.claude-code
+      pkgs.bun
       ccrPkg
     ];
 
@@ -89,6 +112,29 @@ in
         install -m 0644 -o "$user" -g "$group" -D ${configPath} "$dest/config.json"
       else
         echo "ccr: user '$user' not found or has no home directory" >&2
+      fi
+    '';
+
+    system.activationScripts.claudecode = lib.stringAfter [ "users" ] ''
+      set -euo pipefail
+      user="${username}"
+      home="$(getent passwd "$user" | cut -d: -f6 || true)"
+      if [ -n "$home" ] && [ -d "$home" ]; then
+        dest="$home/.claude"
+
+        group="$(id -gn "$user" 2>/dev/null || echo users)"
+
+        mkdir -p "$dest" "$dest/agents" "$dest/commands"
+
+        # agents
+        ${installAgents}
+
+        # commands
+        ${installCommands}
+
+        chown -R "$user":"$group" "$dest"
+      else
+        echo "opencode: user '$user' not found or has no home directory" >&2
       fi
     '';
   };

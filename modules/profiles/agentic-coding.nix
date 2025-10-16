@@ -11,6 +11,7 @@ in
 {
   imports = [
     ../programs/opencode
+    ../programs/claudecode.nix
   ];
 
   options.jvf.profiles.agenticCoding.enable = lib.mkOption {
