@@ -20,7 +20,14 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, darwin, sops-nix, home-manager, ... }:
+  outputs =
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      home-manager,
+      ...
+    }:
     let
       systems = {
         nixos = {
@@ -41,41 +48,84 @@
         };
       };
 
-      specialArgsFor = { systemArc, os, host, username, isDarwin, isNixOS }: {
-        inherit inputs os systemArc username host;
-        configRoot = ./.;
-        inherit isDarwin isNixOS;
-      };
+      specialArgsFor =
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
+        }:
+        {
+          inherit
+            inputs
+            os
+            systemArc
+            username
+            host
+            ;
+          configRoot = ./.;
+          inherit isDarwin isNixOS;
+        };
 
-      homeManagerConfig = { systemArc, os, host, username, isDarwin, isNixOS, ... }: {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.backupFileExtension = "backup";
-        home-manager.extraSpecialArgs = specialArgsFor { inherit systemArc os host username isDarwin isNixOS; };
-        home-manager.users.${username} = import ./home-manager/${host}/${os}-specific.nix;
-      };
+      homeManagerConfig =
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
+          ...
+        }:
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "backup";
+          home-manager.extraSpecialArgs = specialArgsFor {
+            inherit
+              systemArc
+              os
+              host
+              username
+              isDarwin
+              isNixOS
+              ;
+          };
+          home-manager.users.${username} = import ./home-manager/${host}/${os}-specific.nix;
+        };
 
-      nixosModule = { systemArc, host, ... }: nixpkgs.lib.nixosSystem {
-        specialArgs = specialArgsFor (systems.nixos);
-        modules = [
-          sops-nix.nixosModules.sops
-          ./hosts/${host}/config.nix
-          inputs.distro-grub-themes.nixosModules.${systemArc}.default
-          home-manager.nixosModules.home-manager
-          homeManagerConfig
-        ];
-      };
+      nixosModule =
+        { systemArc, host, ... }:
+        nixpkgs.lib.nixosSystem {
+          specialArgs = specialArgsFor (systems.nixos);
+          modules = [
+            sops-nix.nixosModules.sops
+            ./hosts/${host}/config.nix
+            inputs.distro-grub-themes.nixosModules.${systemArc}.default
+            home-manager.nixosModules.home-manager
+            homeManagerConfig
+          ];
+        };
 
-      darwinModule = { systemArc, host, ... }: darwin.lib.darwinSystem {
-        specialArgs = specialArgsFor (systems.macos);
-        system = systemArc;
-        modules = [
-          sops-nix.darwinModules.sops
-          ./hosts/${host}/config.nix
-          home-manager.darwinModules.home-manager
-          homeManagerConfig
-        ];
-      };
+      darwinModule =
+        { systemArc, host, ... }:
+        darwin.lib.darwinSystem {
+          specialArgs = specialArgsFor (systems.macos);
+          system = systemArc;
+          modules = [
+            sops-nix.darwinModules.sops
+            ./hosts/${host}/config.nix
+            home-manager.darwinModules.home-manager
+            homeManagerConfig
+          ];
+        };
+
+      forAllSystems = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
 
     in
     {
@@ -86,5 +136,7 @@
       darwinConfigurations = {
         ${systems.macos.host} = darwinModule systems.macos;
       };
+
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
 }

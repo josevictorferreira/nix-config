@@ -5,7 +5,11 @@ RESET=\033[0m
 
 .DEFAULT_GOAL := help
 
-.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys
+.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys lint
+
+lint: ## Lint the nix files.
+	@bash -c "nix fmt -- --check"
+
 
 GIT_BASE_ADDRESS := git@github.com:josevictorferreira
 
@@ -53,7 +57,7 @@ up_keys: ## Update keys for secrets files
 secrets: ## Edit the secrets file
 	sops secrets/secrets.enc.yaml
 
-check: ## Check if the flake is valid.
+check: lint ## Check if the flake is valid.
 	@bash -c "nix flake check --show-trace"
 
 update: ## Update flake
