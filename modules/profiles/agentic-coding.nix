@@ -24,7 +24,7 @@ in
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
 
-    environment.packages = [
+    environment.systemPackages = [
       pkgs.code-cursor
       pkgs.cursor-cli
     ];
