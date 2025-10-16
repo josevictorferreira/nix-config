@@ -19,12 +19,15 @@ in
   };
 
   home = {
-    packages = with pkgs; [
-      fzf
-      ripgrep
-      fd
-      gcc
-      tree-sitter
+    packages = [
+      pkgs.fzf
+      pkgs.ripgrep
+      pkgs.fd
+      pkgs.gcc
+      pkgs.tree-sitter
+      pkgs.glibc
+      pkgs.glibc.dev
+      pkgs.pkg-config
     ];
 
     file = {

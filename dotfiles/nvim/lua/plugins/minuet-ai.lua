@@ -89,7 +89,7 @@ return n;
 		}
 
 		local prefix_first_template =
-			"{{{language-and-tab}}}\n<contextBeforeCursor>\n{{{context_before_cursor}}}<cursorPosition>\n<contextAfterCursor>\n{{{context_after_cursor}}}"
+			"{{{language-and-tab}}}\n<contextBeforeCursor>\n{{{context_before_cursor}}}\n<cursorPosition>\n<contextAfterCursor>\n{{{context_after_cursor}}}"
 
 		return {
 			provider = "openai_compatible",

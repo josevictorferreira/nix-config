@@ -78,12 +78,25 @@ function notes() {
   nvim -- "${picks[@]}"
 }
 
-function git_commit_message() {
-    local MODEL_NAME="openai/gpt-4.1-nano"
-    local BASE_PROMPT="With the project README.md in mind: \"{README_CONTENT}\", the following changes were made to the repository: \"{STAGED_CHANGES}\", generate a commit message to the repository as if the coder would commit those changes right now."
-		local BASE_PROMPT=$(cat <<EOF
+function trim_string() {
+  local input="$1"
+  local max_chars="$2"
+  if (( ${#input} > max_chars )); then
+    echo "${input:0:max_chars}...[TRUNCATED]"
+  else
+    echo "$input"
+  fi
+}
 
+function git_commit_message() {
+    local MODEL_NAME="x-ai/grok-4-fast"
+    local MAX_CHARS=7200000
+		local BASE_PROMPT=$(cat <<EOF
+Generate a commit message to the repository as if the coder would commit those changes right now.
+Use imperative mood in the subject line.
+Make sure the commit message is really concise and descriptive, explain why the change was made. Avoid the message being too large.
 With the project README.md in mind:
+
 \`\`\`
 {README_CONTENT}
 \`\`\`
@@ -92,10 +105,6 @@ The following changes were made to the repository:
 \`\`\`
 {STAGED_CHANGES}
 \`\`\`
-
-Generate a commit message to the repository as if the coder would commit those changes right now.
-Use the imperative mood in the subject line.
-Make sure the commit message is concise and descriptive, explain why the change was made. Avoid the message being too large.
 EOF
 )
 		local log_file="/tmp/git_commit_message.log"
@@ -131,10 +140,12 @@ EOF
 			echo "[INFO] PROMPT: $prompt\n\n" >> $log_file
 		fi
 
+    local prompt_truncated=$(trim_string "$prompt" "$MAX_CHARS")
+
 		local payload
 		payload=$(jq -n \
 			--arg model "$MODEL_NAME" \
-			--arg content "$prompt" \
+			--arg content "$prompt_truncated" \
 			'{model: $model, messages: [{role:"user", content: $content }]}' )
 		
 		local response
