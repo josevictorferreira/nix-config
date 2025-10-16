@@ -5,10 +5,17 @@ RESET=\033[0m
 
 .DEFAULT_GOAL := help
 
-.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys lint
+.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys lint format
 
 lint: ## Lint the nix files.
-	@bash -c "nix fmt -- --check"
+	@echo "Running nix formatter check..."
+	@nix fmt -- --check . || (echo "❌ Some files need formatting. Run 'make format' to fix." && exit 1)
+	@echo "✅ All files are properly formatted."
+
+format: ## Format the nix files.
+	@echo "Formatting nix files..."
+	@nix fmt .
+	@echo "✅ Formatting complete."
 
 
 GIT_BASE_ADDRESS := git@github.com:josevictorferreira

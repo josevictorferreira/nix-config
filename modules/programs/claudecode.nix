@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -22,23 +21,31 @@ let
   sanitize = name: lib.replaceStrings [ "/" " " ] [ "_" "-" ] name;
 
   aiTools = import ../common/ai-tools { inherit lib pkgs; };
-  agentEntries = lib.mapAttrsToList (name: text: {
-    rel = "agents/${sanitize name}.md";
-    src = pkgs.writeText "agent-${sanitize name}.md" text;
-  }) aiTools.agents;
-  commandEntries = lib.mapAttrsToList (name: text: {
-    rel = "commands/${sanitize name}.md";
-    src = pkgs.writeText "command-${sanitize name}.md" text;
-  }) aiTools.commands;
+  agentEntries = lib.mapAttrsToList
+    (name: text: {
+      rel = "agents/${sanitize name}.md";
+      src = pkgs.writeText "agent-${sanitize name}.md" text;
+    })
+    aiTools.agents;
+  commandEntries = lib.mapAttrsToList
+    (name: text: {
+      rel = "commands/${sanitize name}.md";
+      src = pkgs.writeText "command-${sanitize name}.md" text;
+    })
+    aiTools.commands;
   installAgents = lib.concatStringsSep "\n" (
-    map (e: ''
-      install -m 0644 -D ${e.src} "$dest/${e.rel}"
-    '') agentEntries
+    map
+      (e: ''
+        install -m 0644 -D ${e.src} "$dest/${e.rel}"
+      '')
+      agentEntries
   );
   installCommands = lib.concatStringsSep "\n" (
-    map (e: ''
-      install -m 0644 -D ${e.src} "$dest/${e.rel}"
-    '') commandEntries
+    map
+      (e: ''
+        install -m 0644 -D ${e.src} "$dest/${e.rel}"
+      '')
+      commandEntries
   );
 in
 {

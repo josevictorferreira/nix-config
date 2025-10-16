@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  isDarwin,
-  username,
-  ...
+{ config
+, lib
+, isDarwin
+, username
+, ...
 }:
 
 let

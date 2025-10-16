@@ -104,7 +104,7 @@
       neededForBoot = true;
     };
 
-  fileSystems."/nix"  =
+  fileSystems."/nix" =
     {
       device = "/dev/disk/by-partlabel/nixos-root";
       fsType = "btrfs";

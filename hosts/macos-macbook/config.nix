@@ -1,9 +1,8 @@
-{
-  pkgs,
-  username,
-  host,
-  configRoot,
-  ...
+{ pkgs
+, username
+, host
+, configRoot
+, ...
 }:
 
 {

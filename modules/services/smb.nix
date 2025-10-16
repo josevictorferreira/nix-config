@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  isDarwin,
-  ...
+{ config
+, lib
+, isDarwin
+, ...
 }:
 let
   cfg = config.jvf.services.smb;
