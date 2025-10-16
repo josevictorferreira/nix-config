@@ -45,12 +45,7 @@ in
 
     settings = lib.mkOption {
       type = json.type;
-      default = {
-        theme = "one-dark";
-        model = "moonshotai/kimi-k2-0905";
-        autoshare = false;
-        autoupdate = false;
-      };
+      default = { };
       description = "Settings written to ~/.config/opencode/config.json";
     };
   };
@@ -58,12 +53,22 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = [ pkgs.opencode ];
 
+    jvf.programs.opencode.settings = {
+      theme = "one-dark";
+      model = "moonshotai/kimi-k2-0905";
+      autoshare = false;
+      autoupdate = false;
+    };
+
     system.activationScripts.opencode = lib.stringAfter [ "users" ] ''
       set -euo pipefail
       user="${username}"
       home="$(getent passwd "$user" | cut -d: -f6 || true)"
       if [ -n "$home" ] && [ -d "$home" ]; then
         dest="$home/.config/opencode"
+
+        group="$(id -gn "$user" 2>/dev/null || echo users)"
+
         mkdir -p "$dest" "$dest/agent" "$dest/command"
 
         # config.json
@@ -75,7 +80,7 @@ in
         # commands
         ${installCommands}
 
-        chown -R "$user":"$user" "$dest"
+        chown -R "$user":"$group" "$dest"
       else
         echo "opencode: user '$user' not found or has no home directory" >&2
       fi
