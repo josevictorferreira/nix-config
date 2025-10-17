@@ -5,4 +5,5 @@ lib.foldl' lib.recursiveUpdate { } [
   (import ./commands/git/index.nix { inherit lib; })
   (import ./commands/quality/index.nix { inherit lib; })
   (import ./commands/project/index.nix { inherit lib; })
+  (import ./commands/general/index.nix { inherit lib; })
 ]
