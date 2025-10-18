@@ -15,6 +15,9 @@
         "google/gemini-2.5-pro" = {
           name = "Gemini 2.5 Pro";
         };
+        "deepseek/deepseek-v3.2-exp" = {
+          name = "DeepSeek: DeepSeek V3.2 Exp";
+        };
       };
     };
   };

@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   inherit (lib) mkIf;
@@ -11,32 +12,27 @@ let
   configPath = json.generate "opencode-config.json" cfg.settings;
   sanitize = name: lib.replaceStrings [ "/" " " ] [ "_" "-" ] name;
   aiTools = import ../../common/ai-tools { inherit lib pkgs; };
-  agentEntries = lib.mapAttrsToList
-    (name: text: {
-      rel = "agent/${sanitize name}.md";
-      src = pkgs.writeText "agent-${sanitize name}.md" text;
-    })
-    aiTools.agents;
-  commandEntries = lib.mapAttrsToList
-    (name: text: {
-      rel = "command/${sanitize name}.md";
-      src = pkgs.writeText "command-${sanitize name}.md" text;
-    })
-    aiTools.commands;
+  agentEntries = lib.mapAttrsToList (name: text: {
+    rel = "agent/${sanitize name}.md";
+    src = pkgs.writeText "agent-${sanitize name}.md" text;
+  }) aiTools.agents;
+  commandEntries = lib.mapAttrsToList (name: text: {
+    rel = "command/${sanitize name}.md";
+    src = pkgs.writeText "command-${sanitize name}.md" text;
+  }) aiTools.commands;
   installAgents = lib.concatStringsSep "\n" (
-    map
-      (e: ''
-        install -m 0644 -D ${e.src} "$dest/${e.rel}"
-      '')
-      agentEntries
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') agentEntries
   );
   installCommands = lib.concatStringsSep "\n" (
-    map
-      (e: ''
-        install -m 0644 -D ${e.src} "$dest/${e.rel}"
-      '')
-      commandEntries
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') commandEntries
   );
+  opencodePkg = pkgs.writeShellScriptBin "opencode" ''
+    ${pkgs.bun}/bin/bunx opencode-ai@latest "$@"
+  '';
 in
 {
   imports = [
@@ -58,11 +54,11 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.opencode ];
+    environment.systemPackages = [ opencodePkg ];
 
     jvf.programs.opencode.settings = {
       theme = "one-dark";
-      model = "moonshotai/kimi-k2-0905";
+      model = "deepseek/deepseek-v3.2-exp";
       autoshare = false;
       autoupdate = false;
     };
