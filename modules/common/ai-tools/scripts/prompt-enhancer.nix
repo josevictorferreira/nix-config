@@ -70,16 +70,19 @@ let
     ARGS="$*"
 
     if [[ "" ]]; then
-      `prompt-enhancer feature` Add a poisonous giant snake monster to the game; echo -e "\n\n============\n\n";
-      
-      `prompt-enhancer ask` How frequently will the dragon monster be spawned?; echo -e "\n\n============\n\n";
-      
-      `prompt-enhancer bare` How frequently will the dragon monster be spawned?; echo -e "\n\n============\n\n";  
+      echo "This is debug code that should not execute"
+      # Example usage that was commented out
+      # prompt-enhancer feature "Add a poisonous giant snake monster to the game"
+      # prompt-enhancer ask "How frequently will the dragon monster be spawned?"
+      # prompt-enhancer bare "How frequently will the dragon monster be spawned?"
     fi;
 
     if [[ "$ARGS" == *" "* ]]; then
-      PROMPT_OBJECT_ARG=$${ARGS%% *};
-      REST=$${ARGS#* };
+      PROMPT_OBJECT_ARG=$(echo "$ARGS" | cut -d' ' -f1)
+      REST=$(echo "$ARGS" | cut -d' ' -f2-)
+    else
+      PROMPT_OBJECT_ARG="$ARGS"
+      REST=""
     else
       PROMPT_OBJECT_ARG="$ARGS";
       REST="";
@@ -141,8 +144,8 @@ let
       EPILOGUE_INDEPENDANT_CLAUSE="thinking the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT through thoroughly";
 
     if [[ "$REST" == *" "* ]]; then
-      MODEL=$${REST%% *}           # second word
-      USER_PROMPT=$${REST#* }      # everything after second word
+      MODEL=$${REST%% *};           # second word
+      USER_PROMPT=$${REST#* };      # everything after second word
     else
       MODEL="$REST"               # if no space, second = rest
       USER_PROMPT=""              # nothing left
@@ -178,25 +181,21 @@ let
     fi;
 
 
-    ENHANCED=$$({
-    printf '%s\n' <<'PRELUDE'
-    ${promptPrelude}
-    PRELUDE
+    ENHANCED=$(echo "${promptPrelude}"
     [[ $${OBJECT} != "BARE" ]] && echo -en "$${ENHANCER_ACTION} $${ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT}: "
     echo -e "$${USER_PROMPT}$${PUNCTUATION}"
-    [[ $${ENHANCER_SUPPLEMENTAL_PHRASE} ]] && echo -e "\n$${ENHANCER_SUPPLEMENTAL_PHRASE}\n"
-    })
+    [[ $${ENHANCER_SUPPLEMENTAL_PHRASE} ]] && echo -e "\n$${ENHANCER_SUPPLEMENTAL_PHRASE}\n")
 
     if [[ -z $DEBUG__SKIP_ENHANCING ]]; then
-      ENHANCED=$$(echo "$ENHANCED" | opencode --model $$MODEL --agent plan run 2>/dev/null);
+      ENHANCED=$(echo "$ENHANCED" | opencode --model $MODEL --agent plan run 2>/dev/null);
     else
       ENHANCED="$ENHANCED\n\nDEBUG__SKIP_ENHANCING is set, this is dummy data!";
     fi;
 
-    ENHANCED=$$(echo "$ENHANCED" | gsed 's/^#\+ *Enhanced.*//i');
-    ENHANCED=$$(echo "$ENHANCED" | gsed 's/^#/##/');
-    ENHANCED=$$(echo -e "$ENHANCED" | gsed -Ez 's/\n{3,}/\n\n/g');
-    ENHANCED=$$(echo -e "$ENHANCED" | awk 'NF{p=1} p');
+    ENHANCED=$(echo "$ENHANCED" | gsed 's/^#\+ *Enhanced.*//i');
+    ENHANCED=$(echo "$ENHANCED" | gsed 's/^#/##/');
+    ENHANCED=$(echo -e "$ENHANCED" | gsed -Ez 's/\n{3,}/\n\n/g');
+    ENHANCED=$(echo -e "$ENHANCED" | awk 'NF{p=1} p');
 
     [[ "$${RFC2119:-0}" -ge 1 && $OBJECT != "BARE" && $OBJECT != "question" ]] &&\
       ENHANCED="The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\",  \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.\n\n$${ENHANCED}\n";
@@ -205,20 +204,15 @@ let
       ENHANCED="# $ENHANCED_PROMPT_TITLE_HEADING:\n\n$${ENHANCED}";
 
     if [[ $OBJECT != "BARE" && $OBJECT != "question" ]]; then
-       ENHANCED=$$({
-                  [[ "$${RFC2119:-0}" -ge 2  ]] && printf '%s\n' <<'RFC2119'
-    ${rfc2119}
-    RFC2119
+       ENHANCED=$(printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" "$ENHANCED" \
+         "$([[ "$${RFC2119:-0}" -ge 2 ]] && echo "${rfc2119}")" \
+         "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!" \
+         "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:"
+         "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed."
+         "- Next, write the plan into an appropriately named new Markdown file in the project's ./plans directory which includes checkboxes in which to mark the completion of each step."
+         "- Proceed to systematically implement the plan that you just wrote in the Markdown file. You MUST check off each step you've completed in the Markdown file immediately as you complete it, you MAY NOT proceed to the next step until you have checked off the current step."
+          "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.")
 
-                  echo -e "$ENHANCED\n";
-
-                  echo -e "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!\n";
-                  echo -e "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:\n"
-                  echo -e "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed.";
-                  echo -e "- Next, write the plan into an appropriately named new Markdown file in the project's ./plans directory which includes checkboxes in which to mark the completion of each step.";
-                  echo -e "- Proceed to systematically implement the plan that you just wrote in the Markdown file. You MUST check off each step you've completed in the Markdown file immediately as you complete it, you MAY NOT proceed to the next step until you have checked off the current step.";
-                  echo -e "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.";
-                });
     fi;
 
     [[ ! -z $DEBUG__OUTPUT_FENCES ]] && echo "BEGIN";
