@@ -7,9 +7,8 @@
 
 let
   cfg = config.jvf.profiles.agenticCoding;
-  scripts = (import ../common/ai-tools { inherit lib; }).scripts;
-  bins = lib.mapAttrs (name: script: pkgs.writeShellScriptBin name script) scripts;
-  binsList = lib.attrValues bins;
+  aiTools = import ../common/ai-tools { inherit lib pkgs; };
+  scriptPkgs = lib.attrValues aiTools.scripts;
 in
 {
   imports = [
@@ -31,6 +30,6 @@ in
       pkgs.code-cursor
       pkgs.cursor-cli
     ]
-    ++ binsList;
+    ++ scriptPkgs;
   };
 }
