@@ -177,17 +177,18 @@ let
       exit 0;
     fi;
 
+
     ENHANCED=$$({
-                printf '%s\n' <<'PRELUDE'
+    printf '%s\n' <<'PRELUDE'
     ${promptPrelude}
     PRELUDE
-                [[ $OBJECT != "BARE" ]] && echo -en "$ENHANCER_ACTION $ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT: ";
-                echo -e "$${USER_PROMPT}$${PUNCTUATION}";
-                [[ $ENHANCER_SUPPLEMENTAL_PHRASE ]] && echo -e "\n$ENHANCER_SUPPLEMENTAL_PHRASE\n";
-              });
+    [[ $${OBJECT} != "BARE" ]] && echo -en "$${ENHANCER_ACTION} $${ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT}: "
+    echo -e "$${USER_PROMPT}$${PUNCTUATION}"
+    [[ $${ENHANCER_SUPPLEMENTAL_PHRASE} ]] && echo -e "\n$${ENHANCER_SUPPLEMENTAL_PHRASE}\n"
+    })
 
     if [[ -z $DEBUG__SKIP_ENHANCING ]]; then
-      ENHANCED=$$(echo "$ENHANCED" | opencode --model $MODEL --agent plan run 2>/dev/null);
+      ENHANCED=$$(echo "$ENHANCED" | opencode --model $$MODEL --agent plan run 2>/dev/null);
     else
       ENHANCED="$ENHANCED\n\nDEBUG__SKIP_ENHANCING is set, this is dummy data!";
     fi;
@@ -204,7 +205,7 @@ let
       ENHANCED="# $ENHANCED_PROMPT_TITLE_HEADING:\n\n$${ENHANCED}";
 
     if [[ $OBJECT != "BARE" && $OBJECT != "question" ]]; then
-      ENHANCED=$$({              
+       ENHANCED=$$({
                   [[ "$${RFC2119:-0}" -ge 2  ]] && printf '%s\n' <<'RFC2119'
     ${rfc2119}
     RFC2119
