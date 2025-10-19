@@ -63,6 +63,11 @@ in
       autoupdate = false;
     };
 
+    sops.secrets."context7_api_key" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
+
     system.activationScripts.opencode = lib.stringAfter [ "users" ] ''
       set -euo pipefail
       user="${username}"
