@@ -18,7 +18,6 @@
         "--bun"
         "shadcn@latest"
         "mcp"
-        (lib.getExe pkgs.bun)
       ];
       enabled = true;
     };
