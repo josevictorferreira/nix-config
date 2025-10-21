@@ -21,6 +21,7 @@
       unetbootin
       nixos-generators
 
+      discord
       spotifywm
 
       lmstudio

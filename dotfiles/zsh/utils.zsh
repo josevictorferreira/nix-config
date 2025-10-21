@@ -89,7 +89,7 @@ function trim_string() {
 }
 
 function git_commit_message() {
-    local MODEL_NAME="x-ai/grok-4-fast"
+		local MODEL_NAME="google/gemini-2.5-flash-lite"
     local MAX_CHARS=7200000
 		local BASE_PROMPT=$(cat <<EOF
 Generate a commit message to the repository as if the coder would commit those changes right now.
