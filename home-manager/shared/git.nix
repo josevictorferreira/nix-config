@@ -1,8 +1,9 @@
-{ config
-, configRoot
-, host
-, pkgs
-, ...
+{
+  config,
+  configRoot,
+  host,
+  pkgs,
+  ...
 }:
 let
   inherit (import "${configRoot}/hosts/${host}/variables.nix") gitUsername gitEmail;
@@ -28,27 +29,22 @@ in
     pkgs.yq
   ];
 
-  programs.neovim.enable = true; # ensure nvim is available
+  programs.neovim.enable = true;
 
   programs.git = {
     enable = true;
-    userName = gitUsername;
-    userEmail = gitEmail;
 
-    # Optional: pretty structural diffs for `git diff`, unrelated to difftool
-    difftastic.enable = true;
-
-    extraConfig = {
+    settings = {
+      user = {
+        name = gitUsername;
+        email = gitEmail;
+      };
       core.hooksPath = "${config.xdg.configHome}/git/hooks";
       core.editor = "nvim";
 
-      # Difftool (use with `git difftool`)
       diff.tool = "nvimdiff";
       difftool.prompt = false;
-      # NOTE: single-dollar variables and Nix '' quoting
       difftool.nvimdiff.cmd = ''nvim -d "$LOCAL" "$REMOTE"'';
-
-      # Mergetool (use with `git mergetool`)
       merge.tool = "nvimdiff3";
       mergetool.prompt = false;
       mergetool.keepBackup = false;
@@ -66,6 +62,8 @@ in
       fetch.tags = true;
     };
   };
+
+  programs.difftastic.git.enable = true;
 
   xdg.configFile."git/hooks/pre-commit" = {
     source = preCommit;

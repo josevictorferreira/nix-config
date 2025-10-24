@@ -1,7 +1,8 @@
-{ config
-, username
-, configRoot
-, ...
+{
+  config,
+  username,
+  configRoot,
+  ...
 }:
 
 let
@@ -11,6 +12,11 @@ in
   sops = {
     defaultSopsFile = "${configRoot}/secrets/secrets.enc.yaml";
     age.keyFile = ageKeyFilePath;
+  };
+
+  sops.secrets."github_token" = {
+    owner = config.users.users.${username}.name;
+    mode = "0400";
   };
 
   sops.secrets."nordvpn_access_token" = {

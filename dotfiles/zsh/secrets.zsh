@@ -4,3 +4,5 @@ export OPENROUTER_API_KEY_AUTOCOMPLETE=$(cat /run/secrets/openrouter_autocomplet
 export OPENROUTER_API_KEY_CODE_AGENT=$(cat /run/secrets/openrouter_code_agent)
 
 export CONTEXT7_API_KEY=$(cat /run/secrets/context7_api_key)
+
+export GITHUB_TOKEN=$(cat /run/secrets/github_token)
