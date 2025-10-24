@@ -34,6 +34,7 @@ k9s:
     sinceSeconds: -1
     textWrap: true
     showTime: false
+    disableAutoscroll: true
   thresholds:
     cpu:
       critical: 90
