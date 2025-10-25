@@ -67,7 +67,10 @@
             isDarwin
             isNixOS
             ;
-          jvfLib = import ./lib { lib = nixpkgs.lib; };
+          jvfLib = import ./lib {
+            lib = nixpkgs.lib;
+            pkgs = nixpkgs.pkgs;
+          };
           configRoot = ./.;
         };
 

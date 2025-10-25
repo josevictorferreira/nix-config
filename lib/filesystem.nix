@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   # importModulesInDir: Automatically discover and import all .nix modules in a directory
@@ -34,4 +34,65 @@
     in
     # Convert filenames to full paths by prepending the directory
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
+
+  # mkConfigDir: Generate a configuration directory with structured file content
+  #
+  # WHAT IT DOES:
+  # - Creates a directory containing configuration files with generated content
+  # - Supports multiple formats: YAML, INI, and raw text
+  # - Uses Nix store derivations for reproducible configuration files
+  # - Returns a path that can be used as a configuration directory
+  #
+  # WHAT IT NEEDS:
+  # - `name`: Directory name (used in derivation naming)
+  # - `files`: Attribute set where keys are file paths and values are specs:
+  #   - `type`: "yaml", "ini", or omitted for raw text
+  #   - `content`: The actual configuration data (attrset for YAML/INI, string for text)
+  # - Returns: Path to generated configuration directory
+  #
+  # WHY THIS EXISTS:
+  # - Eliminates manual file creation for dynamic configurations
+  # - Ensures configuration files are reproducible and version-controlled
+  # - Provides type-safe generation of complex config formats
+  # - Standardizes configuration management across the entire system
+  #
+  # USAGE EXAMPLE:
+  # home.file.".config/myapp" = mkConfigDir {
+  #   name = "myapp-config";
+  #   files = {
+  #     "config.yaml" = {
+  #       type = "yaml";
+  #       content = { key = "value"; nested = { setting = true; }; };
+  #     };
+  #     "settings.ini" = {
+  #       type = "ini";
+  #       content = { section = { option = "value"; }; };
+  #     };
+  #   };
+  # };
+  mkConfigDir =
+    { name, files }:
+    let
+      # Use mapAttrsToList to transform the input attrset into a list
+      # suitable for pkgs.linkFarm.
+      pathSpecs = lib.mapAttrsToList (path: spec: {
+        inherit path;
+        # For each file, create the corresponding derivation.
+        # This is where we handle different content types.
+        source =
+          if spec.type == "yaml" then
+            # Use writeText with the YAML generator.
+            pkgs.writeText "${name}-${path}" (lib.generators.toYAML { } spec.content)
+          else if spec.type == "ini" then
+            # Use writeText with the INI generator.
+            pkgs.writeText "${name}-${path}" (
+              lib.generators.toINIWithGlobalSection { } { globalSection = spec.content; }
+            )
+          else
+            # Default to raw text.
+            pkgs.writeText "${name}-${path}" spec.content;
+      }) files;
+    in
+    # pkgs.linkFarm is the perfect tool to build a directory from a list of sources.
+    pkgs.linkFarm name pathSpecs;
 }

@@ -1,5 +1,5 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
-  filesystem = import ./filesystem.nix { inherit lib; };
+  filesystem = import ./filesystem.nix { inherit lib pkgs; };
 }

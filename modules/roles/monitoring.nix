@@ -10,6 +10,7 @@ in
 {
   imports = [
     ../programs/btop.nix
+    ../programs/k9s.nix
   ];
 
   options.jvf.roles.monitoring.enable = lib.mkOption {
@@ -20,5 +21,6 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.btop.enable = true;
+    jvf.programs.k9s.enable = true;
   };
 }
