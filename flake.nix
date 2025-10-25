@@ -21,11 +21,12 @@
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , darwin
-    , sops-nix
-    , home-manager
-    , ...
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      home-manager,
+      ...
     }:
     let
       systems = {
@@ -48,13 +49,13 @@
       };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
         }:
         {
           inherit
@@ -63,19 +64,22 @@
             systemArc
             username
             host
+            isDarwin
+            isNixOS
             ;
+          jvfLib = import ./lib { lib = nixpkgs.lib; };
           configRoot = ./.;
-          inherit isDarwin isNixOS;
         };
 
       homeManagerConfig =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        , ...
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
+          ...
         }:
         {
           home-manager.useGlobalPkgs = true;
