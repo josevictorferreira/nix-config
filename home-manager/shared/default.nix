@@ -21,7 +21,6 @@ in
     ./ghostty.nix
     ./k9s.nix
     ./alacritty.nix
-    ./btop.nix
     ./development
   ];
 
@@ -67,7 +66,6 @@ in
       zip
       unzip
       imagemagick
-      btop
       fastfetch
       ffmpeg
       nettools

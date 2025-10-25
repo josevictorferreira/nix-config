@@ -1,19 +1,20 @@
-{ config
-, lib
-, isDarwin
-, username
-, ...
+{
+  config,
+  lib,
+  isDarwin,
+  username,
+  ...
 }:
 
 let
-  cfg = config.jvf.profiles.homelabStorage;
+  cfg = config.jvf.roles.networkStorage;
   profileOptions = {
     enable = lib.mkEnableOption "Enable homelab storage mount on the home directory.";
   };
   darwinModule = {
     imports = [ ./../services/smb.nix ];
 
-    options.jvf.profiles.homelabStorage = profileOptions;
+    options.jvf.roles.networkStorage = profileOptions;
 
     config = lib.mkIf (cfg.enable) {
       jvf.services.smb = {
@@ -28,7 +29,7 @@ let
   defaultModule = {
     imports = [ ./../services/cephfs.nix ];
 
-    options.jvf.profiles.homelabStorage = profileOptions;
+    options.jvf.roles.networkStorage = profileOptions;
 
     config = lib.mkIf (cfg.enable) {
       jvf.services.cephFs = {

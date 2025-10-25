@@ -74,7 +74,6 @@ This document outlines the comprehensive plan for removing Home Manager from the
 #### 2.4 Applications & Tools
 **Files to migrate:**
 - [ ] `btop.nix` - Resource monitor
-- [ ] `chat.nix` - Chat applications
 - [ ] `easyeffects.nix` - Audio effects processor
 - [ ] `git.nix` - Git configuration
 - [ ] `k9s.nix` - Kubernetes management

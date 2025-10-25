@@ -6,7 +6,7 @@
 }:
 
 let
-  cfg = config.jvf.profiles.agenticCoding;
+  cfg = config.jvf.roles.aiDeveloper;
 in
 {
   imports = [
@@ -14,7 +14,7 @@ in
     ../programs/claudecode.nix
   ];
 
-  options.jvf.profiles.agenticCoding.enable = lib.mkOption {
+  options.jvf.roles.aiDeveloper.enable = lib.mkOption {
     type = lib.types.bool;
     default = false;
     description = "Whether to enable vibe coding tools.";

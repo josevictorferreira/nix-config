@@ -41,8 +41,7 @@ in
     "${configRoot}/modules/security/polkit.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/profiles/homelab-storage.nix"
-    "${configRoot}/modules/profiles/agentic-coding.nix"
+    "${configRoot}/modules/roles"
     ./hardware.nix
   ];
 
@@ -408,8 +407,9 @@ in
   system.activationScripts = { };
   system.stateVersion = "24.05";
 
-  jvf.profiles = {
-    homelabStorage.enable = true;
-    agenticCoding.enable = true;
+  jvf.roles = {
+    networkStorage.enable = true;
+    aiDeveloper.enable = true;
+    monitoring.enable = true;
   };
 }

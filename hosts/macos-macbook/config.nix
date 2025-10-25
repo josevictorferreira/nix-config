@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, host
-, configRoot
-, ...
+{
+  pkgs,
+  username,
+  host,
+  configRoot,
+  ...
 }:
 
 {
@@ -95,8 +96,7 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
-    "${configRoot}/modules/profiles/homelab-storage.nix"
-    "${configRoot}/modules/profiles/agentic-coding.nix"
+    "${configRoot}/modules/roles"
   ];
 
   nix.package = pkgs.nix;
@@ -127,8 +127,9 @@
 
   system.stateVersion = 4;
 
-  jvf.profiles = {
-    homelabStorage.enable = true;
-    agenticCoding.enable = true;
+  jvf.roles = {
+    networkStorage.enable = true;
+    aiDeveloper.enable = true;
+    monitoring.enable = true;
   };
 }
