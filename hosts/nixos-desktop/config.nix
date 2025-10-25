@@ -1,10 +1,11 @@
-{ pkgs
-, lib
-, host
-, options
-, configRoot
-, username
-, ...
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  configRoot,
+  username,
+  ...
 }:
 let
 
@@ -153,6 +154,8 @@ in
       sambaFull
       gvfs
       hplip
+
+      brave
 
       # System Tools
       gparted
