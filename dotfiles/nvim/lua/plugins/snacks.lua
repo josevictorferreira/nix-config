@@ -1,6 +1,6 @@
 return {
 	"folke/snacks.nvim",
-	optional = true,
+	optional = false,
 	opts = {
 		picker = {
 			actions = {
