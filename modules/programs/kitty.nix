@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 let
   cfg = config.jvf.programs.kitty;
@@ -31,15 +32,13 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${builtins.toString value}"
+      ) settings
     );
 in
 {
@@ -65,16 +64,37 @@ in
         text = toConfigFormat cfg.settings;
       };
 
-      kitty-wrapped = pkgs.writeShellApplication {
+      kittyWrapped = pkgs.writeShellApplication {
         name = "kitty";
         runtimeInputs = [ cfg.package ];
         text = ''
-          exec ${lib.getExe cfg.package} --config "${configFile}" "$@"
+          exec ${lib.getExe cfg.package} --config="${configFile}" "$@"
         '';
+      };
+
+      kittyDesktop = pkgs.makeDesktopItem {
+        name = "kitty";
+        desktopName = "Kitty";
+        comment = "A GPU-accelerated terminal emulator";
+        exec = lib.getExe kittyWrapped;
+        terminal = false;
+        type = "Application";
+        categories = [
+          "System"
+          "Utility"
+          "TerminalEmulator"
+        ];
+        icon = "kitty";
       };
     in
     {
-      environment.systemPackages = [ kitty-wrapped ];
+      environment.systemPackages = [
+        kittyWrapped
+        kittyDesktop
+      ];
+      fonts.packages = [
+        pkgs.nerd-fonts.jetbrains-mono
+      ];
     }
   );
 }

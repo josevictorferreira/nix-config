@@ -38,22 +38,12 @@ let
         background = "#2d4f67";
         foreground = "#c8c093";
       };
-      indexed_colors = [
-        {
-          index = 16;
-          color = "#ffa066";
-        }
-        {
-          index = 17;
-          color = "#ff5d62";
-        }
-      ];
     };
     env = {
       TERM = "tmux-256color";
     };
     font = {
-      size = 14;
+      size = 14.0;
       normal = {
         family = "JetBrainsMonoNL Nerd Font";
         style = "Regular";
@@ -123,19 +113,41 @@ in
     let
       configFile = pkgs.writeTextFile {
         name = "alacritty.toml";
-        text = jvfLib.generators.toTOML "alacritty.toml" cfg.settings;
+        text = jvfLib.generators.toTOML cfg.settings;
       };
 
-      alacritty-wrapped = pkgs.writeShellApplication {
+      alacrittyWrapped = pkgs.writeShellApplication {
         name = "alacritty";
         runtimeInputs = [ cfg.package ];
         text = ''
           exec ${lib.getExe cfg.package} --config-file "${configFile}" "$@"
         '';
       };
+
+      alacrittyDesktop = pkgs.makeDesktopItem {
+        name = "alacritty";
+        desktopName = "Alacritty";
+        comment = "A fast, cross-platform, OpenGL terminal emulator";
+        exec = lib.getExe alacrittyWrapped;
+        terminal = false;
+        type = "Application";
+        categories = [
+          "System"
+          "Utility"
+          "TerminalEmulator"
+        ];
+        icon = "alacritty";
+      };
+
     in
     {
-      environment.systemPackages = [ alacritty-wrapped ];
+      environment.systemPackages = [
+        alacrittyWrapped
+        alacrittyDesktop
+      ];
+      fonts.packages = [
+        pkgs.nerd-fonts.jetbrains-mono
+      ];
     }
   );
 }

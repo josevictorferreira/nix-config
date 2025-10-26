@@ -4,7 +4,6 @@
   imports = [
     ../shared/default.nix
     ../shared/hyprland/default.nix
-    ../shared/chat.nix
     ../shared/easyeffects.nix
   ];
 

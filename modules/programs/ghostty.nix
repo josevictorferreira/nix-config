@@ -7,6 +7,18 @@
 let
   cfg = config.jvf.programs.ghostty;
 
+  toConfigFormat =
+    settings:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
+      ) settings
+    );
+
   defaultConfig = {
     gtk-titlebar = false;
     gtk-single-instance = true;
@@ -18,23 +30,12 @@ let
     font-size = 14;
     cursor-style = "block_hollow";
     cursor-style-blink = true;
-    cursor-invert-fg-bg = true;
     mouse-hide-while-typing = true;
     custom-shader-animation = true;
     confirm-close-surface = false;
-    theme = "zenbones-zenwritten-dark";
     shell-integration = "zsh";
-    command = "/bin/zsh ~/.config/tmux/scripts/sessions.sh";
+    theme = "Zenbones Dark";
   };
-
-  toConfigFormat =
-    settings:
-    lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
-      ) settings
-    );
 in
 {
   options.jvf.programs.ghostty = {
@@ -54,21 +55,45 @@ in
 
   config = lib.mkIf cfg.enable (
     let
-      configFile = pkgs.writeTextFile {
-        name = "ghostty-config";
-        text = toConfigFormat cfg.settings;
-      };
+      configDir = pkgs.writeTextDir "ghostty/config" (toConfigFormat cfg.settings);
 
-      ghostty-wrapped = pkgs.writeShellApplication {
+      ghosttyWrapped = pkgs.writeShellApplication {
         name = "ghostty";
         runtimeInputs = [ cfg.package ];
         text = ''
-          exec ${lib.getExe cfg.package} --config "${configFile}" "$@"
+          XDG_CONFIG_HOME='${configDir}' exec ${lib.getExe cfg.package} "$@"
         '';
       };
+
+      ghosttyDesktop = pkgs.makeDesktopItem {
+        name = "ghostty";
+        desktopName = "Ghostty";
+        comment = "A fast, feature-rich terminal emulator";
+        exec = lib.getExe ghosttyWrapped;
+        terminal = false;
+        type = "Application";
+        categories = [
+          "System"
+          "Utility"
+          "TerminalEmulator"
+        ];
+        icon = "ghostty";
+      };
+
+      ghosttyIcon = pkgs.runCommand "ghostty-icon" { } ''
+        mkdir -p $out/share/icons/hicolor/512x512/apps
+        mkdir -p $out/share/icons
+      '';
     in
     {
-      environment.systemPackages = [ ghostty-wrapped ];
+      environment.systemPackages = [
+        ghosttyWrapped
+        ghosttyDesktop
+        ghosttyIcon
+      ];
+      fonts.packages = [
+        pkgs.nerd-fonts.jetbrains-mono
+      ];
     }
   );
 }

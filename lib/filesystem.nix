@@ -1,6 +1,11 @@
-{ lib, pkgs, ... }:
-
 {
+  lib,
+  pkgs,
+  generators,
+  ...
+}:
+
+let
   # importModulesInDir: Automatically discover and import all .nix modules in a directory
   #
   # WHAT IT DOES:
@@ -77,19 +82,8 @@
       entries = lib.mapAttrsToList (
         relPath: spec:
         let
-          # Determine the file content text to write
-          text =
-            if (builtins.isAttrs spec) && (spec ? type) && spec.type == "yaml" then
-              lib.generators.toYAML { } spec.content
-            else if (builtins.isAttrs spec) && (spec ? type) && spec.type == "ini" then
-              lib.generators.toINIWithGlobalSection { } { globalSection = spec.content; }
-            else if builtins.isString spec then
-              spec
-            else
-              # default: raw text from spec.content
-              spec.content;
+          text = generators.toFileFormatStr spec;
 
-          # One file per entry
           out = pkgs.writeText "${name}-${lib.replaceStrings [ "/" ] [ "-" ] relPath}" text;
         in
         {
@@ -99,4 +93,58 @@
       ) files;
     in
     pkgs.linkFarm name entries;
+
+  #############################################################################
+  #  2. mkConfigDirSymlink (New Signature)
+  #  - Signature: `config: fsPath:`
+  #  - The first argument is the `{ name, files }` attribute set.
+  #  - The second argument is the string path for the symlink directory.
+  #  - Reuses the refactored `mkConfigDir` above.
+  #############################################################################
+  mkConfigDirSymlink =
+    config: fsPath:
+    let
+      # Generate the real config files in a dedicated store path.
+      # `mkConfigDir` is called with the `config` attrset directly.
+      configStorePath = mkConfigDir config;
+
+      # Get the list of relative file paths to create symlinks for.
+      relativeFilePaths = builtins.attrNames config.files;
+    in
+    # Create the final derivation which contains only the symlink tree.
+    pkgs.runCommand "${config.name}-symlink-tree"
+      {
+        # Pass Nix variables to the builder's environment for use in the script.
+        inherit relativeFilePaths configStorePath fsPath;
+        nativeBuildInputs = [ pkgs.coreutils ]; # For `ln`, `mkdir`, `dirname`
+      }
+      ''
+        # A robust shell script header is best practice.
+        set -euo pipefail
+
+        echo "--- Creating symlink tree for ${config.name} ---"
+
+        # `relativeFilePaths` is a space-separated string; load into a bash array.
+        declare -a file_paths=($relativeFilePaths)
+
+        for relPath in "''${file_paths[@]}"; do
+          # The full path to the source file in the Nix store.
+          local src_file="$configStorePath/$relPath"
+          # The full path for the symlink we want to create inside the new package.
+          local dst_file="$out/$fsPath/$relPath"
+
+          # Ensure the parent directory for the symlink exists.
+          mkdir -p "$(dirname "$dst_file")"
+
+          # Create the symlink pointing to the immutable store path.
+          ln -s "$src_file" "$dst_file"
+
+          echo "Linked: $dst_file -> $src_file"
+        done
+
+        echo "--- Symlink tree created successfully at $out ---"
+      '';
+in
+{
+  inherit importModulesInDir mkConfigDir mkConfigDirSymlink;
 }

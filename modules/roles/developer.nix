@@ -1,6 +1,7 @@
 {
-  config,
   lib,
+  pkgs,
+  config,
   ...
 }:
 
@@ -24,5 +25,9 @@ in
     jvf.programs.ghostty.enable = true;
     jvf.programs.alacritty.enable = true;
     jvf.programs.kitty.enable = true;
+
+    environment.systemPackages = [
+      pkgs.gitleaks
+    ];
   };
 }
