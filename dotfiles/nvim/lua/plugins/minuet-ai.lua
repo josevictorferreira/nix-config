@@ -89,7 +89,7 @@ return n;
 		}
 
 		local prefix_first_template =
-			"{{{language-and-tab}}}\n<contextBeforeCursor>\n{{{context_before_cursor}}}\n<cursorPosition>\n<contextAfterCursor>\n{{{context_after_cursor}}}"
+			"{{{language-and-tab}}}\n<contextBeforeCursor>\n{{{context_before_cursor}}}<cursorPosition>\n<contextAfterCursor>\n{{{context_after_cursor}}}"
 
 		return {
 			provider = "openai_compatible",
@@ -141,7 +141,7 @@ return n;
 					chat_input = { template = prefix_first_template },
 					stream = true,
 					optional = {
-						max_tokens = 128,
+						max_tokens = 256,
 						top_p = 0.9,
 						stop = { "\n\n", "<endCompletion>" },
 						provider = { sort = "throughput" },

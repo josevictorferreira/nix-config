@@ -71,6 +71,11 @@
         }:
         let
           pkgs = mkPkgs systemArc;
+          homeDir =
+            if (builtins.match ".*darwin.*" systemArc) != null then
+              "/Users/${username}"
+            else
+              "/home/${username}";
         in
         {
           inherit
@@ -81,6 +86,7 @@
             host
             isDarwin
             isNixOS
+            homeDir
             ;
           configRoot = ./.;
           jvfLib = import ./lib {

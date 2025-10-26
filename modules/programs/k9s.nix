@@ -3,6 +3,7 @@
   jvfLib,
   pkgs,
   config,
+  homeDir,
   ...
 }:
 let
@@ -10,7 +11,7 @@ let
 
   defaultConfig = {
     liveViewAutoRefresh = false;
-    screenDumpDir = "~/.local/state/k9s/screen-dumps";
+    screenDumpDir = "${cfg.homeDir}/.local/state/k9s/screen-dumps";
     refreshRate = 2;
     maxConnRetry = 5;
     defaultView = "pods";
@@ -215,6 +216,12 @@ in
   options.jvf.programs.k9s = {
     enable = lib.mkEnableOption "k9s, a terminal-based UI for Kubernetes";
     package = lib.mkPackageOption pkgs "k9s" { };
+
+    homeDir = lib.mkOption {
+      type = lib.types.str;
+      default = homeDir;
+      description = "Directory where k9s should store its configuration files.";
+    };
 
     settings = lib.mkOption {
       type = lib.types.attrs;

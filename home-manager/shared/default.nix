@@ -17,9 +17,6 @@ in
     ./neovim.nix
     ./tmux.nix
     ./weechat.nix
-    ./kitty.nix
-    ./ghostty.nix
-    ./alacritty.nix
     ./development
   ];
 

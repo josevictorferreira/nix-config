@@ -409,6 +409,7 @@ in
 
   jvf.roles = {
     networkStorage.enable = true;
+    developer.enable = true;
     aiDeveloper.enable = true;
     monitoring.enable = true;
   };
