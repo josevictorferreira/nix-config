@@ -123,7 +123,7 @@ in
     let
       configFile = pkgs.writeTextFile {
         name = "alacritty.toml";
-        text = jvfLib.generators.toTOML { } cfg.settings;
+        text = jvfLib.generators.toTOML "alacritty.toml" cfg.settings;
       };
 
       alacritty-wrapped = pkgs.writeShellApplication {
