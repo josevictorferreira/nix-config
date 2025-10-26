@@ -48,6 +48,18 @@
         };
       };
 
+      mkPkgs =
+        systemArc:
+        import
+          (if builtins.match ".*-darwin" systemArc != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
+          {
+            system = systemArc;
+            overlays = [ ];
+            config = {
+              allowUnfree = true;
+            };
+          };
+
       specialArgsFor =
         {
           systemArc,
@@ -57,6 +69,9 @@
           isDarwin,
           isNixOS,
         }:
+        let
+          pkgs = mkPkgs systemArc;
+        in
         {
           inherit
             inputs
@@ -68,6 +83,10 @@
             isNixOS
             ;
           configRoot = ./.;
+          jvfLib = import ./lib {
+            lib = pkgs.lib;
+            inherit pkgs;
+          };
         };
 
       homeManagerConfig =
@@ -102,7 +121,6 @@
         nixpkgs.lib.nixosSystem {
           specialArgs = specialArgsFor (systems.nixos);
           modules = [
-            ./modules/_args/jvf-lib.nix
             sops-nix.nixosModules.sops
             ./hosts/${host}/config.nix
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
@@ -117,7 +135,6 @@
           specialArgs = specialArgsFor (systems.macos);
           system = systemArc;
           modules = [
-            ./modules/_args/jvf-lib.nix
             sops-nix.darwinModules.sops
             ./hosts/${host}/config.nix
             home-manager.darwinModules.home-manager

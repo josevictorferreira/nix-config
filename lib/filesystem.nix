@@ -73,26 +73,30 @@
   mkConfigDir =
     { name, files }:
     let
-      # Use mapAttrsToList to transform the input attrset into a list
-      # suitable for pkgs.linkFarm.
-      pathSpecs = lib.mapAttrsToList (path: spec: {
-        inherit path;
-        # For each file, create the corresponding derivation.
-        # This is where we handle different content types.
-        source =
-          if spec.type == "yaml" then
-            # Use writeText with the YAML generator.
-            pkgs.writeText "${name}-${path}" (lib.generators.toYAML { } spec.content)
-          else if spec.type == "ini" then
-            # Use writeText with the INI generator.
-            pkgs.writeText "${name}-${path}" (
+      # For each "relative path" -> spec, produce { name = relPath; path = storeFile; }
+      entries = lib.mapAttrsToList (
+        relPath: spec:
+        let
+          # Determine the file content text to write
+          text =
+            if (builtins.isAttrs spec) && (spec ? type) && spec.type == "yaml" then
+              lib.generators.toYAML { } spec.content
+            else if (builtins.isAttrs spec) && (spec ? type) && spec.type == "ini" then
               lib.generators.toINIWithGlobalSection { } { globalSection = spec.content; }
-            )
-          else
-            # Default to raw text.
-            pkgs.writeText "${name}-${path}" spec.content;
-      }) files;
+            else if builtins.isString spec then
+              spec
+            else
+              # default: raw text from spec.content
+              spec.content;
+
+          # One file per entry
+          out = pkgs.writeText "${name}-${lib.replaceStrings [ "/" ] [ "-" ] relPath}" text;
+        in
+        {
+          name = relPath; # destination inside the directory (can include subdirs like "skins/foo.yaml")
+          path = out; # source store path
+        }
+      ) files;
     in
-    # pkgs.linkFarm is the perfect tool to build a directory from a list of sources.
-    pkgs.linkFarm name pathSpecs;
+    pkgs.linkFarm name entries;
 }
