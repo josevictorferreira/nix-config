@@ -1,5 +1,6 @@
 {
   lib,
+  jvfLib,
   pkgs,
   config,
   ...
@@ -122,7 +123,7 @@ in
     let
       configFile = pkgs.writeTextFile {
         name = "alacritty.toml";
-        text = lib.generators.toTOML { } cfg.settings;
+        text = jvfLib.generators.toTOML { } cfg.settings;
       };
 
       alacritty-wrapped = pkgs.writeShellApplication {
