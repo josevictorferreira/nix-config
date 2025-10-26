@@ -1,8 +1,13 @@
 return {
 	"folke/snacks.nvim",
-	optional = false,
+	priority = 1000,
+	lazy = false,
 	opts = {
+		input = {
+			enabled = true,
+		},
 		picker = {
+			enabled = true,
 			actions = {
 				sidekick_send = function(...)
 					return require("sidekick.cli.picker.snacks").send(...)
