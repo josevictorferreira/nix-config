@@ -19,7 +19,6 @@ in
     ./weechat.nix
     ./kitty.nix
     ./ghostty.nix
-    ./k9s.nix
     ./alacritty.nix
     ./development
   ];
