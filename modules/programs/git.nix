@@ -5,16 +5,33 @@
   ...
 }:
 
-with lib;
-
 let
-  cfg = config.programs.git;
-  preCommit = pkgs.writeShellScript "pre-commit-secrets-check" ''
-    #!/usr/bin/env bash
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    types
+    optional
+    optionalAttrs
+    optionalString
+    concatStringsSep
+    generators
+    literalExpression
+    ;
+
+  cfg = config.jvf.programs.git;
+
+  preCommit = pkgs.writeScript "pre-commit" ''
+    #!${pkgs.bash}/bin/bash
     set -euo pipefail
+    export PATH="${
+      pkgs.lib.makeBinPath [
+        pkgs.git
+        pkgs.yq
+      ]
+    }:$PATH"
     fail=0
-    for file in $(${pkgs.git}/bin/git diff --cached --name-only -- '*.enc.yaml' '*.enc.yml'); do
-      if ! ${pkgs.yq}/bin/yq -e 'has("sops") and (.sops.mac // "" != "")' "$file" >/dev/null 2>&1; then
+    for file in $(git diff --cached --name-only -- '*.enc.yaml' '*.enc.yml'); do
+      if ! yq -e 'has("sops") and (.sops.mac // "" != "")' "$file" >/dev/null 2>&1; then
         echo "❌ ERROR: $file is not encrypted with sops!"
         fail=1
       fi
@@ -24,9 +41,41 @@ let
       exit 1
     fi
   '';
+
+  defaultExtraConfig = {
+    core = {
+      editor = "nvim";
+      hooksPath = "/etc/git/hooks";
+    };
+    diff = {
+      tool = "nvimdiff";
+      external = "difftastic";
+    };
+    merge = {
+      tool = "nvimdiff3";
+    };
+    mergetool = {
+      prompt = false;
+      keepBackup = false;
+    };
+    init = {
+      defaultBranch = "main";
+    };
+    push = {
+      autoSetupRemote = true;
+      followTags = true;
+    };
+    pull = {
+      rebase = true;
+    };
+    fetch = {
+      prune = true;
+      tags = true;
+    };
+  };
 in
 {
-  options.programs.git = {
+  options.jvf.programs.git = {
     enable = mkEnableOption (lib.mdDoc "Git version control system");
 
     package = mkOption {
@@ -72,7 +121,7 @@ in
         default = false;
         description = lib.mdDoc ''
           Whether to sign commits by default. This is equivalent to
-          setting the `user.signingkey` option in the global Git configuration.
+          setting the `commit.gpgsign` option in the global Git configuration.
         '';
       };
     };
@@ -96,22 +145,27 @@ in
     };
 
     extraConfig = mkOption {
-      type = types.attrsOf types.str;
-      default = { };
+      type = types.attrsOf (
+        types.attrsOf (
+          types.oneOf [
+            lib.types.str
+            lib.types.bool
+            lib.types.attrs
+          ]
+        )
+      );
+      default = defaultExtraConfig;
       example = literalExpression ''
         {
-          core = {
-            editor = "nvim";
-            autocrlf = "input";
-          };
-          push = {
-            default = "simple";
-          };
+          core.autocrlf = "input";
+          push.default = "simple";
         }
       '';
       description = lib.mdDoc ''
         Additional configuration for Git. This is equivalent to setting
-        arbitrary options in the global Git configuration.
+        arbitrary options in the global Git configuration. Defaults include
+        developer-friendly settings (nvim editor, difftastic diff, SSH for GitHub,
+        auto-setup remote pushes, rebase on pull, etc.) matching standard Home Manager setup.
       '';
     };
 
@@ -127,7 +181,7 @@ in
       '';
       description = lib.mdDoc ''
         Additional patterns to ignore. These are added to the global
-        ignore file at {file}`/etc/git/ignore`.
+        ignore file at `/etc/git/ignore`.
       '';
     };
 
@@ -140,23 +194,32 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
-      (optionalAssertion (cfg.userName == null) ''
-        programs.git.userName must be set when programs.git.enable = true
-      '')
-      (optionalAssertion (cfg.userEmail == null) ''
-        programs.git.userEmail must be set when programs.git.enable = true
-      '')
+      {
+        assertion = cfg.userName != null;
+        message = "jvf.programs.git.userName must be set when jvf.programs.git.enable = true";
+      }
+      {
+        assertion = cfg.userEmail != null;
+        message = "jvf.programs.git.userEmail must be set when jvf.programs.git.enable = true";
+      }
     ];
 
-    environment.systemPackages = [ cfg.package ] ++ (optional cfg.lfs.enable pkgs.git-lfs);
+    environment.systemPackages = [
+      cfg.package
+      pkgs.yq
+      pkgs.difftastic
+    ]
+    ++ optional cfg.lfs.enable pkgs.git-lfs;
+
+    environment.etc."git/hooks/pre-commit".source = preCommit;
 
     environment.etc."gitconfig".text = generators.toINI { } (
-      (optionalAttrs (cfg.userName != null) { "user".name = cfg.userName; })
-      // (optionalAttrs (cfg.userEmail != null) { "user".email = cfg.userEmail; })
-      // (optionalAttrs (cfg.signing.key != null) { "user".signingkey = cfg.signing.key; })
-      // (optionalAttrs cfg.signing.signByDefault { "commit".gpgsign = "true"; })
+      (optionalAttrs (cfg.userName != null) { user.name = cfg.userName; })
+      // (optionalAttrs (cfg.userEmail != null) { user.email = cfg.userEmail; })
+      // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+      // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
       // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
       // cfg.extraConfig
     );
@@ -168,10 +231,5 @@ in
         ${cfg.package}/bin/git lfs install --system
       fi
     '';
-
-    xdg.configFile."git/hooks/pre-commit" = {
-      source = preCommit;
-      executable = true;
-    };
   };
 }

@@ -34,6 +34,8 @@ in
 
     environment.systemPackages = [
       pkgs.gitleaks
+      pkgs.difftastic
+      pkgs.yq
     ];
   };
 }
