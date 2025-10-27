@@ -13,6 +13,7 @@ in
     ../programs/ghostty.nix
     ../programs/alacritty.nix
     ../programs/kitty.nix
+    ../programs/git.nix
   ];
 
   options.jvf.roles.developer.enable = lib.mkOption {
@@ -25,6 +26,11 @@ in
     jvf.programs.ghostty.enable = true;
     jvf.programs.alacritty.enable = true;
     jvf.programs.kitty.enable = true;
+    jvf.programs.git = {
+      enable = true;
+      userName = "Jose Victor Ferreira";
+      userEmail = "root@josevictor.me";
+    };
 
     environment.systemPackages = [
       pkgs.gitleaks

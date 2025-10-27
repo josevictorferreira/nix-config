@@ -12,7 +12,6 @@ let
 in
 {
   imports = [
-    ./git.nix
     ./zsh.nix
     ./neovim.nix
     ./tmux.nix
@@ -35,7 +34,6 @@ in
       # Cli tools
       home-manager
       curl
-      git
       gnupg
       gnumake
       coreutils
