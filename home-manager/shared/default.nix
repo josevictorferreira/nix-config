@@ -15,7 +15,6 @@ in
     ./zsh.nix
     ./neovim.nix
     ./tmux.nix
-    ./weechat.nix
     ./development
   ];
 
@@ -75,13 +74,6 @@ in
     ];
 
     stateVersion = "24.05";
-  };
-
-  modules = {
-    weechat = {
-      enable = true;
-      additionalScripts = [ ];
-    };
   };
 
   programs = {

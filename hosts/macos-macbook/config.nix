@@ -96,6 +96,7 @@
 
   imports = [
     "${configRoot}/modules/security/sops.nix"
+    "${configRoot}/modules/programs/weechat.nix"
     "${configRoot}/modules/roles"
   ];
 
