@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  systemArc,
   ...
 }:
 
@@ -23,7 +24,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.ghostty.enable = true;
+    jvf.programs.ghostty.enable = !(lib.strings.hasInfix "darwin" systemArc);
     jvf.programs.alacritty.enable = true;
     jvf.programs.kitty.enable = true;
     jvf.programs.git = {

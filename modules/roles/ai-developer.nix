@@ -27,6 +27,7 @@ in
     environment.systemPackages = [
       pkgs.code-cursor
       pkgs.cursor-cli
+      pkgs.llama-cpp-rocm
     ];
   };
 }
