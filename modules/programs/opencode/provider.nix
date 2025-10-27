@@ -9,8 +9,14 @@
         "x-ai/grok-4-fast" = {
           name = "Grok 4 Fast";
         };
+        "minimax/minimax-m2:free" = {
+          name = "Minimax M2";
+        };
         "moonshotai/kimi-k2-0905:exacto" = {
           name = "Kimi K2 Instruct 0905 Exacto";
+        };
+        "openai/gpt-oss-120b:exacto" = {
+          name = "GPT OSS 120b Exacto";
         };
         "deepseek/deepseek-v3.1-terminus:exacto" = {
           name = "DeepSeek v3.1 Exacto";
