@@ -1,8 +1,7 @@
-{
-  config,
-  username,
-  configRoot,
-  ...
+{ config
+, username
+, configRoot
+, ...
 }:
 
 let

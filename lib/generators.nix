@@ -4,10 +4,12 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
-      ) settings
+      lib.mapAttrsToList
+        (
+          key: value:
+          if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
+        )
+        settings
     );
 
   toTOML =
@@ -40,7 +42,7 @@ let
         else if obj == null then
           throw "“null” is not supported by TOML"
         else if !isFloat obj then
-          # Strings, integers and booleans.
+        # Strings, integers and booleans.
           toJSON obj
         # Sanitize +-inf and NaN. They'll produce "null", which is invalid for TOML.
         else if obj == inf then

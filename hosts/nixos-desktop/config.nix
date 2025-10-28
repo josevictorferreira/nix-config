@@ -1,11 +1,10 @@
-{
-  pkgs,
-  lib,
-  host,
-  options,
-  configRoot,
-  username,
-  ...
+{ pkgs
+, lib
+, host
+, options
+, configRoot
+, username
+, ...
 }:
 let
 
@@ -41,8 +40,8 @@ in
     "${configRoot}/modules/security/polkit.nix"
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
-    "${configRoot}/modules/programs/weechat.nix"
     "${configRoot}/modules/roles"
+    "${configRoot}/modules/programs/weechat.nix"
     ./hardware.nix
   ];
 
@@ -122,12 +121,6 @@ in
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
-    };
-
-    # WeeChat configuration
-    jvf.programs.weechat = {
-      enable = true;
-      configFile = "${configRoot}/dotfiles/weechat/weechatrc";
     };
   };
 
@@ -420,4 +413,6 @@ in
     aiDeveloper.enable = true;
     monitoring.enable = true;
   };
+
+  jvf.programs.weechat.enable = true;
 }

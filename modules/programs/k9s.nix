@@ -1,10 +1,9 @@
-{
-  lib,
-  jvfLib,
-  pkgs,
-  config,
-  homeDir,
-  ...
+{ lib
+, jvfLib
+, pkgs
+, config
+, homeDir
+, ...
 }:
 let
   cfg = config.jvf.programs.k9s;
@@ -262,13 +261,15 @@ in
             };
           };
         }
-        // (lib.mapAttrs' (name: value: {
-          name = "skins/${name}.yaml";
-          value = {
-            type = "yaml";
-            content = value;
-          };
-        }) cfg.skins);
+        // (lib.mapAttrs'
+          (name: value: {
+            name = "skins/${name}.yaml";
+            value = {
+              type = "yaml";
+              content = value;
+            };
+          })
+          cfg.skins);
       };
 
       k9s-wrapped = pkgs.writeShellApplication {

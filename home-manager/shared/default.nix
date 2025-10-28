@@ -1,10 +1,9 @@
-{
-  pkgs,
-  username,
-  host,
-  isDarwin,
-  configRoot,
-  ...
+{ pkgs
+, username
+, host
+, isDarwin
+, configRoot
+, ...
 }:
 let
   homeDirPrefix = if isDarwin then "/Users" else "/home";

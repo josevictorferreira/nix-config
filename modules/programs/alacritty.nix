@@ -1,9 +1,8 @@
-{
-  lib,
-  jvfLib,
-  pkgs,
-  config,
-  ...
+{ lib
+, jvfLib
+, pkgs
+, config
+, ...
 }:
 let
   cfg = config.jvf.programs.alacritty;

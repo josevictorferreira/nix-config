@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
+{ lib
+, pkgs
+, config
+, ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
@@ -10,13 +9,15 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then
-          "${key} = ${builtins.toJSON value}"
-        else
-          "${key} = ${builtins.toString value}"
-      ) settings
+      lib.mapAttrsToList
+        (
+          key: value:
+          if builtins.isBool value then
+            "${key} = ${builtins.toJSON value}"
+          else
+            "${key} = ${builtins.toString value}"
+        )
+        settings
     );
 
   defaultConfig = {
