@@ -1,7 +1,0 @@
-vim.loader.enable()
-require("core.filetypes")
-require("core.keymaps")
-require("core.lazy")
-require("core.options")
-require("core.functions")
-require("core.commands")

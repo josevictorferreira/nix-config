@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, systemArc
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  systemArc,
+  ...
 }:
 
 let
@@ -14,6 +15,7 @@ in
     ../programs/alacritty.nix
     ../programs/kitty.nix
     ../programs/git.nix
+    ../programs/neovim.nix
   ];
 
   options.jvf.roles.developer.enable = lib.mkOption {
@@ -23,13 +25,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.ghostty.enable = !(lib.strings.hasInfix "darwin" systemArc);
-    jvf.programs.alacritty.enable = true;
-    jvf.programs.kitty.enable = true;
-    jvf.programs.git = {
-      enable = true;
-      userName = "Jose Victor Ferreira";
-      userEmail = "root@josevictor.me";
+    jvf.programs = {
+      ghostty.enable = !(lib.strings.hasInfix "darwin" systemArc);
+      alacritty.enable = true;
+      kitty.enable = true;
+      neovim.enable = true;
+      git = {
+        enable = true;
+        userName = "Jose Victor Ferreira";
+        userEmail = "root@josevictor.me";
+      };
     };
 
     environment.systemPackages = [
