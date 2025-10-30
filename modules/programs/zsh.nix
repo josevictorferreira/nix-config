@@ -119,34 +119,5 @@ in
       echo "Setting up Zsh configuration..."
       ${setupZshConfig}
     '';
-
-    system.activationScripts.setup-zshrc = lib.mkIf cfg.useDerivationConfig ''
-      echo "Setting up initial .zshrc..."
-      USER_HOME="${if isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}"}"
-      ZSHRC_SOURCE="${initialZshrcDerivation}/share/.zshrc"
-      ZSHRC_TARGET="$USER_HOME/.zshrc"
-
-      # Create the home directory if it doesn't exist
-      mkdir -p "$USER_HOME"
-
-      # Only create .zshrc if it doesn't exist or is not a symlink to our source
-      if [ ! -e "$ZSHRC_TARGET" ]; then
-        echo "Creating initial .zshrc..."
-        ln -s "$ZSHRC_SOURCE" "$ZSHRC_TARGET"
-        ${lib.optionalString (!isDarwin) "chown ${cfg.username}:users \"$ZSHRC_TARGET\""}
-      elif [ -L "$ZSHRC_TARGET" ]; then
-        CURRENT_TARGET=$(readlink "$ZSHRC_TARGET")
-        if [ "$CURRENT_TARGET" != "$ZSHRC_SOURCE" ]; then
-          echo "Updating .zshrc symlink..."
-          rm -f "$ZSHRC_TARGET"
-          ln -s "$ZSHRC_SOURCE" "$ZSHRC_TARGET"
-          ${lib.optionalString (!isDarwin) "chown ${cfg.username}:users \"$ZSHRC_TARGET\""}
-        else
-          echo ".zshrc is already correctly linked, skipping..."
-        fi
-      else
-        echo ".zshrc exists but is not a symlink, preserving existing file..."
-      fi
-    '';
   };
 }
