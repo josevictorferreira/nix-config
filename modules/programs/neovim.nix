@@ -1,11 +1,11 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  isDarwin,
-  isNixOS,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, isDarwin
+, isNixOS
+, jvfLib
+, ...
 }:
 let
   cfg = config.jvf.programs.neovim;
@@ -35,56 +35,14 @@ let
     };
   };
 
-  createNeovimConfigLinks =
-    {
-      username,
-      isDarwin ? false,
-    }:
-    let
-      userHome = if isDarwin then "/Users/${username}" else "/home/${username}";
-    in
-    pkgs.writeScript "setup-nvim-config" ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-
-      USER_HOME="${userHome}"
-      NVIM_CONFIG_DIR="''${USER_HOME}/.config/nvim"
-      DERIVATION_CONFIG="${neovimConfigDerivation}/share/nvim-config"
-
-      # Create .config directory if it doesn't exist
-      mkdir -p "''${USER_HOME}/.config"
-
-      # Remove existing nvim config if it exists (but not if it's already a symlink to our derivation)
-      if [ -L "''${NVIM_CONFIG_DIR}" ]; then
-        CURRENT_TARGET=$(readlink "''${NVIM_CONFIG_DIR}")
-        if [ "''${CURRENT_TARGET}" = "''${DERIVATION_CONFIG}" ]; then
-          echo "Neovim configuration is already correctly linked, skipping..."
-          exit 0
-        fi
-      fi
-
-      # Remove existing nvim config if it exists
-      if [ -e "''${NVIM_CONFIG_DIR}" ]; then
-        echo "Removing existing nvim config..."
-        rm -rf "''${NVIM_CONFIG_DIR}"
-      fi
-
-      # Create symlink to the derivation
-      echo "Creating symlink from derivation to ''${NVIM_CONFIG_DIR}..."
-      ln -sf "''${DERIVATION_CONFIG}" "''${NVIM_CONFIG_DIR}"
-
-      ${
-        if isDarwin then
-          ""
-        else
-          ''
-            # Set proper ownership on NixOS
-            chown -R ${username}:users "''${NVIM_CONFIG_DIR}"
-          ''
-      }
-
-      echo "Neovim configuration installed successfully!"
-    '';
+  setupNeovimConfig = jvfLib.filesystem.createConfigLinks {
+    derivation = neovimConfigDerivation;
+    configPath = "/share/nvim-config";
+    targetDir = "nvim";
+    username = cfg.username;
+    inherit isDarwin;
+    description = "Neovim configuration";
+  };
 in
 {
   options.jvf.programs.neovim = {
@@ -93,16 +51,6 @@ in
       type = lib.types.str;
       default = username;
       description = "Username for which to clone the neovim configuration";
-    };
-    generateSSHKey = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to generate an SSH key if one doesn't exist";
-    };
-    fallbackToHTTPS = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to fall back to HTTPS clone if SSH clone fails";
     };
     useDerivationConfig = lib.mkOption {
       type = lib.types.bool;
@@ -137,19 +85,13 @@ in
         Type = "oneshot";
         RemainAfterExit = true;
         User = "root";
-        ExecStart = "${createNeovimConfigLinks {
-          inherit (cfg) username;
-          inherit isDarwin;
-        }}";
+        ExecStart = "${setupNeovimConfig}";
       };
     };
 
     system.activationScripts.setup-nvim-config = lib.mkIf cfg.useDerivationConfig ''
       echo "Setting up Neovim configuration..."
-      ${createNeovimConfigLinks {
-        inherit (cfg) username;
-        inherit isDarwin;
-      }}
+      ${setupNeovimConfig}
     '';
   };
 }
