@@ -14,7 +14,7 @@ let
     owner = "josevictorferreira";
     repo = ".easyeffects";
     rev = "main";
-    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256 = "sha256-hN8xUCujOn5+y1SiBjQIvxs2ewGcZhtiHoUWIS1GpIY=";
   };
 
   easyeffectsConfigDerivation = pkgs.stdenv.mkDerivation {

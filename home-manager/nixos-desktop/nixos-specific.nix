@@ -4,7 +4,6 @@
   imports = [
     ../shared/default.nix
     ../shared/hyprland/default.nix
-    ../shared/easyeffects.nix
   ];
 
   home = {
@@ -25,12 +24,6 @@
 
       inkscape-with-extensions
     ];
-  };
-
-  modules = {
-    easyeffects = {
-      enable = true;
-    };
   };
 
   xdg = {
