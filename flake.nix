@@ -21,12 +21,11 @@
   };
 
   outputs =
-    inputs@{
-      nixpkgs,
-      darwin,
-      sops-nix,
-      home-manager,
-      ...
+    inputs@{ nixpkgs
+    , darwin
+    , sops-nix
+    , home-manager
+    , ...
     }:
     let
       systems = {
@@ -61,13 +60,13 @@
           };
 
       specialArgsFor =
-        {
-          systemArc,
-          os,
-          host,
-          username,
-          isDarwin,
-          isNixOS,
+        { systemArc
+        , os
+        , host
+        , username
+        , isDarwin
+        , isNixOS
+        ,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -96,14 +95,13 @@
         };
 
       homeManagerConfig =
-        {
-          systemArc,
-          os,
-          host,
-          username,
-          isDarwin,
-          isNixOS,
-          ...
+        { systemArc
+        , os
+        , host
+        , username
+        , isDarwin
+        , isNixOS
+        , ...
         }:
         {
           home-manager.useGlobalPkgs = true;
@@ -174,7 +172,8 @@
           };
         in
         {
-          neovim-config = jvfLib.neovim.neovimConfigDerivation;
+          # Packages can be defined here if needed
+          # Example: some-package = pkgs.callPackage ./pkgs/some-package {};
         }
       );
 

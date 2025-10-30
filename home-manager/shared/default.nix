@@ -11,8 +11,6 @@ let
 in
 {
   imports = [
-    ./zsh.nix
-    ./tmux.nix
     ./development
   ];
 

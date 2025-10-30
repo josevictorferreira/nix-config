@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  generators,
-  ...
+{ lib
+, pkgs
+, generators
+, ...
 }:
 
 let
@@ -33,9 +32,11 @@ let
 
       # Filter for .nix files, excluding default.nix to prevent circular imports
       # default.nix files typically contain the imports themselves
-      nixFileNames = lib.filter (
-        fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
-      ) allFileNames;
+      nixFileNames = lib.filter
+        (
+          fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
+        )
+        allFileNames;
     in
     # Convert filenames to full paths by prepending the directory
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
@@ -79,18 +80,20 @@ let
     { name, files }:
     let
       # For each "relative path" -> spec, produce { name = relPath; path = storeFile; }
-      entries = lib.mapAttrsToList (
-        relPath: spec:
-        let
-          text = generators.toFileFormatStr spec;
+      entries = lib.mapAttrsToList
+        (
+          relPath: spec:
+            let
+              text = generators.toFileFormatStr spec;
 
-          out = pkgs.writeText "${name}-${lib.replaceStrings [ "/" ] [ "-" ] relPath}" text;
-        in
-        {
-          name = relPath; # destination inside the directory (can include subdirs like "skins/foo.yaml")
-          path = out; # source store path
-        }
-      ) files;
+              out = pkgs.writeText "${name}-${lib.replaceStrings [ "/" ] [ "-" ] relPath}" text;
+            in
+            {
+              name = relPath; # destination inside the directory (can include subdirs like "skins/foo.yaml")
+              path = out; # source store path
+            }
+        )
+        files;
     in
     pkgs.linkFarm name entries;
 
@@ -177,13 +180,13 @@ let
   #   description = "MyApp configuration";
   # }
   createConfigLinks =
-    {
-      derivation,
-      configPath,
-      targetDir,
-      username,
-      isDarwin ? false,
-      description ? targetDir,
+    { derivation
+    , configPath
+    , targetDir
+    , username
+    , isDarwin ? false
+    , description ? targetDir
+    ,
     }:
     let
       userHome = if isDarwin then "/Users/${username}" else "/home/${username}";
@@ -248,10 +251,10 @@ let
   #   targetDir = "nvim";
   # };
   createConfigLinksDerivation =
-    {
-      derivation,
-      configPath,
-      targetDir,
+    { derivation
+    , configPath
+    , targetDir
+    ,
     }:
     let
       sourcePath = "${derivation}${configPath}";
