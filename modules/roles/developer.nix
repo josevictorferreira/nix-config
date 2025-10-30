@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, systemArc
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  systemArc,
+  ...
 }:
 
 let
@@ -15,6 +16,7 @@ in
     ../programs/kitty.nix
     ../programs/git.nix
     ../programs/neovim.nix
+    ../programs/easyeffects.nix
   ];
 
   options.jvf.roles.developer.enable = lib.mkOption {
@@ -29,6 +31,7 @@ in
       alacritty.enable = true;
       kitty.enable = true;
       neovim.enable = true;
+      easyeffects.enable = true;
       git = {
         enable = true;
         userName = "Jose Victor Ferreira";
