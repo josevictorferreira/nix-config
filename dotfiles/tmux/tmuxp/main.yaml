@@ -1,7 +1,0 @@
-session_name: main
-start_directory: "$HOME/.config/nix"
-windows:
-  - window_name: NixConfig
-    panes:
-      - fastfetch
-      - clear

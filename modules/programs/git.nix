@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -48,7 +49,6 @@ let
     };
     diff = {
       tool = "nvimdiff";
-      external = "difftastic";
     };
     merge = {
       tool = "nvimdiff3";
@@ -214,14 +214,19 @@ in
 
     environment.etc."git/hooks/pre-commit".source = preCommit;
 
-    environment.etc."gitconfig".text = generators.toINI { } (
-      (optionalAttrs (cfg.userName != null) { user.name = cfg.userName; })
-      // (optionalAttrs (cfg.userEmail != null) { user.email = cfg.userEmail; })
-      // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-      // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-      // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-      // cfg.extraConfig
-    );
+    environment.etc."gitconfig".text =
+      generators.toINI { } (
+        (optionalAttrs (cfg.userName != null) { user.name = cfg.userName; })
+        // (optionalAttrs (cfg.userEmail != null) { user.email = cfg.userEmail; })
+        // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+        // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+        // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+        // cfg.extraConfig
+      )
+      + ''
+        [diff]
+          external = ${pkgs.difftastic}/bin/difft
+      '';
 
     environment.etc."git/ignore".text = concatStringsSep "\n" cfg.ignores;
 
