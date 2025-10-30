@@ -44,22 +44,6 @@ let
     inherit isDarwin;
     description = "Zsh configuration";
   };
-
-  # Create initial .zshrc file that sources the main config
-  initialZshrcDerivation = pkgs.stdenv.mkDerivation {
-    pname = "initial-zshrc";
-    version = "1.0.0";
-
-    dontUnpack = true;
-
-    installPhase = ''
-      mkdir -p $out/share
-      echo '# Initial zsh configuration' > $out/share/.zshrc
-      echo '# This file sources the main zsh configuration from ~/.config/zsh/init.zsh' >> $out/share/.zshrc
-      echo >> $out/share/.zshrc
-      echo 'source $HOME/.config/zsh/init.zsh' >> $out/share/.zshrc
-    '';
-  };
 in
 {
   options.jvf.programs.zsh = {
