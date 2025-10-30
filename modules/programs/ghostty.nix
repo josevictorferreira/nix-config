@@ -7,19 +7,15 @@
 let
   cfg = config.jvf.programs.ghostty;
 
-  # Convert configuration settings to command-line arguments
-  toArgsFormat =
+  toConfigFormat =
     settings:
-    lib.concatStringsSep " " (
+    lib.concatStringsSep "\n" (
       lib.mapAttrsToList (
         key: value:
-        let
-          # Convert kebab-case to camelCase for CLI args
-          argName = lib.replaceStrings [ "-" ] [ "" ] key;
-          argValue =
-            if builtins.isBool value then (if value then "true" else "false") else builtins.toString value;
-        in
-        "--${argName}=${argValue}"
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
       ) settings
     );
 
@@ -59,14 +55,13 @@ in
 
   config = lib.mkIf cfg.enable (
     let
-      # Generate command-line arguments from configuration
-      ghosttyArgs = toArgsFormat cfg.settings;
+      configFile = pkgs.writeText "ghostty-config" (toConfigFormat cfg.settings);
 
       ghosttyWrapped = pkgs.writeShellApplication {
         name = "ghostty";
         runtimeInputs = [ cfg.package ];
         text = ''
-          exec ${lib.getExe cfg.package} --args ${ghosttyArgs} "$@"
+          exec ${lib.getExe cfg.package} --config-file="${configFile}" "$@"
         '';
       };
 
