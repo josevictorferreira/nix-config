@@ -14,7 +14,7 @@ let
     owner = "josevictorferreira";
     repo = ".zsh";
     rev = "main";
-    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256 = "sha256-mqEid7pBC72tebfGE/oy/CQ37d0HHjC9qtTsn8QbsqM=";
   };
 
   zshConfigDerivation = pkgs.stdenv.mkDerivation {
