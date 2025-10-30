@@ -8,3 +8,4 @@ secrets/*.yml
 */**/*.orig
 *.bak
 .ruff-cache/
+result/
