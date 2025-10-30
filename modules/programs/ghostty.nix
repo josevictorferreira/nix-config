@@ -1,23 +1,26 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
 
-  toConfigFormat =
+  # Convert configuration settings to command-line arguments
+  toArgsFormat =
     settings:
-    lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} = ${builtins.toJSON value}"
-          else
-            "${key} = ${builtins.toString value}"
-        )
-        settings
+    lib.concatStringsSep " " (
+      lib.mapAttrsToList (
+        key: value:
+        let
+          # Convert kebab-case to camelCase for CLI args
+          argName = lib.replaceStrings [ "-" ] [ "" ] key;
+          argValue =
+            if builtins.isBool value then (if value then "true" else "false") else builtins.toString value;
+        in
+        "--${argName}=${argValue}"
+      ) settings
     );
 
   defaultConfig = {
@@ -46,7 +49,7 @@ in
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = defaultConfig;
-      description = lib.mdDoc "Configuration for ghostty, written to config.";
+      description = lib.mdDoc "Configuration for ghostty, passed as command-line arguments via --args.";
       example = {
         font-size = 12;
         theme = "tokyonight_night";
@@ -56,13 +59,14 @@ in
 
   config = lib.mkIf cfg.enable (
     let
-      configDir = pkgs.writeTextDir "ghostty/config" (toConfigFormat cfg.settings);
+      # Generate command-line arguments from configuration
+      ghosttyArgs = toArgsFormat cfg.settings;
 
       ghosttyWrapped = pkgs.writeShellApplication {
         name = "ghostty";
         runtimeInputs = [ cfg.package ];
         text = ''
-          XDG_CONFIG_HOME='${configDir}' exec ${lib.getExe cfg.package} "$@"
+          exec ${lib.getExe cfg.package} --args ${ghosttyArgs} "$@"
         '';
       };
 
