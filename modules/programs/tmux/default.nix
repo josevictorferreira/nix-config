@@ -7,6 +7,13 @@
 let
   cfg = config.jvf.programs.tmux;
 
+  plugins = [
+    pkgs.tmuxPlugins.yank
+    pkgs.tmuxPlugins.onedark-theme
+  ];
+
+  applyPlugin = p: ''run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}'';
+
   tmuxConf = ''
     unbind C-b
     set-option -g prefix C-a
@@ -82,13 +89,20 @@ let
 
     setw -g aggressive-resize on
     setw -g allow-rename off
+    set -g set-clipboard on
+    setw -g @shell_mode 'vi'
+
+    ${lib.strings.concatStringsSep "\n" (map applyPlugin plugins)}
   '';
 
   tmuxPackage = (
     pkgs.symlinkJoin {
       name = "tmux";
       buildInputs = [ pkgs.makeWrapper ];
-      paths = [ pkgs.tmux ];
+      paths = [
+        pkgs.tmux
+      ]
+      ++ plugins;
       postBuild =
         let
           configFile = pkgs.writeText "config" tmuxConf;
@@ -100,13 +114,17 @@ let
   );
 in
 {
+
+  imports = [ ./tmuxp.nix ];
+
   options.jvf.programs.tmux = {
     enable = lib.mkEnableOption "tmux, a terminal multiplexer";
   };
 
   config = lib.mkIf cfg.enable {
+    jvf.programs.tmuxp.enable = true;
+
     environment.systemPackages = [
-      pkgs.tmuxp
       tmuxPackage
     ];
   };

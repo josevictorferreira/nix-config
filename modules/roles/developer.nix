@@ -18,7 +18,7 @@ in
     ../programs/neovim.nix
     ../programs/easyeffects.nix
     ../programs/zsh.nix
-    ../programs/tmux.nix
+    ../programs/tmux
   ];
 
   options.jvf.roles.developer.enable = lib.mkOption {

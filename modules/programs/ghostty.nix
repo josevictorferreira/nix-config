@@ -34,7 +34,7 @@ let
     custom-shader-animation = true;
     confirm-close-surface = false;
     shell-integration = "zsh";
-    theme = "Zenbones Dark";
+    theme = "Atom One Dark";
   };
 in
 {

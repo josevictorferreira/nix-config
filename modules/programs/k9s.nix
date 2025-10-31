@@ -1,16 +1,16 @@
-{ lib
-, jvfLib
-, pkgs
-, config
-, homeDir
-, ...
+{
+  lib,
+  pkgs,
+  jvfLib,
+  config,
+  homeDir,
+  ...
 }:
 let
   cfg = config.jvf.programs.k9s;
 
-  defaultConfig = {
+  defaultSettings = {
     liveViewAutoRefresh = false;
-    screenDumpDir = "${cfg.homeDir}/.local/state/k9s/screen-dumps";
     refreshRate = 2;
     maxConnRetry = 5;
     defaultView = "pods";
@@ -210,6 +210,28 @@ let
         };
       };
     };
+
+  k9sConfigFiles = {
+    "config.yaml" = cfg.settings;
+    "aliases.yaml" = cfg.aliases;
+    "skins.yaml" = cfg.skins;
+  };
+
+  k9sConfigDir = jvfLib.filesystem.mkConfigDir "k9s-config" k9sConfigFiles;
+
+  k9sPackage = (
+    pkgs.symlinkJoin {
+      name = "k9s";
+      buildInputs = [ pkgs.makeWrapper ];
+      paths = [
+        pkgs.k9s
+      ];
+      postBuild = ''
+        export K9S_CONFIG_DIR="${k9sConfigDir}"
+        wrapProgram $out/bin/k9s
+      '';
+    }
+  );
 in
 {
   options.jvf.programs.k9s = {
@@ -224,7 +246,7 @@ in
 
     settings = lib.mkOption {
       type = lib.types.attrs;
-      default = defaultConfig;
+      default = defaultSettings;
       description = lib.mdDoc "Configuration for k9s, written to config.yaml.";
     };
 
@@ -243,46 +265,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    let
-      k9sConfigDir = jvfLib.filesystem.mkConfigDir {
-        name = "k9s-config-dir";
-        files = {
-          "config.yaml" = {
-            type = "yaml";
-            content = {
-              k9s = cfg.settings;
-            };
-          };
-          "aliases.yaml" = {
-            type = "yaml";
-            content = {
-              aliases = cfg.aliases;
-            };
-          };
-        }
-        // (lib.mapAttrs'
-          (name: value: {
-            name = "skins/${name}.yaml";
-            value = {
-              type = "yaml";
-              content = value;
-            };
-          })
-          cfg.skins);
-      };
-
-      k9s-wrapped = pkgs.writeShellApplication {
-        name = "k9s";
-        runtimeInputs = [ cfg.package ];
-        text = ''
-          export K9S_CONFIG_DIR="${k9sConfigDir}"
-          exec ${lib.getExe cfg.package} "$@"
-        '';
-      };
-    in
-    {
-      environment.systemPackages = [ k9s-wrapped ];
-    }
-  );
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ k9sPackage ];
+  };
 }

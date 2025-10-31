@@ -6,6 +6,16 @@
 }:
 
 let
+
+  getFileExtension =
+    fileName:
+    let
+      parts = builtins.split "\\." fileName;
+      extension =
+        if builtins.length parts > 1 then (builtins.elemAt parts (builtins.length parts - 1)) else "";
+    in
+    extension;
+
   # importModulesInDir: Automatically discover and import all .nix modules in a directory
   #
   # WHAT IT DOES:
@@ -62,88 +72,19 @@ let
   # - Standardizes configuration management across the entire system
   #
   # USAGE EXAMPLE:
-  # home.file.".config/myapp" = mkConfigDir {
-  #   name = "myapp-config";
-  #   files = {
-  #     "config.yaml" = {
-  #       type = "yaml";
-  #       content = { key = "value"; nested = { setting = true; }; };
-  #     };
-  #     "settings.ini" = {
-  #       type = "ini";
-  #       content = { section = { option = "value"; }; };
-  #     };
+  # myAppConfig = mkConfigDir "myapp-config" {
+  #     "config.yaml" = { key = "value"; nested = { setting = true; }; };
+  #     "settings.ini" = { section = { option = "value"; }; };
   #   };
   # };
   mkConfigDir =
-    { name, files }:
-    let
-      # For each "relative path" -> spec, produce { name = relPath; path = storeFile; }
-      entries = lib.mapAttrsToList (
-        relPath: spec:
-        let
-          text = generators.toFileFormatStr spec;
-
-          out = pkgs.writeText "${name}-${lib.replaceStrings [ "/" ] [ "-" ] relPath}" text;
-        in
-        {
-          name = relPath; # destination inside the directory (can include subdirs like "skins/foo.yaml")
-          path = out; # source store path
-        }
-      ) files;
-    in
-    pkgs.linkFarm name entries;
-
-  #############################################################################
-  #  2. mkConfigDirSymlink (New Signature)
-  #  - Signature: `config: fsPath:`
-  #  - The first argument is the `{ name, files }` attribute set.
-  #  - The second argument is the string path for the symlink directory.
-  #  - Reuses the refactored `mkConfigDir` above.
-  #############################################################################
-  mkConfigDirSymlink =
-    config: fsPath:
-    let
-      # Generate the real config files in a dedicated store path.
-      # `mkConfigDir` is called with the `config` attrset directly.
-      configStorePath = mkConfigDir config;
-
-      # Get the list of relative file paths to create symlinks for.
-      relativeFilePaths = builtins.attrNames config.files;
-    in
-    # Create the final derivation which contains only the symlink tree.
-    pkgs.runCommand "${config.name}-symlink-tree"
-      {
-        # Pass Nix variables to the builder's environment for use in the script.
-        inherit relativeFilePaths configStorePath fsPath;
-        nativeBuildInputs = [ pkgs.coreutils ]; # For `ln`, `mkdir`, `dirname`
-      }
-      ''
-        # A robust shell script header is best practice.
-        set -euo pipefail
-
-        echo "--- Creating symlink tree for ${config.name} ---"
-
-        # `relativeFilePaths` is a space-separated string; load into a bash array.
-        declare -a file_paths=($relativeFilePaths)
-
-        for relPath in "''${file_paths[@]}"; do
-          # The full path to the source file in the Nix store.
-          local src_file="$configStorePath/$relPath"
-          # The full path for the symlink we want to create inside the new package.
-          local dst_file="$out/$fsPath/$relPath"
-
-          # Ensure the parent directory for the symlink exists.
-          mkdir -p "$(dirname "$dst_file")"
-
-          # Create the symlink pointing to the immutable store path.
-          ln -s "$src_file" "$dst_file"
-
-          echo "Linked: $dst_file -> $src_file"
-        done
-
-        echo "--- Symlink tree created successfully at $out ---"
-      '';
+    name: files:
+    pkgs.linkFarm name (
+      lib.mapAttrsToList (fileName: fileContent: {
+        name = fileName;
+        path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
+      }) files
+    );
 
   # createConfigLinks: Create a script that symlinks a derivation to a user's config directory
   #
@@ -272,7 +213,6 @@ in
   inherit
     importModulesInDir
     mkConfigDir
-    mkConfigDirSymlink
     createConfigLinks
     createConfigLinksDerivation
     ;

@@ -9,3 +9,4 @@ secrets/*.yml
 *.bak
 .ruff-cache/
 result/
+result
