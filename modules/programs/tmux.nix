@@ -2,105 +2,112 @@
   lib,
   pkgs,
   config,
-  username,
-  isDarwin,
-  isNixOS,
-  jvfLib,
   ...
 }:
 let
   cfg = config.jvf.programs.tmux;
-  tmuxConfig = pkgs.fetchFromGitHub {
-    owner = "josevictorferreira";
-    repo = ".tmux";
-    rev = "main";
-    sha256 = "sha256-mqEid7pBC72tebfGE/oy/CQ37d0HHjC9qtTsn8QbsqM=";
-  };
 
-  tmuxConfigDerivation = pkgs.stdenv.mkDerivation {
-    pname = "josevictor-tmux-config";
-    version = "1.0.0";
+  tmuxConf = ''
+    unbind C-b
+    set-option -g prefix C-a
+    bind-key C-a send-prefix
+    bind a send-prefix
 
-    src = tmuxConfig;
+    set -g base-index 1
 
-    installPhase = ''
-      mkdir -p $out/share/tmux-config
-      cp -r . $out/share/tmux-config/
-    '';
+    set -g mouse on
 
-    meta = with lib; {
-      description = "Tmux configuration for josevictorferreira";
-      homepage = "https://github.com/josevictorferreira/.tmux";
-      license = licenses.mit;
-      maintainers = [ ];
-    };
-  };
+    set -g pane-base-index 1
 
-  setupTmuxConfig = jvfLib.filesystem.createConfigLinks {
-    derivation = tmuxConfigDerivation;
-    configPath = "/share/tmux-config";
-    targetDir = "tmux";
-    username = cfg.username;
-    inherit isDarwin;
-    description = "Tmux configuration";
-  };
+    set -g default-terminal "tmux-256color"
+    set -ag terminal-overrides ",tmux-256color:RGB"
+    set -g default-command "zsh"
 
-  tmuxConf = pkgs.writeText "tmux.conf" ''
-    ${builtins.readFile "${tmuxConfigDerivation}/share/tmux-config/tmux.conf"}
+    set -g history-limit 10000
+
+    setw -g mode-keys vi
+    set -g status-keys vi
+
+    bind -T copy-mode-vi v send -X begin-selection
+    bind P paste-buffer
+    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xsel -i -p && xsel -o -p | xsel -i -b"
+
+    bind - split-window -v -c "#{pane_current_path}"
+    bind = split-window -h -c "#{pane_current_path}"
+    bind-key -r J resize-pane -D 5
+    bind-key -r K resize-pane -U 5
+    bind-key -r H resize-pane -L 5
+    bind-key -r L resize-pane -R 5
+    bind-key -r C-j resize-pane -D
+    bind-key -r C-k resize-pane -U
+    bind-key -r C-h resize-pane -L
+    bind-key -r C-l resize-pane -R
+    unbind '"'
+    unbind %
+
+    bind : command-prompt
+
+    bind h select-pane -L
+    bind j select-pane -D
+    bind k select-pane -U
+    bind l select-pane -R
+
+    set -g status-justify left
+    set -g status-interval 2
+
+    set -g status-left \'\'
+
+    set-option -g visual-activity off
+    set-option -g visual-bell off
+    set-option -g visual-silence off
+    set-window-option -g monitor-activity off
+    set-option -g bell-action none
+    set-option -g focus-events on
+    set-option -g escape-time 0
+
+    bind x kill-pane
+    bind X next-layout
+    bind Z previous-layout
+
+    bind -n S-down new-window
+    bind -n S-left prev
+    bind -n S-right next
+    bind -n C-left swap-window -t -1
+    bind -n C-right swap-window -t +1
+
+    set -g status-position bottom
+    set -g status-left \'\'
+    set -g status-right-length 50
+    set -g status-left-length 20
+
+    setw -g aggressive-resize on
+    setw -g allow-rename off
   '';
 
-  tmuxWrapper = pkgs.writeScriptBin "tmux" ''
-    #!${pkgs.bash}/bin/bash
-    export TMUXP_CONFIGDIR="$HOME/.config/tmux/tmuxp"
-
-    # Use our custom tmux.conf
-    export TMUX_CONF="${tmuxConf}"
-
-    # Call the actual tmux with our configuration
-    exec ${pkgs.tmux}/bin/tmux -f "''${TMUX_CONF}" "$@"
-  '';
+  tmuxPackage = (
+    pkgs.symlinkJoin {
+      name = "tmux";
+      buildInputs = [ pkgs.makeWrapper ];
+      paths = [ pkgs.tmux ];
+      postBuild =
+        let
+          configFile = pkgs.writeText "config" tmuxConf;
+        in
+        ''
+          wrapProgram $out/bin/tmux --add-flags "-f ${configFile}"
+        '';
+    }
+  );
 in
 {
   options.jvf.programs.tmux = {
     enable = lib.mkEnableOption "tmux, a terminal multiplexer";
-    username = lib.mkOption {
-      type = lib.types.str;
-      default = username;
-      description = "Username for which to clone the tmux configuration";
-    };
-    useDerivationConfig = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to use the derivation-based tmux configuration from GitHub";
-    };
   };
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       pkgs.tmuxp
-      tmuxWrapper
-    ]
-    ++ lib.optionals cfg.useDerivationConfig [
-      tmuxConfigDerivation
+      tmuxPackage
     ];
-
-    environment.variables = {
-      TMUXP_CONFIGDIR = "$HOME/.config/tmux/tmuxp";
-    };
-
-    systemd.services.setup-tmux-config = lib.mkIf (cfg.useDerivationConfig && isNixOS) {
-      description = "Setup Tmux configuration from derivation";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "local-fs.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        User = "root";
-        ExecStart = "${setupTmuxConfig}";
-      };
-    };
-
-    environment.etc."tmux.conf".text = builtins.readFile tmuxConf;
   };
 }
