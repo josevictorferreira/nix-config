@@ -1,10 +1,11 @@
-{ pkgs
-, lib
-, host
-, options
-, configRoot
-, username
-, ...
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  configRoot,
+  username,
+  ...
 }:
 let
 
@@ -41,7 +42,6 @@ in
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/roles"
-    "${configRoot}/modules/programs/weechat.nix"
     ./hardware.nix
   ];
 
@@ -412,7 +412,6 @@ in
     developer.enable = true;
     aiDeveloper.enable = true;
     monitoring.enable = true;
+    communication.enable = true;
   };
-
-  jvf.programs.weechat.enable = true;
 }
