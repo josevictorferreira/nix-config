@@ -209,6 +209,7 @@ in
       cfg.package
       pkgs.yq
       pkgs.difftastic
+      pkgs.gitleaks
     ]
     ++ optional cfg.lfs.enable pkgs.git-lfs;
 

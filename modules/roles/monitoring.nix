@@ -1,6 +1,8 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -20,6 +22,16 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.btop.enable = true;
-    jvf.programs.k9s.enable = true;
+
+    environment.systemPackages = [
+      pkgs.htop-vim
+      pkgs.ncdu
+      pkgs.inetutils
+      pkgs.dig
+      pkgs.nettools
+      pkgs.lsof
+      pkgs.nmap
+      pkgs.arp-scan
+    ];
   };
 }

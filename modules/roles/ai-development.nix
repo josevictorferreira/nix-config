@@ -1,11 +1,12 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
-  cfg = config.jvf.roles.aiDeveloper;
+  cfg = config.jvf.roles.aiDevelopment;
 in
 {
   imports = [
@@ -13,7 +14,7 @@ in
     ../programs/claudecode.nix
   ];
 
-  options.jvf.roles.aiDeveloper.enable = lib.mkOption {
+  options.jvf.roles.aiDevelopment.enable = lib.mkOption {
     type = lib.types.bool;
     default = false;
     description = "Whether to enable vibe coding tools.";
@@ -27,6 +28,7 @@ in
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.llama-cpp-rocm
+      pkgs.lmstudio
     ];
   };
 }

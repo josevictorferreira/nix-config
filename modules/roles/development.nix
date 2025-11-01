@@ -7,7 +7,7 @@
 }:
 
 let
-  cfg = config.jvf.roles.developer;
+  cfg = config.jvf.roles.development;
 in
 {
   imports = [
@@ -16,15 +16,14 @@ in
     ../programs/kitty.nix
     ../programs/git.nix
     ../programs/neovim.nix
-    ../programs/easyeffects.nix
     ../programs/zsh.nix
     ../programs/tmux
   ];
 
-  options.jvf.roles.developer.enable = lib.mkOption {
+  options.jvf.roles.development.enable = lib.mkOption {
     type = lib.types.bool;
     default = false;
-    description = "Whether to enable developer tools.";
+    description = "Whether to enable development tools.";
   };
 
   config = lib.mkIf cfg.enable {
@@ -33,7 +32,6 @@ in
       alacritty.enable = true;
       kitty.enable = true;
       neovim.enable = true;
-      easyeffects.enable = true;
       zsh.enable = true;
       tmux.enable = true;
       git = {
@@ -44,9 +42,31 @@ in
     };
 
     environment.systemPackages = [
-      pkgs.gitleaks
-      pkgs.difftastic
+      pkgs.fastfetch
+      pkgs.dbeaver-bin
+      pkgs.insomnia
+      pkgs.curl
+      pkgs.gnupg
+      pkgs.gnumake
+      pkgs.coreutils
+      pkgs.gh
+      pkgs.eza
+      pkgs.fzf
+      pkgs.ripgrep
+      pkgs.vim
+      pkgs.openssl
+      pkgs.openssh
+      pkgs.wget
+      pkgs.tree
+      pkgs.xsel
+      pkgs.sops
+      pkgs.age
+      pkgs.zip
+      pkgs.unzip
+      pkgs.imagemagick
+      pkgs.jq
       pkgs.yq
+      pkgs.direnv
     ];
   };
 }
