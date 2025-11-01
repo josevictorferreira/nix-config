@@ -21,11 +21,12 @@
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , darwin
-    , sops-nix
-    , home-manager
-    , ...
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      home-manager,
+      ...
     }:
     let
       systems = {
@@ -60,13 +61,13 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -95,13 +96,14 @@
         };
 
       homeManagerConfig =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        , ...
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
+          ...
         }:
         {
           home-manager.useGlobalPkgs = true;
@@ -117,7 +119,7 @@
               isNixOS
               ;
           };
-          home-manager.users.${username} = import ./home-manager/${host}/${os}-specific.nix;
+          home-manager.users.${username} = import ./home-manager/${host}/nixos-specific.nix;
         };
 
       nixosModule =

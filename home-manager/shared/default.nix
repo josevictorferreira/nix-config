@@ -10,10 +10,6 @@ let
   inherit (import "${configRoot}/hosts/${host}/variables.nix") keyboardLayout;
 in
 {
-  imports = [
-    ./development
-  ];
-
   home = {
     username = "${username}";
     homeDirectory = "${homeDirPrefix}/${username}";

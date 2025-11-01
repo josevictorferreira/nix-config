@@ -19,7 +19,7 @@
         return polkit.Result.YES;
       }
     });
-  
+
     polkit.addRule(function(action, subject) {
       if (subject.isInGroup("wheel") &&
           action.id.indexOf("org.freedesktop.policykit.exec") >= 0) {

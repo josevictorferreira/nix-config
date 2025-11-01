@@ -9,6 +9,8 @@
   ...
 }:
 let
+  devTools = import ./../common/development { inherit pkgs; };
+
   cfg = config.jvf.programs.neovim;
   neovimConfig = pkgs.fetchFromGitHub {
     owner = "josevictorferreira";
@@ -53,11 +55,6 @@ in
       default = username;
       description = "Username for which to clone the neovim configuration";
     };
-    useDerivationConfig = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to use the derivation-based neovim configuration from GitHub";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -73,11 +70,11 @@ in
       pkgs.pkg-config
       pkgs.openssh
     ]
-    ++ lib.optionals cfg.useDerivationConfig [
-      neovimConfigDerivation
-    ];
+    ++ devTools.lspServers
+    ++ devTools.formatters
+    ++ devTools.languages;
 
-    systemd.services.setup-nvim-config = lib.mkIf (cfg.useDerivationConfig && isNixOS) {
+    systemd.services.setup-nvim-config = lib.mkIf isNixOS {
       description = "Setup Neovim configuration from derivation";
       wantedBy = [ "multi-user.target" ];
       after = [ "local-fs.target" ];
@@ -90,7 +87,7 @@ in
       };
     };
 
-    system.activationScripts.setup-nvim-config = lib.mkIf cfg.useDerivationConfig ''
+    system.activationScripts.setup-nvim-config = ''
       echo "Setting up Neovim configuration..."
       ${setupNeovimConfig}
     '';
