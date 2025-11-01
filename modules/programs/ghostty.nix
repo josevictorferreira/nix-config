@@ -19,6 +19,14 @@ let
       ) settings
     );
 
+  tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
+    if command -v tmuxp-init >/dev/null 2>&1; then
+      exec tmuxp-init
+    else
+      exec tmux
+    fi
+  '';
+
   defaultConfig = {
     gtk-titlebar = false;
     gtk-single-instance = true;
@@ -35,6 +43,7 @@ let
     confirm-close-surface = false;
     shell-integration = "zsh";
     theme = "Atom One Dark";
+    command = tmuxpInitScript;
   };
 in
 {
