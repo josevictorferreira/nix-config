@@ -9,7 +9,7 @@
         "x-ai/grok-4-fast" = {
           name = "Grok 4 Fast";
         };
-        "minimax/minimax-m2:free" = {
+        "minimax/minimax-m2" = {
           name = "Minimax M2";
         };
         "moonshotai/kimi-k2-0905:exacto" = {
