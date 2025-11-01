@@ -42,6 +42,7 @@ in
     "${configRoot}/modules/hardware/local-hardware-clock.nix"
     "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/roles"
+    "${configRoot}/modules/desktop/hyprland"
     ./hardware.nix
   ];
 
@@ -417,4 +418,6 @@ in
     designing.enable = true;
     media.enable = true;
   };
+
+  jvf.desktop.hyprland.enable = true;
 }

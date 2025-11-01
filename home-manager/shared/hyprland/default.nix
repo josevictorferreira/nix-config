@@ -1,13 +1,17 @@
-{ pkgs, inputs, configRoot, ... }:
+{
+  pkgs,
+  inputs,
+  configRoot,
+  ...
+}:
 
 let
   hyprlandConfig = "${configRoot}/dotfiles/hypr";
   python-packages = pkgs.python3.withPackages (
-    ps:
-      with ps; [
-        requests
-        pyquery # needed for hyprland-dots Weather script
-      ]
+    ps: with ps; [
+      requests
+      pyquery # needed for hyprland-dots Weather script
+    ]
   );
 in
 {
@@ -20,7 +24,6 @@ in
     ./qt5.nix
     ./qt6.nix
     ./kvantum.nix
-    ./ags.nix
     ./cava.nix
     ./wlogout.nix
     ./hyprlock.nix
@@ -37,40 +40,43 @@ in
       recursive = true;
     };
   };
-  home.packages = with pkgs; [
-    slurp
-    wl-clipboard
-    hypridle
-    hyprcursor
-    pyprland
-    brightnessctl # for brightness control
-    cliphist
-    eog
-    gnome-system-monitor
-    file-roller
-    gtk-engine-murrine #for gtk themes
-    inxi
-    networkmanagerapplet
-    nwg-look # requires unstable channel
-    nvtopPackages.full
-    pamixer
-    pavucontrol
-    playerctl
-    polkit_gnome
-    yad
-    yt-dlp
-    noto-fonts
+  home.packages =
+    with pkgs;
+    [
+      slurp
+      wl-clipboard
+      hypridle
+      hyprcursor
+      pyprland
+      brightnessctl # for brightness control
+      cliphist
+      eog
+      gnome-system-monitor
+      file-roller
+      gtk-engine-murrine # for gtk themes
+      inxi
+      networkmanagerapplet
+      nwg-look # requires unstable channel
+      nvtopPackages.full
+      pamixer
+      pavucontrol
+      playerctl
+      polkit_gnome
+      yad
+      yt-dlp
+      noto-fonts
 
-    # GUI Apps
-    kitty
+      # GUI Apps
+      kitty
 
-    # Fonts
-    fira-code
-    noto-fonts-cjk-sans
-    jetbrains-mono
-    font-awesome
-    terminus_font
-  ] ++ [
-    python-packages
-  ];
+      # Fonts
+      fira-code
+      noto-fonts-cjk-sans
+      jetbrains-mono
+      font-awesome
+      terminus_font
+    ]
+    ++ [
+      python-packages
+    ];
 }
