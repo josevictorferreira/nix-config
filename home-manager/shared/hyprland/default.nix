@@ -1,8 +1,7 @@
-{
-  pkgs,
-  inputs,
-  configRoot,
-  ...
+{ pkgs
+, inputs
+, configRoot
+, ...
 }:
 
 let
