@@ -1,7 +1,8 @@
-{ lib
-, config
-, pkgs
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  ...
 }:
 
 let
@@ -11,6 +12,7 @@ in
   imports = [
     ./ags
     ./cava
+    ./qt5ct
   ];
 
   options.jvf.desktop.hyprland = {
@@ -21,6 +23,7 @@ in
     jvf.desktop.hyprland = {
       ags.enable = true;
       cava.enable = true;
+      qt5ct.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];
