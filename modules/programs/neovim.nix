@@ -1,12 +1,11 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  isDarwin,
-  isNixOS,
-  jvfLib,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, isDarwin
+, isNixOS
+, jvfLib
+, ...
 }:
 let
   devTools = import ./../common/development { inherit pkgs; };

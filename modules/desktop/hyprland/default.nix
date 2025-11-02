@@ -1,7 +1,7 @@
 {
   lib,
-  pkgs,
   config,
+  pkgs,
   ...
 }:
 
@@ -11,19 +11,19 @@ in
 {
   imports = [
     ./ags
+    ./cava
   ];
 
   options.jvf.desktop.hyprland = {
     enable = lib.mkEnableOption "Hyprland desktop";
-
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.ags;
-      description = "Enable hyprland desktop.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.desktop.hyprland.ags.enable = true;
+    jvf.desktop.hyprland = {
+      ags.enable = true;
+      cava.enable = true;
+    };
+
+    environment.systemPackages = [ pkgs.hyprlock ];
   };
 }

@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  jvfLib,
-  ...
+{ lib
+, pkgs
+, config
+, jvfLib
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;

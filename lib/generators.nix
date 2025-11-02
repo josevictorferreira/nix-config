@@ -4,10 +4,12 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
-      ) settings
+      lib.mapAttrsToList
+        (
+          key: value:
+          if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
+        )
+        settings
     );
 
   toTOML =

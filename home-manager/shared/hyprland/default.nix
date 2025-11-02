@@ -23,10 +23,7 @@ in
     ./screenshot.nix
     ./qt5.nix
     ./qt6.nix
-    ./kvantum.nix
-    ./cava.nix
     ./wlogout.nix
-    ./hyprlock.nix
   ];
   wayland.windowManager.hyprland = {
     enable = true;

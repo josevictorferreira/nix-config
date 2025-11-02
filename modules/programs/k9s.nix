@@ -1,10 +1,9 @@
-{
-  lib,
-  pkgs,
-  jvfLib,
-  config,
-  homeDir,
-  ...
+{ lib
+, pkgs
+, jvfLib
+, config
+, homeDir
+, ...
 }:
 let
   cfg = config.jvf.programs.k9s;

@@ -1,12 +1,11 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  isDarwin,
-  isNixOS,
-  jvfLib,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, isDarwin
+, isNixOS
+, jvfLib
+, ...
 }:
 let
   cfg = config.jvf.programs.zsh;

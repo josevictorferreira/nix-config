@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  generators,
-  ...
+{ lib
+, pkgs
+, generators
+, ...
 }:
 
 let
@@ -43,9 +42,11 @@ let
 
       # Filter for .nix files, excluding default.nix to prevent circular imports
       # default.nix files typically contain the imports themselves
-      nixFileNames = lib.filter (
-        fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
-      ) allFileNames;
+      nixFileNames = lib.filter
+        (
+          fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
+        )
+        allFileNames;
     in
     # Convert filenames to full paths by prepending the directory
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
@@ -80,10 +81,12 @@ let
   mkConfigDir =
     name: files:
     pkgs.linkFarm name (
-      lib.mapAttrsToList (fileName: fileContent: {
-        name = fileName;
-        path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
-      }) files
+      lib.mapAttrsToList
+        (fileName: fileContent: {
+          name = fileName;
+          path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
+        })
+        files
     );
 
   # createConfigLinks: Create a script that symlinks a derivation to a user's config directory
@@ -118,13 +121,13 @@ let
   #   description = "MyApp configuration";
   # }
   createConfigLinks =
-    {
-      derivation,
-      configPath,
-      targetDir,
-      username,
-      isDarwin ? false,
-      description ? targetDir,
+    { derivation
+    , configPath
+    , targetDir
+    , username
+    , isDarwin ? false
+    , description ? targetDir
+    ,
     }:
     let
       userHome = if isDarwin then "/Users/${username}" else "/home/${username}";
@@ -189,10 +192,10 @@ let
   #   targetDir = "nvim";
   # };
   createConfigLinksDerivation =
-    {
-      derivation,
-      configPath,
-      targetDir,
+    { derivation
+    , configPath
+    , targetDir
+    ,
     }:
     let
       sourcePath = "${derivation}${configPath}";
