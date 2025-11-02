@@ -1,0 +1,29 @@
+{
+  config,
+  pkgs,
+  ...
+}:
+''
+  /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
+  /* Main Config Calculator */
+  /* Submitted by: https://github.com/JosephArmas */
+
+  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+
+  /* ---- Entry ---- */
+  entry {
+    width: 27%;
+    placeholder: "🧮 Calculate";
+  }
+
+  /* ---- Window ---- */
+  window {
+      width: 30%;
+  }
+
+  /* ---- Message ---- */
+  textbox {
+      background-color:            @selected;
+      text-color:                  @background;
+  }
+''

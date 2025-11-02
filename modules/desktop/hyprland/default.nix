@@ -13,6 +13,8 @@ in
     ./ags
     ./cava
     ./qt5ct
+    ./qt6ct
+    ./rofi
   ];
 
   options.jvf.desktop.hyprland = {
@@ -24,6 +26,8 @@ in
       ags.enable = true;
       cava.enable = true;
       qt5ct.enable = true;
+      qt6ct.enable = true;
+      rofi.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];

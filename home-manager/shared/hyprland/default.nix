@@ -1,7 +1,8 @@
-{ pkgs
-, inputs
-, configRoot
-, ...
+{
+  pkgs,
+  inputs,
+  configRoot,
+  ...
 }:
 
 let
@@ -15,13 +16,10 @@ let
 in
 {
   imports = [
-    ./rofi.nix
     ./waybar.nix
     ./wallust.nix
     ./swaync.nix
     ./screenshot.nix
-    ./qt5.nix
-    ./qt6.nix
     ./wlogout.nix
   ];
   wayland.windowManager.hyprland = {

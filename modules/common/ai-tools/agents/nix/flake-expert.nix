@@ -3,6 +3,8 @@
     ---
     name: flake-expert
     description: Nix flake management, inputs, and dependency specialist
+    tools:
+      context7: true
     ---
 
     <flake_schema_mastery>

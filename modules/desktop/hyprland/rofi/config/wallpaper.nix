@@ -1,0 +1,58 @@
+{
+  config,
+  pkgs,
+  ...
+}:
+''
+  /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
+  /* Main Config (wallpaper) */
+
+  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+
+  /* ---- Configuration ---- */
+  configuration {
+    modi: "drun";
+  }
+
+  window {
+    width: 60%;
+  }
+
+  /* ---- Imagebox ---- */
+  imagebox {
+    orientation: vertical;
+    children:
+      [ "entry", "listbox"];
+  }
+
+
+  entry {
+    expand: false;
+    placeholder: "🎞️ Choose Wallpaper";
+  }
+
+  /* ---- Listview ---- */
+  listview {
+    columns: 4;
+    lines: 3;
+    flow: horizontal;
+  }
+
+  /* ---- Element ---- */
+  element {
+    orientation: vertical;
+    padding: 0px;
+    spacing: 0px;
+    border-radius: 15px;
+  }
+
+  element-icon {
+    size: 20%;
+  }
+
+  element-text {
+    font: "Fira Code SemiBold 12";
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+  }
+''

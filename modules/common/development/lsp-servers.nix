@@ -6,7 +6,7 @@
     pkgs.bash-language-server
     pkgs.lua-language-server
     pkgs.vscode-langservers-extracted
-    pkgs.dockerfile-language-server-nodejs
+    pkgs.dockerfile-language-server
     pkgs.docker-compose-language-service
     pkgs.ruff
     pkgs.vim-language-server

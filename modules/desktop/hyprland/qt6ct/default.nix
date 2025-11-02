@@ -6,8 +6,8 @@
 }:
 
 let
-  cfg = config.jvf.desktop.hyprland.qt5ct;
-  qt5ctConf = {
+  cfg = config.jvf.desktop.hyprland.qt6ct;
+  qt6ctConf = {
     Appearance = {
       color_scheme_path = "${catpuccinMochaConfFile}";
       custom_palette = true;
@@ -16,8 +16,8 @@ let
       style = "kvantum";
     };
     Fonts = {
-      fixed = "Fira Code Medium,12,-1,5,57,0,0,0,0,0,Regular";
-      general = "Fira Code Medium,14,-1,5,57,0,0,0,0,0,Regular";
+      fixed = "Fira Code Medium,12,-1,5,500,0,0,0,0,0,0,0,0,0,0,1,Regular";
+      general = "Fira Code Medium,14,-1,5,500,0,0,0,0,0,0,0,0,0,0,1,Regular";
     };
     Interface = {
       activate_item_on_single_click = 1;
@@ -35,7 +35,7 @@ let
       wheel_scroll_lines = 3;
     };
     SettingsWindow = {
-      geometry = "@ByteArray(\x1\xd9\xd0\xcb\0\x3\0\0\0\0\0\0\0\0\0\0\0\0\x6\xe3\0\0\x5\x61\0\0\0\0\0\0\0\0\0\0\x6\xe3\0\0\x5\x61\0\0\0\0\x2\0\0\0\n\0\0\0\0\0\0\0\0\0\0\0\x6\xe3\0\0\x5\x61)";
+      geometry = "@ByteArray(\\x1\\xd9\\xd0\\xcb\\0\\x3\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\x4\\xef\\0\\0\\x5_\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\t\\xff\\0\\0\\x5s\\0\\0\\0\\0\\x2\\0\\0\\0\\n\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\x4\\xef\\0\\0\\x5_)";
     };
     Troubleshooting = {
       force_raster_widgets = 1;
@@ -63,36 +63,37 @@ let
   catpuccinLatteConfFile = pkgs.writeText "Catppuccin-Latte.conf" (
     lib.generators.toINI { } catpuccinLatte
   );
-  qt5ctConfFile = pkgs.writeText "qt5ct.conf" (lib.generators.toINI { } qt5ctConf);
+  qt6ctConfFile = pkgs.writeText "qt6ct.conf" (lib.generators.toINI { } qt6ctConf);
 
-  qt5ctConfigDir = pkgs.runCommand "qt5ct-config-1.0.0" { } ''
-    mkdir -p $out/qt5ct/colors
-    ln -s ${qt5ctConfFile} $out/qt5ct/qt5ct.conf
-    ln -s ${catpuccinMochaConfFile} $out/qt5ct/colors/Catppuccin-Mocha.conf
-    ln -s ${catpuccinLatteConfFile} $out/qt5ct/colors/Catppuccin-Latte.conf
+  qt6ctConfigDir = pkgs.runCommand "qt6ct-config-1.0.0" { } ''
+    mkdir -p $out/qt6ct/colors
+    ln -s ${qt6ctConfFile} $out/qt6ct/qt6ct.conf
+    ln -s ${catpuccinMochaConfFile} $out/qt6ct/colors/Catppuccin-Mocha.conf
+    ln -s ${catpuccinLatteConfFile} $out/qt6ct/colors/Catppuccin-Latte.conf
   '';
 
-  qt5ctWrapper = pkgs.symlinkJoin {
-    name = "qt5ct";
+  qt6ctWrapper = pkgs.symlinkJoin {
+    name = "qt6ct";
     paths = [
-      pkgs.libsForQt5.qt5ct
-      pkgs.libsForQt5.qtstyleplugin-kvantum
+      pkgs.qt6ct
+      pkgs.qt6.qtwayland
+      pkgs.qt6Packages.qtstyleplugin-kvantum
     ];
     buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
-      wrapProgram $out/bin/qt5ct \
-        --prefix XDG_CONFIG_HOME : "${qt5ctConfigDir}"
+      wrapProgram $out/bin/qt6ct \
+        --prefix XDG_CONFIG_HOME : "${qt6ctConfigDir}"
     '';
   };
 in
 {
-  options.jvf.desktop.hyprland.qt5ct = {
-    enable = lib.mkEnableOption "Qt5ct settings for Hyprland";
+  options.jvf.desktop.hyprland.qt6ct = {
+    enable = lib.mkEnableOption "qt6ct settings for Hyprland";
   };
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
-      qt5ctWrapper
+      qt6ctWrapper
     ];
   };
 }

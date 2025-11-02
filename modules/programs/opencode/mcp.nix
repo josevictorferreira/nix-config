@@ -19,7 +19,7 @@
         "shadcn@latest"
         "mcp"
       ];
-      enabled = true;
+      enabled = false;
     };
 
     chrome-devtools = {
@@ -32,7 +32,7 @@
         "--isolated=true"
         "--executablePath=${pkgs.chromium}/bin/chromium"
       ];
-      enabled = true;
+      enabled = false;
     };
 
     context7 = {
@@ -41,7 +41,7 @@
       headers = {
         CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
       };
-      enabled = true;
+      enabled = false;
     };
 
     socket = {
