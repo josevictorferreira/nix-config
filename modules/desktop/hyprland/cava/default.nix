@@ -43,6 +43,8 @@ let
     };
   };
 
+  configFile = pkgs.writeText "cava.conf" cavaConfig;
+
   cavaShaders = pkgs.stdenv.mkDerivation {
     pname = "cava-shaders";
     version = "1.0.0";
@@ -51,6 +53,7 @@ let
 
     installPhase = ''
       mkdir -p $out
+      cp -rf ${configFile} $out/config
       cp -r ./* $out/
     '';
   };
@@ -61,7 +64,7 @@ let
     buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/cava \
-        --add-flags "--config ${cavaConfig}" \
+        --add-flags "--config ${cavaShaders}/config" \
         --prefix XDG_CONFIG_HOME : "${cavaShaders}"
     '';
   };
