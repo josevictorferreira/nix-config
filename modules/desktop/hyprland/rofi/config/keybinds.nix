@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Main Config - For Keybinds generation */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Entry ---- */
   entry {

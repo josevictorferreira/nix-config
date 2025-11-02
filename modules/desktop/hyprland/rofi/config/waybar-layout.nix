@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Main Config (waybar) */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Configuration ---- */
   configuration {

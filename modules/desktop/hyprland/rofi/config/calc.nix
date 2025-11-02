@@ -8,7 +8,7 @@
   /* Main Config Calculator */
   /* Submitted by: https://github.com/JosephArmas */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Entry ---- */
   entry {

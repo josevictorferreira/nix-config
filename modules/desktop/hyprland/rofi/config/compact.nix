@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Main Config (compact) */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Configuration ---- */
   configuration {
@@ -22,7 +22,7 @@
 
   /* ---- Inputbar ---- */
   inputbar {
-    background-image: url("${config.xdg.configHome}/rofi/.current_wallpaper", width);
+    background-image: url("~/.config/rofi/.current_wallpaper", width);
   }
 
   /* ---- Imagebox ---- */

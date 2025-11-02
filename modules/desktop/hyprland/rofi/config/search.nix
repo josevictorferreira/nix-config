@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Rofi Config for Google Search) */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Window ---- */
   window {

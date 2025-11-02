@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Main config Rofi Beats Config (compact) */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Entry ---- */
   entry {

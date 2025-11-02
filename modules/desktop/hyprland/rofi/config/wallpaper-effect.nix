@@ -7,7 +7,7 @@
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
   /* Wallpaper Effects */
 
-  @import "${config.xdg.configHome}/rofi/master-config.rasi"
+  @import "/etc/xdg/rofi/master-config.rasi"
 
   /* ---- Entry ---- */
   entry {
@@ -29,6 +29,6 @@
 
   /* ---- Inputbar ---- */
   inputbar {
-      background-image: url("${config.xdg.configHome}/hypr/wallpaper_effects/.wallpaper_modified", width);
+      background-image: url("~/.config/hypr/wallpaper_effects/.wallpaper_modified", width);
   }
 ''

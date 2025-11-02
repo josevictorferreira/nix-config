@@ -26,7 +26,7 @@
   }
 
   /* ---- Load wallust colors ---- */
-  @theme "${config.xdg.configHome}/rofi/wallust/colors-rofi.rasi"
+  @theme "~/.config/rofi/wallust/colors-rofi.rasi"
 
   /* ---- Global Properties ---- */
   * {
@@ -78,7 +78,7 @@
       border-radius:               25px;
       orientation:                 horizontal;
       children:                    ["entry", "dummy", "mode-switcher" ];
-      background-image:            url("${config.xdg.configHome}/rofi/.current_wallpaper", width);
+      background-image:            url("~/.config/rofi/.current_wallpaper", width);
   }
 
   /* ---- Entry input ---- */
