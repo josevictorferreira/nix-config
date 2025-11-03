@@ -19,7 +19,7 @@ in
     ];
 
     environment.etc = {
-      "xdg/config.rasi".text = import ./config/main.nix { inherit config pkgs; };
+      "xdg/rofi.rasi".text = import ./config/main.nix { inherit config pkgs; };
       "xdg/rofi/master-config.rasi".text = import ./config/master.nix { inherit config pkgs; };
       "xdg/rofi/config-calc.rasi".text = import ./config/calc.nix { inherit config pkgs; };
       "xdg/rofi/config-clipboard.rasi".text = import ./config/clipboard.nix { inherit config pkgs; };
