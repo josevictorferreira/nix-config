@@ -39,7 +39,7 @@ let
 
   setupNeovimConfig = jvfLib.filesystem.createConfigLinks {
     derivation = neovimConfigDerivation;
-    configPath = "/share/nvim-config";
+    configtargetDir = "/share/nvim-config";
     targetDir = "nvim";
     username = cfg.username;
     inherit isDarwin;

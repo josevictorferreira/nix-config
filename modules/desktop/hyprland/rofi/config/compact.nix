@@ -1,7 +1,6 @@
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 ''
   /* ---- 💫 https://github.com/JaKooLit 💫 ---- */

@@ -5,6 +5,26 @@
 }:
 
 let
+  clonerepoOnce =
+    { username
+    , group
+    , repo
+    , targetDir
+    ,
+    }:
+    {
+      supportsDryActivation = true;
+      text = ''
+        set -euo pipefail
+        if [ ! -d "${targetDir}/.git" ]; then
+          ${pkgs.coreutils}/bin/mkdir -p "${targetDir}"
+          ${pkgs.coreutils}/bin/chown -R ${username}:${group} "${targetDir}"
+          GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -o StrictHostKeyChecking=accept-new" \
+          ${pkgs.util.linux}/bin/runuser -u ${username} -- \
+            ${pkgs.git}/bin/git clone --depth=1 ${repo} "${targetDir}"
+        fi
+      '';
+    };
 
   getFileExtension =
     fileName:
@@ -20,11 +40,11 @@ let
   # WHAT IT DOES:
   # - Scans a directory for all .nix files
   # - Filters out "default.nix" (to prevent circular imports)
-  # - Returns a list of paths to import in your configuration
+  # - Returns a list of targetDirs to import in your configuration
   #
   # WHAT IT NEEDS:
-  # - `dir`: A directory path (e.g., ./modules, ./roles)
-  # - Returns: List of file paths ready for the `imports` attribute
+  # - `dir`: A directory targetDir (e.g., ./modules, ./roles)
+  # - Returns: List of file targetDirs ready for the `imports` attribute
   #
   # WHY THIS EXISTS:
   # - Eliminates manual maintenance of import lists
@@ -48,7 +68,7 @@ let
         )
         allFileNames;
     in
-    # Convert filenames to full paths by prepending the directory
+    # Convert filenames to full targetDirs by prepending the directory
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
 
   # mkConfigDir: Generate a configuration directory with structured file content
@@ -57,14 +77,14 @@ let
   # - Creates a directory containing configuration files with generated content
   # - Supports multiple formats: YAML, INI, and raw text
   # - Uses Nix store derivations for reproducible configuration files
-  # - Returns a path that can be used as a configuration directory
+  # - Returns a targetDir that can be used as a configuration directory
   #
   # WHAT IT NEEDS:
   # - `name`: Directory name (used in derivation naming)
-  # - `files`: Attribute set where keys are file paths and values are specs:
+  # - `files`: Attribute set where keys are file targetDirs and values are specs:
   #   - `type`: "yaml", "ini", or omitted for raw text
   #   - `content`: The actual configuration data (attrset for YAML/INI, string for text)
-  # - Returns: Path to generated configuration directory
+  # - Returns: targetDir to generated configuration directory
   #
   # WHY THIS EXISTS:
   # - Eliminates manual file creation for dynamic configurations
@@ -84,7 +104,9 @@ let
       lib.mapAttrsToList
         (fileName: fileContent: {
           name = fileName;
-          path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
+          targetDir = pkgs.writeText fileName (
+            generators.toFileFormatStr (getFileExtension fileName) fileContent
+          );
         })
         files
     );
@@ -99,7 +121,7 @@ let
   #
   # WHAT IT NEEDS:
   # - `derivation`: The derivation containing config files (must have a predictable structure)
-  # - `configPath`: Path within the derivation to the config files (e.g., "/share/nvim-config")
+  # - `configtargetDir`: targetDir within the derivation to the config files (e.g., "/share/nvim-config")
   # - `targetDir`: Target directory name in user's config (e.g., "nvim", "git", "tmux")
   # - `username`: Username for home directory resolution
   # - `isDarwin`: Boolean for macOS vs Linux home directory structure
@@ -114,7 +136,7 @@ let
   # USAGE EXAMPLE:
   # createConfigLinks {
   #   derivation = myAppConfigDerivation;
-  #   configPath = "/share/myapp-config";
+  #   configtargetDir = "/share/myapp-config";
   #   targetDir = "myapp";
   #   username = "josevictor";
   #   isDarwin = false;
@@ -122,7 +144,7 @@ let
   # }
   createConfigLinks =
     { derivation
-    , configPath
+    , configtargetDir
     , targetDir
     , username
     , isDarwin ? false
@@ -131,7 +153,7 @@ let
     }:
     let
       userHome = if isDarwin then "/Users/${username}" else "/home/${username}";
-      derivationConfigPath = "${derivation}${configPath}";
+      derivationConfigtargetDir = "${derivation}${configtargetDir}";
     in
     pkgs.writeScript "setup-${targetDir}-config" ''
       #!${pkgs.bash}/bin/bash
@@ -139,7 +161,7 @@ let
 
       USER_HOME="${userHome}"
       TARGET_DIR="''${USER_HOME}/.config/${targetDir}"
-      DERIVATION_CONFIG="${derivationConfigPath}"
+      DERIVATION_CONFIG="${derivationConfigtargetDir}"
       DESCRIPTION="${description}"
 
       # Create .config directory if it doesn't exist
@@ -164,10 +186,7 @@ let
       echo "Creating symlink for ''${DESCRIPTION} to ''${TARGET_DIR}..."
       ln -sf "''${DERIVATION_CONFIG}" "''${TARGET_DIR}"
 
-      ${lib.optionalString (!isDarwin) ''
-        # Set proper ownership on NixOS
-        chown -R ${username}:users "''${TARGET_DIR}"
-      ''}
+      chown -R ${username}:users "''${TARGET_DIR}"
 
       echo "''${DESCRIPTION} installed successfully!"
     '';
@@ -181,35 +200,100 @@ let
   #
   # WHAT IT NEEDS:
   # - `derivation`: Source derivation containing config files
-  # - `configPath`: Path within derivation to config files
+  # - `configtargetDir`: targetDir within derivation to config files
   # - `targetDir`: Target config directory name
   # - Returns: Derivation with symlinked config structure
   #
   # USAGE EXAMPLE:
   # home.file.".config/nvim".source = createConfigLinksDerivation {
   #   derivation = neovimConfigDerivation;
-  #   configPath = "/share/nvim-config";
+  #   configtargetDir = "/share/nvim-config";
   #   targetDir = "nvim";
   # };
   createConfigLinksDerivation =
     { derivation
-    , configPath
+    , configtargetDir
     , targetDir
     ,
     }:
     let
-      sourcePath = "${derivation}${configPath}";
+      sourcetargetDir = "${derivation}${configtargetDir}";
     in
     pkgs.runCommand "${targetDir}-config-links"
       {
         nativeBuildInputs = [ pkgs.coreutils ];
-        inherit sourcePath targetDir;
+        inherit sourcetargetDir targetDir;
       }
       ''
         mkdir -p $out
-        ln -s $sourcePath $out/${targetDir}
-        echo "Created config symlink: $out/${targetDir} -> $sourcePath"
+        ln -s $sourcetargetDir $out/${targetDir}
+        echo "Created config symlink: $out/${targetDir} -> $sourcetargetDir"
       '';
+
+  # cloneOnceText: Generate a script to clone a git repository once (idempotent)
+  #
+  # WHAT IT DOES:
+  # - Creates a bash script fragment that clones a git repo if it doesn't exist
+  # - Uses SSH with strict host key checking for security
+  # - Runs as the specified user with proper ownership
+  # - Supports both NixOS and nix-darwin systems
+  #
+  # WHAT IT NEEDS:
+  # - `pkgs`: Package set for dependencies
+  # - `repo`: Git repository URL (SSH format recommended)
+  # - `user`: Username to run git clone as
+  # - `group`: Group name for file ownership (optional, defaults to user)
+  # - `home`: Home directory path (optional, auto-detected based on platform)
+  # - `rel`: Relative path from home to clone directory
+  # - `isDarwin`: Boolean indicating if this is for macOS (optional, defaults to false)
+  #
+  # WHY THIS EXISTS:
+  # - Standardizes git repository cloning across the configuration
+  # - Provides idempotent cloning (won't re-clone existing repos)
+  # - Handles platform differences between NixOS and nix-darwin
+  # - Ensures proper user ownership and permissions
+  #
+  # USAGE EXAMPLE:
+  # cloneOnceText {
+  #   pkgs = pkgs;
+  #   repo = "git@github.com:user/dotfiles.git";
+  #   user = "josevictor";
+  #   group = "users";
+  #   home = "/home/josevictor";
+  #   rel = ".config/nvim";
+  #   isDarwin = false;
+  # }
+  cloneOnceText =
+    { pkgs
+    , repo
+    , user
+    , group ? user
+    , home
+    , rel
+    , isDarwin ? false
+    ,
+    }:
+    let
+      targetDir = "${home}/${rel}";
+      # Use appropriate command for running as user on different platforms
+      runAsUserCmd =
+        if isDarwin then
+          "${pkgs.sudo}/bin/sudo -u ${user}"
+        else
+          "${pkgs.util-linux}/bin/runuser -u ${user} --";
+    in
+    ''
+      # Clone ${repo} to ${targetDir} if it doesn't exist
+      if [ ! -d "${targetDir}/.git" ]; then
+        echo "Cloning ${repo} to ${targetDir}..."
+        ${pkgs.coreutils}/bin/mkdir -p "${targetDir}"
+        ${pkgs.coreutils}/bin/chown -R ${user}:${group} "${targetDir}"
+        GIT_SSH_COMMAND="${pkgs.openssh}/bin/ssh -o StrictHostKeyChecking=accept-new" \
+        ${runAsUserCmd} ${pkgs.git}/bin/git clone --depth=1 ${repo} "${targetDir}"
+      else
+        echo "Repository already exists at ${targetDir}, skipping clone..."
+      fi
+    '';
 
 in
 {
@@ -218,5 +302,6 @@ in
     mkConfigDir
     createConfigLinks
     createConfigLinksDerivation
+    cloneOnceText
     ;
 }

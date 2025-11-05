@@ -37,7 +37,7 @@ let
 
   setupZshConfig = jvfLib.filesystem.createConfigLinks {
     derivation = zshConfigDerivation;
-    configPath = "/share/zsh-config";
+    configtargetDir = "/share/zsh-config";
     targetDir = "zsh";
     username = cfg.username;
     inherit isDarwin;
