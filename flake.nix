@@ -21,11 +21,12 @@
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , darwin
-    , sops-nix
-    , home-manager
-    , ...
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      home-manager,
+      ...
     }:
     let
       systems = {
@@ -60,13 +61,13 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -95,13 +96,14 @@
         };
 
       homeManagerConfig =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        , ...
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
+          ...
         }:
         {
           home-manager.useGlobalPkgs = true;
@@ -130,6 +132,7 @@
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
             home-manager.nixosModules.home-manager
             homeManagerConfig
+            ./modules/users/repositories.nix
           ];
         };
 
@@ -143,6 +146,7 @@
             ./hosts/${host}/config.nix
             home-manager.darwinModules.home-manager
             homeManagerConfig
+            ./modules/users/repositories.nix
           ];
         };
 

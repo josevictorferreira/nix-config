@@ -10,13 +10,29 @@
 let
   cfg = config.jvf.users.repositories;
 
-  defaultOptions = {
-    enable = lib.mkEnableOption "per-user repo cloning on switch (once per target)";
+  mkBody =
+    uCfg: userName:
+    let
+      userConfig = config.users.users.${userName} or { };
+      home = userConfig.home or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+      group = userConfig.group or (if isDarwin then "staff" else "users");
+    in
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        rel: repo:
+        jvfLib.git.cloneRepoText {
+          username = userName;
+          inherit group repo;
+          targetDir = "${home}/${rel}";
+        }
+      ) uCfg.clonedDirs
+    );
 
+  defaultOptions = {
     users = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule (
-          { name, ... }:
+          { ... }:
           {
             options.clonedDirs = lib.mkOption {
               type = lib.types.attrsOf lib.types.str;
@@ -35,29 +51,43 @@ let
 
   darwinModule = {
     options.jvf.users.repositories = defaultOptions;
+
+    config = {
+      launchd.daemons = lib.mkMerge (
+        lib.mapAttrsToList (
+          userName: uCfg:
+          if uCfg.clonedDirs == { } then
+            { }
+          else
+            {
+              "jvf-clone-repos-${userName}" = {
+                config = {
+                  ProgramArguments = [
+                    "${pkgs.bash}/bin/bash"
+                    "-c"
+                    ''
+                      set -euo pipefail
+                      ${mkBody uCfg userName}
+                    ''
+                  ];
+                  RunAtLoad = true;
+                  StandardOutPath = "/tmp/jvf-clone-repos-${userName}.log";
+                  StandardErrorPath = "/tmp/jvf-clone-repos-${userName}.err";
+                };
+              };
+            }
+        ) cfg.users
+      );
+    };
   };
 
   defaultModule = {
     options.jvf.users.repositories = defaultOptions;
 
-    config = lib.mkIf cfg.enable {
+    config = {
       system.activationScripts = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
-          let
-            home = config.users.users.${userName}.home or "/home/${userName}";
-            group = config.users.users.${userName}.group or "users";
-            body = lib.concatStringsSep "\n" (
-              lib.mapAttrsToList (
-                rel: repo:
-                jvfLib.git.cloneOnceText {
-                  inherit pkgs repo;
-                  user = userName;
-                  inherit group home rel;
-                }
-              ) uCfg.clonedDirs
-            );
-          in
           if uCfg.clonedDirs == { } then
             { }
           else
@@ -66,7 +96,7 @@ let
                 supportsDryActivation = true;
                 text = ''
                   set -euo pipefail
-                  ${body}
+                  ${mkBody uCfg userName}
                 '';
               };
             }
