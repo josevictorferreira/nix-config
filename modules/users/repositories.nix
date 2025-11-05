@@ -8,7 +8,7 @@
 }:
 
 let
-  cfg = config.jvf.users.repositories;
+  cfg = config.jvf.repositories;
 
   mkBody =
     uCfg: userName:
@@ -50,7 +50,7 @@ let
   };
 
   darwinModule = {
-    options.jvf.users.repositories = defaultOptions;
+    options.jvf.repositories = defaultOptions;
 
     config = {
       launchd.daemons = lib.mkMerge (
@@ -82,7 +82,7 @@ let
   };
 
   defaultModule = {
-    options.jvf.users.repositories = defaultOptions;
+    options.jvf.repositories = defaultOptions;
 
     config = {
       system.activationScripts = lib.mkMerge (

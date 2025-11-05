@@ -1,50 +1,14 @@
-{ lib
-, pkgs
-, config
-, username
-, isDarwin
-, isNixOS
-, jvfLib
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   devTools = import ./../common/development { inherit pkgs; };
 
   cfg = config.jvf.programs.neovim;
-  neovimConfig = pkgs.fetchFromGitHub {
-    owner = "josevictorferreira";
-    repo = ".nvim";
-    rev = "main";
-    sha256 = "sha256-E/A5H44u1ZgmMJ6PObzB2scsGar/kka1JrRFjK3UXd0=";
-  };
-
-  neovimConfigDerivation = pkgs.stdenv.mkDerivation {
-    pname = "josevictor-nvim-config";
-    version = "1.0.0";
-
-    src = neovimConfig;
-
-    installPhase = ''
-      mkdir -p $out/share/nvim-config
-      cp -r . $out/share/nvim-config/
-    '';
-
-    meta = with lib; {
-      description = "Neovim configuration for josevictorferreira";
-      homepage = "https://github.com/josevictorferreira/.nvim";
-      license = licenses.mit;
-      maintainers = [ ];
-    };
-  };
-
-  setupNeovimConfig = jvfLib.filesystem.createConfigLinks {
-    derivation = neovimConfigDerivation;
-    configtargetDir = "/share/nvim-config";
-    targetDir = "nvim";
-    username = cfg.username;
-    inherit isDarwin;
-    description = "Neovim configuration";
-  };
 in
 {
   options.jvf.programs.neovim = {
@@ -73,22 +37,8 @@ in
     ++ devTools.formatters
     ++ devTools.languages;
 
-    systemd.services.setup-nvim-config = lib.mkIf isNixOS {
-      description = "Setup Neovim configuration from derivation";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "local-fs.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        User = "root";
-        ExecStart = "${setupNeovimConfig}";
-      };
+    jvf.repositories.users.${cfg.username}.clonedDirs = {
+      ".config/nvim" = "git@github.com:josevictorferreira/.nvim.git";
     };
-
-    system.activationScripts.setup-nvim-config = ''
-      echo "Setting up Neovim configuration..."
-      ${setupNeovimConfig}
-    '';
   };
 }

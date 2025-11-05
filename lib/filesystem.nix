@@ -33,9 +33,7 @@ let
     pkgs.linkFarm name (
       lib.mapAttrsToList (fileName: fileContent: {
         name = fileName;
-        targetDir = pkgs.writeText fileName (
-          generators.toFileFormatStr (getFileExtension fileName) fileContent
-        );
+        path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
       }) files
     );
 

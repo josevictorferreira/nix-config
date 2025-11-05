@@ -23,7 +23,7 @@ in
       pkgs.easyeffects
     ];
 
-    jvf.users.repositories.${cfg.username}.clonedDirs = {
+    jvf.repositories.users.${cfg.username}.clonedDirs = {
       ".config/easyeffects" = "git@github.com:josevictorferreira/.easyeffects.git";
     };
   };

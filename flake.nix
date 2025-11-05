@@ -128,11 +128,11 @@
           specialArgs = specialArgsFor (systems.nixos);
           modules = [
             sops-nix.nixosModules.sops
+            ./modules/users/repositories.nix
             ./hosts/${host}/config.nix
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
             home-manager.nixosModules.home-manager
             homeManagerConfig
-            ./modules/users/repositories.nix
           ];
         };
 
@@ -143,10 +143,10 @@
           system = systemArc;
           modules = [
             sops-nix.darwinModules.sops
+            ./modules/users/repositories.nix
             ./hosts/${host}/config.nix
             home-manager.darwinModules.home-manager
             homeManagerConfig
-            ./modules/users/repositories.nix
           ];
         };
 
