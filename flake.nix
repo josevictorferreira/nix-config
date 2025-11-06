@@ -130,6 +130,7 @@
             sops-nix.nixosModules.sops
             ./hosts/${host}/config.nix
             ./modules/users/repositories.nix
+            ./modules/users/wrappers.nix
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
             home-manager.nixosModules.home-manager
             homeManagerConfig
@@ -145,6 +146,7 @@
             sops-nix.darwinModules.sops
             ./hosts/${host}/config.nix
             ./modules/users/repositories.nix
+            ./modules/users/wrappers.nix
             home-manager.darwinModules.home-manager
             homeManagerConfig
           ];
