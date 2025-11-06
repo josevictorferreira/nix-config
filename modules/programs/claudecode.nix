@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -35,31 +36,23 @@ let
   sanitize = name: lib.replaceStrings [ "/" " " ] [ "_" "-" ] name;
 
   aiTools = import ../common/ai-tools { inherit lib pkgs; };
-  agentEntries = lib.mapAttrsToList
-    (name: text: {
-      rel = "agents/${sanitize name}.md";
-      src = pkgs.writeText "agent-${sanitize name}.md" text;
-    })
-    aiTools.agents;
-  commandEntries = lib.mapAttrsToList
-    (name: text: {
-      rel = "commands/${sanitize name}.md";
-      src = pkgs.writeText "command-${sanitize name}.md" text;
-    })
-    aiTools.commands;
+  agentEntries = lib.mapAttrsToList (name: text: {
+    rel = "agents/${sanitize name}.md";
+    src = pkgs.writeText "agent-${sanitize name}.md" text;
+  }) aiTools.agents;
+  commandEntries = lib.mapAttrsToList (name: text: {
+    rel = "commands/${sanitize name}.md";
+    src = pkgs.writeText "command-${sanitize name}.md" text;
+  }) aiTools.commands;
   installAgents = lib.concatStringsSep "\n" (
-    map
-      (e: ''
-        install -m 0644 -D ${e.src} "$dest/${e.rel}"
-      '')
-      agentEntries
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') agentEntries
   );
   installCommands = lib.concatStringsSep "\n" (
-    map
-      (e: ''
-        install -m 0644 -D ${e.src} "$dest/${e.rel}"
-      '')
-      commandEntries
+    map (e: ''
+      install -m 0644 -D ${e.src} "$dest/${e.rel}"
+    '') commandEntries
   );
 in
 {
@@ -114,7 +107,8 @@ in
             "minimax/minimax-m2:free" # $0, $0
             "openai/gpt-oss-120b:exacto" # $0.04, $0.40
             "deepseek/deepseek-v3.1-terminus:exacto" # $0.27, $1
-            "deepseek/deepseek-v3.2-exp" # 0.27, $0.40
+            "deepseek/deepseek-v3.2-exp" # $0.27, $0.40
+            "moonshotai/kimi-k2-thinking" # $0.60, $2.50
           ];
           transformer = {
             use = [ "openrouter" ];
@@ -122,9 +116,9 @@ in
         }
       ];
       Router = {
-        default = "openrouter,moonshotai/kimi-k2-0905";
+        default = "openrouter,moonshotai/kimi-k2-thinking";
         background = "openrouter,openai/gpt-oss-120b:exacto";
-        think = "openrouter,qwen/qwen3-235b-a22b-thinking-2507";
+        think = "openrouter,moonshotai/kimi-k2-thinking";
         longContext = "openrouter,x-ai/grok-4-fast";
         webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
         image = "openrouter,google/gemini-2.5-flash-image";

@@ -54,6 +54,9 @@
         "deepseek/deepseek-v3.2-exp" = {
           name = "DeepSeek: DeepSeek V3.2 Exp";
         };
+        "moonshotai/kimi-k2-thinking" = {
+          name = "Kimi K2 Thinking";
+        };
       };
     };
   };
