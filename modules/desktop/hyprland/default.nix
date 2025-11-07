@@ -1,7 +1,8 @@
-{ lib
-, config
-, pkgs
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  ...
 }:
 
 let
@@ -14,6 +15,7 @@ in
     ./qt5ct
     ./qt6ct
     ./rofi
+    ./swaync
   ];
 
   options.jvf.desktop.hyprland = {
@@ -27,6 +29,7 @@ in
       qt5ct.enable = true;
       qt6ct.enable = true;
       rofi.enable = true;
+      swaync.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];
