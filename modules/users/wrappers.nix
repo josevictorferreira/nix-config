@@ -129,12 +129,10 @@ let
         (
           programName: programCfg:
           let
-            wrapper = mkProgramWrapper (
-              {
-                inherit userName programName;
-              }
-              // programCfg
-            );
+            wrapper = mkProgramWrapper {
+              inherit userName programName;
+              inherit (programCfg) packages command env configs useDerivationConfig;
+            };
 
             installWrapper = ''
               echo "Installing wrapper for ${programName}..."
@@ -179,11 +177,6 @@ let
                   { ... }:
                   {
                     options = {
-                      programName = lib.mkOption {
-                        type = lib.types.str;
-                        description = "Program name (used for wrapper binary).";
-                      };
-
                       packages = lib.mkOption {
                         type = lib.types.listOf lib.types.package;
                         default = [ ];
