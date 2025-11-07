@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, systemd
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  systemd,
+  username,
+  ...
 }:
 
 let
@@ -23,18 +24,6 @@ in
     jvf.wrappers.users.${cfg.username}.programs.swaync = {
       packages = [ pkgs.swaynotificationcenter ];
       command = "${pkgs.swaynotificationcenter}/bin/swaync";
-    };
-
-    # Start swaync notification daemon automatically via systemd user service
-    systemd.user.services.swaync = {
-      description = "Sway Notification Center";
-      wantedBy = [ "default.target" ];
-      serviceConfig = {
-        Type = "dbus";
-        BusName = "org.freedesktop.Notifications";
-        ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
-        Restart = "on-failure";
-      };
     };
   };
 }
