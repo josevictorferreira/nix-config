@@ -80,7 +80,7 @@ let
     { userName
     , programName
     , packages
-    , command
+    , command ? null
     , env ? { }
     , configs ? { }
     , useDerivationConfig ? false
@@ -99,19 +99,26 @@ let
           pkgs.linkFarm "${programName}-config" (lib.mapAttrsToList (_: v: v) processedConfigs);
 
       wrapperScript =
-        let
-          envVars = lib.mapAttrsToList (name: value: "export ${name}='${value}'") env;
-          envStr = lib.concatStringsSep "\n" envVars;
-        in
-        pkgs.writeShellScriptBin programName ''
-          ${envStr}
-          exec ${command} "$@"
-        '';
+        if command == null || command == "" then
+          null
+        else
+          let
+            envVars = lib.mapAttrsToList (name: value: "export ${name}='${value}'") env;
+            envStr = lib.concatStringsSep "\n" envVars;
+          in
+          pkgs.writeShellScriptBin programName ''
+            ${envStr}
+            exec ${command} "$@"
+          '';
 
-      wrapperEnv = pkgs.symlinkJoin {
-        name = "${programName}-env";
-        paths = [ wrapperScript ] ++ packages;
-      };
+      wrapperEnv =
+        if wrapperScript == null then
+          null
+        else
+          pkgs.symlinkJoin {
+            name = "${programName}-env";
+            paths = [ wrapperScript ] ++ packages;
+          };
     in
     {
       inherit wrapperEnv configDir;
@@ -134,11 +141,16 @@ let
               inherit (programCfg) packages command env configs useDerivationConfig;
             };
 
-            installWrapper = ''
-              echo "Installing wrapper for ${programName}..."
-              mkdir -p ${home}/.local/bin
-              ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
-            '';
+            installWrapper =
+              if wrapper.wrapperEnv == null then
+              # No wrapper script, packages are already available in system/environment
+                ""
+              else
+                ''
+                  echo "Installing wrapper for ${programName}..."
+                  mkdir -p ${home}/.local/bin
+                  ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
+                '';
 
             setupConfig =
               if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
@@ -184,8 +196,9 @@ let
                       };
 
                       command = lib.mkOption {
-                        type = lib.types.str;
-                        description = "Command to execute in wrapper.";
+                        type = lib.types.nullOr lib.types.str;
+                        default = null;
+                        description = "Command to execute in wrapper. If null or empty, no wrapper script is created.";
                       };
 
                       env = lib.mkOption {
