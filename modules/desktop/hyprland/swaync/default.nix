@@ -23,7 +23,9 @@ in
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.swaync = {
       packages = [ pkgs.swaynotificationcenter ];
-      command = "${pkgs.swaynotificationcenter}/bin/swaync";
+      configs = {
+        "swaync" = ./.;
+      };
     };
   };
 }

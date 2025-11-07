@@ -23,6 +23,30 @@ let
     if configs == { } then
       { }
     else
+      let
+        # Recursively collect all files in a directory, excluding .nix files
+        # Returns a list of { name = "relative/path"; path = "/absolute/path"; }
+        collectFilesRecursive =
+          baseDir: subPath:
+          let
+            fullPath = baseDir + "/" + subPath;
+            entries = builtins.readDir fullPath;
+            results = lib.flatten (lib.mapAttrsToList
+              (entryName: entryType:
+                let
+                  fullEntryPath = fullPath + "/" + entryName;
+                  relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
+                in
+                if entryType == "directory" then
+                  collectFilesRecursive baseDir relativePath
+                else if entryType == "regular" && ! (lib.hasSuffix ".nix" entryName) then
+                  [{ name = relativePath; path = fullEntryPath; }]
+                else
+                  [])
+              entries);
+          in
+          results;
+      in
       lib.mapAttrs
         (
           fileName: fileValue:
@@ -39,22 +63,14 @@ let
                 else
                   false
               );
+              # When directory contains the config files directly, use programName instead of fileName
+              isProgramConfigDir = isDir.success && isDir.value && fileName == "${programName}-config";
             in
             if isDir.success && isDir.value then
-            # It's a directory, use linkFarm to copy the entire directory structure
+            # It's a directory, recursively collect all files (excluding .nix files)
               {
-                name = fileName;
-                path = pkgs.linkFarm "${programName}-${fileName}-dir" (
-                  lib.mapAttrsToList
-                    (
-                      entryName: entryType:
-                        {
-                          name = entryName;
-                          path = "${fileValue}/${entryName}";
-                        }
-                    )
-                    (builtins.readDir fileValue)
-                );
+                name = if isProgramConfigDir then programName else fileName;
+                path = pkgs.linkFarm programName (collectFilesRecursive (toString fileValue) "");
               }
             else
             # It's a file, use as-is
@@ -166,7 +182,22 @@ let
                     mv "${targetDir}" "${targetDir}.backup.$(date +%s)"
                   fi
                   rm -f "${targetDir}"
-                  ln -sf ${wrapper.configDir} "${targetDir}"
+
+                  # Copy directory recursively with proper ownership instead of symlinking
+                  if [ -d "${wrapper.configDir}" ]; then
+                    mkdir -p "${targetDir}"
+                    cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
+                    chown -R ${userName} "${targetDir}"
+                    chmod -R u+rw "${targetDir}"
+                    find "${targetDir}" -type d -exec chmod 755 {} \;
+                    find "${targetDir}" -type f -exec chmod 644 {} \;
+                  else
+                    # Single file - copy with proper permissions
+                    mkdir -p "$(dirname "${targetDir}")"
+                    cp ${wrapper.configDir} "${targetDir}"
+                    chown ${userName} "${targetDir}"
+                    chmod 644 "${targetDir}"
+                  fi
                 '';
           in
           ''
