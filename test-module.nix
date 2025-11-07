@@ -1,10 +1,9 @@
 # Minimal test module for Darwin compatibility
-{
-  config,
-  lib,
-  pkgs,
-  isDarwin,
-  ...
+{ config
+, lib
+, pkgs
+, isDarwin
+, ...
 }:
 
 let

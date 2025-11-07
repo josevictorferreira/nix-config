@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -20,8 +19,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.${cfg.username}.program = {
-      name = "swaync";
+    jvf.wrappers.users.${cfg.username}.programs.swaync = {
+      programName = "swaync";
       packages = [ pkgs.swaynotificationcenter ];
       command = "${pkgs.swaynotificationcenter}/bin/swaync";
     };

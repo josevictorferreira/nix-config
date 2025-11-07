@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  generators,
-  ...
+{ lib
+, pkgs
+, generators
+, ...
 }:
 
 let
@@ -21,9 +20,11 @@ let
     dir:
     let
       allFileNames = builtins.attrNames (builtins.readDir dir);
-      nixFileNames = lib.filter (
-        fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
-      ) allFileNames;
+      nixFileNames = lib.filter
+        (
+          fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
+        )
+        allFileNames;
     in
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
 
@@ -31,21 +32,23 @@ let
   mkConfigDir =
     name: files:
     pkgs.linkFarm name (
-      lib.mapAttrsToList (fileName: fileContent: {
-        name = fileName;
-        path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
-      }) files
+      lib.mapAttrsToList
+        (fileName: fileContent: {
+          name = fileName;
+          path = pkgs.writeText fileName (generators.toFileFormatStr (getFileExtension fileName) fileContent);
+        })
+        files
     );
 
   # Create a script that symlinks a derivation to a user's config directory
   createConfigLinks =
-    {
-      derivation,
-      configtargetDir,
-      targetDir,
-      username,
-      isDarwin ? false,
-      description ? targetDir,
+    { derivation
+    , configtargetDir
+    , targetDir
+    , username
+    , isDarwin ? false
+    , description ? targetDir
+    ,
     }:
     let
       userHome = if isDarwin then "/Users/${username}" else "/home/${username}";
@@ -89,10 +92,10 @@ let
 
   # Create a derivation that contains config symlinks
   createConfigLinksDerivation =
-    {
-      derivation,
-      configtargetDir,
-      targetDir,
+    { derivation
+    , configtargetDir
+    , targetDir
+    ,
     }:
     let
       sourcetargetDir = "${derivation}${configtargetDir}";

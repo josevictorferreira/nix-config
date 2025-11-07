@@ -1,15 +1,14 @@
-{
-  pkgs,
-  ...
+{ pkgs
+, ...
 }:
 
 let
   cloneRepoText =
-    {
-      username,
-      group,
-      repo,
-      targetDir,
+    { username
+    , group
+    , repo
+    , targetDir
+    ,
     }:
     ''
       set -euo pipefail
