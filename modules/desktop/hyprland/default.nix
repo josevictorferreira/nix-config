@@ -49,8 +49,8 @@ in
       waybar.enable = true;
       wlogout.enable = true;
       swappy.enable = true;
-      Kvantum.enable = true;
-      Thunar.enable = true;
+      kvantum.enable = true;
+      thunar.enable = true;
       xfce4.enable = true;
     };
 

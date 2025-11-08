@@ -20,14 +20,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    thunar.enable = true;
-    thunar.plugins = [
-      pkgs.xfce.exo
-      pkgs.xfce.mousepad
-      pkgs.xfce.thunar-archive-plugin
-      pkgs.xfce.thunar-volman
-      pkgs.xfce.tumbler
-    ];
+    programs = {
+      thunar.enable = true;
+      thunar.plugins = [
+        pkgs.xfce.exo
+        pkgs.xfce.mousepad
+        pkgs.xfce.thunar-archive-plugin
+        pkgs.xfce.thunar-volman
+        pkgs.xfce.tumbler
+      ];
+    };
 
     jvf.wrappers.users.${cfg.username}.programs.Thunar = {
       packages = [
