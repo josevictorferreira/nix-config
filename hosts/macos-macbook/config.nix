@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, host
-, configRoot
-, ...
+{
+  pkgs,
+  username,
+  host,
+  configRoot,
+  ...
 }:
 
 {
@@ -128,8 +129,10 @@
 
   jvf.roles = {
     networkStorage.enable = true;
-    developer.enable = true;
-    aiDeveloper.enable = true;
+    development.enable = true;
+    aiDevelopment.enable = true;
+    opsDevelopment.enable = true;
     monitoring.enable = true;
+    communication.enable = true;
   };
 }
