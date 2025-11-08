@@ -95,7 +95,7 @@
   };
 
   imports = [
-    "${configRoot}/modules/security/sops.nix"
+    "${configRoot}/modules/services/sops.nix"
     "${configRoot}/modules/roles"
   ];
 

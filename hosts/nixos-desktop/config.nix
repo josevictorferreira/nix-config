@@ -56,8 +56,8 @@ in
   };
 
   imports = [
-    "${configRoot}/modules/security/sops.nix"
-    "${configRoot}/modules/security/polkit.nix"
+    "${configRoot}/modules/services/sops.nix"
+    "${configRoot}/modules/services/polkit.nix"
     "${configRoot}/modules/roles"
     "${configRoot}/modules/desktop/hyprland"
     ./hardware.nix
