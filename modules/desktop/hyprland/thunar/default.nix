@@ -32,9 +32,6 @@ in
     };
 
     jvf.wrappers.users.${cfg.username}.programs.Thunar = {
-      packages = [
-        pkgs.thunar
-      ];
       configs = {
         "Thunar" = ./.;
       };

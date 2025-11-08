@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, jvfLib
-, isDarwin
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  jvfLib,
+  isDarwin,
+  ...
 }:
 
 let
@@ -31,76 +32,82 @@ let
           let
             fullPath = baseDir + "/" + subPath;
             entries = builtins.readDir fullPath;
-            results = lib.flatten (lib.mapAttrsToList
-              (entryName: entryType:
+            results = lib.flatten (
+              lib.mapAttrsToList (
+                entryName: entryType:
                 let
                   fullEntryPath = fullPath + "/" + entryName;
                   relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
                 in
                 if entryType == "directory" then
                   collectFilesRecursive baseDir relativePath
-                else if entryType == "regular" && ! (lib.hasSuffix ".nix" entryName) then
-                  [{ name = relativePath; path = fullEntryPath; }]
+                else if entryType == "regular" && !(lib.hasSuffix ".nix" entryName) then
+                  [
+                    {
+                      name = relativePath;
+                      path = fullEntryPath;
+                    }
+                  ]
                 else
-                  [ ])
-              entries);
+                  [ ]
+              ) entries
+            );
           in
           results;
       in
-      lib.mapAttrs
-        (
-          fileName: fileValue:
-          if builtins.isPath fileValue then
+      lib.mapAttrs (
+        fileName: fileValue:
+        if builtins.isPath fileValue then
           # Check if the path is a directory
-            let
-              isDir = builtins.tryEval (
-                if builtins.pathExists fileValue then
-                  let
-                    dirContents = builtins.readDir fileValue;
-                  in
-                  # If we can read the directory and it's not empty, it's likely a directory
-                  dirContents != { }
-                else
-                  false
-              );
-              # When directory contains the config files directly, use programName instead of fileName
-              isProgramConfigDir = isDir.success && isDir.value && (fileName == programName || fileName == "${programName}-config");
-            in
-            if isDir.success && isDir.value then
+          let
+            isDir = builtins.tryEval (
+              if builtins.pathExists fileValue then
+                let
+                  dirContents = builtins.readDir fileValue;
+                in
+                # If we can read the directory and it's not empty, it's likely a directory
+                dirContents != { }
+              else
+                false
+            );
+            # When directory contains the config files directly, use programName instead of fileName
+            isProgramConfigDir =
+              isDir.success && isDir.value && (fileName == programName || fileName == "${programName}-config");
+          in
+          if isDir.success && isDir.value then
             # It's a directory, recursively collect all files (excluding .nix files)
-              {
-                name = if isProgramConfigDir then programName else fileName;
-                path = pkgs.linkFarm programName (collectFilesRecursive (toString fileValue) "");
-              }
-            else
-            # It's a file, use as-is
-              {
-                name = fileName;
-                path = fileValue;
-              }
-          else if builtins.isAttrs fileValue then
-            let
-              ext = getFileExtension fileName;
-              content = jvfLib.generators.toFileFormatStr ext fileValue;
-            in
             {
-              name = fileName;
-              path = pkgs.writeText "${programName}-${fileName}" content;
+              name = if isProgramConfigDir then programName else fileName;
+              path = pkgs.linkFarm programName (collectFilesRecursive (toString fileValue) "");
             }
           else
-            throw "Config value for ${fileName} must be either a path or an attrset"
-        )
-        configs;
+            # It's a file, use as-is
+            {
+              name = fileName;
+              path = fileValue;
+            }
+        else if builtins.isAttrs fileValue then
+          let
+            ext = getFileExtension fileName;
+            content = jvfLib.generators.toFileFormatStr ext fileValue;
+          in
+          {
+            name = fileName;
+            path = pkgs.writeText "${programName}-${fileName}" content;
+          }
+        else
+          throw "Config value for ${fileName} must be either a path or an attrset"
+      ) configs;
 
   mkProgramWrapper =
-    { userName
-    , programName
-    , packages
-    , command ? null
-    , env ? { }
-    , configs ? { }
-    , useDerivationConfig ? false
-    ,
+    {
+      userName,
+      programName,
+      packages,
+      command ? null,
+      env ? { },
+      configs ? { },
+      useDerivationConfig ? false,
     }:
     let
       userConfig = config.users.users.${userName} or { };
@@ -148,71 +155,75 @@ let
       home = userConfig.home or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
     in
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          programName: programCfg:
-          let
-            wrapper = mkProgramWrapper {
-              inherit userName programName;
-              inherit (programCfg) packages command env configs useDerivationConfig;
-            };
+      lib.mapAttrsToList (
+        programName: programCfg:
+        let
+          wrapper = mkProgramWrapper {
+            inherit userName programName;
+            inherit (programCfg)
+              packages
+              command
+              env
+              configs
+              useDerivationConfig
+              ;
+          };
 
-            installWrapper =
-              if wrapper.wrapperEnv == null then
+          installWrapper =
+            if wrapper.wrapperEnv == null then
               # No wrapper script, packages are already available in system/environment
-                ""
-              else
-                ''
-                  echo "Installing wrapper for ${programName}..."
-                  mkdir -p ${home}/.local/bin
-                  ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
-                '';
+              ""
+            else
+              ''
+                echo "Installing wrapper for ${programName}..."
+                mkdir -p ${home}/.local/bin
+                ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
+              '';
 
-            setupConfig =
-              if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
-                ""
-              else
-                let
-                  targetDir = "${home}/.config/${programName}";
-                in
-                ''
-                  echo "Setting up config for ${programName}..."
-                  if [ -e "${targetDir}" ] && [ ! -L "${targetDir}" ]; then
-                    echo "Backing up existing ${programName} config..."
-                    mv "${targetDir}" "${targetDir}.backup.$(date +%s)"
-                  fi
-                  rm -f "${targetDir}"
+          setupConfig =
+            if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
+              ""
+            else
+              let
+                targetDir = "${home}/.config/${programName}";
+              in
+              ''
+                echo "Setting up config for ${programName}..."
+                if [ -e "${targetDir}" ] && [ ! -L "${targetDir}" ]; then
+                  echo "Backing up existing ${programName} config..."
+                  mv "${targetDir}" "${targetDir}.backup.$(date +%s)"
+                fi
+                rm -f "${targetDir}"
 
-                  # Copy directory recursively with proper ownership instead of symlinking
-                  if [ -d "${wrapper.configDir}" ]; then
-                    mkdir -p "${targetDir}"
-                    # Check if there's a subdirectory with the same name as the program
-                    if [ -d "${wrapper.configDir}/${programName}" ]; then
-                      # Copy contents of the subdirectory directly
-                      cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
-                    else
-                      # Copy all contents directly
-                      cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
-                    fi
-                    chown -R ${userName} "${targetDir}"
-                    chmod -R u+rw "${targetDir}"
-                    find "${targetDir}" -type d -exec chmod 755 {} \;
-                    find "${targetDir}" -type f -exec chmod 644 {} \;
+                # Copy directory recursively with proper ownership instead of symlinking
+                if [ -d "${wrapper.configDir}" ]; then
+                  mkdir -p "${targetDir}"
+                  # Check if there's a subdirectory with the same name as the program
+                  if [ -d "${wrapper.configDir}/${programName}" ]; then
+                    # Copy contents of the subdirectory directly
+                    cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
                   else
-                    # Single file - copy with proper permissions
-                    mkdir -p "$(dirname "${targetDir}")"
-                    cp ${wrapper.configDir} "${targetDir}"
-                    chown ${userName} "${targetDir}"
-                    chmod 644 "${targetDir}"
+                    # Copy all contents directly
+                    cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
                   fi
-                '';
-          in
-          ''
-            ${installWrapper}
-            ${setupConfig}
-          ''
-        )
-        (uCfg.programs or { })
+                  chown -R ${userName} "${targetDir}"
+                  chmod -R u+rw "${targetDir}"
+                  find "${targetDir}" -type d -exec chmod 755 {} \;
+                  find "${targetDir}" -type f -exec chmod 644 {} \;
+                else
+                  # Single file - copy with proper permissions
+                  mkdir -p "$(dirname "${targetDir}")"
+                  cp ${wrapper.configDir} "${targetDir}"
+                  chown ${userName} "${targetDir}"
+                  chmod 644 "${targetDir}"
+                fi
+              '';
+        in
+        ''
+          ${installWrapper}
+          ${setupConfig}
+        ''
+      ) (uCfg.programs or { })
     );
 
   defaultOptions = {
@@ -274,33 +285,46 @@ let
     };
   };
 
+  # Collect packages from programs without commands
+  packagesWithoutCommands = lib.flatten (
+    lib.mapAttrsToList (
+      userName: uCfg:
+      lib.flatten (
+        lib.mapAttrsToList (
+          programName: programCfg:
+          if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+        ) (uCfg.programs or { })
+      )
+    ) cfg.users
+  );
+
   darwinModule = {
     options.jvf.wrappers = defaultOptions;
 
     config = {
+      environment.systemPackages = packagesWithoutCommands;
+
       launchd.daemons = lib.mkMerge (
-        lib.mapAttrsToList
-          (
-            userName: uCfg:
-              if (uCfg.programs or { }) == { } then
-                { }
-              else
-                {
-                  "jvf-wrappers-${userName}" = {
-                    config = {
-                      ProgramArguments = [
-                        "${pkgs.bash}/bin/bash"
-                        "-c"
-                        (mkUserActivation userName uCfg)
-                      ];
-                      RunAtLoad = true;
-                      StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
-                      StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
-                    };
-                  };
-                }
-          )
-          cfg.users
+        lib.mapAttrsToList (
+          userName: uCfg:
+          if (uCfg.programs or { }) == { } then
+            { }
+          else
+            {
+              "jvf-wrappers-${userName}" = {
+                config = {
+                  ProgramArguments = [
+                    "${pkgs.bash}/bin/bash"
+                    "-c"
+                    (mkUserActivation userName uCfg)
+                  ];
+                  RunAtLoad = true;
+                  StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
+                  StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
+                };
+              };
+            }
+        ) cfg.users
       );
     };
   };
@@ -309,21 +333,21 @@ let
     options.jvf.wrappers = defaultOptions;
 
     config = {
+      environment.systemPackages = packagesWithoutCommands;
+
       system.activationScripts = lib.mkMerge (
-        lib.mapAttrsToList
-          (
-            userName: uCfg:
-              if (uCfg.programs or { }) == { } then
-                { }
-              else
-                {
-                  "jvf-wrappers-${userName}" = {
-                    supportsDryActivation = true;
-                    text = mkUserActivation userName uCfg;
-                  };
-                }
-          )
-          cfg.users
+        lib.mapAttrsToList (
+          userName: uCfg:
+          if (uCfg.programs or { }) == { } then
+            { }
+          else
+            {
+              "jvf-wrappers-${userName}" = {
+                supportsDryActivation = true;
+                text = mkUserActivation userName uCfg;
+              };
+            }
+        ) cfg.users
       );
     };
   };

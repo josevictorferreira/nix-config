@@ -21,9 +21,6 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.xfce4 = {
-      packages = [
-        pkgs.xfce4-settings
-      ];
       configs = {
         "xfce4" = ./.;
       };
