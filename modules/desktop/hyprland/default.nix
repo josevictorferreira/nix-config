@@ -20,6 +20,7 @@ in
     ./waybar
     ./wlogout
     ./swappy
+    ./kvantum
   ];
 
   options.jvf.desktop.hyprland = {
@@ -38,6 +39,7 @@ in
       waybar.enable = true;
       wlogout.enable = true;
       swappy.enable = true;
+      kvantum.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];
