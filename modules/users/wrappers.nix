@@ -42,7 +42,7 @@ let
                 else if entryType == "regular" && ! (lib.hasSuffix ".nix" entryName) then
                   [{ name = relativePath; path = fullEntryPath; }]
                 else
-                  [])
+                  [ ])
               entries);
           in
           results;
@@ -64,7 +64,7 @@ let
                   false
               );
               # When directory contains the config files directly, use programName instead of fileName
-              isProgramConfigDir = isDir.success && isDir.value && fileName == "${programName}-config";
+              isProgramConfigDir = isDir.success && isDir.value && (fileName == programName || fileName == "${programName}-config");
             in
             if isDir.success && isDir.value then
             # It's a directory, recursively collect all files (excluding .nix files)
@@ -186,7 +186,14 @@ let
                   # Copy directory recursively with proper ownership instead of symlinking
                   if [ -d "${wrapper.configDir}" ]; then
                     mkdir -p "${targetDir}"
-                    cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
+                    # Check if there's a subdirectory with the same name as the program
+                    if [ -d "${wrapper.configDir}/${programName}" ]; then
+                      # Copy contents of the subdirectory directly
+                      cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
+                    else
+                      # Copy all contents directly
+                      cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
+                    fi
                     chown -R ${userName} "${targetDir}"
                     chmod -R u+rw "${targetDir}"
                     find "${targetDir}" -type d -exec chmod 755 {} \;
