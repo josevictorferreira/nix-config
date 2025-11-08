@@ -394,6 +394,10 @@ in
   system.activationScripts = { };
   system.stateVersion = "24.05";
 
+  jvf.services.sops.enable = true;
+  jvf.services.polkit.enable = true;
+  jvf.desktop.hyprland.enable = true;
+
   jvf.roles = {
     networkStorage.enable = true;
     development.enable = true;
@@ -404,6 +408,4 @@ in
     designing.enable = true;
     media.enable = true;
   };
-
-  jvf.desktop.hyprland.enable = true;
 }

@@ -1,11 +1,12 @@
-{ lib
-, pkgs
-, config
-, username
-, isDarwin
-, isNixOS
-, jvfLib
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  isDarwin,
+  isNixOS,
+  jvfLib,
+  ...
 }:
 let
   cfg = config.jvf.programs.zsh;
@@ -74,6 +75,31 @@ in
     ++ lib.optionals cfg.useDerivationConfig [
       zshConfigDerivation
     ];
+
+    sops.secrets."github_token" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
+
+    sops.secrets."openrouter_code_agent" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
+
+    sops.secrets."openrouter_autocomplete" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
+
+    sops.secrets."openrouter_terminal" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
+
+    sops.secrets."openrouter_commit" = {
+      owner = config.users.users.${username}.name;
+      mode = "0400";
+    };
 
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;

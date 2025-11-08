@@ -127,6 +127,8 @@
 
   system.stateVersion = 4;
 
+  jvf.services.sops.enable = true;
+
   jvf.roles = {
     networkStorage.enable = true;
     development.enable = true;
