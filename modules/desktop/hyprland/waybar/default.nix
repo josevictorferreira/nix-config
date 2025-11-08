@@ -20,6 +20,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.waybar.enable = true;
+
     jvf.wrappers.users.${cfg.username}.programs.waybar = {
       packages = [
         pkgs.waybar
