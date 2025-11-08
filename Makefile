@@ -5,7 +5,7 @@ RESET=\033[0m
 
 .DEFAULT_GOAL := help
 
-.PHONY: help secrets rebuild clean push_configs subtree_sync up_keys lint format
+.PHONY: help secrets rebuild clean push_configs up_keys lint format
 
 lint: ## Lint the nix files.
 	@echo "Running nix formatter check..."
@@ -16,47 +16,6 @@ format: ## Format the nix files.
 	@echo "Formatting nix files..."
 	@nix fmt .
 	@echo "✅ Formatting complete."
-
-
-GIT_BASE_ADDRESS := git@github.com:josevictorferreira
-
-SUBTRESS := \
-	nvim=$(GIT_BASE_ADDRESS)/.nvim.git@main \
-	tmux=$(GIT_BASE_ADDRESS)/.tmux.git@main \
-	zsh=$(GIT_BASE_ADDRESS)/.zsh.git@main \
-	ghostty=$(GIT_BASE_ADDRESS)/.ghostty.git@main \
-	hypr=$(GIT_BASE_ADDRESS)/.hypr.git@main \
-	kitty=$(GIT_BASE_ADDRESS)/.kitty.git@main \
-	waybar=$(GIT_BASE_ADDRESS)/.waybar.git@main \
-	easyeffects=$(GIT_BASE_ADDRESS)/.easyeffects.git@main \
-	rofi=$(GIT_BASE_ADDRESS)/.rofi.git@main \
-	alacritty=$(GIT_BASE_ADDRESS)/.alacritty.git@main
-
-subtree_clean_check: ## Check if the git working tree is clean.
-	@if ! git diff --quiet || ! git diff --cached --quiet; then \
-		echo -e "❌ Git working tree is dirty. Please commit or stash your changes."; \
-		exit 1; \
-	else \
-		echo -e "✅ Git working tree is clean.\n"; \
-	fi
-
-subtree_sync: subtree_clean_check ## Add or sync subtrees to the config directory.
-	@for entry in $(SUBTRESS); do \
-		name=$$(echo $$entry | cut -d= -f1); \
-		repo=$$(echo $$entry | cut -d= -f2 | cut -d@ -f1,2); \
-		branch=$$(echo $$entry | cut -d@ -f3); \
-		echo -e "$(GREEN)--- 🔁 SYNC $$name ---$(RESET)"; \
-		if [ ! -d "config/$$name" ]; then \
-			echo -e "$(CYAN) Adding $$repo -> config/$$name (branch: $$branch)$(RESET)"; \
-			git subtree add --prefix=config/$$name $$repo $$branch --squash; \
-		else \
-			echo -e "$(CYAN) Pulling from $$repo (branch: $$branch)$(RESET)"; \
-			git subtree pull --prefix=config/$$name $$repo $$branch --squash || true; \
-			echo -e "$(CYAN) Pushing config/$$name to $$repo (branch: $$branch)$(RESET)"; \
-			git subtree push --prefix=config/$$name $$repo $$branch || true; \
-		fi; \
-		echo -e "✅ $(GREEN)DONE.$(RESET)\n"; \
-	done
 
 up_keys: ## Update keys for secrets files
 	sops updatekeys secrets/secrets.enc.yaml
