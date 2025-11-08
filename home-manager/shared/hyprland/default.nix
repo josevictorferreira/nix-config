@@ -1,7 +1,8 @@
-{ pkgs
-, inputs
-, configRoot
-, ...
+{
+  pkgs,
+  inputs,
+  configRoot,
+  ...
 }:
 
 let
@@ -15,8 +16,6 @@ let
 in
 {
   imports = [
-    ./waybar.nix
-    ./wallust.nix
     ./screenshot.nix
     ./wlogout.nix
   ];
