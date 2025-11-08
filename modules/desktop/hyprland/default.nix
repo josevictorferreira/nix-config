@@ -7,6 +7,12 @@
 
 let
   cfg = config.jvf.desktop.hyprland;
+  python-packages = pkgs.python3.withPackages (
+    ps: with ps; [
+      requests
+      pyquery
+    ]
+  );
 in
 {
   imports = [
@@ -21,6 +27,7 @@ in
     ./wlogout
     ./swappy
     ./kvantum
+    ./hypr
   ];
 
   options.jvf.desktop.hyprland = {
@@ -40,8 +47,36 @@ in
       wlogout.enable = true;
       swappy.enable = true;
       kvantum.enable = true;
+      hypr.enable = true;
     };
 
-    environment.systemPackages = [ pkgs.hyprlock ];
+    environment.systemPackages = [
+      pkgs.slurp
+      pkgs.wl-clipboard
+      pkgs.brightnessctl
+      pkgs.cliphist
+      pkgs.eog
+      pkgs.gnome-system-monitor
+      pkgs.file-roller
+      pkgs.gtk-engine-murrine
+      pkgs.inxi
+      pkgs.networkmanagerapplet
+      pkgs.nwg-look
+      pkgs.nvtopPackages.full
+      pkgs.pamixer
+      pkgs.pavucontrol
+      pkgs.playerctl
+      pkgs.polkit_gnome
+      pkgs.yad
+      pkgs.yt-dlp
+      pkgs.noto-fonts
+      pkgs.kitty
+      pkgs.fira-code
+      pkgs.noto-fonts-cjk-sans
+      pkgs.jetbrains-mono
+      pkgs.font-awesome
+      pkgs.terminus_font
+      python-packages
+    ];
   };
 }

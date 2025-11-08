@@ -14,18 +14,14 @@
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , darwin
-    , sops-nix
-    , home-manager
-    , ...
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      ...
     }:
     let
       systems = {
@@ -60,13 +56,13 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
+          isDarwin,
+          isNixOS,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -94,32 +90,6 @@
           };
         };
 
-      homeManagerConfig =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        , ...
-        }:
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = specialArgsFor {
-            inherit
-              systemArc
-              os
-              host
-              username
-              isDarwin
-              isNixOS
-              ;
-          };
-          home-manager.users.${username} = import ./home-manager/${host}/nixos-specific.nix;
-        };
-
       nixosModule =
         { systemArc, host, ... }:
         nixpkgs.lib.nixosSystem {
@@ -130,8 +100,6 @@
             ./modules/users/repositories.nix
             ./modules/users/wrappers.nix
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
-            home-manager.nixosModules.home-manager
-            homeManagerConfig
           ];
         };
 
@@ -145,8 +113,6 @@
             ./hosts/${host}/config.nix
             ./modules/users/repositories.nix
             ./modules/users/wrappers.nix
-            home-manager.darwinModules.home-manager
-            homeManagerConfig
           ];
         };
 
@@ -164,22 +130,6 @@
       darwinConfigurations = {
         ${systems.macos.host} = darwinModule systems.macos;
       };
-
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = mkPkgs system;
-          jvfLib = import ./lib {
-            lib = pkgs.lib;
-            inherit pkgs;
-            fetchFromGitHub = pkgs.fetchFromGitHub;
-          };
-        in
-        {
-          # Packages can be defined here if needed
-          # Example: some-package = pkgs.callPackage ./pkgs/some-package {};
-        }
-      );
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
