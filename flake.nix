@@ -17,11 +17,10 @@
   };
 
   outputs =
-    inputs@{
-      nixpkgs,
-      darwin,
-      sops-nix,
-      ...
+    inputs@{ nixpkgs
+    , darwin
+    , sops-nix
+    , ...
     }:
     let
       systems = {
@@ -56,13 +55,13 @@
           };
 
       specialArgsFor =
-        {
-          systemArc,
-          os,
-          host,
-          username,
-          isDarwin,
-          isNixOS,
+        { systemArc
+        , os
+        , host
+        , username
+        , isDarwin
+        , isNixOS
+        ,
         }:
         let
           pkgs = mkPkgs systemArc;

@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  configRoot,
-  ...
+{ config
+, lib
+, configRoot
+, ...
 }:
 let
   cfg = config.jvf.services.sops;

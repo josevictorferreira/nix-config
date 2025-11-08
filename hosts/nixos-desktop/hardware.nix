@@ -1,9 +1,8 @@
-{
-  pkgs,
-  username,
-  lib,
-  modulesPath,
-  ...
+{ pkgs
+, username
+, lib
+, modulesPath
+, ...
 }:
 
 {
@@ -182,7 +181,7 @@
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
-  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
+  swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
 
   networking.useDHCP = lib.mkDefault true;
 
