@@ -6,11 +6,11 @@
 }:
 
 let
-  cfg = config.jvf.desktop.hyprland.gtk3;
+  cfg = config.jvf.desktop.hyprland.fastfetch;
 in
 {
-  options.jvf.desktop.hyprland.gtk3 = {
-    enable = lib.mkEnableOption "Gtk 3.0 settings.";
+  options.jvf.desktop.hyprland.fastfetch = {
+    enable = lib.mkEnableOption "Fastfetch hyprland and nixos settings.";
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
@@ -19,11 +19,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.${cfg.username}.programs."gtk-3.0" = {
+    jvf.wrappers.users.${cfg.username}.programs.fastfetch = {
       packages = [
       ];
       configs = {
-        "gtk-3.0" = ./.;
+        fastfetch = ./.;
       };
     };
   };

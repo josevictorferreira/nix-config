@@ -31,6 +31,7 @@ in
     ./thunar
     ./xfce4
     ./gtk3
+    ./fastfetch
   ];
 
   options.jvf.desktop.hyprland = {
@@ -54,6 +55,7 @@ in
       thunar.enable = true;
       xfce4.enable = true;
       gtk3.enable = true;
+      fastfetch.enable = true;
     };
 
     environment.systemPackages = [
