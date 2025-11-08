@@ -28,6 +28,8 @@ in
     ./wlogout
     ./swappy
     ./kvantum
+    ./thunar
+    ./xfce4
   ];
 
   options.jvf.desktop.hyprland = {
@@ -47,7 +49,9 @@ in
       waybar.enable = true;
       wlogout.enable = true;
       swappy.enable = true;
-      kvantum.enable = true;
+      Kvantum.enable = true;
+      Thunar.enable = true;
+      xfce4.enable = true;
     };
 
     environment.systemPackages = [
