@@ -30,6 +30,7 @@ in
     ./kvantum
     ./thunar
     ./xfce4
+    ./gtk3
   ];
 
   options.jvf.desktop.hyprland = {
@@ -52,6 +53,7 @@ in
       kvantum.enable = true;
       thunar.enable = true;
       xfce4.enable = true;
+      gtk3.enable = true;
     };
 
     environment.systemPackages = [
