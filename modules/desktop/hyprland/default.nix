@@ -18,6 +18,7 @@ in
     ./swaync
     ./wallust
     ./waybar
+    ./wlogout
   ];
 
   options.jvf.desktop.hyprland = {
@@ -34,6 +35,7 @@ in
       swaync.enable = true;
       wallust.enable = true;
       waybar.enable = true;
+      wlogout.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];

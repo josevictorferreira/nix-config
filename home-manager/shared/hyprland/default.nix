@@ -15,10 +15,6 @@ let
   );
 in
 {
-  imports = [
-    ./screenshot.nix
-    ./wlogout.nix
-  ];
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
