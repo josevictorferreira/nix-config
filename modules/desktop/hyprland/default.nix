@@ -19,6 +19,7 @@ in
     ./wallust
     ./waybar
     ./wlogout
+    ./swappy
   ];
 
   options.jvf.desktop.hyprland = {
@@ -36,6 +37,7 @@ in
       wallust.enable = true;
       waybar.enable = true;
       wlogout.enable = true;
+      swappy.enable = true;
     };
 
     environment.systemPackages = [ pkgs.hyprlock ];
