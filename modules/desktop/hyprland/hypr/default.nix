@@ -21,11 +21,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    wayland.windowManager.hyprland = {
+    services.hypridle.enable = true;
+
+    programs.hyprland = {
       enable = true;
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      xwayland.enable = true;
-      extraConfig = builtins.readFile ./hyprland.conf;
+      portalPackage =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
 
     jvf.wrappers.users.${cfg.username}.programs.hypr = {
