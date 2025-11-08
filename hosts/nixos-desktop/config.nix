@@ -58,8 +58,6 @@ in
   imports = [
     "${configRoot}/modules/security/sops.nix"
     "${configRoot}/modules/security/polkit.nix"
-    "${configRoot}/modules/hardware/local-hardware-clock.nix"
-    "${configRoot}/modules/hardware/hp-1020-drivers.nix"
     "${configRoot}/modules/roles"
     "${configRoot}/modules/desktop/hyprland"
     ./hardware.nix
@@ -78,9 +76,6 @@ in
         ];
     };
   };
-
-  # Extra Module Options
-  local.hardware-clock.enable = false;
 
   # networking
   networking.networkmanager.enable = true;

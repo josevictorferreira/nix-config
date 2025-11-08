@@ -1,16 +1,17 @@
-{ pkgs, username, lib, modulesPath, configRoot, ... }:
+{
+  pkgs,
+  username,
+  lib,
+  modulesPath,
+  ...
+}:
 
 {
-  imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
-      "${configRoot}/modules/hardware/amd-drivers.nix"
-    ];
-
-  drivers.amdgpu.enable = true;
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
 
   console = {
-    # useXkbConfig = true;
     earlySetup = false;
   };
 
@@ -32,7 +33,14 @@
     ];
 
     initrd = {
-      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "usbhid"
+        "sd_mod"
+      ];
       kernelModules = [ "amdgpu" ];
       verbose = false;
     };
@@ -81,45 +89,63 @@
     };
   };
 
-  services.btrfs.autoScrub = { enable = true; interval = "monthly"; fileSystems = [ "/" ]; };
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = [ "/" ];
+  };
+  services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   distro-grub-themes = {
     enable = true;
     theme = "nixos";
   };
 
-  fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-partlabel/boot";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-      neededForBoot = true;
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-partlabel/boot";
+    fsType = "vfat";
+    options = [
+      "fmask=0077"
+      "dmask=0077"
+    ];
+    neededForBoot = true;
+  };
 
-  fileSystems."/" =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@root" "compress=zstd:3" "noatime" ];
-      neededForBoot = true;
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-partlabel/nixos-root";
+    fsType = "btrfs";
+    options = [
+      "subvol=@root"
+      "compress=zstd:3"
+      "noatime"
+    ];
+    neededForBoot = true;
+  };
 
-  fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" "compress=zstd:3" "noatime" ];
-      depends = [ "/" ];
-    };
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-partlabel/nixos-root";
+    fsType = "btrfs";
+    options = [
+      "subvol=@nix"
+      "compress=zstd:3"
+      "noatime"
+    ];
+    depends = [ "/" ];
+  };
 
-  fileSystems."/home" =
-    {
-      device = "/dev/disk/by-partlabel/nixos-root";
-      fsType = "btrfs";
-      options = [ "subvol=@home" "compress=zstd:5" "noatime" "autodefrag" ];
-      depends = [ "/" ];
-      neededForBoot = false;
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-partlabel/nixos-root";
+    fsType = "btrfs";
+    options = [
+      "subvol=@home"
+      "compress=zstd:5"
+      "noatime"
+      "autodefrag"
+    ];
+    depends = [ "/" ];
+    neededForBoot = false;
+  };
 
   fileSystems."/mnt/external_storage" = {
     device = "/dev/disk/by-partlabel/file-storage";
@@ -153,10 +179,10 @@
 
   systemd.tmpfiles.rules = [
     "d /home/${username}/Downloads 0755 ${username} users -"
+    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
-  swapDevices =
-    [{ device = "/dev/disk/by-partlabel/swap"; }];
+  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -167,6 +193,21 @@
   ];
 
   hardware.i2c.enable = true;
+
+  hardware.cpu.amd.updateMicrocode = true;
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      libva
+      libva-utils
+      rocmPackages.clr.icd
+      rocmPackages.clr
+      rocmPackages.rocminfo
+      rocmPackages.rocm-runtime
+    ];
+    enable32Bit = true;
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
