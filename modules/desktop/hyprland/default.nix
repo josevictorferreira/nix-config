@@ -16,6 +16,7 @@ let
 in
 {
   imports = [
+    ./hypr
     ./ags
     ./cava
     ./qt5ct
@@ -27,7 +28,6 @@ in
     ./wlogout
     ./swappy
     ./kvantum
-    ./hypr
   ];
 
   options.jvf.desktop.hyprland = {
@@ -36,6 +36,7 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.desktop.hyprland = {
+      hypr.enable = true;
       ags.enable = true;
       cava.enable = true;
       qt5ct.enable = true;
@@ -47,7 +48,6 @@ in
       wlogout.enable = true;
       swappy.enable = true;
       kvantum.enable = true;
-      hypr.enable = true;
     };
 
     environment.systemPackages = [
