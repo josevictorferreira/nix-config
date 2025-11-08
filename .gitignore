@@ -10,3 +10,4 @@ secrets/*.yml
 .ruff-cache/
 result/
 result
+.claude/

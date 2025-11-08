@@ -12,7 +12,6 @@ let
   inherit (import ./variables.nix) gitUsername keyboardLayout;
 in
 {
-  # Cachix, Optimization settings and garbage collection automation
   nix = {
     settings = {
       auto-optimise-store = true;
