@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
@@ -74,7 +75,7 @@ let
   qt6ctWrapper = pkgs.symlinkJoin {
     name = "qt6ct";
     paths = [
-      pkgs.qt6ct
+      pkgs.qt6Packages.qt6ct
       pkgs.qt6.qtwayland
       pkgs.qt6Packages.qtstyleplugin-kvantum
     ];
