@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  username,
   ...
 }:
 
@@ -60,10 +61,16 @@ in
 {
   options.jvf.desktop.hyprland.qt6ct = {
     enable = lib.mkEnableOption "qt6ct settings for Hyprland";
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to configure qt6ct.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.josevictor.programs.qt6ct = {
+    jvf.wrappers.users.${username}.programs.qt6ct = {
       packages = [
         pkgs.qt6Packages.qt6ct
         pkgs.qt6.qtwayland

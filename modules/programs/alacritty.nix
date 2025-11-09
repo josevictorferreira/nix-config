@@ -1,8 +1,9 @@
-{ lib
-, jvfLib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.alacritty;
@@ -95,6 +96,13 @@ in
 {
   options.jvf.programs.alacritty = {
     enable = lib.mkEnableOption "alacritty, a GPU-accelerated terminal emulator";
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to configure alacritty.";
+    };
+
     package = lib.mkPackageOption pkgs "alacritty" { };
 
     settings = lib.mkOption {
@@ -108,45 +116,14 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    let
-      configFile = pkgs.writeTextFile {
-        name = "alacritty.toml";
-        text = jvfLib.generators.toTOML cfg.settings;
-      };
-
-      alacrittyWrapped = pkgs.writeShellApplication {
-        name = "alacritty";
-        runtimeInputs = [ cfg.package ];
-        text = ''
-          exec ${lib.getExe cfg.package} --config-file "${configFile}" "$@"
-        '';
-      };
-
-      alacrittyDesktop = pkgs.makeDesktopItem {
-        name = "alacritty";
-        desktopName = "Alacritty";
-        comment = "A fast, cross-platform, OpenGL terminal emulator";
-        exec = lib.getExe alacrittyWrapped;
-        terminal = false;
-        type = "Application";
-        categories = [
-          "System"
-          "Utility"
-          "TerminalEmulator"
-        ];
-        icon = "alacritty";
-      };
-
-    in
-    {
-      environment.systemPackages = [
-        alacrittyWrapped
-        alacrittyDesktop
+  config = lib.mkIf cfg.enable {
+    jvf.wrappers.users.${username}.programs.alacritty = {
+      packages = [
+        cfg.package
       ];
-      fonts.packages = [
-        pkgs.nerd-fonts.jetbrains-mono
-      ];
-    }
-  );
+      configs = {
+        "alacritty.toml" = cfg.settings;
+      };
+    };
+  };
 }
