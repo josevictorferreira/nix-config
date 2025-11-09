@@ -21,13 +21,6 @@ let
       inactive_colors = "#ffcdd6f4, #ff1e1e2e, #ffa6adc8, #ff9399b2, #ff45475a, #ff6c7086, #ffcdd6f4, #ffcdd6f4, #ffcdd6f4, #ff1e1e2e, #ff181825, #ff7f849c, #ff89b4fa, #ffa6adc8, #ff89b4fa, #fff38ba8, #ff1e1e2e, #ffcdd6f4, #ff11111b, #ffcdd6f4, #807f849c";
     };
   };
-
-  catpuccinMochaConfFile = pkgs.writeText "Catppuccin-Mocha.conf" (
-    lib.generators.toINI { } catpuccinMocha
-  );
-  catpuccinLatteConfFile = pkgs.writeText "Catppuccin-Latte.conf" (
-    lib.generators.toINI { } catpuccinLatte
-  );
   qt6ctConf = {
     Appearance = {
       color_scheme_path = "$HOME/.config/qt6ct/colors/Catppuccin-Mocha.conf";
@@ -63,14 +56,6 @@ let
       ignored_applications = "@Invalid()";
     };
   };
-  qt6ctConfFile = pkgs.writeText "qt6ct.conf" (lib.generators.toINI { } qt6ctConf);
-
-  qt6ctConfigDir = pkgs.runCommand "qt6ct-config-1.0.0" { } ''
-    mkdir -p $out/qt6ct/colors
-    ln -s ${qt6ctConfFile} $out/qt6ct/qt6ct.conf
-    ln -s ${catpuccinMochaConfFile} $out/qt6ct/colors/Catppuccin-Mocha.conf
-    ln -s ${catpuccinLatteConfFile} $out/qt6ct/colors/Catppuccin-Latte.conf
-  '';
 in
 {
   options.jvf.desktop.hyprland.qt6ct = {
