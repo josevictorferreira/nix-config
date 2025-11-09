@@ -117,7 +117,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.${username}.programs.alacritty = {
+    jvf.wrappers.users.${cfg.username}.programs.alacritty = {
       packages = [
         cfg.package
       ];

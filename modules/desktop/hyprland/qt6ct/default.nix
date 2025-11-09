@@ -70,7 +70,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.${username}.programs.qt6ct = {
+    jvf.wrappers.users.${cfg.username}.programs.qt6ct = {
       packages = [
         pkgs.qt6Packages.qt6ct
         pkgs.qt6.qtwayland

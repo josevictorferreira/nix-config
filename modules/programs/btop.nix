@@ -1,7 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.btop;
@@ -89,6 +91,11 @@ in
   options.jvf.programs.btop = {
     enable = lib.mkEnableOption "btop, a modern resource monitor";
     package = lib.mkPackageOption pkgs "btop" { };
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to configure btop.";
+    };
     settings = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.oneOf [
@@ -106,26 +113,14 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    let
-      configFile = pkgs.writeTextFile {
-        name = "btop.conf";
-        text = lib.generators.toINIWithGlobalSection { } {
-          globalSection = cfg.settings;
-          sections = { };
-        };
+  config = lib.mkIf cfg.enable {
+    jvf.wrappers.users.${cfg.username}.programs.btop = {
+      packages = [
+        cfg.package
+      ];
+      configs = {
+        "btop.conf" = cfg.settings;
       };
-
-      btop-wrapped = pkgs.writeShellApplication {
-        name = "btop";
-        runtimeInputs = [ cfg.package ];
-        text = ''
-          exec ${lib.getExe pkgs.btop} --config "${configFile}" "$@"
-        '';
-      };
-    in
-    {
-      environment.systemPackages = [ btop-wrapped ];
-    }
-  );
+    };
+  };
 }
