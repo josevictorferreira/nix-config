@@ -1,9 +1,9 @@
-{ lib
-, pkgs
-, jvfLib
-, config
-, homeDir
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.k9s;
@@ -209,38 +209,16 @@ let
         };
       };
     };
-
-  k9sConfigFiles = {
-    "config.yaml" = cfg.settings;
-    "aliases.yaml" = cfg.aliases;
-    "skins.yaml" = cfg.skins;
-  };
-
-  k9sConfigDir = jvfLib.filesystem.mkConfigDir "k9s-config" k9sConfigFiles;
-
-  k9sPackage = (
-    pkgs.symlinkJoin {
-      name = "k9s";
-      buildInputs = [ pkgs.makeWrapper ];
-      paths = [
-        pkgs.k9s
-      ];
-      postBuild = ''
-        export K9S_CONFIG_DIR="${k9sConfigDir}"
-        wrapProgram $out/bin/k9s
-      '';
-    }
-  );
 in
 {
   options.jvf.programs.k9s = {
     enable = lib.mkEnableOption "k9s, a terminal-based UI for Kubernetes";
     package = lib.mkPackageOption pkgs "k9s" { };
 
-    homeDir = lib.mkOption {
+    username = lib.mkOption {
       type = lib.types.str;
-      default = homeDir;
-      description = "Directory where k9s should store its configuration files.";
+      default = username;
+      description = "Username for which to install the configuration";
     };
 
     settings = lib.mkOption {
@@ -265,6 +243,15 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ k9sPackage ];
+    jvf.wrappers.users.${cfg.username}.programs.k9s = {
+      packages = [
+        cfg.package
+      ];
+      configs = {
+        "config.yaml" = cfg.settings;
+        "aliases.yaml" = cfg.aliases;
+        "skins.yaml" = cfg.skins;
+      };
+    };
   };
 }

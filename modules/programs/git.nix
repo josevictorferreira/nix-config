@@ -1,7 +1,9 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -83,7 +85,13 @@ in
       description = lib.mdDoc "Git package to install";
     };
 
-    userName = mkOption {
+    username = mkOption {
+      type = types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
+
+    name = mkOption {
       type = types.nullOr types.str;
       default = null;
       example = "Jane Doe";
@@ -93,7 +101,7 @@ in
       '';
     };
 
-    userEmail = mkOption {
+    email = mkOption {
       type = types.nullOr types.str;
       default = null;
       example = "jane.doe@example.org";
@@ -195,12 +203,12 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.userName != null;
-        message = "jvf.programs.git.userName must be set when jvf.programs.git.enable = true";
+        assertion = cfg.name != null;
+        message = "jvf.programs.git.name must be set when jvf.programs.git.enable = true";
       }
       {
-        assertion = cfg.userEmail != null;
-        message = "jvf.programs.git.userEmail must be set when jvf.programs.git.enable = true";
+        assertion = cfg.email != null;
+        message = "jvf.programs.git.email must be set when jvf.programs.git.enable = true";
       }
     ];
 
@@ -212,24 +220,32 @@ in
     ]
     ++ optional cfg.lfs.enable pkgs.git-lfs;
 
-    environment.etc."git/hooks/pre-commit".source = preCommit;
-
-    environment.etc."gitconfig".text =
-      generators.toINI { }
-        (
-          (optionalAttrs (cfg.userName != null) { user.name = cfg.userName; })
-          // (optionalAttrs (cfg.userEmail != null) { user.email = cfg.userEmail; })
-          // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-          // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-          // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-          // cfg.extraConfig
-        )
-      + ''
-        [diff]
-          external = ${pkgs.difftastic}/bin/difft
-      '';
-
-    environment.etc."git/ignore".text = concatStringsSep "\n" cfg.ignores;
+    jvf.wrappers.users.${cfg.username}.programs.git = {
+      packages = [
+        cfg.package
+        pkgs.yq
+        pkgs.difftastic
+        pkgs.gitleaks
+      ]
+      ++ optional cfg.lfs.enable pkgs.git-lfs;
+      configs = {
+        "config" =
+          generators.toINI { } (
+            (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+            // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
+            // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+            // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+            // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+            // cfg.extraConfig
+          )
+          + ''
+            [diff]
+              external = ${pkgs.difftastic}/bin/difft
+          '';
+        "ignore" = concatStringsSep "\n" cfg.ignores;
+        "hooks/pre-commit" = preCommit;
+      };
+    };
 
     system.activationScripts.git-lfs-setup = optionalString cfg.lfs.enable ''
       if [ ! -f /etc/profile.d/git-lfs.sh ]; then

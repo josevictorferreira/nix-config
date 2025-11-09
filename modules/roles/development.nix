@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, systemArc
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  systemArc,
+  ...
 }:
 
 let
@@ -35,8 +36,8 @@ in
       tmux.enable = true;
       git = {
         enable = true;
-        userName = "Jose Victor Ferreira";
-        userEmail = "root@josevictor.me";
+        name = "Jose Victor Ferreira";
+        email = "root@josevictor.me";
       };
     };
 
