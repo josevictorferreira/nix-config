@@ -1,12 +1,14 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.desktop.hyprland.cava;
 
-  cavaConfig = lib.generators.toINI { } {
+  cavaConfig = {
     general = {
       framerate = 60;
       autosens = 1;
@@ -41,39 +43,27 @@ let
       noise_reduction = 77;
     };
   };
-
-  configFile = pkgs.writeText "cava.conf" cavaConfig;
-
-  cavaShaders = pkgs.stdenv.mkDerivation {
-    pname = "cava-shaders";
-    version = "1.0.0";
-
-    src = ./shaders;
-
-    installPhase = ''
-      mkdir -p $out
-      cp -rf ${configFile} $out/config
-      cp -r ./* $out/
-    '';
-  };
-
-  cavaWrapper = pkgs.symlinkJoin {
-    name = "cava";
-    paths = [ pkgs.cava ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/cava \
-        --add-flags "-p ${configFile}" \
-        --prefix XDG_CONFIG_HOME : "${cavaShaders}"
-    '';
-  };
 in
 {
   options.jvf.desktop.hyprland.cava = {
     enable = lib.mkEnableOption "Cava - Console-based Audio Visualizer";
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username to configure Cava for.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ cavaWrapper ];
+    jvf.wrappers.users.${cfg.username}.programs.cava = {
+      packages = [
+        pkgs.cava
+      ];
+      configs = {
+        "cava.conf" = cavaConfig;
+        "shaders" = ./shaders;
+      };
+    };
   };
 }
