@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
@@ -9,15 +10,13 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} = ${builtins.toJSON value}"
-          else
-            "${key} = ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
+      ) settings
     );
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
@@ -36,7 +35,7 @@ let
     macos-titlebar-style = "transparent";
     font-family = "JetBrainsMonoNL Nerd Font";
     font-style = "Regular";
-    font-size = 14;
+    font-size = 15;
     cursor-style = "block_hollow";
     cursor-style-blink = true;
     mouse-hide-while-typing = true;
