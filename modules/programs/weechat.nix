@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, jvfLib
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  jvfLib,
+  ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -127,116 +128,59 @@ let
     key_mouse = { };
   };
 
-  weechatConf = lib.generators.toINI { } weechatConfig;
-
   pluginsConfig = {
-    var = {
-      "python.vimode.mode_indicator_cmd_color" = "white";
-      "python.vimode.mode_indicator_cmd_color_bg" = "141";
-      "python.vimode.mode_indicator_insert_color" = "white";
-      "python.vimode.mode_indicator_insert_color_bg" = "56";
-      "python.vimode.mode_indicator_normal_color" = "black";
-      "python.vimode.mode_indicator_normal_color_bg" = "148";
-      "python.vimode.mode_indicator_prefix" = "[";
-      "python.vimode.mode_indicator_replace_color" = "white";
-      "python.vimode.mode_indicator_replace_color_bg" = "196";
-      "python.vimode.mode_indicator_search_color" = "white";
-      "python.vimode.mode_indicator_search_color_bg" = "27";
-      "python.vimode.mode_indicator_suffix" = "]";
-      "python.vimode.search_vim" = "on";
-      "python.slack.auto_open_threads" = "true";
-      "python.slack.background_load_all_history" = "true";
-      "python.slack.color_buflist_muted_channels" = "dark gray";
-      "python.slack.color_deleted" = "red";
-      "python.slack.color_edited_suffix" = "196";
-      "python.slack.color_reaction_suffix" = "058";
-      "python.slack.color_reaction_suffix_added_by_you" = "blue";
-      "python.slack.color_thread_suffix" = "013";
-      "python.slack.color_typing_notice" = "yellow";
-      "python.slack.colorize_attachments" = "prefix";
-      "python.slack.colorize_private_chats" = "false";
-      "python.slack.debug_level" = "0";
-      "python.slack.debug_mode" = "on";
-      "python.slack.external_user_prefix" = "*";
-      "python.slack.files_download_location" = "~/Downloads/weeslack";
-      "python.slack.group_name_prefix" = "&";
-      "python.slack.history_fetch_count" = "50";
-      "python.slack.map_underline_to" = "_";
-      "python.slack.muted_channels_activity" = "personal_highlights";
-      "python.slack.never_away" = "true";
-      "python.slack.notify_subscribed_threads" = "auto";
-      "python.slack.notify_usergroup_handled_updated" = "false";
-      "python.slack.record_events" = "false";
-      "python.slack.render_bold_as" = "bold";
-      "python.slack.render_emoji_as_string" = "false";
-      "python.slack.render_italic_as" = "italic";
-      "python.slack.send_typing_notice" = "false";
-      "python.slack.shared_name_prefix" = "%";
-      "python.slack.short_buffer_names" = "false";
-      "python.slack.show_buflist_presense" = "true";
-      "python.slack.show_emoji" = "true";
-      "python.slack.show_emoji_reactions" = "true";
-      "python.slack.show_emoji_reactions_in_threads" = "true";
-      "python.slack.switch_buffer_on_join" = "true";
-      "python.slack.thread_messages_in_channel" = "false";
-      "python.slack.unfurl_auto_link_display" = "false";
-      "python.slack.unfurl_ignore_alt_text" = "false";
-      "python.slack.unhide_buffers_with_activity" = "false";
-      "python.slack.use_full_names" = "false";
+    default = { };
+    scripts = {
+      description = "weechat-scripts package";
+      autoload = "on";
     };
-    desc = { };
   };
-
-  pluginsConf = lib.generators.toINI { } pluginsConfig;
 
   spellConfig = {
-    color = { };
-    check = {
-      default_dict = "en,pt_BR";
-      suggestions = 3;
+    dicts = {
+      enabled = "en,pt_BR";
     };
-    dict = { };
-    look = { };
-    option = {
-      ignore-case = "true";
+    aspell = {
+      search_aka = "off";
     };
   };
-
-  spellConf = lib.generators.toINI { } spellConfig;
 
   ircConfig = {
     look = {
-      server_buffer = "independent";
+      new_channel_position = "bottom";
+      new_server_position = "bottom";
+      display_channel_join = "on";
+      display_motd = "on";
     };
-    color = { };
-    network = { };
-    msgbuffer = { };
-    ctcp = { };
-    ignore = { };
-    server_default = { };
-    server = { };
+    color = {
+      away = "red";
+      error = "red";
+      highlight = "white";
+      information = "cyan";
+      nick = "lightgreen";
+      ssl_self = "green";
+      user = "lightblue";
+      topic_changed = "yellow";
+    };
+    server_default = {
+      ipv6 = "on";
+      ssl = "on";
+      ssl_verify = "off";
+    };
   };
-
-  ircConf = lib.generators.toINI { } ircConfig;
 
   buflistConfig = {
     look = {
-      sort = "number";
+      scroll_horiz = "off";
+      mouse_wheel = "on";
+      show_cursor = "on";
     };
     format = {
-      buffer = "\${color_hotlist}\${format_number}\${if:\${buffer.name}=~^server?\${if:\${buffer.prev_buffer.number}==\${buffer.number}?├:┬}:\${if:\${type}==channel||\${type}==private?: }}\${indent}\${color_hotlist}\${format_nick_prefix}\${cut:15,…,\${name}} \${hotlist}";
-      buffer_current = "\${color:magenta}>>\${if:\${type}==server?\${color:brown,default}:\${color:cyan,default}}\${if:\${buffer.name}=~^server?\${if:\${buffer.prev_buffer.number}==\${buffer.number}?├:┬}:\${if:\${type}==channel||\${type}==private?: }}\${indent}\${color_hotlist}\${format_nick_prefix}\${cut:15,…,\${name}} \${hotlist}";
-      hotlist_highlight = "\${color:148}";
-      hotlist_low = "\${color:white}";
-      hotlist_message = "\${color:magenta}";
-      hotlist_none = "\${if:\${type}==server?\${color:brown}:\${color:cyan}}";
-      hotlist_private = "\${color:226}";
-      indent = "\${color:brown}\${if:\${merged}?\${if:\${buffer.prev_buffer.number}!=\${buffer.number}?│┌:\${if:\${buffer.next_buffer.number}==\${buffer.number}?│├:\${if:\${buffer.next_buffer.name}=~^server||\${buffer.next_buffer.number}<0?└┴:├┴}}}:\${if:\${buffer.active}>0?\${if:\${buffer.next_buffer.name}=~^server?└:\${if:\${buffer.next_buffer.number}>0?├:└}}:\${if:\${buffer.next_buffer.name}=~^server? :│}}}─";
+      buffer = "\${color:42}●\${color:reset} \${color:237}\${name}\${color:reset}";
+      hotlist = "\${color:69}(\${color:reset}\${hotlist}\${color:69})\${color:reset}";
       number = "\${if:\${number}<10||\${number}>20?\${number}:\${if:\${number}==10? 0:\${if:\${number}==11? Q:\${if:\${number}==12? W:\${if:\${number}==13? E:\${if:\${number}==14? R:\${if:\${number}==15? T:\${if:\${number}==16? Y:\${if:\${number}==17? U:\${if:\${number}==18? I:\${if:\${number}==19? O:\${if:\${number}==20? P}}}}}}}}}}}";
     };
   };
-
-  buflistConf = lib.generators.toINI { } buflistConfig;
 
   triggerConfig = {
     look = { };
@@ -272,8 +216,6 @@ let
     };
   };
 
-  triggerConf = lib.generators.toINI { } triggerConfig;
-
   aliasConfig = {
     cmd = {
       open = "/url_hint_replace /exec -bg xdg-open {url$1}";
@@ -281,16 +223,14 @@ let
     completion = { };
   };
 
-  aliasConf = lib.generators.toINI { } aliasConfig;
-
   configDir = jvfLib.filesystem.mkConfigDir "weechat-config" {
-    "weechat.conf" = weechatConf;
-    "plugins.conf" = pluginsConf;
-    "spell.conf" = spellConf;
-    "irc.conf" = ircConf;
-    "buflist.conf" = buflistConf;
-    "trigger.conf" = triggerConf;
-    "alias.conf" = aliasConf;
+    "weechat.conf" = weechatConfig;
+    "plugins.conf" = pluginsConfig;
+    "spell.conf" = spellConfig;
+    "irc.conf" = ircConfig;
+    "buflist.conf" = buflistConfig;
+    "trigger.conf" = triggerConfig;
+    "alias.conf" = aliasConfig;
   };
 
   weechatWithPlugins = pkgs.wrapWeechat cfg.package {

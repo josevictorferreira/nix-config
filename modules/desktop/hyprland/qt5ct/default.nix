@@ -1,14 +1,16 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
   cfg = config.jvf.desktop.hyprland.qt5ct;
   qt5ctConf = {
     Appearance = {
-      color_scheme_path = "${catpuccinMochaConfFile}";
+      color_scheme_path = "$HOME/.config/qt5ct/colors/Catppuccin-Mocha.conf";
       custom_palette = true;
       icon_theme = "Flat-Remix-Blue-Dark";
       standard_dialogs = "default";
@@ -55,43 +57,28 @@ let
       inactive_colors = "#ffcdd6f4, #ff1e1e2e, #ffa6adc8, #ff9399b2, #ff45475a, #ff6c7086, #ffcdd6f4, #ffcdd6f4, #ffcdd6f4, #ff1e1e2e, #ff181825, #ff7f849c, #ff89b4fa, #ffa6adc8, #ff89b4fa, #fff38ba8, #ff1e1e2e, #ffcdd6f4, #ff11111b, #ffcdd6f4, #807f849c";
     };
   };
-
-  catpuccinMochaConfFile = pkgs.writeText "Catppuccin-Mocha.conf" (
-    lib.generators.toINI { } catpuccinMocha
-  );
-  catpuccinLatteConfFile = pkgs.writeText "Catppuccin-Latte.conf" (
-    lib.generators.toINI { } catpuccinLatte
-  );
-  qt5ctConfFile = pkgs.writeText "qt5ct.conf" (lib.generators.toINI { } qt5ctConf);
-
-  qt5ctConfigDir = pkgs.runCommand "qt5ct-config-1.0.0" { } ''
-    mkdir -p $out/qt5ct/colors
-    ln -s ${qt5ctConfFile} $out/qt5ct/qt5ct.conf
-    ln -s ${catpuccinMochaConfFile} $out/qt5ct/colors/Catppuccin-Mocha.conf
-    ln -s ${catpuccinLatteConfFile} $out/qt5ct/colors/Catppuccin-Latte.conf
-  '';
-
-  qt5ctWrapper = pkgs.symlinkJoin {
-    name = "qt5ct";
-    paths = [
-      pkgs.libsForQt5.qt5ct
-      pkgs.libsForQt5.qtstyleplugin-kvantum
-    ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/qt5ct \
-        --prefix XDG_CONFIG_HOME : "${qt5ctConfigDir}"
-    '';
-  };
 in
 {
   options.jvf.desktop.hyprland.qt5ct = {
     enable = lib.mkEnableOption "Qt5ct settings for Hyprland";
+    username = lib.mkOption {
+      type = lib.types.str;
+      description = "Username for which qt5ct settings will be applied.";
+      default = username;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      qt5ctWrapper
-    ];
+    jvf.wrappers.users.${cfg.username}.programs.qt5ct = {
+      packages = [
+        pkgs.libsForQt5.qt5ct
+        pkgs.libsForQt5.qtstyleplugin-kvantum
+      ];
+      configs = {
+        "qt5ct.conf" = qt5ctConf;
+        "colors/Catppuccin-Mocha.conf" = catpuccinMocha;
+        "colors/Catppuccin-Latte.conf" = catpuccinLatte;
+      };
+    };
   };
 }
