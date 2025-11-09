@@ -87,6 +87,12 @@ let
                 name = fileName;
                 path = fileValue;
               }
+          else if builtins.isString fileValue then
+            # It's a string, write it to a plain file
+            {
+              name = fileName;
+              path = pkgs.writeText "${programName}-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue;
+            }
           else if builtins.isAttrs fileValue then
             let
               ext = getFileExtension fileName;
@@ -97,7 +103,7 @@ let
               path = pkgs.writeText "${programName}-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" content;
             }
           else
-            throw "Config value for ${fileName} must be either a path or an attrset";
+            throw "Config value for ${fileName} must be either a path, string, or an attrset";
       in
       lib.mapAttrs createStructuredConfig configs;
 
@@ -253,11 +259,18 @@ let
                       };
 
                       configs = lib.mkOption {
-                        type = lib.types.attrsOf (lib.types.either lib.types.path lib.types.attrs);
+                        type = lib.types.attrsOf (
+                          lib.types.oneOf [
+                            lib.types.path
+                            lib.types.str
+                            lib.types.attrs
+                          ]
+                        );
                         default = { };
                         description = ''
                           Configuration files. Keys are filenames, values are either:
                           - Path: copied as-is
+                          - String: written as plain text
                           - Attrset: converted based on file extension (.json, .yaml, .toml, .ini)
                         '';
                       };

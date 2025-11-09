@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  username,
   ...
 }:
 let
@@ -51,6 +52,12 @@ in
     enable = lib.mkEnableOption "ghostty, a fast terminal emulator";
     package = lib.mkPackageOption pkgs "ghostty" { };
 
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
+
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = defaultConfig;
@@ -62,47 +69,14 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    let
-      configFile = pkgs.writeText "ghostty-config" (toConfigFormat cfg.settings);
-
-      ghosttyWrapped = pkgs.writeShellApplication {
-        name = "ghostty";
-        runtimeInputs = [ cfg.package ];
-        text = ''
-          exec ${lib.getExe cfg.package} --config-file="${configFile}" "$@"
-        '';
-      };
-
-      ghosttyDesktop = pkgs.makeDesktopItem {
-        name = "ghostty";
-        desktopName = "Ghostty";
-        comment = "A fast, feature-rich terminal emulator";
-        exec = lib.getExe ghosttyWrapped;
-        terminal = false;
-        type = "Application";
-        categories = [
-          "System"
-          "Utility"
-          "TerminalEmulator"
-        ];
-        icon = "ghostty";
-      };
-
-      ghosttyIcon = pkgs.runCommand "ghostty-icon" { } ''
-        mkdir -p $out/share/icons/hicolor/512x512/apps
-        mkdir -p $out/share/icons
-      '';
-    in
-    {
-      environment.systemPackages = [
-        ghosttyWrapped
-        ghosttyDesktop
-        ghosttyIcon
+  config = lib.mkIf cfg.enable {
+    jvf.wrappers.users.${cfg.username}.programs.ghostty = {
+      packages = [
+        cfg.package
       ];
-      fonts.packages = [
-        pkgs.nerd-fonts.jetbrains-mono
-      ];
-    }
-  );
+      configs = {
+        "config" = toConfigFormat cfg.settings;
+      };
+    };
+  };
 }
