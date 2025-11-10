@@ -132,5 +132,11 @@ in
         "work.yaml" = work;
       };
     };
+
+    environment = {
+      sessionVariables = {
+        TMUXP_CONFIGDIR = "$HOME/.config/tmuxp";
+      };
+    };
   };
 }

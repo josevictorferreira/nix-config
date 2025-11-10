@@ -22,7 +22,7 @@ let
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
     if command -v tmuxp-init >/dev/null 2>&1; then
-      exec tmuxp
+      exec tmuxp load -y monitoring.yaml chat.yaml work.yaml projects.yaml main.yaml
     else
       exec tmux
     fi
