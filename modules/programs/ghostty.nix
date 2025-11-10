@@ -19,10 +19,13 @@ let
           "${key} = ${builtins.toString value}"
       ) settings
     );
+  #
+  # homeDir = if (pkgs.stdenv.isDarwin) then "/Users/#{cfg.username}" else "/home/${cfg.username}";
+  # export TMUXP_CONFIGDIR="${homeDir}/.config/tmuxp"
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
-    if command -v tmuxp-init >/dev/null 2>&1; then
-      exec tmuxp load -y monitoring.yaml chat.yaml work.yaml projects.yaml main.yaml
+    if command -v tmuxp >/dev/null 2>&1; then
+      exec tmuxp load -y monitoring chat work projects main
     else
       exec tmux
     fi
