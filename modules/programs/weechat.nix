@@ -2,7 +2,7 @@
   lib,
   pkgs,
   config,
-  jvfLib,
+  username,
   ...
 }:
 let
@@ -222,58 +222,15 @@ let
     };
     completion = { };
   };
-
-  configDir = jvfLib.filesystem.mkConfigDir "weechat-config" {
-    "weechat.conf" = weechatConfig;
-    "plugins.conf" = pluginsConfig;
-    "spell.conf" = spellConfig;
-    "irc.conf" = ircConfig;
-    "buflist.conf" = buflistConfig;
-    "trigger.conf" = triggerConfig;
-    "alias.conf" = aliasConfig;
-  };
-
-  weechatWithPlugins = pkgs.wrapWeechat cfg.package {
-    configure =
-      { availablePlugins, ... }:
-      {
-        plugins = builtins.attrValues (
-          builtins.removeAttrs availablePlugins [
-            "python-plugins"
-            "perl-plugins"
-            "lua-plugins"
-            "tcl-plugins"
-            "ruby-plugins"
-            "guile-plugins"
-          ]
-        );
-        scripts = cfg.plugins ++ cfg.additionalScripts;
-      };
-  };
-
-  weechatPackage = (
-    pkgs.writeShellScriptBin "weechat" ''
-      WEECHAT_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}/weechat"
-      mkdir -p "$WEECHAT_HOME"
-
-      if [ ! -f "$WEECHAT_HOME/.config_initialized" ]; then
-        cp ${configDir}/weechat.conf "$WEECHAT_HOME/weechat.conf"
-        cp ${configDir}/plugins.conf "$WEECHAT_HOME/plugins.conf"
-        cp ${configDir}/spell.conf "$WEECHAT_HOME/spell.conf"
-        cp ${configDir}/irc.conf "$WEECHAT_HOME/irc.conf"
-        cp ${configDir}/buflist.conf "$WEECHAT_HOME/buflist.conf"
-        cp ${configDir}/trigger.conf "$WEECHAT_HOME/trigger.conf"
-        cp ${configDir}/alias.conf "$WEECHAT_HOME/alias.conf"
-        touch "$WEECHAT_HOME/.config_initialized"
-      fi
-
-      exec ${weechatWithPlugins}/bin/weechat --dir "$WEECHAT_HOME" "$@"
-    ''
-  );
 in
 {
   options.jvf.programs.weechat = {
     enable = lib.mkEnableOption "weechat, an extensible chat client";
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
     package = lib.mkPackageOption pkgs "weechat-unwrapped" { };
     additionalScripts = lib.mkOption {
       type = lib.types.listOf lib.types.package;
@@ -285,19 +242,26 @@ in
       default = defaultPlugins;
       description = "List of weechat scripts to install.";
     };
-    configFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to weechat configuration file. If provided, will be copied to /etc/weechat/weechat.conf";
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.aspell
-      pkgs.aspellDicts.en
-      pkgs.aspellDicts.pt_BR
-      weechatPackage
-    ];
+    jvf.wrappers.users.${cfg.username}.programs.weechat = {
+      packages = [
+        cfg.package
+        pkgs.aspell
+        pkgs.aspellDicts.en
+        pkgs.aspellDicts.pt_BR
+      ]
+      ++ cfg.plugins;
+      configs = {
+        "weechat.conf" = weechatConfig;
+        "plugins.conf" = pluginsConfig;
+        "spell.conf" = spellConfig;
+        "irc.conf" = ircConfig;
+        "buflist.conf" = buflistConfig;
+        "trigger.conf" = triggerConfig;
+        "alias.conf" = aliasConfig;
+      };
+    };
   };
 }
