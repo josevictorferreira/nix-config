@@ -16,8 +16,8 @@ in
     ../programs/kitty.nix
     ../programs/git.nix
     ../programs/neovim.nix
-    ../programs/zsh.nix
     ../programs/tmux
+    ../programs/zsh
   ];
 
   options.jvf.roles.development.enable = lib.mkOption {
