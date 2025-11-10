@@ -1,12 +1,14 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.tmux;
 
-  plugins = [
+  defaultPlugins = [
     pkgs.tmuxPlugins.yank
     pkgs.tmuxPlugins.onedark-theme
   ];
@@ -91,26 +93,8 @@ let
     set -g set-clipboard on
     setw -g @shell_mode 'vi'
 
-    ${lib.strings.concatStringsSep "\n" (map applyPlugin plugins)}
+    ${lib.strings.concatStringsSep "\n" (map applyPlugin cfg.plugins)}
   '';
-
-  tmuxPackage = (
-    pkgs.symlinkJoin {
-      name = "tmux";
-      buildInputs = [ pkgs.makeWrapper ];
-      paths = [
-        pkgs.tmux
-      ]
-      ++ plugins;
-      postBuild =
-        let
-          configFile = pkgs.writeText "config" tmuxConf;
-        in
-        ''
-          wrapProgram $out/bin/tmux --add-flags "-f ${configFile}"
-        '';
-    }
-  );
 in
 {
 
@@ -118,13 +102,29 @@ in
 
   options.jvf.programs.tmux = {
     enable = lib.mkEnableOption "tmux, a terminal multiplexer";
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
+    package = lib.mkPackageOption pkgs "tmux" { };
+    plugins = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = defaultPlugins;
+      description = "List of tmux plugins to install.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.tmuxp.enable = true;
+    jvf.wrappers.users.${cfg.username}.programs.tmux = {
+      packages = [
+        cfg.package
+      ];
+      configs = {
+        "tmux.conf" = tmuxConf;
+      };
+    };
 
-    environment.systemPackages = [
-      tmuxPackage
-    ];
+    jvf.programs.tmuxp.enable = true;
   };
 }

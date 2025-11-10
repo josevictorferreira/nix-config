@@ -22,7 +22,7 @@ let
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
     if command -v tmuxp-init >/dev/null 2>&1; then
-      exec tmuxp-init
+      exec tmuxp
     else
       exec tmux
     fi

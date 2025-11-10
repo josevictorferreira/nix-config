@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, jvfLib
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -105,53 +106,31 @@ let
       }
     ];
   };
-
-  tmuxpConfigs = {
-    "chat.yaml" = chat;
-    "main.yaml" = main;
-    "monitoring.yaml" = monitoring;
-    "projects.yaml" = projects;
-    "work.yaml" = work;
-  };
-
-  tmuxpSessionsDir = jvfLib.filesystem.mkConfigDir "tmuxp-sessions" tmuxpConfigs;
-
-  tmuxpPackage = (
-    pkgs.symlinkJoin {
-      name = "tmuxp-base";
-      buildInputs = [ pkgs.makeWrapper ];
-      paths = [
-        pkgs.tmuxp
-      ];
-      postBuild = ''
-        cat > $out/bin/tmuxp-init << 'EOF'
-        #!/usr/bin/env bash
-        set -euo pipefail
-
-        # Change to the sessions directory
-        cd "${tmuxpSessionsDir}" || exit 1
-
-        ${pkgs.tmuxp}/bin/tmuxp load -y monitoring.yaml chat.yaml work.yaml projects.yaml main.yaml
-
-        echo "All tmuxp sessions initialized!"
-        EOF
-
-        chmod +x $out/bin/tmuxp-init
-
-        wrapProgram $out/bin/tmuxp
-      '';
-    }
-  );
 in
 
 {
   options.jvf.programs.tmuxp = {
     enable = lib.mkEnableOption "tmux, a terminal multiplexer";
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
+    package = lib.mkPackageOption pkgs "tmuxp" { };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      tmuxpPackage
-    ];
+    jvf.wrappers.users.${cfg.username}.programs.tmuxp = {
+      packages = [
+        cfg.package
+      ];
+      configs = {
+        "chat.yaml" = chat;
+        "main.yaml" = main;
+        "monitoring.yaml" = monitoring;
+        "projects.yaml" = projects;
+        "work.yaml" = work;
+      };
+    };
   };
 }
