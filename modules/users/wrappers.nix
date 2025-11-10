@@ -312,7 +312,27 @@ let
     options.jvf.wrappers = defaultOptions;
 
     config = {
-      environment.systemPackages = packagesWithoutCommands;
+      users.users = lib.mkMerge (
+        lib.mapAttrsToList (
+          userName: uCfg:
+          let
+            userPackages = lib.flatten (
+              lib.mapAttrsToList (
+                programName: programCfg:
+                if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+              ) (uCfg.programs or { })
+            );
+          in
+          if userPackages == [ ] then
+            { }
+          else
+            {
+              "${userName}" = {
+                packages = userPackages;
+              };
+            }
+        ) cfg.users
+      );
 
       launchd.daemons = lib.mkMerge (
         lib.mapAttrsToList (
@@ -343,7 +363,27 @@ let
     options.jvf.wrappers = defaultOptions;
 
     config = {
-      environment.systemPackages = packagesWithoutCommands;
+      users.users = lib.mkMerge (
+        lib.mapAttrsToList (
+          userName: uCfg:
+          let
+            userPackages = lib.flatten (
+              lib.mapAttrsToList (
+                programName: programCfg:
+                if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+              ) (uCfg.programs or { })
+            );
+          in
+          if userPackages == [ ] then
+            { }
+          else
+            {
+              "${userName}" = {
+                packages = userPackages;
+              };
+            }
+        ) cfg.users
+      );
 
       system.activationScripts = lib.mkMerge (
         lib.mapAttrsToList (
