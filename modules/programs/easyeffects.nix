@@ -19,7 +19,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
+    users.users."${username}".packages = [
       pkgs.easyeffects
     ];
 

@@ -1,10 +1,11 @@
-{ pkgs
-, lib
-, host
-, options
-, configRoot
-, username
-, ...
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  configRoot,
+  username,
+  ...
 }:
 let
 

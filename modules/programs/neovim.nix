@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   devTools = import ./../common/development { inherit pkgs; };
@@ -20,7 +21,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
+    users.users."${username}".packages = [
       pkgs.neovim
       pkgs.fzf
       pkgs.ripgrep
