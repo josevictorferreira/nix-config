@@ -45,11 +45,13 @@ in
 {
   options.jvf.programs.kitty = {
     enable = lib.mkEnableOption "kitty, a GPU-accelerated terminal emulator";
+
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
       description = "Username for which to install the configuration";
     };
+
     package = lib.mkPackageOption pkgs "kitty" { };
 
     settings = lib.mkOption {
