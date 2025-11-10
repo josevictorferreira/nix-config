@@ -1,7 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.kitty;
@@ -31,20 +33,23 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${builtins.toString value}"
+      ) settings
     );
 in
 {
   options.jvf.programs.kitty = {
     enable = lib.mkEnableOption "kitty, a GPU-accelerated terminal emulator";
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to install the configuration";
+    };
     package = lib.mkPackageOption pkgs "kitty" { };
 
     settings = lib.mkOption {
@@ -58,44 +63,14 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    let
-      configFile = pkgs.writeTextFile {
-        name = "kitty.conf";
-        text = toConfigFormat cfg.settings;
-      };
-
-      kittyWrapped = pkgs.writeShellApplication {
-        name = "kitty";
-        runtimeInputs = [ cfg.package ];
-        text = ''
-          exec ${lib.getExe cfg.package} --config="${configFile}" "$@"
-        '';
-      };
-
-      kittyDesktop = pkgs.makeDesktopItem {
-        name = "kitty";
-        desktopName = "Kitty";
-        comment = "A GPU-accelerated terminal emulator";
-        exec = lib.getExe kittyWrapped;
-        terminal = false;
-        type = "Application";
-        categories = [
-          "System"
-          "Utility"
-          "TerminalEmulator"
-        ];
-        icon = "kitty";
-      };
-    in
-    {
-      environment.systemPackages = [
-        kittyWrapped
-        kittyDesktop
+  config = lib.mkIf cfg.enable {
+    jvf.wrappers.users.${cfg.username}.programs.kitty = {
+      packages = [
+        cfg.package
       ];
-      fonts.packages = [
-        pkgs.nerd-fonts.jetbrains-mono
-      ];
-    }
-  );
+      configs = {
+        "kitty.conf" = toConfigFormat cfg.settings;
+      };
+    };
+  };
 }
