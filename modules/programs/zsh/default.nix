@@ -36,8 +36,7 @@ in
         pkgs.fzf
         pkgs.ripgrep
         pkgs.direnv
-      ]
-      ++ cfg.plugins;
+      ];
       configs = {
         "zsh" = ./.;
       };
