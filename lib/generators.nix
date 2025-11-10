@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 let
   toConfigFormat =
@@ -9,6 +9,8 @@ let
         if builtins.isBool value then if value then key else "" else "${key} = ${builtins.toString value}"
       ) settings
     );
+
+  toYAML = data: builtins.readFile ((pkgs.formats.yaml { }).generate "." data);
 
   toTOML =
     let
@@ -71,7 +73,7 @@ let
   toFileFormatStr =
     type: content:
     if type == "yaml" || type == "yml" then
-      lib.generators.toYAML { } content
+      toYAML content
     else if type == "ini" then
       lib.generators.toINIWithGlobalSection { } { globalSection = flattenConfig content; }
     else if type == "conf" || type == "cfg" then

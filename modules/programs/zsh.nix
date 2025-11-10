@@ -106,8 +106,6 @@ in
     };
 
     environment.etc."skel/.zshrc".text = lib.mkIf isNixOS ''
-      export K9S_CONFIG_DIR="$HOME/.config/k9s"
-      eval "$(direnv hook zsh)"
       source $HOME/.config/zsh/init.zsh
     '';
 

@@ -120,6 +120,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment = {
+      sessionVariables = {
+        TMUXP_CONFIGDIR = "$HOME/.config/tmuxp";
+      };
+    };
+
     jvf.wrappers.users.${cfg.username}.programs.tmuxp = {
       packages = [
         cfg.package
@@ -130,12 +136,6 @@ in
         "monitoring.yaml" = monitoring;
         "projects.yaml" = projects;
         "work.yaml" = work;
-      };
-    };
-
-    environment = {
-      sessionVariables = {
-        TMUXP_CONFIGDIR = "$HOME/.config/tmuxp";
       };
     };
   };

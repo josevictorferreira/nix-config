@@ -243,6 +243,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment = {
+      sessionVariables = {
+        K9S_CONFIG_DIR = "$HOME/.config/k9s";
+      };
+    };
+
     jvf.wrappers.users.${cfg.username}.programs.k9s = {
       packages = [
         cfg.package
