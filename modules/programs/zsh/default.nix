@@ -39,6 +39,9 @@ in
       ];
       configs = {
         "zsh" = ./.;
+        ".zshrc" = ''
+          source init.zsh
+        '';
       };
     };
 

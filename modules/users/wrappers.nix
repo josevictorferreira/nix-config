@@ -210,10 +210,11 @@ let
                   if [ -d "${wrapper.configDir}/${programName}" ]; then
                     # Copy contents of the subdirectory directly
                     cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
-                  else
-                    # Copy all contents directly
-                    cp -r ${wrapper.configDir}/* "${targetDir}/" 2>/dev/null || true
                   fi
+                  
+                  # Copy any other files/directories (excluding the program-named subdirectory)
+                  find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -r {} "${targetDir}/" \; 2>/dev/null || true
+                  
                   chown -R ${userName}:users "${targetDir}"
                   chmod -R u+rw "${targetDir}"
                   find "${targetDir}" -type d -exec chmod 755 {} \;
