@@ -40,7 +40,7 @@ in
       configs = {
         "zsh" = ./.;
         ".zshrc" = ''
-          source init.zsh
+          source $HOME/.config/zsh/init.zsh
         '';
       };
     };
