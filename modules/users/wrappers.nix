@@ -3,7 +3,6 @@
   pkgs,
   config,
   jvfLib,
-  isDarwin,
   ...
 }:
 
@@ -25,8 +24,6 @@ let
       { }
     else
       let
-        # Recursively collect all files in a directory, excluding .nix files
-        # Returns a list of { name = "relative/path"; path = "/absolute/path"; }
         collectFilesRecursive =
           baseDir: subPath:
           let
@@ -71,24 +68,20 @@ let
                 else
                   false
               );
-              # When directory contains the config files directly, use programName instead of fileName
               isProgramConfigDir =
                 isDir.success && isDir.value && (fileName == programName || fileName == "${programName}-config");
             in
             if isDir.success && isDir.value then
-              # It's a directory, recursively collect all files (excluding .nix files)
               {
                 name = if isProgramConfigDir then programName else fileName;
                 path = pkgs.linkFarm programName (collectFilesRecursive (toString fileValue) "");
               }
             else
-              # It's a file, use as-is
               {
                 name = fileName;
                 path = fileValue;
               }
           else if builtins.isString fileValue then
-            # It's a string, write it to a plain file
             {
               name = fileName;
               path = pkgs.writeText "${programName}-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue;
@@ -119,7 +112,8 @@ let
     }:
     let
       userConfig = config.users.users.${userName} or { };
-      home = userConfig.home or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+      home =
+        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
 
       processedConfigs = processConfigs { inherit configs programName; };
 
@@ -160,7 +154,8 @@ let
     userName: uCfg:
     let
       userConfig = config.users.users.${userName} or { };
-      home = userConfig.home or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+      home =
+        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
     in
     lib.concatStringsSep "\n" (
       lib.mapAttrsToList (
@@ -228,8 +223,9 @@ let
         ''
       ) (uCfg.programs or { })
     );
-
-  defaultOptions = {
+in
+{
+  options.jvf.wrappers = {
     users = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule (
@@ -295,23 +291,8 @@ let
     };
   };
 
-  # Collect packages from programs without commands
-  packagesWithoutCommands = lib.flatten (
-    lib.mapAttrsToList (
-      userName: uCfg:
-      lib.flatten (
-        lib.mapAttrsToList (
-          programName: programCfg:
-          if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
-        ) (uCfg.programs or { })
-      )
-    ) cfg.users
-  );
-
-  darwinModule = {
-    options.jvf.wrappers = defaultOptions;
-
-    config = {
+  config = lib.mkMerge [
+    {
       users.users = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -333,7 +314,8 @@ let
             }
         ) cfg.users
       );
-
+    }
+    (lib.mkIf pkgs.stdenv.isDarwin {
       launchd.daemons = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -356,35 +338,8 @@ let
             }
         ) cfg.users
       );
-    };
-  };
-
-  defaultModule = {
-    options.jvf.wrappers = defaultOptions;
-
-    config = {
-      users.users = lib.mkMerge (
-        lib.mapAttrsToList (
-          userName: uCfg:
-          let
-            userPackages = lib.flatten (
-              lib.mapAttrsToList (
-                programName: programCfg:
-                if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
-              ) (uCfg.programs or { })
-            );
-          in
-          if userPackages == [ ] then
-            { }
-          else
-            {
-              "${userName}" = {
-                packages = userPackages;
-              };
-            }
-        ) cfg.users
-      );
-
+    })
+    (lib.mkIf (!pkgs.stdenv.isDarwin) {
       system.activationScripts = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -399,7 +354,6 @@ let
             }
         ) cfg.users
       );
-    };
-  };
-in
-if isDarwin then darwinModule else defaultModule
+    })
+  ];
+}

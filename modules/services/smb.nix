@@ -1,10 +1,13 @@
-{ config
-, lib
-, isDarwin
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   cfg = config.jvf.services.smb;
+
+  isDarwin = pkgs.stdenv.isDarwin;
 
   homeDir = if isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
 

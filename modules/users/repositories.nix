@@ -3,7 +3,6 @@
   pkgs,
   config,
   jvfLib,
-  isDarwin,
   ...
 }:
 
@@ -14,8 +13,9 @@ let
     uCfg: userName:
     let
       userConfig = config.users.users.${userName} or { };
-      home = userConfig.home or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
-      group = userConfig.group or (if isDarwin then "staff" else "users");
+      home =
+        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+      group = userConfig.group or (if pkgs.stdenv.isDarwin then "staff" else "users");
     in
     lib.concatStringsSep "\n" (
       lib.mapAttrsToList (
@@ -27,8 +27,9 @@ let
         }
       ) uCfg.clonedDirs
     );
-
-  defaultOptions = {
+in
+{
+  options.jvf.repositories = {
     users = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule (
@@ -49,10 +50,8 @@ let
     };
   };
 
-  darwinModule = {
-    options.jvf.repositories = defaultOptions;
-
-    config = {
+  config = lib.mkMerge [
+    (lib.mkIf pkgs.stdenv.isDarwin {
       launchd.daemons = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -78,13 +77,8 @@ let
             }
         ) cfg.users
       );
-    };
-  };
-
-  defaultModule = {
-    options.jvf.repositories = defaultOptions;
-
-    config = {
+    })
+    (lib.mkIf (!pkgs.stdenv.isDarwin) {
       system.userActivationScripts = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -99,7 +93,6 @@ let
             }
         ) cfg.users
       );
-    };
-  };
-in
-if isDarwin then darwinModule else defaultModule
+    })
+  ];
+}

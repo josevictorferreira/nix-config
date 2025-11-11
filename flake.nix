@@ -17,10 +17,11 @@
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , darwin
-    , sops-nix
-    , ...
+    inputs@{
+      nixpkgs,
+      darwin,
+      sops-nix,
+      ...
     }:
     let
       systems = {
@@ -29,16 +30,12 @@
           os = "nixos";
           host = "nixos-desktop";
           username = "josevictor";
-          isDarwin = false;
-          isNixOS = true;
         };
         macos = {
           systemArc = "aarch64-darwin";
           os = "macos";
           host = "macos-macbook";
           username = "josevictorferreira";
-          isDarwin = true;
-          isNixOS = false;
         };
       };
 
@@ -55,13 +52,11 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        , isDarwin
-        , isNixOS
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -78,8 +73,6 @@
             systemArc
             username
             host
-            isDarwin
-            isNixOS
             homeDir
             ;
           configRoot = ./.;
