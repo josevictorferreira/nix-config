@@ -1,5 +1,5 @@
-{ jvfLib, ... }:
+{ inputs, ... }:
 
 {
-  imports = jvfLib.filesystem.modulesInDir ./.;
+  imports = inputs.lib.filesystem.modulesInDir ./.;
 }

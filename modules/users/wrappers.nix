@@ -2,7 +2,7 @@
   lib,
   pkgs,
   config,
-  jvfLib,
+  inputs,
   system,
   ...
 }:
@@ -91,7 +91,7 @@ let
           else if builtins.isAttrs fileValue then
             let
               ext = getFileExtension fileName;
-              content = jvfLib.generators.toFileFormatStr ext fileValue;
+              content = inputs.lib.generators.toFileFormatStr ext fileValue;
             in
             {
               name = fileName;

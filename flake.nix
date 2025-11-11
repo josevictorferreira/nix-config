@@ -18,6 +18,7 @@
 
   outputs =
     inputs@{
+      self,
       nixpkgs,
       darwin,
       sops-nix,
@@ -68,7 +69,6 @@
         in
         {
           inherit
-            inputs
             os
             username
             host
@@ -76,9 +76,11 @@
             ;
           system = systemArc;
           configRoot = ./.;
-          jvfLib = import ./lib {
-            lib = pkgs.lib;
-            inherit pkgs;
+          inputs = inputs // {
+            lib = import ./lib {
+              lib = pkgs.lib;
+              inherit pkgs;
+            };
           };
         };
 
@@ -115,6 +117,16 @@
 
     in
     {
+      lib =
+        systemArc:
+        let
+          pkgs = mkPkgs systemArc;
+        in
+        import ./lib {
+          lib = pkgs.lib;
+          inherit pkgs;
+        };
+
       nixosConfigurations = {
         ${systems.nixos.host} = nixosModule systems.nixos;
       };

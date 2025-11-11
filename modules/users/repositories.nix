@@ -2,7 +2,7 @@
   lib,
   pkgs,
   config,
-  jvfLib,
+  inputs,
   system,
   ...
 }:
@@ -22,7 +22,7 @@ let
     lib.concatStringsSep "\n" (
       lib.mapAttrsToList (
         rel: repo:
-        jvfLib.git.cloneRepoText {
+        inputs.lib.git.cloneRepoText {
           username = userName;
           inherit group repo;
           targetDir = "${home}/${rel}";
