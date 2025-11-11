@@ -3,11 +3,13 @@
   pkgs,
   config,
   jvfLib,
+  systemArc,
   ...
 }:
 
 let
   cfg = config.jvf.wrappers;
+  isDarwin = builtins.match ".*-darwin" systemArc != null;
 
   getFileExtension =
     fileName:
@@ -291,31 +293,33 @@ in
     };
   };
 
-  config = lib.mkMerge [
-    {
-      users.users = lib.mkMerge (
-        lib.mapAttrsToList (
-          userName: uCfg:
-          let
-            userPackages = lib.flatten (
-              lib.mapAttrsToList (
-                programName: programCfg:
-                if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
-              ) (uCfg.programs or { })
-            );
-          in
-          if userPackages == [ ] then
-            { }
-          else
-            {
-              "${userName}" = {
-                packages = userPackages;
-              };
-            }
-        ) cfg.users
-      );
-    }
-    (lib.mkIf pkgs.stdenv.isDarwin {
+  config = lib.mkMerge (
+    [
+      {
+        users.users = lib.mkMerge (
+          lib.mapAttrsToList (
+            userName: uCfg:
+            let
+              userPackages = lib.flatten (
+                lib.mapAttrsToList (
+                  programName: programCfg:
+                  if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+                ) (uCfg.programs or { })
+              );
+            in
+            if userPackages == [ ] then
+              { }
+            else
+              {
+                "${userName}" = {
+                  packages = userPackages;
+                };
+              }
+          ) cfg.users
+        );
+      }
+    ]
+    ++ lib.optional isDarwin {
       launchd.daemons = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -338,8 +342,8 @@ in
             }
         ) cfg.users
       );
-    })
-    (lib.mkIf (!pkgs.stdenv.isDarwin) {
+    }
+    ++ lib.optional (!isDarwin) {
       system.activationScripts = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -354,6 +358,6 @@ in
             }
         ) cfg.users
       );
-    })
-  ];
+    }
+  );
 }

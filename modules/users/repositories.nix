@@ -3,11 +3,13 @@
   pkgs,
   config,
   jvfLib,
+  systemArc,
   ...
 }:
 
 let
   cfg = config.jvf.repositories;
+  isDarwin = builtins.match ".*-darwin" systemArc != null;
 
   mkBody =
     uCfg: userName:
@@ -50,8 +52,9 @@ in
     };
   };
 
-  config = lib.mkMerge [
-    (lib.mkIf pkgs.stdenv.isDarwin {
+  config = lib.mkMerge (
+    [ ]
+    ++ lib.optional isDarwin {
       launchd.daemons = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -77,8 +80,8 @@ in
             }
         ) cfg.users
       );
-    })
-    (lib.mkIf (!pkgs.stdenv.isDarwin) {
+    }
+    ++ lib.optional (!isDarwin) {
       system.userActivationScripts = lib.mkMerge (
         lib.mapAttrsToList (
           userName: uCfg:
@@ -93,6 +96,6 @@ in
             }
         ) cfg.users
       );
-    })
-  ];
+    }
+  );
 }
