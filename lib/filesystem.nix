@@ -1,6 +1,5 @@
-{
-  lib,
-  ...
+{ lib
+, ...
 }:
 
 let
@@ -9,9 +8,11 @@ let
     dir:
     let
       allFileNames = builtins.attrNames (builtins.readDir dir);
-      nixFileNames = lib.filter (
-        fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
-      ) allFileNames;
+      nixFileNames = lib.filter
+        (
+          fileName: (lib.strings.hasSuffix ".nix" fileName) && (fileName != "default.nix")
+        )
+        allFileNames;
     in
     lib.map (fileName: dir + "/${fileName}") nixFileNames;
 
