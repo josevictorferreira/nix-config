@@ -49,8 +49,8 @@ in
         pkgs.opencode
       ];
       configs = lib.mkMerge [
-        (mkMdConfigs "agents" aiTools.agents)
-        (mkMdConfigs "commands" aiTools.commands)
+        (mkMdConfigs "agent" aiTools.agents)
+        (mkMdConfigs "command" aiTools.commands)
         {
           "config.json" = cfg.settings;
         }
