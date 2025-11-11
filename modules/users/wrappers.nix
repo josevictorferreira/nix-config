@@ -3,13 +3,13 @@
   pkgs,
   config,
   jvfLib,
-  systemArc,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.wrappers;
-  isDarwin = builtins.match ".*-darwin" systemArc != null;
+  isDarwin = builtins.match ".*-darwin" system != null;
 
   getFileExtension =
     fileName:

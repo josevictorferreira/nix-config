@@ -2,7 +2,6 @@
   lib,
   pkgs,
   config,
-  systemArc,
   ...
 }:
 
@@ -28,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs = {
-      ghostty.enable = !(lib.strings.hasInfix "darwin" systemArc);
+      ghostty.enable = !(pkgs.stdenv.isDarwin);
       alacritty.enable = true;
       kitty.enable = true;
       neovim.enable = true;

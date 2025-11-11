@@ -70,11 +70,11 @@
           inherit
             inputs
             os
-            systemArc
             username
             host
             homeDir
             ;
+          system = systemArc;
           configRoot = ./.;
           jvfLib = import ./lib {
             lib = pkgs.lib;
