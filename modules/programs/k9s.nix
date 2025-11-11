@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.k9s;
@@ -44,7 +45,7 @@ let
     logger = {
       tail = 150;
       buffer = 10000;
-      sinceSeconds = -1;
+      sinceSeconds = 3600;
       textWrap = true;
       showTime = false;
       disableAutoscroll = true;
@@ -255,7 +256,7 @@ in
       configs = {
         "config.yaml" = cfg.settings;
         "aliases.yaml" = cfg.aliases;
-        "skins.yaml" = cfg.skins;
+        "skins/tokyonight.yaml" = tokyonight-skin;
       };
     };
   };
