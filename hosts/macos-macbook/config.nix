@@ -2,9 +2,12 @@
   pkgs,
   username,
   host,
-  configRoot,
+  inputs,
   ...
 }:
+let
+  inherit (inputs) self;
+in
 
 {
   networking.hostName = "${host}";
@@ -92,8 +95,8 @@
   };
 
   imports = [
-    "${configRoot}/modules/services/sops.nix"
-    "${configRoot}/modules/roles"
+    "${self}/modules/services/sops.nix"
+    "${self}/modules/roles"
   ];
 
   nix.package = pkgs.nix;

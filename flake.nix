@@ -69,8 +69,8 @@
             host
             ;
           system = systemArc;
-          configRoot = ./.;
           inputs = inputs // {
+            inherit self;
             lib = import ./lib {
               lib = pkgs.lib;
               inherit pkgs;

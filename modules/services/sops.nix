@@ -1,9 +1,10 @@
 { config
 , lib
-, configRoot
+, inputs
 , ...
 }:
 let
+  inherit (inputs) self;
   cfg = config.jvf.services.sops;
 in
 {
@@ -18,7 +19,7 @@ in
 
   config = lib.mkIf cfg.enable {
     sops = {
-      defaultSopsFile = "${configRoot}/secrets/secrets.enc.yaml";
+      defaultSopsFile = "${self}/secrets/secrets.enc.yaml";
       age.keyFile = cfg.ageKeyPath;
     };
 

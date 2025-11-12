@@ -3,10 +3,13 @@
   lib,
   host,
   options,
-  configRoot,
+  inputs,
   username,
   ...
 }:
+let
+  inherit (inputs) self;
+in
 let
 
   inherit (import ./variables.nix) gitUsername keyboardLayout;
@@ -56,10 +59,10 @@ in
   };
 
   imports = [
-    "${configRoot}/modules/services/sops.nix"
-    "${configRoot}/modules/services/polkit.nix"
-    "${configRoot}/modules/roles"
-    "${configRoot}/modules/desktop/hyprland"
+    "${self}/modules/services/sops.nix"
+    "${self}/modules/services/polkit.nix"
+    "${self}/modules/roles"
+    "${self}/modules/desktop/hyprland"
     ./hardware.nix
   ];
 
