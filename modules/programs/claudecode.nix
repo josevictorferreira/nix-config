@@ -11,7 +11,6 @@ let
 
   aiTools = import ../common/ai-tools { inherit lib pkgs; };
 
-  # Transform attrset of name -> content into "prefix/name.md" -> content
   mkMdConfigs =
     prefix: attrset:
     lib.mapAttrs' (name: value: {
@@ -91,6 +90,7 @@ in
         packages = [
           pkgs.claude-code
         ];
+        configPath = ".claude";
         configs = lib.mkMerge [
           (mkMdConfigs "agents" aiTools.agents)
           (mkMdConfigs "commands" aiTools.commands)
@@ -100,6 +100,7 @@ in
         packages = [
           pkgs.claude-code-router
         ];
+        configPath = ".claude-code-router";
         configs = {
           "config.json" = cfg.settings;
         };

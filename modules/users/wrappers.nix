@@ -109,6 +109,7 @@ let
       env ? { },
       configs ? { },
       useDerivationConfig ? false,
+      configPath ? null,
     }:
     let
       userConfig = config.users.users.${userName} or { };
@@ -147,7 +148,11 @@ let
     in
     {
       inherit wrapperEnv configDir;
-      configTargetDir = if useDerivationConfig then null else "${home}/.config/${programName}";
+      configTargetDir =
+        if useDerivationConfig then
+          null
+        else
+          "${home}/${if configPath != null then configPath else ".config/${programName}"}";
     };
 
   mkUserActivation =
@@ -169,6 +174,7 @@ let
               env
               configs
               useDerivationConfig
+              configPath
               ;
           };
 
@@ -188,7 +194,7 @@ let
               ""
             else
               let
-                targetDir = "${home}/.config/${programName}";
+                targetDir = wrapper.configTargetDir;
               in
               ''
                 echo "Setting up config for ${programName}..."
@@ -273,6 +279,16 @@ in
                         type = lib.types.bool;
                         default = false;
                         description = "Keep configs in derivation instead of symlinking to ~/.config/{name}/";
+                      };
+
+                      configPath = lib.mkOption {
+                        type = lib.types.nullOr lib.types.str;
+                        default = null;
+                        description = ''
+                          Custom path for config installation relative to $HOME.
+                          If null, defaults to .config/{programName}.
+                          Example: ".claude-code-router" installs to ~/.claude-code-router
+                        '';
                       };
                     };
                   }
