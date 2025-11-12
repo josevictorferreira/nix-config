@@ -49,28 +49,33 @@ in
       shell = pkgs.zsh;
     };
 
+    sops.secrets."context7_api_key" = {
+      owner = config.users.users.${cfg.username}.name;
+      mode = "0400";
+    };
+
     sops.secrets."github_token" = {
-      owner = config.users.users.${username}.name;
+      owner = config.users.users.${cfg.username}.name;
       mode = "0400";
     };
 
     sops.secrets."openrouter_code_agent" = {
-      owner = config.users.users.${username}.name;
+      owner = config.users.users.${cfg.username}.name;
       mode = "0400";
     };
 
     sops.secrets."openrouter_autocomplete" = {
-      owner = config.users.users.${username}.name;
+      owner = config.users.users.${cfg.username}.name;
       mode = "0400";
     };
 
     sops.secrets."openrouter_terminal" = {
-      owner = config.users.users.${username}.name;
+      owner = config.users.users.${cfg.username}.name;
       mode = "0400";
     };
 
     sops.secrets."openrouter_commit" = {
-      owner = config.users.users.${username}.name;
+      owner = config.users.users.${cfg.username}.name;
       mode = "0400";
     };
   };
