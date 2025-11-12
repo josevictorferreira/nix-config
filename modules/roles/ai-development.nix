@@ -2,13 +2,12 @@
   config,
   lib,
   pkgs,
-  system,
+  username,
   ...
 }:
 
 let
   cfg = config.jvf.roles.aiDevelopment;
-  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   imports = [
@@ -16,23 +15,29 @@ in
     ../programs/claudecode.nix
   ];
 
-  options.jvf.roles.aiDevelopment.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Whether to enable vibe coding tools.";
+  options.jvf.roles.aiDevelopment = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to enable vibe coding tools.";
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for which to configure btop.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
       pkgs.code-cursor
       pkgs.cursor-cli
     ]
-    ++ lib.optional (!isDarwin) [
-      pkgs.llama-cpp-rocm
-      pkgs.lmstudio
-    ];
+    ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.llama-cpp-rocm
+    ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.lmstudio;
   };
 }

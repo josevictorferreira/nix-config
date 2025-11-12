@@ -42,7 +42,7 @@ in
           {
             name = "openrouter";
             api_base_url = "https://openrouter.ai/api/v1/chat/completions";
-            api_key = "\${OPENROUTER_API_KEY_CODE_AGENT}";
+            api_key = "$OPENROUTER_API_KEY_CODE_AGENT";
             models = [
               # In, Out
               "anthropic/claude-sonnet-4.5" # $3, $15

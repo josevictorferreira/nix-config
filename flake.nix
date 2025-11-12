@@ -17,11 +17,12 @@
   };
 
   outputs =
-    inputs@{ self
-    , nixpkgs
-    , darwin
-    , sops-nix
-    , ...
+    inputs@{
+      self,
+      nixpkgs,
+      darwin,
+      sops-nix,
+      ...
     }:
     let
       systems = {
@@ -52,26 +53,20 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
         }:
         let
           pkgs = mkPkgs systemArc;
-          homeDir =
-            if (builtins.match ".*darwin.*" systemArc) != null then
-              "/Users/${username}"
-            else
-              "/home/${username}";
         in
         {
           inherit
             os
             username
             host
-            homeDir
             ;
           system = systemArc;
           configRoot = ./.;
