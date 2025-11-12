@@ -213,7 +213,7 @@ let
                   fi
                   # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
                   find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
-                  chown -R ${userName}:users "${targetDir}"
+                  chown -R ${userName}:${if isDarwin then "staff" else "users"} "${targetDir}"
                   chmod -R 644 "${targetDir}"
                   find "${targetDir}" -type d -exec chmod 755 {} \;
                   find "${targetDir}" -type f -exec chmod 644 {} \;
