@@ -22,7 +22,7 @@ in
   };
 
   config =
-    { }
+    lib.mkIf cfg.enable { }
     // lib.optionalAttrs isDarwin {
       jvf.services.smb = {
         enable = true;
