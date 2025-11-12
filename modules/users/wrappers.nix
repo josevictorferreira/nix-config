@@ -338,19 +338,18 @@ in
             { }
           else
             {
-              "jvf-wrappers-${userName}" = {
-                serviceConfig = {
-                  ProgramArguments = [
-                    "${pkgs.bash}/bin/bash"
-                    "-c"
-                    (mkUserActivation userName uCfg)
-                  ];
-                  RunAtLoad = true;
-                  StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
-                  StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
-                  UserName = userName;
-                };
-              };
+               "jvf-wrappers-${userName}" = {
+                 serviceConfig = {
+                   ProgramArguments = [
+                     "${pkgs.bash}/bin/bash"
+                     "-c"
+                     (mkUserActivation userName uCfg)
+                   ];
+                   RunAtLoad = true;
+                   StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
+                   StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
+                 };
+               };
             }
         ) cfg.users
       );
