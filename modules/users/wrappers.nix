@@ -337,6 +337,7 @@ in
                   RunAtLoad = true;
                   StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
                   StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
+                  UserName = userName;
                 };
               };
             }
