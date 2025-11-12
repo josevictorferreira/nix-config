@@ -21,8 +21,8 @@ in
     enable = lib.mkEnableOption "Enable homelab storage mount on the home directory.";
   };
 
-  config =
-    lib.mkIf cfg.enable { }
+  config = lib.mkIf cfg.enable (
+    { }
     // lib.optionalAttrs isDarwin {
       jvf.services.smb = {
         enable = true;
@@ -48,5 +48,6 @@ in
         fsName = "ceph-filesystem";
         subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
       };
-    };
+    }
+  );
 }
