@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   devTools = import ./../common/development { inherit pkgs; };
@@ -27,14 +28,16 @@ in
       pkgs.fd
       pkgs.gcc
       pkgs.tree-sitter
-      pkgs.glibc
-      pkgs.glibc.dev
       pkgs.pkg-config
       pkgs.openssh
     ]
     ++ devTools.lspServers
     ++ devTools.formatters
-    ++ devTools.languages;
+    ++ devTools.languages
+    ++ (lib.optionals (!pkgs.stdenv.isDarwin) [
+      pkgs.glibc
+      pkgs.glibc.dev
+    ]);
 
     jvf.repositories.users.${cfg.username}.clonedDirs = {
       ".config/nvim" = "git@github.com:josevictorferreira/.nvim.git";

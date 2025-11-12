@@ -1,11 +1,14 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.roles.aiDevelopment;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   imports = [
@@ -26,6 +29,8 @@ in
     environment.systemPackages = [
       pkgs.code-cursor
       pkgs.cursor-cli
+    ]
+    ++ lib.optional (!isDarwin) [
       pkgs.llama-cpp-rocm
       pkgs.lmstudio
     ];

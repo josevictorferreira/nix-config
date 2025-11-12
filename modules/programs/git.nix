@@ -20,7 +20,7 @@ let
 
   cfg = config.jvf.programs.git;
 
-  preCommit = pkgs.writeScript "pre-commit" ''
+  preCommit = ''
     #!${pkgs.bash}/bin/bash
     set -euo pipefail
     export PATH="${
@@ -243,7 +243,7 @@ in
               external = ${pkgs.difftastic}/bin/difft
           '';
         "ignore" = concatStringsSep "\n" cfg.ignores;
-        "hooks/pre-commit" = preCommit;
+        "hooks/pre-commit" = builtins.toString preCommit;
       };
     };
 

@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, host
-, configRoot
-, ...
+{
+  pkgs,
+  username,
+  host,
+  configRoot,
+  ...
 }:
 
 {
@@ -57,8 +58,6 @@
     NSGlobalDomain.ApplePressAndHoldEnabled = false;
   };
 
-  environment.shells = with pkgs; [ zsh ];
-
   environment.variables = {
     K9S_CONFIG_DIR = "$HOME/.config/k9s";
   };
@@ -87,7 +86,6 @@
   users.users.${username} = {
     name = username;
     home = "/Users/${username}";
-    shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
     ];

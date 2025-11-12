@@ -244,7 +244,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment = {
-      sessionVariables = {
+      variables = {
         K9S_CONFIG_DIR = "$HOME/.config/k9s";
       };
     };

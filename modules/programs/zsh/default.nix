@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.zsh;
@@ -24,7 +25,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment = {
-      sessionVariables = {
+      variables = {
         ZDOTDIR = "$HOME/.config/zsh";
       };
     };

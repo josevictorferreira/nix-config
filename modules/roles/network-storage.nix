@@ -1,19 +1,38 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  config,
+  username,
+  system,
+  ...
 }:
 
+let
+  cfg = config.jvf.roles.networkStorage;
+
+  isDarwin = builtins.match ".*-darwin" system != null;
+in
 {
-  imports = [ ./../services/cephfs.nix ];
+  imports =
+    [ ]
+    ++ (if isDarwin then [ ./../services/smb.nix ] else [ ])
+    ++ (if !isDarwin then [ ./../services/cephfs.nix ] else [ ]);
 
   options.jvf.roles.networkStorage = {
     enable = lib.mkEnableOption "Enable homelab storage mount on the home directory.";
   };
 
-  config = lib.mkIf config.jvf.roles.networkStorage.enable {
-    jvf.services.cephFs = {
+  config =
+    { }
+    // lib.optionalAttrs isDarwin {
+      jvf.services.smb = {
+        enable = true;
+        name = "Homelab";
+        username = username;
+        serverAddress = "10.10.10.124";
+        exportedName = "homelab-smb";
+      };
+    }
+    // lib.optionalAttrs (!isDarwin) {
       enable = true;
       name = "Homelab";
       mountPoint = "/mnt/homelabfs";
@@ -28,5 +47,4 @@
       fsName = "ceph-filesystem";
       subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
     };
-  };
 }

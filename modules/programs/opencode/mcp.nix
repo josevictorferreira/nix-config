@@ -1,4 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  system,
+  ...
+}:
+let
+  isDarwin = builtins.match ".*-darwin" system != null;
+in
 {
   config.jvf.programs.opencode.settings.mcp = {
     github = {
@@ -22,19 +30,6 @@
       enabled = false;
     };
 
-    chrome-devtools = {
-      type = "local";
-      command = [
-        "${pkgs.lib.getExe' pkgs.nodejs "npx"}"
-        "-y"
-        "chrome-devtools-mcp@latest"
-        "--headless=true"
-        "--isolated=true"
-        "--executablePath=${pkgs.chromium}/bin/chromium"
-      ];
-      enabled = false;
-    };
-
     context7 = {
       type = "remote";
       url = "https://mcp.context7.com/mcp";
@@ -47,6 +42,20 @@
     socket = {
       type = "remote";
       url = "https://mcp.socket.dev/";
+      enabled = false;
+    };
+  }
+  // lib.optionalAttrs (!isDarwin) {
+    chrome-devtools = {
+      type = "local";
+      command = [
+        "${pkgs.lib.getExe' pkgs.nodejs "npx"}"
+        "-y"
+        "chrome-devtools-mcp@latest"
+        "--headless=true"
+        "--isolated=true"
+        "--executablePath=${pkgs.chromium}/bin/chromium"
+      ];
       enabled = false;
     };
   };

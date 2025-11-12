@@ -1,10 +1,11 @@
-{ pkgs
-, lib
-, host
-, options
-, configRoot
-, username
-, ...
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  configRoot,
+  username,
+  ...
 }:
 let
 
@@ -181,7 +182,7 @@ in
 
       ntfs3g
     ];
-    sessionVariables = {
+    variables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
       XDG_CONFIG_HOME = "$HOME/.config";
     };
@@ -377,7 +378,7 @@ in
 
   console.useXkbConfig = true;
 
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.variables.NIXOS_OZONE_WL = "1";
 
   networking.firewall = {
     enable = true;
