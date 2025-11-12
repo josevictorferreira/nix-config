@@ -1,7 +1,9 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -12,16 +14,24 @@ in
     ../programs/easyeffects.nix
   ];
 
-  options.jvf.roles.media.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Whether to enable media tools.";
+  options.jvf.roles.media = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to enable media tools.";
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for installing packages to.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     jvf.programs.easyeffects.enable = true;
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
       pkgs.inkscape-with-extensions
       pkgs.vlc
       pkgs.spotifywm

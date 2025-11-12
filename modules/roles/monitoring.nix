@@ -1,7 +1,9 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -13,16 +15,24 @@ in
     ../programs/k9s.nix
   ];
 
-  options.jvf.roles.monitoring.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Whether to enable administrative tools.";
+  options.jvf.roles.monitoring = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to enable administrative tools.";
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for installing packages to.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     jvf.programs.btop.enable = true;
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
       pkgs.htop-vim
       pkgs.ncdu
       pkgs.inetutils

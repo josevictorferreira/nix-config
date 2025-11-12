@@ -1,7 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -18,10 +20,18 @@ in
     ../programs/zsh
   ];
 
-  options.jvf.roles.development.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Whether to enable development tools.";
+  options.jvf.roles.development = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to enable development tools.";
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for installing packages to.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -39,7 +49,7 @@ in
       };
     };
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
       pkgs.fastfetch
       pkgs.dbeaver-bin
       pkgs.insomnia

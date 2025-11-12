@@ -25,7 +25,7 @@ in
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
-      description = "Username for which to configure btop.";
+      description = "Username for installing packages to.";
     };
   };
 

@@ -1,7 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -12,16 +14,24 @@ in
     ../programs/k9s.nix
   ];
 
-  options.jvf.roles.opsDevelopment.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Whether to enable devops developer tools.";
+  options.jvf.roles.opsDevelopment = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether to enable devops developer tools.";
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for installing packages to.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     jvf.programs.k9s.enable = true;
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
       pkgs.awscli
       pkgs.kubectl
       pkgs.kubernetes-helm
