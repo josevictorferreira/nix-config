@@ -209,7 +209,7 @@ let
                   # Check if there's a subdirectory with the same name as the program
                   if [ -d "${wrapper.configDir}/${programName}" ]; then
                     # Copy contents of the subdirectory directly, dereferencing symlinks
-                    cp -rL "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
+                    cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
                   fi
                   # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
                   find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
