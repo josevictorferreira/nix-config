@@ -54,7 +54,6 @@ let
           in
           results;
 
-        # Create a file with proper directory structure
         createStructuredConfig =
           fileName: fileValue:
           if builtins.isPath fileValue then
@@ -65,7 +64,6 @@ let
                   let
                     dirContents = builtins.readDir fileValue;
                   in
-                  # If we can read the directory and it's not empty, it's likely a directory
                   dirContents != { }
                 else
                   false
@@ -200,20 +198,17 @@ let
                 fi
                 rm -rf "${targetDir}"
                 mkdir -p "${targetDir}"
-
-                # Copy directory recursively with proper ownership instead of symlinking
+                # Copy directory recursively with proper ownership, dereferencing symlinks
                 if [ -d "${wrapper.configDir}" ]; then
                   # Check if there's a subdirectory with the same name as the program
                   if [ -d "${wrapper.configDir}/${programName}" ]; then
-                    # Copy contents of the subdirectory directly
-                    cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
+                    # Copy contents of the subdirectory directly, dereferencing symlinks
+                    cp -rL "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
                   fi
-
-                  # Copy any other files/directories (excluding the program-named subdirectory)
-                  find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -r {} "${targetDir}/" \; 2>/dev/null || true
-
+                  # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
+                  find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
                   chown -R ${userName}:users "${targetDir}"
-                  chmod -R u+rw "${targetDir}"
+                  chmod -R 644 "${targetDir}"
                   find "${targetDir}" -type d -exec chmod 755 {} \;
                   find "${targetDir}" -type f -exec chmod 644 {} \;
                 fi
