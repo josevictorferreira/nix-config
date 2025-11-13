@@ -73,11 +73,14 @@ in
     jvf.wrappers.users.${cfg.username}.programs.ghostty = {
       packages = [
         cfg.package
-        pkgs.nerd-fonts.jetbrains-mono
       ];
       configs = {
         "config" = toConfigFormat cfg.settings;
       };
     };
+
+    fonts.packages = [
+      pkgs.nerd-fonts.jetbrains-mono
+    ];
   };
 }

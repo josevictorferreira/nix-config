@@ -25,12 +25,15 @@ in
     jvf.wrappers.users.${cfg.username}.programs.waybar = {
       packages = [
         pkgs.waybar
-        pkgs.nerd-fonts.jetbrains-mono
-        pkgs.font-awesome
       ];
       configs = {
         "waybar" = ./.;
       };
     };
+
+    fonts.packages = [
+      pkgs.nerd-fonts.jetbrains-mono
+      pkgs.font-awesome
+    ];
   };
 }
