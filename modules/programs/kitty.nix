@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.kitty;
@@ -32,15 +33,13 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${builtins.toString value}"
+      ) settings
     );
 in
 {
@@ -75,5 +74,9 @@ in
         "kitty.conf" = toConfigFormat cfg.settings;
       };
     };
+
+    fonts.packages = [
+      pkgs.nerd-fonts.jetbrains-mono
+    ];
   };
 }

@@ -120,11 +120,14 @@ in
     jvf.wrappers.users.${cfg.username}.programs.alacritty = {
       packages = [
         cfg.package
-        pkgs.nerd-fonts.jetbrains-mono
       ];
       configs = {
         "alacritty.toml" = cfg.settings;
       };
     };
+
+    fonts.packages = [
+      pkgs.nerd-fonts.jetbrains-mono
+    ];
   };
 }
