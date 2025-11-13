@@ -26,6 +26,7 @@ in
       packages = [
         pkgs.waybar
         pkgs.nerd-fonts.jetbrains-mono
+        pkgs.font-awesome
       ];
       configs = {
         "waybar" = ./.;
