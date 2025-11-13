@@ -13,6 +13,7 @@ in
   imports = [
     ../programs/opencode
     ../programs/claudecode.nix
+    ../programs/droid.nix
   ];
 
   options.jvf.roles.aiDevelopment = {
