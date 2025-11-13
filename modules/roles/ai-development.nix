@@ -32,10 +32,12 @@ in
   config = lib.mkIf cfg.enable {
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
+    jvf.programs.droid.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor
       pkgs.cursor-cli
+      pkgs.goose-cli
     ]
     ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.llama-cpp-rocm
     ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.lmstudio;
