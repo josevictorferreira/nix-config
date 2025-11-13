@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  inputs,
+  ...
 }:
 
 let
@@ -26,8 +27,6 @@ in
       enable = true;
       xwayland.enable = true;
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      # portalPackage =
-      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
 
     jvf.wrappers.users.${cfg.username}.programs.hypr = {
@@ -41,5 +40,9 @@ in
         "hypr" = ./.;
       };
     };
+
+    fonts.packages = [
+      pkgs.nerd-fonts.jetbrains-mono
+    ];
   };
 }
