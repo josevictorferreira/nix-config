@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -24,6 +25,7 @@ in
     jvf.wrappers.users.${cfg.username}.programs.waybar = {
       packages = [
         pkgs.waybar
+        pkgs.nerd-fonts.jetbrains-mono
       ];
       configs = {
         "waybar" = ./.;

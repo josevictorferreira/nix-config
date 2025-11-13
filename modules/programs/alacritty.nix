@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.alacritty;
@@ -119,6 +120,7 @@ in
     jvf.wrappers.users.${cfg.username}.programs.alacritty = {
       packages = [
         cfg.package
+        pkgs.nerd-fonts.jetbrains-mono
       ];
       configs = {
         "alacritty.toml" = cfg.settings;

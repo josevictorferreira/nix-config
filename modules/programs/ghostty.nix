@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
@@ -10,15 +11,13 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} = ${builtins.toJSON value}"
-          else
-            "${key} = ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
+      ) settings
     );
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
@@ -74,6 +73,7 @@ in
     jvf.wrappers.users.${cfg.username}.programs.ghostty = {
       packages = [
         cfg.package
+        pkgs.nerd-fonts.jetbrains-mono
       ];
       configs = {
         "config" = toConfigFormat cfg.settings;
