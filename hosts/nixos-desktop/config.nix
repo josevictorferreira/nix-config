@@ -1,4 +1,12 @@
-{ pkgs, lib, host, options, inputs, username, ... }:
+{
+  pkgs,
+  lib,
+  host,
+  options,
+  inputs,
+  username,
+  ...
+}:
 let
   inherit (inputs) self;
 in
