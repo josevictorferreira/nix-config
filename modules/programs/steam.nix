@@ -21,6 +21,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.variables = {
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
+    };
+
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;

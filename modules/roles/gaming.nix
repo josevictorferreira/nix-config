@@ -32,20 +32,12 @@ in
     jvf.programs.steam.enable = true;
 
     users.users."${cfg.username}".packages = [
-      # Gaming platforms
       pkgs.lutris
       pkgs.protonup-qt
 
-      # Wine ecosystem
       pkgs.wine64
       pkgs.winetricks
       pkgs.wine-wayland
     ];
-
-    # Steam environment variables
-    environment.variables = {
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
-      XDG_CONFIG_HOME = "$HOME/.config";
-    };
   };
 }
