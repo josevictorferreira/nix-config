@@ -61,6 +61,11 @@ in
   imports = [
     "${self}/modules/services/sops.nix"
     "${self}/modules/services/polkit.nix"
+    "${self}/modules/services/ollama.nix"
+    "${self}/modules/services/virtualisation.nix"
+    "${self}/modules/system/power-management.nix"
+    "${self}/modules/hardware/bluetooth.nix"
+    "${self}/modules/hardware/logitech.nix"
     "${self}/modules/roles"
     "${self}/modules/desktop/hyprland"
     ./hardware.nix
@@ -109,19 +114,7 @@ in
       libraries = options.programs.nix-ld.libraries.default;
     };
 
-    zsh.enable = true;
-    firefox.enable = true;
-    git.enable = true;
     nm-applet.indicator = true;
-
-    virt-manager.enable = false;
-
-    steam = {
-      enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
-      localNetworkGameTransfers.openFirewall = true;
-    };
 
     dconf.enable = true;
     seahorse.enable = true;
@@ -141,10 +134,8 @@ in
     shells = with pkgs; [ zsh ];
     systemPackages = with pkgs; [
       # System Packages
-      baobab
       btrfs-progs
       cpufrequtils
-      duf
       glib # for gsettings to work
       gsettings-qt
       killall
@@ -168,14 +159,6 @@ in
       # System Tools
       gparted
       p7zip
-
-      # Gaming
-      lutris
-      # protonup
-      protonup-qt
-      wine64
-      winetricks
-      wine-wayland
 
       # Containers
       gcc
@@ -259,8 +242,6 @@ in
     openssh.enable = true;
     flatpak.enable = false;
 
-    blueman.enable = true;
-
     fwupd.enable = true;
 
     upower.enable = true;
@@ -273,38 +254,6 @@ in
     script = ''
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     '';
-  };
-
-  # zram
-  zramSwap = {
-    enable = true;
-    priority = 100;
-    memoryPercent = 30;
-    swapDevices = 1;
-    algorithm = "zstd";
-  };
-
-  powerManagement = {
-    enable = true;
-    cpuFreqGovernor = "schedutil";
-  };
-
-  # Extra Logitech Support
-  hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = false;
-
-  # Bluetooth
-  hardware = {
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-          Experimental = true;
-        };
-      };
-    };
   };
 
   xdg = {
@@ -344,15 +293,6 @@ in
     };
   };
 
-  services.ollama = {
-    enable = true;
-    acceleration = "rocm";
-    loadModels = [
-      "dolphin-mixtral:8x7b"
-      "goekdenizguelmez/JOSIEFIED-Qwen3:14b"
-    ];
-  };
-
   security = {
     rtkit.enable = true;
     polkit.enable = true;
@@ -388,18 +328,18 @@ in
     allowedTCPPorts = [ 8000 ];
   };
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enabled = true;
-  };
-
   system.activationScripts = { };
   system.stateVersion = "24.05";
 
-  jvf.services.sops.enable = true;
-  jvf.services.polkit.enable = true;
+  jvf.services = {
+    sops.enable = true;
+    polkit.enable = true;
+  };
+
+  jvf.system.power-management.enable = true;
+  jvf.hardware.bluetooth.enable = true;
+  jvf.hardware.logitech.enable = true;
+
   jvf.desktop.hyprland.enable = true;
 
   jvf.roles = {

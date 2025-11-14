@@ -35,6 +35,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.firefox.enable = true;
+
     jvf.programs = {
       ghostty.enable = !(pkgs.stdenv.isDarwin);
       alacritty.enable = true;

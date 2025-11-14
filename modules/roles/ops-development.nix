@@ -12,6 +12,7 @@ in
 {
   imports = [
     ../programs/k9s.nix
+    ../services/virtualisation.nix
   ];
 
   options.jvf.roles.opsDevelopment = {
@@ -30,12 +31,14 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.k9s.enable = true;
+    jvf.services.virtualisation.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.awscli
       pkgs.kubectl
       pkgs.kubernetes-helm
       pkgs.helmfile
+      pkgs.podman-compose
     ];
   };
 }
