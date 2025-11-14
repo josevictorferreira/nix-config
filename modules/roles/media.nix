@@ -37,6 +37,7 @@ in
       pkgs.spotifywm
       pkgs.ffmpeg
       (pkgs.mpv.override { scripts = [ pkgs.mpvScripts.mpris ]; })
+      pkgs.hplip  # Moved from system packages
     ];
   };
 }

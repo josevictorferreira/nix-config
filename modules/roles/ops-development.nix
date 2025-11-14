@@ -39,6 +39,7 @@ in
       pkgs.kubernetes-helm
       pkgs.helmfile
       pkgs.podman-compose
+      pkgs.podman
     ];
   };
 }

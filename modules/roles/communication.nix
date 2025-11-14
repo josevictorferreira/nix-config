@@ -33,6 +33,7 @@ in
 
     users.users."${cfg.username}".packages = [
       pkgs.discord
+      pkgs.brave  # Moved from system packages
     ];
   };
 }
