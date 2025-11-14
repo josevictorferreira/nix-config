@@ -24,6 +24,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.zsh.enable = true;
+
     environment = {
       variables = {
         ZDOTDIR = "$HOME/.config/zsh";
