@@ -34,10 +34,6 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       networkmanager.enable = true;
-      timeServers = 
-        if cfg.manageTime 
-        then (lib.attrByPath [ "networking" "timeServers" "default" ] [] options) ++ cfg.additionalTimeServers
-        else lib.attrByPath [ "networking" "timeServers" "default" ] [] options;
     };
   };
 }

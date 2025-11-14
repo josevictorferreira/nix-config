@@ -62,21 +62,20 @@ in
       udev.enable = true;
       libinput.enable = true;
       envfs.enable = true;
-      
+
       gvfs = lib.mkIf cfg.enableGvfs {
         enable = true;
-        package = config.lib.trivial.imports.pkgs.gvfs;
       };
-      
+
       tumbler.enable = lib.mkIf cfg.enableTumbler true;
-      
+
       smartd = lib.mkIf cfg.enableSmartd {
         enable = true;
         autodetect = true;
       };
-      
+
       lorri.enable = lib.mkIf cfg.enableLorri true;
-      
+
       fstrim = lib.mkIf cfg.enableFstrim {
         enable = true;
         interval = cfg.fstrimInterval;

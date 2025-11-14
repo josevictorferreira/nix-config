@@ -23,16 +23,6 @@ in
 
   config = lib.mkIf cfg.enable (
     { }
-    // {
-      # Add networking packages from system packages
-      environment.systemPackages = with pkgs; [
-        nfs-utils
-        samba
-        sambaFull
-        gvfs
-        ntfs3g
-      ];
-    }
     // lib.optionalAttrs isDarwin {
       jvf.services.smb = {
         enable = true;

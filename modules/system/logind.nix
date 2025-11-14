@@ -16,19 +16,49 @@ in
     };
 
     handleLidSwitch = lib.mkOption {
-      type = lib.types.enum [ "ignore" "poweroff" "reboot" "halt" "kexec" "suspend" "hibernate" "hybrid-sleep" "lock" ];
+      type = lib.types.enum [
+        "ignore"
+        "poweroff"
+        "reboot"
+        "halt"
+        "kexec"
+        "suspend"
+        "hibernate"
+        "hybrid-sleep"
+        "lock"
+      ];
       default = "lock";
       description = "Action to take when laptop lid is closed.";
     };
 
     handleSuspendKey = lib.mkOption {
-      type = lib.types.enum [ "ignore" "poweroff" "reboot" "halt" "kexec" "suspend" "hibernate" "hybrid-sleep" "lock" ];
+      type = lib.types.enum [
+        "ignore"
+        "poweroff"
+        "reboot"
+        "halt"
+        "kexec"
+        "suspend"
+        "hibernate"
+        "hybrid-sleep"
+        "lock"
+      ];
       default = "lock";
       description = "Action to take when suspend key is pressed.";
     };
 
     handleHibernateKey = lib.mkOption {
-      type = lib.types.enum [ "ignore" "poweroff" "reboot" "halt" "kexec" "suspend" "hibernate" "hybrid-sleep" "lock" ];
+      type = lib.types.enum [
+        "ignore"
+        "poweroff"
+        "reboot"
+        "halt"
+        "kexec"
+        "suspend"
+        "hibernate"
+        "hybrid-sleep"
+        "lock"
+      ];
       default = "lock";
       description = "Action to take when hibernate key is pressed.";
     };
@@ -47,12 +77,6 @@ in
         HandleSuspendKey = cfg.handleSuspendKey;
         HandleHibernateKey = cfg.handleHibernateKey;
       };
-    };
-
-    services.pam.swaylock = {
-      text = ''
-        auth include login
-      '';
     };
 
     security = lib.mkIf cfg.allowUsersToDoPowerOperations {

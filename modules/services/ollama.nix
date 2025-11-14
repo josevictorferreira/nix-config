@@ -17,8 +17,12 @@ in
     };
 
     acceleration = lib.mkOption {
-      type = lib.types.enum [ "rocm" "cuda" "none" ];
-      default = "none";
+      type = lib.types.enum [
+        "rocm"
+        "cuda"
+        "none"
+      ];
+      default = "rocm";
       description = ''
         GPU acceleration to use for Ollama.
         Options: "rocm" (AMD), "cuda" (NVIDIA), or "none" (CPU only).
@@ -32,7 +36,10 @@ in
         List of model names to preload on Ollama service start.
         These models will be downloaded and loaded into memory.
       '';
-      example = [ "dolphin-mixtral:8x7b" "qwen:14b" ];
+      example = [
+        "dolphin-mixtral:8x7b"
+        "qwen:14b"
+      ];
     };
   };
 

@@ -93,7 +93,7 @@ in
     };
   };
 
-  xserver = {
+  services.xserver = {
     enable = true;
     xkb.options = "repeat:delay=250,rate=40";
     xkb = {
