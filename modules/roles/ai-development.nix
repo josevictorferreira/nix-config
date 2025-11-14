@@ -33,7 +33,6 @@ in
   config = lib.mkIf cfg.enable {
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
-    jvf.programs.droid.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor
