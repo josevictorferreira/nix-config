@@ -351,5 +351,6 @@ in
     communication.enable = true;
     designing.enable = true;
     media.enable = true;
+    gaming.enable = true;
   };
 }

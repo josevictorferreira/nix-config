@@ -12,7 +12,6 @@ in
 {
   imports = [
     ../programs/easyeffects.nix
-    ../programs/steam.nix
   ];
 
   options.jvf.roles.media = {
@@ -31,19 +30,13 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.easyeffects.enable = true;
-    jvf.programs.steam.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.inkscape-with-extensions
       pkgs.vlc
       pkgs.spotifywm
       pkgs.ffmpeg
-      # Gaming
-      pkgs.lutris
-      pkgs.protonup-qt
-      pkgs.wine64
-      pkgs.winetricks
-      pkgs.wine-wayland
+      (pkgs.mpv.override { scripts = [ pkgs.mpvScripts.mpris ]; })
     ];
   };
 }

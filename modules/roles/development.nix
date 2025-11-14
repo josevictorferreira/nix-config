@@ -77,6 +77,7 @@ in
       pkgs.jq
       pkgs.yq
       pkgs.direnv
+      pkgs.brave
     ];
   };
 }
