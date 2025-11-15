@@ -70,6 +70,35 @@ let
         acc // { "${name}" = value; }
     ) { } (lib.attrsToList attrs);
 
+  mkValueString =
+    v:
+    if v == true then
+      "True"
+    else if v == false then
+      "False"
+    else if builtins.isNull v then
+      "\"\"" # explicit empty string
+    else if builtins.typeOf v == "string" then
+      # quote and escape " and \
+      let
+        esc = lib.strings.escape [ "\"" "\\" ] v;
+      in
+      "\"${esc}\""
+    else
+      builtins.toString v;
+
+  mkKeyValue = name: v: "${name} = ${mkValueString v}";
+
+  toCONF =
+    content:
+    lib.generators.toINIWithGlobalSection
+      {
+        mkKeyValue = mkKeyValue;
+      }
+      {
+        globalSection = flattenConfig content;
+      };
+
   toFileFormatStr =
     type: content:
     if type == "yaml" || type == "yml" then
@@ -79,7 +108,7 @@ let
     else if type == "ini" then
       lib.generators.toINIWithGlobalSection { } { globalSection = flattenConfig content; }
     else if type == "conf" || type == "cfg" then
-      lib.generators.toINIWithGlobalSection { } { globalSection = flattenConfig content; }
+      toCONF content
     else if type == "toml" then
       toTOML content
     else

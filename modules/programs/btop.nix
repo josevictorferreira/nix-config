@@ -8,11 +8,12 @@
 let
   cfg = config.jvf.programs.btop;
   defaultConfig = {
-    theme_background = false;
+    color_theme = "onedark";
+    theme_background = true;
     truecolor = true;
     force_tty = false;
-    presets = "cpu:0:braille,mem:0:braille,net:0:braille,disk:0:braille,proc:0:default";
-    vim_keys = false;
+    presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille,proc:0:default";
+    vim_keys = true;
     rounded_corners = true;
     graph_symbol = "braille";
     graph_symbol_cpu = "default";
@@ -20,9 +21,9 @@ let
     graph_symbol_mem = "default";
     graph_symbol_net = "default";
     graph_symbol_proc = "default";
-    shown_boxes = "proc cpu mem net";
+    shown_boxes = "proc cpu mem net gpu0";
     update_ms = 2000;
-    proc_sorting = "cpu direct";
+    proc_sorting = "memory";
     proc_reversed = false;
     proc_tree = false;
     proc_colors = true;
@@ -37,6 +38,7 @@ let
     cpu_graph_upper = "total";
     cpu_graph_lower = "total";
     show_gpu_info = "Auto";
+    enable_gpu = true;
     cpu_invert_lower = true;
     cpu_single_graph = false;
     cpu_bottom = false;
@@ -90,7 +92,7 @@ in
 {
   options.jvf.programs.btop = {
     enable = lib.mkEnableOption "btop, a modern resource monitor";
-    package = lib.mkPackageOption pkgs "btop" { };
+    package = lib.mkPackageOption pkgs "btop-rocm" { };
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
