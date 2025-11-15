@@ -1,6 +1,8 @@
 {
-  config,
   lib,
+  config,
+  pkgs,
+  username,
   ...
 }:
 
@@ -17,14 +19,25 @@ in
         - Podman with Docker compatibility
       '';
     };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "The username to use for virtualization services.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    virtualization.libvirtd.enable = true;
-    virtualization.podman = {
+    virtualisation.libvirtd.enable = true;
+    virtualisation.podman = {
       enable = true;
       dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
+
+    users.users."${cfg.username}".packages = [
+      pkgs.podman-compose
+      pkgs.podman
+    ];
   };
 }

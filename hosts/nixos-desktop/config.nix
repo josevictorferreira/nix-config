@@ -132,7 +132,6 @@ in
     sops.enable = true;
     polkit.enable = true;
     ollama.enable = true;
-    virtualization.enable = true;
   };
 
   # Hardware
