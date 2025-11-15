@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -33,7 +32,7 @@ in
 
     users.users."${cfg.username}".packages = [
       pkgs.discord
-      pkgs.brave  # Moved from system packages
+      pkgs.brave # Moved from system packages
     ];
   };
 }

@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -13,10 +12,12 @@ let
 
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = value;
+      })
+      attrset;
 in
 {
   options.jvf.programs.claudecode = {

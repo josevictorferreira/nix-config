@@ -1,9 +1,8 @@
-{
-  pkgs,
-  username,
-  host,
-  inputs,
-  ...
+{ pkgs
+, username
+, host
+, inputs
+, ...
 }:
 let
   inherit (inputs) self;

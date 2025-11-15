@@ -1,7 +1,6 @@
-{
-  config,
-  lib,
-  ...
+{ config
+, lib
+, ...
 }:
 
 let
@@ -82,7 +81,7 @@ in
         automatic = cfg.autoOptimiseStore;
       };
     };
-    
+
     nix.gc = lib.mkIf cfg.garbageCollect {
       automatic = true;
       dates = cfg.gcDates;

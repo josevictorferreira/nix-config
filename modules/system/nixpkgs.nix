@@ -1,7 +1,6 @@
-{
-  config,
-  lib,
-  ...
+{ config
+, lib
+, ...
 }:
 
 let
@@ -26,7 +25,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [
         "steam"
-        "steam-original" 
+        "steam-original"
         "steam-unwrapped"
         "steam-run"
       ];

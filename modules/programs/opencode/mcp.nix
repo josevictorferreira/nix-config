@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  system,
-  ...
+{ lib
+, pkgs
+, system
+, ...
 }:
 let
   isDarwin = builtins.match ".*-darwin" system != null;

@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  ...
+{ config
+, lib
+, pkgs
+, username
+, ...
 }:
 
 let
@@ -37,7 +36,7 @@ in
       pkgs.spotifywm
       pkgs.ffmpeg
       (pkgs.mpv.override { scripts = [ pkgs.mpvScripts.mpris ]; })
-      pkgs.hplip  # Moved from system packages
+      pkgs.hplip # Moved from system packages
     ];
   };
 }
