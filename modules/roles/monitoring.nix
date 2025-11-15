@@ -3,11 +3,13 @@
   lib,
   pkgs,
   username,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.roles.monitoring;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   imports = [
@@ -46,7 +48,7 @@ in
       pkgs.nettools # network configuration tools
       pkgs.nmap # network scanner
       pkgs.arp-scan # ARP scanner
-      pkgs.gparted # Moved from system packages
-    ];
+    ]
+    ++ (lib.optional (!isDarwin) pkgs.gparted);
   };
 }
