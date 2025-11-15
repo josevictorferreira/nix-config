@@ -13,15 +13,16 @@ in
 {
   options.jvf.programs.neovim = {
     enable = lib.mkEnableOption "neovim, a hyperextensible text editor";
+
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
-      description = "Username for which to clone the neovim configuration";
+      description = "Username for which to install the configuration";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    users.users."${username}".packages = [
+    users.users."${cfg.username}".packages = [
       pkgs.neovim
       pkgs.fzf
       pkgs.ripgrep
