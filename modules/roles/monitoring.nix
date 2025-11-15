@@ -48,6 +48,8 @@ in
       pkgs.nettools # network configuration tools
       pkgs.nmap # network scanner
       pkgs.arp-scan # ARP scanner
+      pkgs.cpufrequtils
+      pkgs.pciutils
     ]
     ++ (lib.optional (!isDarwin) pkgs.gparted);
   };

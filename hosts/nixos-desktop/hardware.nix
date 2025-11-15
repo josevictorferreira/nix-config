@@ -15,6 +15,10 @@
     earlySetup = false;
   };
 
+  environment.systemPackages = [
+    pkgs.btrfs-progs
+  ];
+
   boot = {
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];

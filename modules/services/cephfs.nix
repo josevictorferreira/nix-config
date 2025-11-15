@@ -1,7 +1,9 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.services.cephFs;
@@ -48,7 +50,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = "";
+      default = username;
       description = "Local user to add to the 'homelab' group.";
     };
 
@@ -66,7 +68,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.ceph-client ];
     system.fsPackages = [ pkgs.bindfs ];
 
     sops.secrets.ceph_client_keyring = {
@@ -80,8 +81,17 @@ in
       mon_host = ${mons}
     '';
 
-    users.users."${cfg.username}".extraGroups = lib.mkAfter [ "${lib.strings.toLower cfg.name}" ];
-    users.groups.${lib.strings.toLower cfg.name}.gid = 2002;
+    users = {
+      groups = {
+        ${lib.strings.toLower cfg.name}.gid = 2002;
+      };
+      users."${cfg.username}" = {
+        packages = [
+          pkgs.ceph-client
+        ];
+        extraGroups = lib.mkAfter [ "${lib.strings.toLower cfg.name}" ];
+      };
+    };
 
     fileSystems."${cfg.mountPoint}" =
       let

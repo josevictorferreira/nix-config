@@ -1,8 +1,6 @@
 {
   pkgs,
-  lib,
   host,
-  options,
   inputs,
   username,
   ...
@@ -14,10 +12,7 @@ let
   inherit (import ./variables.nix) gitUsername keyboardLayout;
 in
 {
-  # === IMPORTS ===
-  # System modules - Phase 1 & 2 of refactoring
   imports = [
-    # Core system modules
     "${self}/modules/system/nix-daemon.nix"
     "${self}/modules/system/nixpkgs.nix"
     "${self}/modules/system/networking.nix"
@@ -156,21 +151,6 @@ in
     gaming.enable = true;
     networkStorage.enable = true;
   };
-
-  # === MINIMAL SYSTEM PACKAGES ===
-  # Only core system utilities remain
-  environment.systemPackages = with pkgs; [
-    btrfs-progs
-    cpufrequtils
-    glib # for gsettings to work
-    gsettings-qt
-    killall
-    libappindicator
-    libnotify
-    pciutils
-    xdg-user-dirs
-    xdg-utils
-  ];
 
   system.stateVersion = "24.05";
 }

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
+}:
 
 let
   cfg = config.jvf.system.xdg;
@@ -15,7 +21,12 @@ in
       '';
     };
 
-    # Mime configuration options
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "The username to use for XDG configurations.";
+    };
+
     enableMimeDefaults = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -39,7 +50,6 @@ in
       description = "Mapping of MIME types to default applications (.desktop files).";
     };
 
-    # Portal configuration options
     enablePortals = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -60,12 +70,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    users.users."${cfg.username}".packages = [
+      pkgs.xdg-user-dirs
+      pkgs.xdg-utils
+    ];
+
     xdg = {
       mime = lib.mkIf cfg.enableMimeDefaults {
         enable = true;
         defaultApplications = cfg.mimeDefaults;
       };
-      
+
       portal = lib.mkIf cfg.enablePortals {
         enable = true;
         wlr.enable = cfg.portalWlr;

@@ -1,7 +1,9 @@
-{ lib
-, config
-, pkgs
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -35,6 +37,12 @@ in
 
   options.jvf.desktop.hyprland = {
     enable = lib.mkEnableOption "Hyprland desktop";
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username to use for Hyprland";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -57,7 +65,12 @@ in
       fastfetch.enable = true;
     };
 
-    environment.systemPackages = [
+    users.users."${cfg.username}".packages = [
+      pkgs.killall
+      pkgs.glib
+      pkgs.gsettings-qt
+      pkgs.libnotify
+      pkgs.libappindicator
       pkgs.slurp
       pkgs.wl-clipboard
       pkgs.brightnessctl
