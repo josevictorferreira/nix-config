@@ -1,6 +1,7 @@
 {
-  config,
   lib,
+  pkgs,
+  config,
   ...
 }:
 
@@ -24,6 +25,10 @@ in
     environment.variables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     };
+
+    users.users."${cfg.username}".packages = [
+      pkgs.protonup-qt
+    ];
 
     programs.steam = {
       enable = true;

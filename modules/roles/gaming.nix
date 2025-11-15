@@ -1,18 +1,18 @@
 {
-  config,
   lib,
   pkgs,
+  config,
   username,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.roles.gaming;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
-  imports = [
-    ../programs/steam.nix
-  ];
+  imports = if !isDarwin then [ ../programs/steam.nix ] else [ ];
 
   options.jvf.roles.gaming = {
     enable = lib.mkOption {
@@ -28,16 +28,22 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    jvf.programs.steam.enable = true;
+  config =
+    lib.mkIf cfg.enable {
+      users.users."${cfg.username}".packages = [
+        pkgs.lutris
 
-    users.users."${cfg.username}".packages = [
-      pkgs.lutris
-      pkgs.protonup-qt
-
-      pkgs.wine64
-      pkgs.winetricks
-      pkgs.wine-wayland
-    ];
-  };
+        pkgs.wine64
+        pkgs.winetricks
+        pkgs.wine-wayland
+      ];
+    }
+    // (
+      if !isDarwin then
+        {
+          jvf.programs.steam.enable = true;
+        }
+      else
+        { }
+    );
 }
