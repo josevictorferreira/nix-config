@@ -76,8 +76,7 @@ in
       pkgs.yq
       pkgs.direnv
       pkgs.brave
-      pkgs.gparted  # Moved from system packages
-      pkgs.p7zip    # Moved from system packages
+      pkgs.p7zip # Moved from system packages
     ];
   };
 }

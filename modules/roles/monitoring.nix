@@ -33,19 +33,20 @@ in
     jvf.programs.btop.enable = true;
 
     users.users."${cfg.username}".packages = [
-      pkgs.baobab      # disk usage analyzer
-      pkgs.btop        # system monitor (via jvf.programs)
-      pkgs.duf         # disk usage/free utility
-      pkgs.inxi        # system information tool
-      pkgs.mtr         # network diagnostic
-      pkgs.lsof        # list open files
-      pkgs.ncdu        # NCurses Disk Usage
-      pkgs.htop-vim    # interactive process viewer
-      pkgs.inetutils   # networking utilities
-      pkgs.dig         # DNS lookup
-      pkgs.nettools    # network configuration tools
-      pkgs.nmap        # network scanner
-      pkgs.arp-scan    # ARP scanner
+      pkgs.baobab # disk usage analyzer
+      pkgs.btop # system monitor (via jvf.programs)
+      pkgs.duf # disk usage/free utility
+      pkgs.inxi # system information tool
+      pkgs.mtr # network diagnostic
+      pkgs.lsof # list open files
+      pkgs.ncdu # NCurses Disk Usage
+      pkgs.htop-vim # interactive process viewer
+      pkgs.inetutils # networking utilities
+      pkgs.dig # DNS lookup
+      pkgs.nettools # network configuration tools
+      pkgs.nmap # network scanner
+      pkgs.arp-scan # ARP scanner
+      pkgs.gparted # Moved from system packages
     ];
   };
 }
