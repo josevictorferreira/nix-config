@@ -1,8 +1,9 @@
-{ lib
-, config
-, pkgs
-, username
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -62,6 +63,16 @@ in
       xfce4.enable = true;
       gtk3.enable = true;
       fastfetch.enable = true;
+    };
+
+    services.greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          user = username;
+          command = "hyprland";
+        };
+      };
     };
 
     users.users."${cfg.username}".packages = [

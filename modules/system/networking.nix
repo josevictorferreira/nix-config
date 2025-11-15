@@ -1,6 +1,7 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  ...
 }:
 
 let
@@ -15,6 +16,12 @@ in
         - NetworkManager (primary network management)
         - NTP time synchronization
       '';
+    };
+
+    hostName = lib.mkOption {
+      type = lib.types.str;
+      default = "nixos";
+      description = "The hostname of the system.";
     };
 
     manageTime = lib.mkOption {
@@ -32,6 +39,7 @@ in
 
   config = lib.mkIf cfg.enable {
     networking = {
+      hostName = cfg.hostName;
       networkmanager.enable = true;
     };
   };

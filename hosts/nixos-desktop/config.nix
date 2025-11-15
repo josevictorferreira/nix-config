@@ -1,17 +1,18 @@
-{ pkgs
-, host
-, inputs
-, username
-, ...
+{
+  host,
+  inputs,
+  username,
+  ...
 }:
 let
   inherit (inputs) self;
 in
 let
-  inherit (import ./variables.nix) gitUsername keyboardLayout;
+  inherit (import ./variables.nix) gitUsername;
 in
 {
   imports = [
+    "${self}/modules/users"
     "${self}/modules/system/nix-daemon.nix"
     "${self}/modules/system/nixpkgs.nix"
     "${self}/modules/system/networking.nix"
@@ -26,6 +27,7 @@ in
     "${self}/modules/system/firewall.nix"
     "${self}/modules/system/flatpak.nix"
     "${self}/modules/system/power-management.nix"
+    "${self}/modules/system/display.nix"
 
     # Services
     "${self}/modules/services/sops.nix"
@@ -47,67 +49,22 @@ in
     ./hardware.nix
   ];
 
-  # === HOST-SPECIFIC CONFIGURATION ===
-  # Only truly host-specific settings should remain here
-  networking.hostName = host;
-
-  # User configuration (remains here as it's user-specific)
-  users.users."${username}" = {
-    homeMode = "755";
-    isNormalUser = true;
+  jvf.users.${username} = {
     description = gitUsername;
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "libvirtd"
-      "scanner"
-      "lp"
-      "video"
-      "input"
-      "audio"
-    ];
-    openssh.authorizedKeys.keys = [
+    authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
     ];
-    packages = [ ];
   };
-
-  users = {
-    mutableUsers = true;
-  };
-
-  # Desktop/X11 configuration (host-specific graphics setup)
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        user = username;
-        command = "hyprland";
-      };
-    };
-  };
-
-  services.xserver = {
-    enable = true;
-    xkb.options = "repeat:delay=250,rate=40";
-    xkb = {
-      layout = keyboardLayout;
-      variant = "";
-    };
-  };
-
-  console.useXkbConfig = true;
-
-  # System shell configuration
-  users.defaultUserShell = pkgs.zsh;
-  environment.shells = with pkgs; [ zsh ];
 
   # === MODULE ACTIVATIONS ===
   # All system modules (Phase 1 & 2)
   jvf.system = {
+    networking = {
+      enable = true;
+      hostName = host;
+    };
     nix-daemon.enable = true;
     nixpkgs.enable = true;
-    networking.enable = true;
     locale.enable = true;
     base-programs.enable = true;
     base-services.enable = true;
@@ -119,6 +76,7 @@ in
     firewall.enable = true;
     flatpak.enable = true;
     power-management.enable = true;
+    display.enable = true;
   };
 
   # Services
