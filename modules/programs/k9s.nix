@@ -9,55 +9,57 @@ let
   cfg = config.jvf.programs.k9s;
 
   defaultSettings = {
-    liveViewAutoRefresh = false;
-    refreshRate = 2;
-    maxConnRetry = 5;
-    defaultView = "pods";
-    readOnly = false;
-    noExitOnCtrlC = false;
-    ui = {
-      enableMouse = false;
-      headless = false;
-      logoless = false;
-      crumbsless = false;
-      reactive = false;
-      noIcons = false;
-      defaultsToFullScreen = false;
-      skin = "tokyonight";
-    };
-    skipLatestRevCheck = false;
-    disablePodCounting = false;
-    shellPod = {
-      image = "busybox:1.35.0";
-      namespace = "default";
-      limits = {
-        cpu = "100m";
-        memory = "100Mi";
+    k9s = {
+      liveViewAutoRefresh = false;
+      refreshRate = 2;
+      maxConnRetry = 5;
+      defaultView = "pods";
+      readOnly = false;
+      noExitOnCtrlC = false;
+      ui = {
+        enableMouse = false;
+        headless = false;
+        logoless = false;
+        crumbsless = false;
+        reactive = false;
+        noIcons = false;
+        defaultsToFullScreen = false;
+        skin = "tokyonight";
       };
-    };
-    imageScans = {
-      enable = false;
-      exclusions = {
-        namespaces = [ ];
-        labels = { };
+      skipLatestRevCheck = false;
+      disablePodCounting = false;
+      shellPod = {
+        image = "busybox:1.35.0";
+        namespace = "default";
+        limits = {
+          cpu = "100m";
+          memory = "100Mi";
+        };
       };
-    };
-    logger = {
-      tail = 150;
-      buffer = 10000;
-      sinceSeconds = 3600;
-      textWrap = true;
-      showTime = false;
-      disableAutoscroll = true;
-    };
-    thresholds = {
-      cpu = {
-        critical = 90;
-        warn = 70;
+      imageScans = {
+        enable = false;
+        exclusions = {
+          namespaces = [ ];
+          labels = { };
+        };
       };
-      memory = {
-        critical = 90;
-        warn = 70;
+      logger = {
+        tail = 150;
+        buffer = 10000;
+        sinceSeconds = 3600;
+        textWrap = true;
+        showTime = false;
+        disableAutoscroll = true;
+      };
+      thresholds = {
+        cpu = {
+          critical = 90;
+          warn = 70;
+        };
+        memory = {
+          critical = 90;
+          warn = 70;
+        };
       };
     };
   };
