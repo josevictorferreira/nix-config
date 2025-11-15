@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.btop;
@@ -10,7 +11,7 @@ let
     theme_background = false;
     truecolor = true;
     force_tty = false;
-    presets = "cpu:1:default,proc:0:default cpu:0:default,mem:0:default,net:0:default cpu:0:block,net:0:tty";
+    presets = "cpu:0:braille,mem:0:braille,net:0:braille,disk:0:braille,proc:0:default";
     vim_keys = false;
     rounded_corners = true;
     graph_symbol = "braille";
