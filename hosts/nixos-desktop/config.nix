@@ -50,6 +50,7 @@ in
   ];
 
   jvf.users.${username} = {
+    enable = true;
     description = gitUsername;
     authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"

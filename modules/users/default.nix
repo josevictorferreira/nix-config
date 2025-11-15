@@ -5,12 +5,10 @@
 }:
 
 let
-  cfg = config.jvf.users;
+  cfg = config.jvf;
 in
 {
-  options.jvf.users = {
-    enable = lib.mkEnableOption "jvf users module (enables multi-user configuration)";
-
+  options.jvf = {
     users = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule (
@@ -70,7 +68,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     users.mutableUsers = true;
 
     users.users = lib.mapAttrs (
