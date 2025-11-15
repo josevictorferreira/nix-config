@@ -37,7 +37,7 @@ in
     "${self}/modules/services/sops.nix"
     "${self}/modules/services/polkit.nix"
     "${self}/modules/services/ollama.nix"
-    "${self}/modules/services/virtualisation.nix"
+    "${self}/modules/services/virtualization.nix"
 
     # Hardware
     "${self}/modules/hardware/bluetooth.nix"
@@ -132,7 +132,7 @@ in
     sops.enable = true;
     polkit.enable = true;
     ollama.enable = true;
-    virtualisation.enable = true;
+    virtualization.enable = true;
   };
 
   # Hardware
