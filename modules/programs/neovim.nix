@@ -31,6 +31,7 @@ in
       pkgs.tree-sitter
       pkgs.pkg-config
       pkgs.openssh
+      pkgs.cmake
     ]
     ++ devTools.lspServers
     ++ devTools.formatters
