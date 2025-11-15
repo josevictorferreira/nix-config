@@ -7,6 +7,7 @@
 }:
 let
   cfg = config.jvf.programs.btop;
+  defaultPackage = if pkgs.stdenv.isDarwin then "btop" else "btop-rocm";
   defaultConfig = {
     color_theme = "onedark";
     theme_background = true;
@@ -92,7 +93,7 @@ in
 {
   options.jvf.programs.btop = {
     enable = lib.mkEnableOption "btop, a modern resource monitor";
-    package = lib.mkPackageOption pkgs "btop-rocm" { };
+    package = lib.mkPackageOption pkgs defaultPackage { };
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
