@@ -1,6 +1,8 @@
 {
   config,
   lib,
+  username,
+  pkgs,
   ...
 }:
 
@@ -18,8 +20,23 @@ in
       '';
     };
 
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = ''
+        Username of the user for whom power management optimizations should be applied.
+      '';
+    };
+
     zramAlgorithm = lib.mkOption {
-      type = lib.types.enum [ "zstd" "lz4" "lz4hc" "zle" "deflate" "842" ];
+      type = lib.types.enum [
+        "zstd"
+        "lz4"
+        "lz4hc"
+        "zle"
+        "deflate"
+        "842"
+      ];
       default = "zstd";
       description = ''
         Compression algorithm to use for zram swap.
@@ -46,7 +63,12 @@ in
     };
 
     cpuFreqGovernor = lib.mkOption {
-      type = lib.types.enum [ "schedutil" "powersave" "performance" "ondemand" ];
+      type = lib.types.enum [
+        "schedutil"
+        "powersave"
+        "performance"
+        "ondemand"
+      ];
       default = "schedutil";
       description = ''
         CPU frequency scaling governor.
@@ -56,6 +78,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    users.users."${cfg.username}".packages = [
+      pkgs.cpufrequtils
+    ];
+
     zramSwap = {
       enable = true;
       priority = cfg.zramPriority;
