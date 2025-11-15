@@ -12,22 +12,9 @@ let
 in
 {
   imports = [
+    # Core modules
     "${self}/modules/users"
-    "${self}/modules/system/nix-daemon.nix"
-    "${self}/modules/system/nixpkgs.nix"
-    "${self}/modules/system/networking.nix"
-    "${self}/modules/system/locale.nix"
-    "${self}/modules/system/base-programs.nix"
-    "${self}/modules/system/base-services.nix"
-    "${self}/modules/system/audio.nix"
-    "${self}/modules/system/logind.nix"
-    "${self}/modules/system/security.nix"
-    "${self}/modules/system/environment.nix"
-    "${self}/modules/system/xdg.nix"
-    "${self}/modules/system/firewall.nix"
-    "${self}/modules/system/flatpak.nix"
-    "${self}/modules/system/power-management.nix"
-    "${self}/modules/system/display.nix"
+    "${self}/modules/system"
 
     # Services
     "${self}/modules/services/sops.nix"
@@ -60,24 +47,25 @@ in
   # === MODULE ACTIVATIONS ===
   # All system modules (Phase 1 & 2)
   jvf.system = {
-    networking = {
-      enable = true;
-      hostName = host;
-    };
-    nix-daemon.enable = true;
-    nixpkgs.enable = true;
-    locale.enable = true;
-    base-programs.enable = true;
-    base-services.enable = true;
-    audio.enable = true;
-    security.enable = true;
-    logind.enable = true;
-    environment.enable = true;
-    xdg.enable = true;
-    firewall.enable = true;
-    flatpak.enable = true;
-    power-management.enable = true;
-    display.enable = true;
+    enable = true;
+    hostName = host;
+    modules = [
+      "audio"
+      "base-programs"
+      "base-services"
+      "display"
+      "environment"
+      "firewall"
+      "flatpak"
+      "locale"
+      "logind"
+      "networking"
+      "nix-daemon"
+      "nixpkgs"
+      "power-management"
+      "security"
+      "xdg"
+    ];
   };
 
   # Services
