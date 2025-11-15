@@ -3,11 +3,13 @@
   config,
   pkgs,
   username,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.services.virtualization;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.services.virtualization = {
@@ -27,17 +29,22 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    virtualisation.libvirtd.enable = true;
-    virtualisation.podman = {
-      enable = true;
-      dockerCompat = true;
-      defaultNetwork.settings.dns_enabled = true;
-    };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        virtualisation.libvirtd.enable = true;
+        virtualisation.podman = {
+          enable = true;
+          dockerCompat = true;
+          defaultNetwork.settings.dns_enabled = true;
+        };
 
-    users.users."${cfg.username}".packages = [
-      pkgs.podman-compose
-      pkgs.podman
-    ];
-  };
+        users.users."${cfg.username}".packages = [
+          pkgs.podman-compose
+          pkgs.podman
+        ];
+      }
+    else
+      { }
+  );
 }
