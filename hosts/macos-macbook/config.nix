@@ -9,7 +9,6 @@ let
 in
 
 {
-  networking.hostName = "${host}";
   networking.computerName = "${host}";
   networking.localHostName = "${host}";
 
@@ -60,10 +59,6 @@ in
     NSGlobalDomain.ApplePressAndHoldEnabled = false;
   };
 
-  environment.variables = {
-    K9S_CONFIG_DIR = "$HOME/.config/k9s";
-  };
-
   environment.systemPackages = with pkgs; [
     m-cli
     mas
@@ -85,55 +80,29 @@ in
     remapCapsLockToEscape = true;
   };
 
-  users.users.${username} = {
+  jvf.users.${username} = {
     name = username;
-    home = "/Users/${username}";
-    openssh.authorizedKeys.keys = [
+    authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
     ];
   };
-
-  imports = [
-    "${self}/modules/services/sops.nix"
-    "${self}/modules/roles"
-  ];
-
-  nix.package = pkgs.nix;
-
-  nix.optimise.automatic = true;
-
-  nix.settings = {
-    experimental-features = "nix-command flakes";
-    substituters = [
-      "https://cache.nixos.org"
-    ];
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
-    trusted-users = [
-      "root"
-      username
-    ];
-  };
-
-  nix.gc = {
-    automatic = true;
-    interval = {
-      Day = 7;
-    };
-    options = "--delete-older-than 14d";
-  };
-
   system.stateVersion = 4;
 
-  jvf.services.sops.enable = true;
-
-  jvf.roles = {
-    networkStorage.enable = true;
-    development.enable = true;
-    aiDevelopment.enable = true;
-    opsDevelopment.enable = true;
-    monitoring.enable = true;
-    communication.enable = true;
+  jvf.system = {
+    hostName = host;
+    modules = [
+      "nixpkgs"
+      "nix-daemon"
+      "security"
+    ];
   };
+
+  jvf.roles.active = [
+    "networkStorage"
+    "development"
+    "aiDevelopment"
+    "opsDevelopment"
+    "monitoring"
+    "communication"
+  ];
 }

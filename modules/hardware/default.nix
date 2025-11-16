@@ -24,14 +24,16 @@ let
   isHardwareEnabled = name: builtins.elem name config.jvf.hardware.active;
 
   mkHardwareEnables = lib.mkMerge (
-    map (
-      name:
-      lib.mkIf (isHardwareEnabled name) {
-        ${name} = {
-          enable = true;
-        };
-      }
-    ) (builtins.attrNames availableHardware)
+    map
+      (
+        name:
+        lib.mkIf (isHardwareEnabled name) {
+          ${name} = {
+            enable = true;
+          };
+        }
+      )
+      (builtins.attrNames availableHardware)
   );
 in
 {

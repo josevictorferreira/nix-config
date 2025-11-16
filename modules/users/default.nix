@@ -1,7 +1,6 @@
-{
-  lib,
-  config,
-  ...
+{ lib
+, config
+, ...
 }:
 
 let
@@ -71,16 +70,18 @@ in
   config = {
     users.mutableUsers = true;
 
-    users.users = lib.mapAttrs (
-      name: userCfg:
-      lib.mkIf userCfg.enable {
-        homeMode = userCfg.homeMode;
-        isNormalUser = true;
-        description = userCfg.description;
-        extraGroups = userCfg.extraGroups;
-        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-        packages = userCfg.packages;
-      }
-    ) cfg.users;
+    users.users = lib.mapAttrs
+      (
+        name: userCfg:
+          lib.mkIf userCfg.enable {
+            homeMode = userCfg.homeMode;
+            isNormalUser = true;
+            description = userCfg.description;
+            extraGroups = userCfg.extraGroups;
+            openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+            packages = userCfg.packages;
+          }
+      )
+      cfg.users;
   };
 }

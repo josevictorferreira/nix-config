@@ -24,14 +24,16 @@ let
   isServiceEnabled = name: builtins.elem name config.jvf.services.active;
 
   mkServiceEnables = lib.mkMerge (
-    map (
-      name:
-      lib.mkIf (isServiceEnabled name) {
-        ${name} = {
-          enable = true;
-        };
-      }
-    ) (builtins.attrNames availableServices)
+    map
+      (
+        name:
+        lib.mkIf (isServiceEnabled name) {
+          ${name} = {
+            enable = true;
+          };
+        }
+      )
+      (builtins.attrNames availableServices)
   );
 in
 {

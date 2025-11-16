@@ -87,6 +87,10 @@
             ./modules/users/repositories.nix
             ./modules/users/wrappers.nix
             inputs.distro-grub-themes.nixosModules.${systemArc}.default
+            ./modules/users/default.nix
+            ./modules/hardware/default.nix
+            ./modules/system/default.nix
+            ./modules/roles/default.nix
           ];
         };
 
@@ -100,6 +104,10 @@
             ./hosts/${host}/config.nix
             ./modules/users/repositories.nix
             ./modules/users/wrappers.nix
+            ./modules/users/default.nix
+            ./modules/hardware/default.nix
+            ./modules/system/default.nix
+            ./modules/roles/default.nix
           ];
         };
 

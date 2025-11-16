@@ -1,8 +1,7 @@
-{
-  host,
-  inputs,
-  username,
-  ...
+{ host
+, inputs
+, username
+, ...
 }:
 let
   inherit (inputs) self;
@@ -13,10 +12,6 @@ in
 {
   imports = [
     # Core modules
-    "${self}/modules/users"
-    "${self}/modules/system"
-    "${self}/modules/roles"
-    "${self}/modules/hardware"
     "${self}/modules/desktop/hyprland"
 
     # Machine-specific hardware configuration

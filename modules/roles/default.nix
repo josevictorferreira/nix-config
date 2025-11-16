@@ -22,11 +22,10 @@
 # - networkStorage - NAS and storage management
 # - opsDevelopment - DevOps tools (kubectl, helm, awscli, etc.)
 
-{
-  config,
-  lib,
-  username,
-  ...
+{ config
+, lib
+, username
+, ...
 }:
 let
   availableRoles = {
@@ -46,15 +45,17 @@ let
   isRoleEnabled = name: builtins.elem name config.jvf.roles.active;
 
   mkRoleEnables = lib.mkMerge (
-    map (
-      name:
-      lib.mkIf (isRoleEnabled name) {
-        ${name} = {
-          enable = true;
-          inherit username;
-        };
-      }
-    ) (builtins.attrNames availableRoles)
+    map
+      (
+        name:
+        lib.mkIf (isRoleEnabled name) {
+          ${name} = {
+            enable = true;
+            inherit username;
+          };
+        }
+      )
+      (builtins.attrNames availableRoles)
   );
 in
 {
