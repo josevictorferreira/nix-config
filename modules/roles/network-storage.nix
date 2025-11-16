@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  username,
   system,
   ...
 }:
@@ -33,7 +32,7 @@ in
       jvf.services.smb = {
         enable = true;
         name = "Homelab";
-        username = username;
+        username = cfg.username;
         serverAddress = "10.10.10.124";
         exportedName = "homelab-smb";
       };
@@ -45,7 +44,7 @@ in
         mountPoint = "/mnt/homelabfs";
         clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
         clientId = "josevictor";
-        username = username;
+        username = cfg.username;
         monHosts = [
           "10.10.10.200:6789"
           "10.10.10.201:6789"

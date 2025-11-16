@@ -16,24 +16,15 @@ in
     "${self}/modules/users"
     "${self}/modules/system"
     "${self}/modules/roles"
-
-    # Services
-    "${self}/modules/services/sops.nix"
-    "${self}/modules/services/polkit.nix"
-    "${self}/modules/services/ollama.nix"
-    "${self}/modules/services/virtualization.nix"
-
-    # Hardware
-    "${self}/modules/hardware/bluetooth.nix"
-    "${self}/modules/hardware/logitech.nix"
-
-    # Desktop environment
+    "${self}/modules/services"
+    "${self}/modules/hardware"
     "${self}/modules/desktop/hyprland"
 
     # Machine-specific hardware configuration
     ./hardware.nix
   ];
 
+  # User configuration
   jvf.users.${username} = {
     enable = true;
     description = gitUsername;
@@ -41,6 +32,9 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
     ];
   };
+
+  # Desktop
+  jvf.desktop.hyprland.enable = true;
 
   # === MODULE ACTIVATIONS ===
   # All system modules (Phase 1 & 2)
@@ -65,21 +59,17 @@ in
     ];
   };
 
-  # Services
-  jvf.services = {
-    sops.enable = true;
-    polkit.enable = true;
-    ollama.enable = true;
-  };
+  jvf.services.active = [
+    "sops"
+    "polkit"
+    "ollama"
+    "virtualization"
+  ];
 
-  # Hardware
-  jvf.hardware = {
-    bluetooth.enable = true;
-    logitech.enable = true;
-  };
-
-  # Desktop
-  jvf.desktop.hyprland.enable = true;
+  jvf.hardware.active = [
+    "bluetooth"
+    "logitech"
+  ];
 
   # Role
   jvf.roles.active = [
