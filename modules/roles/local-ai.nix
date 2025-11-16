@@ -63,23 +63,13 @@ in
     services.ollama = {
       enable = true;
       acceleration = cfg.ollamaAcceleration;
-      inherit (cfg) ollamaLoadModels;
     };
 
-    users.users."${cfg.username}".packages =
-      with pkgs;
-      [
-        llama-cpp
-        llama-index
-        transformers
-        datasets
-        tokenizers
-        safetensors
-        huggingface-cli
-      ]
-      ++ lib.optionals (!stdenv.isDarwin) [
-        lmstudio
-        llama-cpp-rocm
-      ];
+    users.users."${cfg.username}".packages = [
+    ]
+    ++ lib.optionals (!pkgs.stdenv.isDarwin) [
+      pkgs.lmstudio
+      pkgs.llama-cpp-rocm
+    ];
   };
 }
