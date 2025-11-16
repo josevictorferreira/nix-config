@@ -206,15 +206,9 @@ let
                   fi
                   rm -rf "${targetDir}"
                   mkdir -p "${targetDir}"
-                  # Copy directory recursively with proper ownership, dereferencing symlinks
+                  # Copy all files from config directory, dereferencing symlinks
                   if [ -d "${wrapper.configDir}" ]; then
-                    # Check if there's a subdirectory with the same name as the program
-                    if [ -d "${wrapper.configDir}/${programName}" ]; then
-                      # Copy contents of the subdirectory directly, dereferencing symlinks
-                      cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
-                    fi
-                    # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
-                    find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
+                    cp -rL "${wrapper.configDir}"/* "${targetDir}/" 2>/dev/null || true
                     chown -R ${userName}:${if isDarwin then "staff" else "users"} "${targetDir}"
                     chmod -R u+rw "${targetDir}"
                     find "${targetDir}" -type d -exec chmod 755 {} \;
