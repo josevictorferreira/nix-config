@@ -16,7 +16,6 @@ in
     "${self}/modules/users"
     "${self}/modules/system"
     "${self}/modules/roles"
-    "${self}/modules/services"
     "${self}/modules/hardware"
     "${self}/modules/desktop/hyprland"
 
@@ -56,15 +55,9 @@ in
       "power-management"
       "security"
       "xdg"
+      "virtualization"
     ];
   };
-
-  jvf.services.active = [
-    "sops"
-    "polkit"
-    "ollama"
-    "virtualization"
-  ];
 
   jvf.hardware.active = [
     "bluetooth"
@@ -75,6 +68,7 @@ in
   jvf.roles.active = [
     "development"
     "aiDevelopment"
+    "localAi"
     "webDevelopment"
     "aiDevelopment"
     "opsDevelopment"

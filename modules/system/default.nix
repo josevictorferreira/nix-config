@@ -29,6 +29,7 @@ let
     nixpkgs = ./nixpkgs.nix;
     power-management = ./power-management.nix;
     security = ./security.nix;
+    virtualization = ./virtualization.nix;
     xdg = ./xdg.nix;
   };
 

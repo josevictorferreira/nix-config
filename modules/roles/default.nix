@@ -36,6 +36,7 @@ let
     development = ./development.nix;
     documenting = ./documenting.nix;
     gaming = ./gaming.nix;
+    localAi = ./local-ai.nix;
     media = ./media.nix;
     monitoring = ./monitoring.nix;
     networkStorage = ./network-storage.nix;

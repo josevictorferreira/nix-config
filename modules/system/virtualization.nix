@@ -7,11 +7,11 @@
 }:
 
 let
-  cfg = config.jvf.services.virtualization;
+  cfg = config.jvf.system.virtualization;
   isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
-  options.jvf.services.virtualization = {
+  options.jvf.system.virtualization = {
     enable = lib.mkEnableOption "virtualization support (libvirtd and podman)" // {
       description = ''
         Whether to enable virtualization services.

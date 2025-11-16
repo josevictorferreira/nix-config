@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -37,8 +38,6 @@ in
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.goose-cli
-    ]
-    ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.llama-cpp-rocm
-    ++ lib.optional (!pkgs.stdenv.isDarwin) pkgs.lmstudio;
+    ];
   };
 }

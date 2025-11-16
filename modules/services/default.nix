@@ -3,7 +3,7 @@
 #
 # Usage in host config:
 #   jvf.services = {
-#     active = [ "sops" "virtualization" "ollama" ... ];
+#     active = [ "smb" "cephFs" ... ];
 #   };
 #
 # This module will:
@@ -11,22 +11,14 @@
 # 2. Set enable = true for each service listed in the 'active' array
 #
 # Available services:
-# - cephfs - CephFS distributed filesystem
-# - ollama - Local AI model server
-# - polkit - PolicyKit authentication framework
+# - cephFs - CephFS distributed filesystem
 # - smb - SMB/CIFS file sharing
-# - sops - Secret management with age encryption
-# - virtualization - libvirtd and podman with Docker compatibility
 
-{ config, lib, username, system, ... }:
+{ config, lib, ... }:
 let
   availableServices = {
-    cephfs = ./cephfs.nix;
-    ollama = ./ollama.nix;
-    polkit = ./polkit.nix;
+    cephFs = ./cephfs.nix;
     smb = ./smb.nix;
-    sops = ./sops.nix;
-    virtualization = ./virtualization.nix;
   };
 
   isServiceEnabled = name: builtins.elem name config.jvf.services.active;
@@ -37,10 +29,6 @@ let
       lib.mkIf (isServiceEnabled name) {
         ${name} = {
           enable = true;
-          inherit username;
-        }
-        // lib.optionalAttrs (name == "virtualization") {
-          inherit system;
         };
       }
     ) (builtins.attrNames availableServices)
@@ -52,9 +40,8 @@ in
       type = types.listOf types.str;
       default = [ ];
       example = [
-        "sops"
-        "virtualization"
-        "ollama"
+        "smb"
+        "cephFs"
       ];
       description = ''
         List of services to enable. Each service will be automatically
