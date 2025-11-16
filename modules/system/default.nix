@@ -3,7 +3,6 @@
 #
 # Usage in host config:
 #   jvf.system = {
-#     enable = true;
 #     hostName = "myhost";
 #     modules = [ "audio" "security" "networking" "base-programs" ... ];
 #   };
@@ -15,7 +14,6 @@
 
 { config, lib, ... }:
 let
-  # Map of module name to file path
   availableModules = {
     audio = ./audio.nix;
     base-programs = ./base-programs.nix;
@@ -34,30 +32,24 @@ let
     xdg = ./xdg.nix;
   };
 
-  # Helper: Check if a module is enabled
   isModuleEnabled = name: builtins.elem name config.jvf.system.modules;
 
-  # Build enable settings for all modules
   mkModuleEnables = lib.mkMerge (
-    map (name: lib.mkIf (isModuleEnabled name) {
-      ${name} = {
-        enable = true;
-      } // lib.optionalAttrs (name == "networking") {
-        hostName = config.jvf.system.hostName;
-      };
-    }) (builtins.attrNames availableModules)
+    map (
+      name:
+      lib.mkIf (isModuleEnabled name) {
+        ${name} = {
+          enable = true;
+        }
+        // lib.optionalAttrs (name == "networking") {
+          hostName = config.jvf.system.hostName;
+        };
+      }
+    ) (builtins.attrNames availableModules)
   );
 in
 {
-  # === OPTIONS ===
   options.jvf.system = with lib; {
-    enable = mkEnableOption "jvf system module management" // {
-      description = ''
-        Enable the jvf.system module which provides centralized management
-        of all system-level configuration modules.
-      '';
-    };
-
     hostName = mkOption {
       type = types.str;
       default = config.networking.hostName or "localhost";
@@ -70,25 +62,25 @@ in
     modules = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      example = [ "audio" "security" "networking" "base-programs" ];
+      example = [
+        "audio"
+        "security"
+        "networking"
+        "base-programs"
+      ];
       description = ''
         List of system modules to enable. Each module will be automatically
         enabled if its name appears in this list. Available modules:
-        ${lib.generators.toPretty {} (builtins.attrNames availableModules)}
+        ${lib.generators.toPretty { } (builtins.attrNames availableModules)}
       '';
     };
   };
 
-  # === CONFIG ===
-  # Import all available system modules
   imports = builtins.attrValues availableModules;
 
-  config = lib.mkIf config.jvf.system.enable {
-    # Enable all modules specified in the modules array
+  config = {
     jvf.system = mkModuleEnables // {
-      # Provide hostName for the networking module
       hostName = lib.mkDefault config.jvf.system.hostName;
     };
   };
 }
-

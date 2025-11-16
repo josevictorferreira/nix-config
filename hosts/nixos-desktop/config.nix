@@ -47,7 +47,6 @@ in
   # === MODULE ACTIVATIONS ===
   # All system modules (Phase 1 & 2)
   jvf.system = {
-    enable = true;
     hostName = host;
     modules = [
       "audio"
