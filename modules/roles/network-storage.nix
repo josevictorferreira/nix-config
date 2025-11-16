@@ -1,8 +1,9 @@
-{ lib
-, config
-, username
-, system
-, ...
+{
+  lib,
+  config,
+  username,
+  system,
+  ...
 }:
 
 let
@@ -18,6 +19,12 @@ in
 
   options.jvf.roles.networkStorage = {
     enable = lib.mkEnableOption "Enable homelab storage mount on the home directory.";
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Username for network storage.";
+    };
   };
 
   config = lib.mkIf cfg.enable (

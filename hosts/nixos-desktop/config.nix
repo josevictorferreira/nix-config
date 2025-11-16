@@ -15,6 +15,7 @@ in
     # Core modules
     "${self}/modules/users"
     "${self}/modules/system"
+    "${self}/modules/roles"
 
     # Services
     "${self}/modules/services/sops.nix"
@@ -25,9 +26,6 @@ in
     # Hardware
     "${self}/modules/hardware/bluetooth.nix"
     "${self}/modules/hardware/logitech.nix"
-
-    # Roles (all role modules)
-    "${self}/modules/roles"
 
     # Desktop environment
     "${self}/modules/desktop/hyprland"
@@ -83,19 +81,20 @@ in
   # Desktop
   jvf.desktop.hyprland.enable = true;
 
-  # === ROLE ACTIVATIONS ===
-  # Based on current roles configuration
-  jvf.roles = {
-    development.enable = true;
-    aiDevelopment.enable = true;
-    opsDevelopment.enable = true;
-    monitoring.enable = true;
-    communication.enable = true;
-    designing.enable = true;
-    media.enable = true;
-    gaming.enable = true;
-    networkStorage.enable = true;
-  };
+  # Role
+  jvf.roles.active = [
+    "development"
+    "aiDevelopment"
+    "webDevelopment"
+    "aiDevelopment"
+    "opsDevelopment"
+    "monitoring"
+    "communication"
+    "designing"
+    "media"
+    "gaming"
+    "networkStorage"
+  ];
 
   system.stateVersion = "24.05";
 }
