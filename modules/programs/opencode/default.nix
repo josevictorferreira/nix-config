@@ -42,11 +42,10 @@ let
     set -euo pipefail
 
     INSTALL_URL="https://opencode.ai/install"
-    LOCAL_OPENCODE="$LOCAL_BIN/opencode"
     OPENCODE_BIN_DIR="$HOME/.opencode/bin"
 
-    if [ ! -x "$LOCAL_OPENCODE" ]; then
-      mkdir -p "$LOCAL_OPENCODE"
+    if [ ! -x "$OPENCODE_BIN_DIR" ]; then
+      mkdir -p "$OPENCODE_BIN_DIR"
       PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
     fi
 
