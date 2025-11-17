@@ -16,7 +16,17 @@ if [ ! -f "$HOME/.initial_startup_done" ]; then
     sleep 1
 	if [ -f "$wallpaper" ]; then
 		wallust run -s $wallpaper > /dev/null 
-		swww query || swww-daemon && $swww $wallpaper $effect
+		swww query || swww-daemon
+		
+		# Small delay to ensure swww daemon is ready and monitors are initialized
+		sleep 0.5
+		
+		# Apply wallpaper to all monitors
+		for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
+			$swww -o "$monitor" $wallpaper $effect &
+		done
+		wait
+		
 	    "$scriptsDir/WallustSwww.sh" > /dev/null 2>&1 & 
 	fi
     gsettings set org.gnome.desktop.interface color-scheme $color_scheme > /dev/null 2>&1 &
