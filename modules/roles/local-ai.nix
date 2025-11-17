@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -59,10 +60,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.ollama = {
-      enable = true;
-      acceleration = cfg.ollamaAcceleration;
-    };
+    # services.ollama = {
+    #   enable = true;
+    #   acceleration = cfg.ollamaAcceleration;
+    # };
 
     users.users."${cfg.username}".packages = [
     ]
