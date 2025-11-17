@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -12,12 +13,45 @@ let
 
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = value;
-      })
-      attrset;
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = value;
+    }) attrset;
+
+  openCodeFHS = pkgs.buildFHSEnv {
+    name = "opencode-fhs";
+    targetPkgs =
+      pkgs: with pkgs; [
+        stdenv.cc.cc.lib
+        zlib
+        openssl
+        curl
+        ripgrep
+        coreutils
+      ];
+    profile = ''
+      export TMPDIR="''${TMPDIR:-$HOME/.cache/opencode-tmp}"
+      mkdir -p "$TMPDIR"
+    '';
+    runScript = "${pkgs.writeShellScript "opencode-runner" ''
+      exec "$HOME/.opencode/bin/opencode" "$@"
+    ''}";
+  };
+
+  shellScriptBin = pkgs.writeShellScriptBin "opencode" ''
+    set -euo pipefail
+
+    INSTALL_URL="https://opencode.ai/install"
+    LOCAL_OPENCODE="$LOCAL_BIN/opencode"
+    OPENCODE_BIN_DIR="$HOME/.opencode/bin"
+
+    if [ ! -x "$LOCAL_OPENCODE" ]; then
+      mkdir -p "$LOCAL_OPENCODE"
+      PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
+    fi
+
+    exec "${openCodeFHS}/bin/opencode-fhs" "$@"
+  '';
 in
 {
   imports = [
@@ -47,7 +81,7 @@ in
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
-        pkgs.opencode
+        shellScriptBin
       ];
       configs = lib.mkMerge [
         (mkMdConfigs "agent" aiTools.agents)
