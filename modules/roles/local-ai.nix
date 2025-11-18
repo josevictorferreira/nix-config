@@ -60,16 +60,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # services.ollama = {
-    #   enable = true;
-    #   acceleration = cfg.ollamaAcceleration;
-    # };
-
     users.users."${cfg.username}".packages = [
     ]
     ++ lib.optionals (!pkgs.stdenv.isDarwin) [
       pkgs.lmstudio
       pkgs.llama-cpp-rocm
+      pkgs.upscayl
     ];
   };
 }
