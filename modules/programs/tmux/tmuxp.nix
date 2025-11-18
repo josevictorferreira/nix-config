@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -56,7 +57,7 @@ let
       {
         window_name = "Homelab";
         layout = "tiled";
-        start_directory = "homelab-reborn";
+        start_directory = "homelab";
         panes = [
           "clear"
           "clear"
