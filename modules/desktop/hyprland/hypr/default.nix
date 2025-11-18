@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  inputs,
+  ...
 }:
 
 let
@@ -20,7 +21,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.hypridle.enable = true;
+    services.hypridle.enable = false;
 
     programs.hyprland = {
       enable = true;

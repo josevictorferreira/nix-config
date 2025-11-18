@@ -57,6 +57,9 @@
         "moonshotai/kimi-k2-thinking" = {
           name = "Kimi K2 Thinking";
         };
+        "google/gemini-3-pro-preview" = {
+          name = "Gemini 3 Pro Preview - Openrouter";
+        };
       };
     };
   };

@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -12,12 +13,10 @@ let
 
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = value;
-      })
-      attrset;
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = value;
+    }) attrset;
 in
 {
   options.jvf.programs.claudecode = {
@@ -65,6 +64,7 @@ in
               "deepseek/deepseek-v3.1-terminus:exacto" # $0.27, $1
               "deepseek/deepseek-v3.2-exp" # $0.27, $0.40
               "moonshotai/kimi-k2-thinking" # $0.60, $2.50
+              "google/gemini-3-pro-preview"
             ];
             transformer = {
               use = [ "openrouter" ];
@@ -72,10 +72,10 @@ in
           }
         ];
         Router = {
-          default = "openrouter,moonshotai/kimi-k2-thinking";
+          default = "openrouter,google/gemini-3-pro-preview";
           background = "openrouter,openai/gpt-oss-120b:exacto";
-          think = "openrouter,moonshotai/kimi-k2-thinking";
-          longContext = "openrouter,x-ai/grok-4-fast";
+          think = "openrouter,google/gemini-3-pro-preview";
+          longContext = "openrouter,google/gemini-3-pro-preview";
           webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
           image = "openrouter,google/gemini-2.5-flash-image";
           longContextThreshold = 250000;
