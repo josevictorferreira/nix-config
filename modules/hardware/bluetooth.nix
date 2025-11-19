@@ -1,11 +1,13 @@
 {
   config,
   lib,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.hardware.bluetooth;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.hardware.bluetooth = {
@@ -54,17 +56,21 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    hardware.bluetooth = {
-      enable = true;
-      inherit (cfg) powerOnBoot;
-      settings.General = {
-        Enable = lib.mkDefault (lib.concatStringsSep "," cfg.profiles);
-        Experimental = lib.mkDefault cfg.enableExperimental;
-      };
-    };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        hardware.bluetooth = {
+          enable = true;
+          inherit (cfg) powerOnBoot;
+          settings.General = {
+            Enable = lib.mkDefault (lib.concatStringsSep "," cfg.profiles);
+            Experimental = lib.mkDefault cfg.enableExperimental;
+          };
+        };
 
-    # Enable blueman applet if using GUI desktop
-    services.blueman.enable = lib.mkDefault true;
-  };
+        services.blueman.enable = lib.mkDefault true;
+      }
+    else
+      { }
+  );
 }
