@@ -1,7 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.display;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.display = {
@@ -18,16 +24,22 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.xserver = {
-      enable = true;
-      xkb.options = "repeat:delay=250,rate=40";
-      xkb = {
-        layout = cfg.keyboardLayout;
-        variant = "";
-      };
-    };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
 
-    console.useXkbConfig = true;
-  };
+        services.xserver = {
+          enable = true;
+          xkb.options = "repeat:delay=250,rate=40";
+          xkb = {
+            layout = cfg.keyboardLayout;
+            variant = "";
+          };
+        };
+
+        console.useXkbConfig = true;
+      }
+    else
+      { }
+  );
 }
