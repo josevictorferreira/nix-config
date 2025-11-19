@@ -11,12 +11,14 @@
 # 2. Set enable = true for each hardware config listed in the 'active' array
 #
 # Available hardware modules:
+# - amd-gpu - AMD GPU support with ROCm runtime
 # - bluetooth - Bluetooth hardware support with bluez stack
 # - logitech - Logitech hardware (mice, keyboards, peripherals)
 
 { config, lib, ... }:
 let
   availableHardware = {
+    amd-gpu = ./amd-gpu.nix;
     bluetooth = ./bluetooth.nix;
     logitech = ./logitech.nix;
   };
@@ -24,16 +26,14 @@ let
   isHardwareEnabled = name: builtins.elem name config.jvf.hardware.active;
 
   mkHardwareEnables = lib.mkMerge (
-    map
-      (
-        name:
-        lib.mkIf (isHardwareEnabled name) {
-          ${name} = {
-            enable = true;
-          };
-        }
-      )
-      (builtins.attrNames availableHardware)
+    map (
+      name:
+      lib.mkIf (isHardwareEnabled name) {
+        ${name} = {
+          enable = true;
+        };
+      }
+    ) (builtins.attrNames availableHardware)
   );
 in
 {

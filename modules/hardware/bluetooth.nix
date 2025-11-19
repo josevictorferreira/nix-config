@@ -1,6 +1,7 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  ...
 }:
 
 let
@@ -34,12 +35,22 @@ in
 
     profiles = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ "Source" "Sink" "Media" "Socket" ];
+      default = [
+        "Source"
+        "Sink"
+        "Media"
+        "Socket"
+      ];
       description = ''
         Bluetooth profiles to enable.
         Common profiles include Source (input), Sink (output), Media, and Socket.
       '';
-      example = [ "Source" "Sink" "Media" "MIDI" ];
+      example = [
+        "Source"
+        "Sink"
+        "Media"
+        "MIDI"
+      ];
     };
   };
 

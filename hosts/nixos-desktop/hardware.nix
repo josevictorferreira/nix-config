@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, lib
-, modulesPath
-, ...
+{
+  pkgs,
+  username,
+  lib,
+  modulesPath,
+  ...
 }:
 
 {
@@ -44,7 +45,6 @@
         "usbhid"
         "sd_mod"
       ];
-      kernelModules = [ "amdgpu" ];
       verbose = false;
     };
 
@@ -97,8 +97,6 @@
     interval = "monthly";
     fileSystems = [ "/" ];
   };
-  services.xserver.enable = true;
-  services.xserver.videoDrivers = [ "amdgpu" ];
 
   distro-grub-themes = {
     enable = true;
@@ -182,10 +180,9 @@
 
   systemd.tmpfiles.rules = [
     "d /home/${username}/Downloads 0755 ${username} users -"
-    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
-  swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
+  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -196,21 +193,6 @@
   ];
 
   hardware.i2c.enable = true;
-
-  hardware.cpu.amd.updateMicrocode = true;
-
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      libva
-      libva-utils
-      rocmPackages.clr.icd
-      rocmPackages.clr
-      rocmPackages.rocminfo
-      rocmPackages.rocm-runtime
-    ];
-    enable32Bit = true;
-  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

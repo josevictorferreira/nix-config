@@ -1,7 +1,8 @@
-{ host
-, inputs
-, username
-, ...
+{
+  host,
+  inputs,
+  username,
+  ...
 }:
 let
   inherit (inputs) self;
@@ -55,6 +56,7 @@ in
   };
 
   jvf.hardware.active = [
+    "amd-gpu"
     "bluetooth"
     "logitech"
   ];
