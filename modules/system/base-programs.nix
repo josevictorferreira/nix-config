@@ -1,7 +1,15 @@
-{ config, lib, pkgs, options, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  options,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.base-programs;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.base-programs = {
@@ -20,32 +28,22 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    # nix-ld for automatic dynamic linking
-    programs.nix-ld = {
-      enable = true;
-      libraries = options.programs.nix-ld.libraries.default;
+  config =
+    lib.mkIf cfg.enable {
+      programs.nix-ld = {
+        enable = true;
+        libraries = options.programs.nix-ld.libraries.default;
+      };
+      programs.gnupg.agent = {
+        enable = true;
+        enableSSHSupport = true;
+      };
+    }
+    // lib.optionalAttrs (!isDarwin) {
+      programs.nm-applet.indicator = true;
+      programs.mtr.enable = true;
+      programs.dconf.enable = true;
+      programs.seahorse.enable = true;
+      programs.fuse.userAllowOther = true;
     };
-
-    # Network manager applet
-    programs.nm-applet.indicator = true;
-
-    # Application settings storage
-    programs.dconf.enable = true;
-
-    # GNOME keyring interface
-    programs.seahorse.enable = true;
-
-    # FUSE utilities for user filesystems
-    programs.fuse.userAllowOther = true;
-
-    # Network diagnostics
-    programs.mtr.enable = true;
-
-    # GPG agent with SSH support
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-  };
 }
