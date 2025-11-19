@@ -1,10 +1,13 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.system.networking;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.networking = {
@@ -39,6 +42,9 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       hostName = cfg.hostName;
+      networkmanager.enable = true;
+    }
+    // lib.optionalAttrs (!isDarwin) {
       networkmanager.enable = true;
     };
   };
