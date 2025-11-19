@@ -2,11 +2,13 @@
   config,
   lib,
   pkgs,
+  system,
   ...
 }:
 
 let
   cfg = config.jvf.hardware.amd-gpu;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.hardware.amd-gpu = {
@@ -46,36 +48,41 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    boot.initrd.kernelModules = [ "amdgpu" ];
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        boot.initrd.kernelModules = [ "amdgpu" ];
 
-    services.xserver = {
-      enable = true;
-      videoDrivers = [ "amdgpu" ];
-    };
+        services.xserver = {
+          enable = true;
+          videoDrivers = [ "amdgpu" ];
+        };
 
-    hardware.graphics = {
-      enable = true;
-      enable32Bit = cfg.enable32Bit;
-      extraPackages =
-        with pkgs;
-        [
-          libva
-          libva-utils
-        ]
-        ++ lib.optionals cfg.enableRocm [
-          rocmPackages.clr.icd
-          rocmPackages.clr
-          rocmPackages.rocminfo
-          rocmPackages.rocm-runtime
-        ]
-        ++ cfg.extraPackages;
-    };
+        hardware.graphics = {
+          enable = true;
+          enable32Bit = cfg.enable32Bit;
+          extraPackages =
+            with pkgs;
+            [
+              libva
+              libva-utils
+            ]
+            ++ lib.optionals cfg.enableRocm [
+              rocmPackages.clr.icd
+              rocmPackages.clr
+              rocmPackages.rocminfo
+              rocmPackages.rocm-runtime
+            ]
+            ++ cfg.extraPackages;
+        };
 
-    systemd.tmpfiles.rules = lib.optionals cfg.enableRocm [
-      "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
-    ];
+        systemd.tmpfiles.rules = lib.optionals cfg.enableRocm [
+          "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+        ];
 
-    hardware.cpu.amd.updateMicrocode = true;
-  };
+        hardware.cpu.amd.updateMicrocode = true;
+      }
+    else
+      { }
+  );
 }
