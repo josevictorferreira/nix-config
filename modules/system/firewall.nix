@@ -1,7 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.firewall;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.firewall = {
@@ -25,11 +31,16 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    networking.firewall = {
-      enable = true;
-      allowedTCPPorts = cfg.allowedTCPPorts;
-      allowedUDPPorts = cfg.allowedUDPPorts;
-    };
-  };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        networking.firewall = {
+          enable = true;
+          allowedTCPPorts = cfg.allowedTCPPorts;
+          allowedUDPPorts = cfg.allowedUDPPorts;
+        };
+      }
+    else
+      { }
+  );
 }
