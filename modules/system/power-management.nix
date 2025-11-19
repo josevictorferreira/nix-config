@@ -1,12 +1,15 @@
-{ config
-, lib
-, username
-, pkgs
-, ...
+{
+  config,
+  lib,
+  username,
+  pkgs,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.system.power-management;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.power-management = {
@@ -76,22 +79,27 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    users.users."${cfg.username}".packages = [
-      pkgs.cpufrequtils
-    ];
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        users.users."${cfg.username}".packages = [
+          pkgs.cpufrequtils
+        ];
 
-    zramSwap = {
-      enable = true;
-      priority = cfg.zramPriority;
-      memoryPercent = cfg.zramMemoryPercent;
-      swapDevices = 1;
-      algorithm = cfg.zramAlgorithm;
-    };
+        zramSwap = {
+          enable = true;
+          priority = cfg.zramPriority;
+          memoryPercent = cfg.zramMemoryPercent;
+          swapDevices = 1;
+          algorithm = cfg.zramAlgorithm;
+        };
 
-    powerManagement = {
-      enable = true;
-      cpuFreqGovernor = cfg.cpuFreqGovernor;
-    };
-  };
+        powerManagement = {
+          enable = true;
+          cpuFreqGovernor = cfg.cpuFreqGovernor;
+        };
+      }
+    else
+      { }
+  );
 }
