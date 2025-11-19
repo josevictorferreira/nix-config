@@ -30,16 +30,16 @@ in
 
   config =
     lib.mkIf cfg.enable {
-      programs.nix-ld = {
-        enable = true;
-        libraries = options.programs.nix-ld.libraries.default;
-      };
       programs.gnupg.agent = {
         enable = true;
         enableSSHSupport = true;
       };
     }
     // lib.optionalAttrs (!isDarwin) {
+      programs.nix-ld = {
+        enable = true;
+        libraries = options.programs.nix-ld.libraries.default;
+      };
       programs.nm-applet.indicator = true;
       programs.mtr.enable = true;
       programs.dconf.enable = true;
