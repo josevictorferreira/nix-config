@@ -1,10 +1,13 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.system.locale;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.locale = {
@@ -34,22 +37,27 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    time.timeZone = cfg.timeZone;
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        time.timeZone = cfg.timeZone;
 
-    i18n = {
-      defaultLocale = cfg.defaultLocale;
-      extraLocaleSettings = lib.mkIf cfg.useConsistentLocale {
-        LC_ADDRESS = cfg.defaultLocale;
-        LC_IDENTIFICATION = cfg.defaultLocale;
-        LC_MEASUREMENT = cfg.defaultLocale;
-        LC_MONETARY = cfg.defaultLocale;
-        LC_NAME = cfg.defaultLocale;
-        LC_NUMERIC = cfg.defaultLocale;
-        LC_PAPER = cfg.defaultLocale;
-        LC_TELEPHONE = cfg.defaultLocale;
-        LC_TIME = cfg.defaultLocale;
-      };
-    };
-  };
+        i18n = {
+          defaultLocale = cfg.defaultLocale;
+          extraLocaleSettings = lib.mkIf cfg.useConsistentLocale {
+            LC_ADDRESS = cfg.defaultLocale;
+            LC_IDENTIFICATION = cfg.defaultLocale;
+            LC_MEASUREMENT = cfg.defaultLocale;
+            LC_MONETARY = cfg.defaultLocale;
+            LC_NAME = cfg.defaultLocale;
+            LC_NUMERIC = cfg.defaultLocale;
+            LC_PAPER = cfg.defaultLocale;
+            LC_TELEPHONE = cfg.defaultLocale;
+            LC_TIME = cfg.defaultLocale;
+          };
+        };
+      }
+    else
+      { }
+  );
 }
