@@ -42,7 +42,6 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       hostName = cfg.hostName;
-      networkmanager.enable = true;
     }
     // lib.optionalAttrs (!isDarwin) {
       networkmanager.enable = true;
