@@ -1,10 +1,13 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.hardware.logitech;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.hardware.logitech = {
@@ -25,10 +28,16 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    hardware.logitech.wireless = {
-      enable = true;
-      enableGraphical = lib.mkDefault cfg.enableGraphical;
-    };
-  };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+
+        hardware.logitech.wireless = {
+          enable = true;
+          enableGraphical = lib.mkDefault cfg.enableGraphical;
+        };
+      }
+    else
+      { }
+  );
 }
