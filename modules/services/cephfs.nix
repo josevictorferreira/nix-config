@@ -68,6 +68,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.ceph-client ];
+
     system.fsPackages = [ pkgs.bindfs ];
 
     sops.secrets.ceph_client_keyring = {
