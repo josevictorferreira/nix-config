@@ -1,7 +1,9 @@
-{ lib
-, config
-, system
-, ...
+{
+  lib,
+  config,
+  system,
+  username,
+  ...
 }:
 
 let
@@ -20,7 +22,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = "";
+      default = username;
       description = "Username for network storage.";
     };
   };

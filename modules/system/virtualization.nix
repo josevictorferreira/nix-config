@@ -37,11 +37,14 @@ in
           enable = true;
           dockerCompat = true;
           defaultNetwork.settings.dns_enabled = true;
+          autoPrune.dates = "monthly";
         };
 
         users.users."${cfg.username}".packages = [
-          pkgs.podman-compose
           pkgs.podman
+          pkgs.podman-tui
+          pkgs.podman-compose
+          pkgs.dive
         ];
       }
     else
