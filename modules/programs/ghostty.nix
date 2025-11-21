@@ -1,24 +1,25 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
+  isDarwin = builtins.match ".*-darwin" system != null;
 
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} = ${builtins.toJSON value}"
-          else
-            "${key} = ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
+      ) settings
     );
 
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
@@ -73,8 +74,8 @@ in
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.ghostty = {
       packages = [
-        cfg.package
-      ];
+      ]
+      ++ (lib.optional (!isDarwin) cfg.package);
       configs = {
         "config" = toConfigFormat cfg.settings;
       };

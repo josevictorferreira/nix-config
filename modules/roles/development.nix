@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -35,7 +36,7 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs = {
-      ghostty.enable = !(pkgs.stdenv.isDarwin);
+      ghostty.enable = true;
       alacritty.enable = true;
       kitty.enable = true;
       neovim.enable = true;
