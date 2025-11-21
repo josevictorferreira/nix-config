@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.services.cephFs;
@@ -71,8 +72,16 @@ in
 
     sops.secrets.ceph_client_keyring = {
       path = "/etc/ceph/ceph.keyring";
+      owner = cfg.username;
+      group = lib.strings.toLower cfg.name;
+      mode = "0400";
     };
-    sops.secrets.ceph_client_secret = { };
+    sops.secrets.ceph_client_secret = {
+      path = "/run/secrets/ceph_client_secret";
+      owner = cfg.username;
+      group = lib.strings.toLower cfg.name;
+      mode = "0400";
+    };
 
     environment.etc."ceph/ceph.conf".text = ''
       [global]
