@@ -70,27 +70,28 @@ in
     };
   };
 
-  config = {
-    users.users = lib.mapAttrs (
-      name: userCfg:
-      lib.mkIf userCfg.enable {
-        description = userCfg.description;
-        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-        packages = userCfg.packages;
-      }
-      // (
-        if (!isDarwin) then
+  config = lib.mkMerge [
+    {
+      users.users = lib.mapAttrs (
+        name: userCfg:
+        lib.mkIf userCfg.enable (
           {
+            description = userCfg.description;
+            openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+            packages = userCfg.packages;
+          }
+          // lib.optionalAttrs (!isDarwin) {
             isNormalUser = true;
+            group = name;
             homeMode = userCfg.homeMode;
             extraGroups = userCfg.extraGroups;
           }
-        else
-          { }
-      )
-    ) cfg.users;
-  }
-  // lib.optionalAttrs (!isDarwin) {
-    users.mutableUsers = true;
-  };
+        )
+      ) cfg.users;
+    }
+    (lib.mkIf (!isDarwin) {
+      users.mutableUsers = true;
+      users.groups = lib.mapAttrs (name: userCfg: lib.mkIf userCfg.enable { }) cfg.users;
+    })
+  ];
 }
