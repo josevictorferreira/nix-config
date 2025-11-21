@@ -190,7 +190,7 @@ let
               let
                 targetDir = wrapper.configTargetDir;
                 darwinCopyDir = ''
-                  cp -rL "${wrapper.configDir}"/* "${targetDir}/" 2>/dev/null || true
+                  find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
                 '';
                 linuxCopyDir = ''
                   if [ -d "${wrapper.configDir}/${programName}" ]; then
