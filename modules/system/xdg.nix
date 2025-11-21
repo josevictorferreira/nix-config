@@ -1,12 +1,15 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.system.xdg;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.xdg = {
@@ -68,29 +71,34 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    users.users."${cfg.username}".packages = [
-      pkgs.xdg-user-dirs
-      pkgs.xdg-utils
-    ];
-
-    xdg = {
-      mime = lib.mkIf cfg.enableMimeDefaults {
-        enable = true;
-        defaultApplications = cfg.mimeDefaults;
-      };
-
-      portal = lib.mkIf cfg.enablePortals {
-        enable = true;
-        wlr.enable = cfg.portalWlr;
-        extraPortals = lib.mkIf cfg.portalGnome [
-          pkgs.xdg-desktop-portal-gtk
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        users.users."${cfg.username}".packages = [
+          pkgs.xdg-user-dirs
+          pkgs.xdg-utils
         ];
-        configPackages = lib.mkIf cfg.portalGnome [
-          pkgs.xdg-desktop-portal-gtk
-          pkgs.xdg-desktop-portal
-        ];
-      };
-    };
-  };
+
+        xdg = {
+          mime = lib.mkIf cfg.enableMimeDefaults {
+            enable = true;
+            defaultApplications = cfg.mimeDefaults;
+          };
+
+          portal = lib.mkIf cfg.enablePortals {
+            enable = true;
+            wlr.enable = cfg.portalWlr;
+            extraPortals = lib.mkIf cfg.portalGnome [
+              pkgs.xdg-desktop-portal-gtk
+            ];
+            configPackages = lib.mkIf cfg.portalGnome [
+              pkgs.xdg-desktop-portal-gtk
+              pkgs.xdg-desktop-portal
+            ];
+          };
+        };
+      }
+    else
+      { }
+  );
 }

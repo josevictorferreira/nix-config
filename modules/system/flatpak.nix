@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.flatpak;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.flatpak = {
@@ -19,16 +26,21 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.flatpak.enable = true;
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        services.flatpak.enable = true;
 
-    services.rpcbind.enable = true;
+        services.rpcbind.enable = true;
 
-    systemd.services.flatpak-repo = lib.mkIf cfg.enableFlathub {
-      path = [ pkgs.flatpak ];
-      script = ''
-        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-      '';
-    };
-  };
+        systemd.services.flatpak-repo = lib.mkIf cfg.enableFlathub {
+          path = [ pkgs.flatpak ];
+          script = ''
+            flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          '';
+        };
+      }
+    else
+      { }
+  );
 }

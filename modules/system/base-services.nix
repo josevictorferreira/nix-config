@@ -1,7 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.base-services;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.base-services = {
@@ -52,34 +58,39 @@ in
     fstrimInterval = lib.mkOption {
       type = lib.types.str;
       default = "weekly";
-      description = "Interval for SSD TRIM operations.";
+      description = "Interval for SSD TRIM operations. ";
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services = {
-      dbus.enable = true;
-      udev.enable = true;
-      libinput.enable = true;
-      envfs.enable = true;
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        services = {
+          dbus.enable = true;
+          udev.enable = true;
+          libinput.enable = true;
+          envfs.enable = true;
 
-      gvfs = lib.mkIf cfg.enableGvfs {
-        enable = true;
-      };
+          gvfs = lib.mkIf cfg.enableGvfs {
+            enable = true;
+          };
 
-      tumbler.enable = lib.mkIf cfg.enableTumbler true;
+          tumbler.enable = lib.mkIf cfg.enableTumbler true;
 
-      smartd = lib.mkIf cfg.enableSmartd {
-        enable = true;
-        autodetect = true;
-      };
+          smartd = lib.mkIf cfg.enableSmartd {
+            enable = true;
+            autodetect = true;
+          };
 
-      lorri.enable = lib.mkIf cfg.enableLorri true;
+          lorri.enable = lib.mkIf cfg.enableLorri true;
 
-      fstrim = lib.mkIf cfg.enableFstrim {
-        enable = true;
-        interval = cfg.fstrimInterval;
-      };
-    };
-  };
+          fstrim = lib.mkIf cfg.enableFstrim {
+            enable = true;
+            interval = cfg.fstrimInterval;
+          };
+        };
+      }
+    else
+      { }
+  );
 }

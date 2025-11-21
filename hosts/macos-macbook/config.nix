@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, host
-, inputs
-, ...
+{
+  pkgs,
+  username,
+  host,
+  inputs,
+  ...
 }:
 let
   inherit (inputs) self;
@@ -81,7 +82,7 @@ in
   };
 
   jvf.users.${username} = {
-    name = username;
+    enable = true;
     authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
     ];

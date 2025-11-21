@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, inputs
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  inputs,
+  system,
+  ...
 }:
 
 let
@@ -14,21 +15,18 @@ let
     uCfg: userName:
     let
       userConfig = config.users.users.${userName} or { };
-      home =
-        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+      home = if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
       group = userConfig.group or (if pkgs.stdenv.isDarwin then "staff" else "users");
     in
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          rel: repo:
-          inputs.lib.git.cloneRepoText {
-            username = userName;
-            inherit group repo;
-            targetDir = "${home}/${rel}";
-          }
-        )
-        uCfg.clonedDirs
+      lib.mapAttrsToList (
+        rel: repo:
+        inputs.lib.git.cloneRepoText {
+          username = userName;
+          inherit group repo;
+          targetDir = "${home}/${rel}";
+        }
+      ) uCfg.clonedDirs
     );
 in
 {
@@ -57,49 +55,45 @@ in
     [ ]
     ++ lib.optional isDarwin {
       launchd.daemons = lib.mkMerge (
-        lib.mapAttrsToList
-          (
-            userName: uCfg:
-              if uCfg.clonedDirs == { } then
-                { }
-              else
-                {
-                  "jvf-clone-repos-${userName}" = {
-                    serviceConfig = {
-                      ProgramArguments = [
-                        "${pkgs.bash}/bin/bash"
-                        "-c"
-                        ''
-                          set -euo pipefail
-                          ${mkBody uCfg userName}
-                        ''
-                      ];
-                      RunAtLoad = true;
-                      StandardOutPath = "/tmp/jvf-clone-repos-${userName}.log";
-                      StandardErrorPath = "/tmp/jvf-clone-repos-${userName}.err";
-                    };
-                  };
-                }
-          )
-          cfg.users
+        lib.mapAttrsToList (
+          userName: uCfg:
+          if uCfg.clonedDirs == { } then
+            { }
+          else
+            {
+              "jvf-clone-repos-${userName}" = {
+                serviceConfig = {
+                  ProgramArguments = [
+                    "${pkgs.bash}/bin/bash"
+                    "-c"
+                    ''
+                      set -euo pipefail
+                      ${mkBody uCfg userName}
+                    ''
+                  ];
+                  RunAtLoad = true;
+                  StandardOutPath = "/tmp/jvf-clone-repos-${userName}.log";
+                  StandardErrorPath = "/tmp/jvf-clone-repos-${userName}.err";
+                };
+              };
+            }
+        ) cfg.users
       );
     }
     ++ lib.optional (!isDarwin) {
       system.userActivationScripts = lib.mkMerge (
-        lib.mapAttrsToList
-          (
-            userName: uCfg:
-              if uCfg.clonedDirs == { } then
-                { }
-              else
-                {
-                  "jvf-clone-repos-${userName}" = ''
-                    set -euo pipefail
-                    ${mkBody uCfg userName}
-                  '';
-                }
-          )
-          cfg.users
+        lib.mapAttrsToList (
+          userName: uCfg:
+          if uCfg.clonedDirs == { } then
+            { }
+          else
+            {
+              "jvf-clone-repos-${userName}" = ''
+                set -euo pipefail
+                ${mkBody uCfg userName}
+              '';
+            }
+        ) cfg.users
       );
     }
   );

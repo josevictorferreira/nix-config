@@ -9,13 +9,10 @@ let
 in
 let
   inherit (import ./variables.nix) gitUsername;
-in
-{
+in {
   imports = [
-    # Core modules
     "${self}/modules/desktop/hyprland"
 
-    # Machine-specific hardware configuration
     ./hardware.nix
   ];
 

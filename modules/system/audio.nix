@@ -1,7 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.audio;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.audio = {
@@ -30,26 +36,31 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    # Disable PulseAudio when using PipeWire
-    services.pulseaudio.enable = false;
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        # Disable PulseAudio when using PipeWire
+        services.pulseaudio.enable = false;
 
-    # Enable PipeWire with ALSA and PulseAudio compatibility
-    services.pipewire = {
-      enable = true;
-      alsa = {
-        enable = true;
-        support32Bit = cfg.alsa32BitSupport;
-      };
-      pulse = {
-        enable = true;
-      };
-      wireplumber = {
-        enable = cfg.wireplumberEnable;
-      };
-    };
+        # Enable PipeWire with ALSA and PulseAudio compatibility
+        services.pipewire = {
+          enable = true;
+          alsa = {
+            enable = true;
+            support32Bit = cfg.alsa32BitSupport;
+          };
+          pulse = {
+            enable = true;
+          };
+          wireplumber = {
+            enable = cfg.wireplumberEnable;
+          };
+        };
 
-    # Enable libinput for input devices (required for audio input)
-    services.libinput.enable = true;
-  };
+        # Enable libinput for input devices (required for audio input)
+        services.libinput.enable = true;
+      }
+    else
+      { }
+  );
 }

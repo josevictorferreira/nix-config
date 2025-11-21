@@ -1,7 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.system.logind;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.logind = {
@@ -70,32 +76,37 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.logind.settings = {
-      Login = {
-        HandleLidSwitch = cfg.handleLidSwitch;
-        HandleSuspendKey = cfg.handleSuspendKey;
-        HandleHibernateKey = cfg.handleHibernateKey;
-      };
-    };
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        services.logind.settings = {
+          Login = {
+            HandleLidSwitch = cfg.handleLidSwitch;
+            HandleSuspendKey = cfg.handleSuspendKey;
+            HandleHibernateKey = cfg.handleHibernateKey;
+          };
+        };
 
-    security = lib.mkIf cfg.allowUsersToDoPowerOperations {
-      polkit.extraConfig = ''
-        polkit.addRule(function(action, subject) {
-          if (
-            subject.isInGroup("users")
-              && (
-                action.id == "org.freedesktop.login1.reboot" ||
-                action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-                action.id == "org.freedesktop.login1.power-off" ||
-                action.id == "org.freedesktop.login1.power-off-multiple-sessions"
-              )
-            )
-          {
-            return polkit.Result.YES;
-          }
-        })
-      '';
-    };
-  };
+        security = lib.mkIf cfg.allowUsersToDoPowerOperations {
+          polkit.extraConfig = ''
+            polkit.addRule(function(action, subject) {
+              if (
+                subject.isInGroup("users")
+                  && (
+                    action.id == "org.freedesktop.login1.reboot" ||
+                    action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+                    action.id == "org.freedesktop.login1.power-off" ||
+                    action.id == "org.freedesktop.login1.power-off-multiple-sessions"
+                  )
+                )
+              {
+                return polkit.Result.YES;
+              }
+            })
+          '';
+        };
+      }
+    else
+      { }
+  );
 }

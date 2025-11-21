@@ -1,10 +1,13 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.system.nixpkgs;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.nixpkgs = {

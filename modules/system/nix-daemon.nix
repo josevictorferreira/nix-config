@@ -1,6 +1,7 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  ...
 }:
 
 let
@@ -31,12 +32,6 @@ in
       description = "Enable automatic garbage collection.";
     };
 
-    gcDates = lib.mkOption {
-      type = lib.types.str;
-      default = "weekly";
-      description = "When to run garbage collection (e.g., 'weekly', 'daily', '01:00').";
-    };
-
     gcOptions = lib.mkOption {
       type = lib.types.str;
       default = "--delete-older-than 7d";
@@ -45,7 +40,10 @@ in
 
     experimentalFeatures = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ "nix-command" "flakes" ];
+      default = [
+        "nix-command"
+        "flakes"
+      ];
       description = "Nix experimental features to enable.";
     };
 
@@ -71,7 +69,6 @@ in
   config = lib.mkIf cfg.enable {
     nix = {
       settings = {
-        auto-optimise-store = cfg.autoOptimiseStore;
         experimental-features = cfg.experimentalFeatures;
         substituters = cfg.substituters;
         trusted-substituters = cfg.trustedSubstituters;
@@ -84,7 +81,6 @@ in
 
     nix.gc = lib.mkIf cfg.garbageCollect {
       automatic = true;
-      dates = cfg.gcDates;
       options = cfg.gcOptions;
     };
   };

@@ -3,6 +3,7 @@
   pkgs,
   config,
   username,
+  system,
   ...
 }:
 let
@@ -10,6 +11,7 @@ let
   cfg = config.jvf.programs.opencode;
 
   aiTools = import ../../common/ai-tools { inherit lib pkgs; };
+  isDarwin = builtins.match ".*-darwin" system != null;
 
   mkMdConfigs =
     prefix: attrset:
@@ -80,8 +82,9 @@ in
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
-        shellScriptBin
-      ];
+      ]
+      ++ lib.optional isDarwin pkgs.opencode
+      ++ lib.optional (!isDarwin) shellScriptBin;
       configs = lib.mkMerge [
         (mkMdConfigs "agent" aiTools.agents)
         (mkMdConfigs "command" aiTools.commands)

@@ -1,8 +1,15 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  system,
+  ...
+}:
 
 let
   inherit (inputs) self;
   cfg = config.jvf.system.security;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.security = {
@@ -65,61 +72,73 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    security = {
-      rtkit.enable = cfg.enableRtkit;
-      polkit = lib.mkMerge [
-        { enable = cfg.enablePolkit; }
-        (lib.mkIf cfg.enablePolkit {
-          extraConfig = ''
-            polkit.addRule(function(action, subject) {
-              if (
-                subject.isInGroup("users")
-                  && (
-                    action.id == "org.freedesktop.login1.reboot" ||
-                    action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-                    action.id == "org.freedesktop.login1.power-off" ||
-                    action.id == "org.freedesktop.login1.power-off-multiple-sessions"
-                  )
-                )
-              {
-                return polkit.Result.YES;
-              }
-            });
+  config = lib.mkIf cfg.enable (
+    if (!isDarwin) then
+      {
+        security = {
+          rtkit.enable = cfg.enableRtkit;
+          polkit = lib.mkMerge [
+            { enable = cfg.enablePolkit; }
+            (lib.mkIf cfg.enablePolkit {
+              extraConfig = ''
+                polkit.addRule(function(action, subject) {
+                  if (
+                    subject.isInGroup("users")
+                      && (
+                        action.id == "org.freedesktop.login1.reboot" ||
+                        action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+                        action.id == "org.freedesktop.login1.power-off" ||
+                        action.id == "org.freedesktop.login1.power-off-multiple-sessions"
+                      )
+                    )
+                  {
+                    return polkit.Result.YES;
+                  }
+                });
 
-            polkit.addRule(function(action, subject) {
-              if (subject.isInGroup("wheel") &&
-                  action.id.indexOf("org.freedesktop.policykit.exec") >= 0) {
-                return polkit.Result.YES;
-              }
-            });
-          '';
-        })
-      ];
-    };
+                polkit.addRule(function(action, subject) {
+                  if (subject.isInGroup("wheel") &&
+                      action.id.indexOf("org.freedesktop.policykit.exec") >= 0) {
+                    return polkit.Result.YES;
+                  }
+                });
+              '';
+            })
+          ];
+        };
 
-    services.openssh = lib.mkIf cfg.enableSsh {
-      enable = true;
-    };
+        services.openssh = lib.mkIf cfg.enableSsh {
+          enable = true;
+        };
 
-    services.gnome.gnome-keyring = lib.mkIf cfg.enableGnomeKeyring {
-      enable = true;
-    };
+        services.gnome.gnome-keyring = lib.mkIf cfg.enableGnomeKeyring {
+          enable = true;
+        };
 
-    services.fwupd = lib.mkIf cfg.enableFwupd {
-      enable = true;
-    };
+        services.fwupd = lib.mkIf cfg.enableFwupd {
+          enable = true;
+        };
 
-    # SOPS configuration
-    services.seatd = lib.mkIf cfg.enablePolkit {
-      enable = true;
-    };
+        # SOPS configuration
+        services.seatd = lib.mkIf cfg.enablePolkit {
+          enable = true;
+        };
 
-    sops = lib.mkIf cfg.enableSops {
-      defaultSopsFile = "${self}/secrets/secrets.enc.yaml";
-      age.keyFile = cfg.sopsAgeKeyPath;
-    };
+        sops = lib.mkIf cfg.enableSops {
+          defaultSopsFile = "${self}/secrets/secrets.enc.yaml";
+          age.keyFile = cfg.sopsAgeKeyPath;
+        };
 
-    environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
-  };
+        environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
+      }
+    else
+      {
+        sops = lib.mkIf cfg.enableSops {
+          defaultSopsFile = "${self}/secrets/secrets.enc.yaml";
+          age.keyFile = cfg.sopsAgeKeyPath;
+        };
+
+        environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
+      }
+  );
 }

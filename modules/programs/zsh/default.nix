@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.zsh;
@@ -24,7 +25,6 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.zsh.enable = true;
-    users.defaultUserShell = pkgs.zsh;
 
     environment = {
       shells = [ pkgs.zsh ];
@@ -41,7 +41,12 @@ in
         pkgs.direnv
       ];
       configs = {
-        "zsh" = ./.;
+        "init.zsh" = builtins.readFile ./init.zsh;
+        "aliases.zsh" = builtins.readFile ./aliases.zsh;
+        "plugins.zsh" = builtins.readFile ./plugins.zsh;
+        "secrets.zsh" = builtins.readFile ./secrets.zsh;
+        "settings.zsh" = builtins.readFile ./settings.zsh;
+        "utils.zsh" = builtins.readFile ./utils.zsh;
         ".zshrc" = ''
           source $HOME/.config/zsh/init.zsh
         '';

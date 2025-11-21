@@ -1,10 +1,13 @@
-{ lib
-, config
-, ...
+{
+  lib,
+  config,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf = {
@@ -68,20 +71,26 @@ in
   };
 
   config = {
-    users.mutableUsers = true;
-
-    users.users = lib.mapAttrs
-      (
-        name: userCfg:
-          lib.mkIf userCfg.enable {
-            homeMode = userCfg.homeMode;
+    users.users = lib.mapAttrs (
+      name: userCfg:
+      lib.mkIf userCfg.enable {
+        description = userCfg.description;
+        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+        packages = userCfg.packages;
+      }
+      // (
+        if (!isDarwin) then
+          {
             isNormalUser = true;
-            description = userCfg.description;
+            homeMode = userCfg.homeMode;
             extraGroups = userCfg.extraGroups;
-            openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-            packages = userCfg.packages;
           }
+        else
+          { }
       )
-      cfg.users;
+    ) cfg.users;
+  }
+  // lib.optionalAttrs (!isDarwin) {
+    users.mutableUsers = true;
   };
 }

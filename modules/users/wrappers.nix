@@ -111,9 +111,7 @@ let
       configPath ? null,
     }:
     let
-      userConfig = config.users.users.${userName} or { };
-      home =
-        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+      home = if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
 
       processedConfigs = processConfigs { inherit configs programName; };
 
@@ -157,9 +155,7 @@ let
   mkUserActivation =
     userName: uCfg:
     let
-      userConfig = config.users.users.${userName} or { };
-      home =
-        userConfig.home or (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+      home = if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
     in
     lib.concatStringsSep "\n" (
       lib.mapAttrsToList (
