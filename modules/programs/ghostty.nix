@@ -22,12 +22,15 @@ let
       ) settings
     );
 
-  tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
-    # Load standard configuration
+  tmuxpDarwinPath = ''
     if [ -e /etc/profile ]; then source /etc/profile; fi
-    
+
     # Explicitly add Nix paths to the front to survive tmux/zsh resets
     export PATH="/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
+  '';
+
+  tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
+    ${lib.optionalString isDarwin tmuxpDarwinPath}
 
     exec tmuxp load -y monitoring chat work projects main
   '';
