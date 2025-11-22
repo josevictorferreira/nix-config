@@ -70,26 +70,26 @@ in
     };
   };
 
-  config = {
-    users.users = lib.mapAttrs (
-      name: userCfg:
-      lib.mkIf userCfg.enable (
-        {
-          description = userCfg.description;
-          openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-          packages = userCfg.packages;
-        }
-        // lib.optionalAttrs (!isDarwin) {
-          isNormalUser = true;
-          group = name;
-          homeMode = userCfg.homeMode;
-          extraGroups = userCfg.extraGroups;
-        }
-      )
-    ) cfg.users;
-  }
-  // (lib.optionalAttrs (!isDarwin) {
-    users.mutableUsers = true;
-    users.groups = lib.mapAttrs (name: userCfg: lib.mkIf userCfg.enable { }) cfg.users;
-  });
+  config =
+    { }
+    // (lib.optionalAttrs (!isDarwin) {
+      users.users = lib.mapAttrs (name: userCfg: {
+        description = userCfg.description;
+        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+        packages = userCfg.packages;
+        group = name;
+        homeMode = userCfg.homeMode;
+        extraGroups = userCfg.extraGroups;
+        isNormalUser = true;
+      }) cfg.users;
+      users.mutableUsers = true;
+      users.groups = lib.mapAttrs (name: userCfg: lib.mkIf userCfg.enable { }) cfg.users;
+    })
+    // (lib.optionalAttrs isDarwin {
+      users.users = lib.mapAttrs (name: userCfg: {
+        description = userCfg.description;
+        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+        packages = userCfg.packages;
+      }) cfg.users;
+    });
 }
