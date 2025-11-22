@@ -2,7 +2,6 @@
 
 scriptsDir=$HOME/.config/hypr/scripts
 wallpaper=$HOME/.wallpaper_modified
-waybar_style="$HOME/.config/waybar/style/[Dark] Latte-Wallust combined.css"
 kvantum_theme="Catppuccin-Mocha"
 color_scheme="prefer-dark"
 gtk_theme="Andromeda-dark"
@@ -39,11 +38,7 @@ if [ ! -f "$HOME/.initial_startup_done" ]; then
 
     "$scriptsDir/SwitchKeyboardLayout.sh" > /dev/null 2>&1 &
 
-	if [ -f "$waybar_style" ]; then
-    	ln -sf "$waybar_style" "$HOME/.config/waybar/style.css"
-
 		"$scriptsDir/Refresh.sh" > /dev/null 2>&1 & 
-	fi
     touch "$HOME/.initial_startup_done"
 
     exit
