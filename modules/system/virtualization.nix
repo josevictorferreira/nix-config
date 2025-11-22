@@ -32,7 +32,7 @@ in
   config = lib.mkIf cfg.enable (
     if (!isDarwin) then
       {
-        virtualisation.libvirtd.enable = true;
+        virtualisation.libvirtd.enable = lib.mkDefault false;
         virtualisation.podman = {
           enable = true;
           dockerCompat = true;

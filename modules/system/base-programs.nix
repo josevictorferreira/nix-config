@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   options,
   system,
   ...
@@ -43,7 +42,7 @@ in
       programs.nm-applet.indicator = true;
       programs.mtr.enable = true;
       programs.dconf.enable = true;
-      programs.seahorse.enable = true;
+      programs.seahorse.enable = false;
       programs.fuse.userAllowOther = true;
     };
 }

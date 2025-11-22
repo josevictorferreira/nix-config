@@ -21,7 +21,6 @@ in
         - Polkit for system-level permission management
         - SSH daemon for remote access
         - PAM services for security
-        - GNOME keyring integration
       '';
     };
 
@@ -39,7 +38,7 @@ in
 
     enablePolkit = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''
         Enable PolicyKit for privilege management.
         Configures custom rules for users group and wheel group.
@@ -48,7 +47,7 @@ in
 
     enableGnomeKeyring = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "Enable GNOME keyring for credential storage.";
     };
 
@@ -81,7 +80,7 @@ in
           '';
           rtkit.enable = cfg.enableRtkit;
           polkit = lib.mkMerge [
-            { enable = cfg.enablePolkit; }
+            { enable = lib.mkDefault cfg.enablePolkit; }
             (lib.mkIf cfg.enablePolkit {
               extraConfig = ''
                 polkit.addRule(function(action, subject) {
@@ -126,7 +125,6 @@ in
           enable = true;
         };
 
-        # SOPS configuration
         services.seatd = lib.mkIf cfg.enablePolkit {
           enable = true;
         };

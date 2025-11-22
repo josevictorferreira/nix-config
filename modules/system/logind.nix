@@ -68,12 +68,6 @@ in
       default = "lock";
       description = "Action to take when hibernate key is pressed.";
     };
-
-    allowUsersToDoPowerOperations = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Allow users to perform power operations like reboot/poweroff.";
-    };
   };
 
   config = lib.mkIf cfg.enable (
@@ -85,25 +79,6 @@ in
             HandleSuspendKey = cfg.handleSuspendKey;
             HandleHibernateKey = cfg.handleHibernateKey;
           };
-        };
-
-        security = lib.mkIf cfg.allowUsersToDoPowerOperations {
-          polkit.extraConfig = ''
-            polkit.addRule(function(action, subject) {
-              if (
-                subject.isInGroup("users")
-                  && (
-                    action.id == "org.freedesktop.login1.reboot" ||
-                    action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-                    action.id == "org.freedesktop.login1.power-off" ||
-                    action.id == "org.freedesktop.login1.power-off-multiple-sessions"
-                  )
-                )
-              {
-                return polkit.Result.YES;
-              }
-            })
-          '';
         };
       }
     else
