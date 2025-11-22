@@ -128,6 +128,8 @@ in
 
     jvf.wrappers.users.${cfg.username}.programs.tmuxp = {
       packages = [
+        pkgs.tmux
+        pkgs.fastfetch
         cfg.package
       ];
       configs = {

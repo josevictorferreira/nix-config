@@ -22,12 +22,14 @@ let
       ) settings
     );
 
-  tmuxpInitScript = pkgs.writeShellScript "tmuxp-init-wrapper" ''
-    if command -v tmuxp >/dev/null 2>&1; then
-      exec tmuxp load -y monitoring chat work projects main
-    else
-      exec tmux
-    fi
+  tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
+    # Load standard configuration
+    if [ -e /etc/profile ]; then source /etc/profile; fi
+    
+    # Explicitly add Nix paths to the front to survive tmux/zsh resets
+    export PATH="/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
+
+    exec tmuxp load -y monitoring chat work projects main
   '';
 
   defaultConfig = {
