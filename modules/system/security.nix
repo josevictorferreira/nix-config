@@ -76,6 +76,9 @@ in
     if (!isDarwin) then
       {
         security = {
+          sudo.extraConfig = ''
+            Defaults env_reset,pwfeedback
+          '';
           rtkit.enable = cfg.enableRtkit;
           polkit = lib.mkMerge [
             { enable = cfg.enablePolkit; }
