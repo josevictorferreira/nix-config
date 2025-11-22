@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Variables
-current_wallpaper="$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"
-wallpaper_output="$HOME/.config/hypr/wallpaper_effects/.wallpaper_modified"
+current_wallpaper="$HOME/.wallpaper_current"
+wallpaper_output="$HOME/.wallpaper_modified"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 focused_monitor=$(hyprctl monitors | awk '/^Monitor/{name=$2} /focused: yes/{print name}')
 

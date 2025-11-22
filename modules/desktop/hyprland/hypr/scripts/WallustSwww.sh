@@ -27,12 +27,12 @@ for monitor in "${monitors[@]}"; do
                 echo "Selected wallpaper: $wallpaper_path"
                 
                 # symlink the wallpaper to the location Rofi can access
-                if ln -sf "$wallpaper_path" "$HOME/.config/rofi/.current_wallpaper"; then
+                if ln -sf "$wallpaper_path" "$HOME/.current_wallpaper"; then
                     ln_success=true
                 fi
                 
                 # copy the wallpaper for wallpaper effects
-                cp -r "$wallpaper_path" "$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"
+                cp -r "$wallpaper_path" "$HOME/.wallpaper_current"
             fi
         fi
     fi

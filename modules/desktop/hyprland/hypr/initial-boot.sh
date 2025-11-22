@@ -1,7 +1,7 @@
 #!/bin/bash
 
 scriptsDir=$HOME/.config/hypr/scripts
-wallpaper=$HOME/.config/hypr/wallpaper_effects/.wallpaper_modified
+wallpaper=$HOME/.wallpaper_modified
 waybar_style="$HOME/.config/waybar/style/[Dark] Latte-Wallust combined.css"
 kvantum_theme="Catppuccin-Mocha"
 color_scheme="prefer-dark"
