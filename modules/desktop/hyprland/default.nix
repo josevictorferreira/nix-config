@@ -66,12 +66,13 @@ in
     };
 
     services.greetd.enable = lib.mkDefault false;
-
-    services.displayManager.ly = {
-      enable = true;
-      settings = {
-        animation = "matrix";
+    services.displayManager = {
+      ly.enable = lib.mkDefault false;
+      autoLogin = {
+        enable = true;
+        user = cfg.username;
       };
+      defaultSession = "hyprland";
     };
 
     users.users."${cfg.username}".packages = [
