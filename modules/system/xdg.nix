@@ -81,9 +81,9 @@ in
         "application/x-pdf" = "org.pwmt.zathura.desktop";
         "application/epub+zip" = "org.koreader.koreader.desktop";
         "application/x-mobipocket-ebook" = "org.koreader.koreader.desktop";
-        "text/csv" = "libreoffice-calc.desktop";
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "libreoffice-calc.desktop"; # .xlsx
-        "application/vnd.oasis.opendocument.spreadsheet" = "libreoffice-calc.desktop"; # .ods
+        "text/csv" = "calc.desktop";
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "calc.desktop"; # .xlsx
+        "application/vnd.oasis.opendocument.spreadsheet" = "calc.desktop"; # .ods
 
         # --- File Manager (Thunar) ---
         "inode/directory" = "thunar.desktop";
@@ -132,7 +132,6 @@ in
           pkgs.xdg-user-dirs
           pkgs.xdg-utils
 
-          # Custom neovim wrapper to edit files
           nvimWrapper
         ];
 
@@ -144,14 +143,18 @@ in
 
           portal = lib.mkIf cfg.enablePortals {
             enable = true;
-            wlr.enable = cfg.portalWlr;
-            extraPortals = lib.mkIf cfg.portalGnome [
-              pkgs.xdg-desktop-portal-gtk
-            ];
-            configPackages = lib.mkIf cfg.portalGnome [
-              pkgs.xdg-desktop-portal-gtk
-              pkgs.xdg-desktop-portal
-            ];
+            extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+            config = {
+              common = {
+                default = [ "gtk" ];
+              };
+              hyprland = {
+                default = [
+                  "gtk"
+                  "hyprland"
+                ];
+              };
+            };
           };
         };
 
