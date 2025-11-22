@@ -74,6 +74,7 @@ in
         # --- Text Editor (Custom Alacritty+Nvim) ---
         "application/json" = "nvim-wrapper.desktop";
         "application/toml" = "nvim-wrapper.desktop";
+        "application/yaml" = "nvim-wrapper.desktop";
         "application/x-yaml" = "nvim-wrapper.desktop";
 
         # --- Documents and Spreadsheets ---

@@ -21,7 +21,7 @@ done
 ags -q
 
 sleep 0.3
-waybar &
+waybar > /dev/null 2>&1
 
 sleep 0.5
 swaync > /dev/null 2>&1 &

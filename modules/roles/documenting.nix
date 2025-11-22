@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -28,7 +29,8 @@ in
       pkgs.font-manager
       pkgs.obsidian
       pkgs.koreader
-      pkgs.libreoffice
+      pkgs.libreoffice-still
+      pkgs.zathura
     ];
   };
 }

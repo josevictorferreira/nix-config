@@ -9,7 +9,8 @@ let
 in
 let
   inherit (import ./variables.nix) gitUsername;
-in {
+in
+{
   imports = [
     "${self}/modules/desktop/hyprland"
 
@@ -72,6 +73,7 @@ in {
     "media"
     "gaming"
     "networkStorage"
+    "documenting"
   ];
 
   system.stateVersion = "24.05";
