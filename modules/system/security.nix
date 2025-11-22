@@ -77,7 +77,7 @@ in
       {
         security = {
           sudo.extraConfig = ''
-            Defaults env_reset,pwfeedback
+            Defaults pwfeedback
           '';
           rtkit.enable = cfg.enableRtkit;
           polkit = lib.mkMerge [
