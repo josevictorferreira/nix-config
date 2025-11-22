@@ -202,6 +202,11 @@ let
               in
               ''
                 echo "Setting up config for ${programName}..."
+                if [ -e "${targetDir}" ] && [ ! -L "${targetDir}" ]; then
+                  echo "Backing up existing ${programName} config..."
+                  rm -rf ${targetDir}.backup.*
+                  mv "${targetDir}" "${targetDir}.backup.$(date +%s)"
+                fi
                 rm -rf "${targetDir}"
                 mkdir -p "${targetDir}"
                 # Copy all files from config directory, dereferencing symlinks
