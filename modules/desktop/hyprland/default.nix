@@ -1,8 +1,9 @@
-{ lib
-, config
-, pkgs
-, username
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -64,13 +65,12 @@ in
       fastfetch.enable = true;
     };
 
-    services.greetd = {
+    services.greetd.enable = lib.mkDefault false;
+
+    services.displayManager.ly = {
       enable = true;
       settings = {
-        default_session = {
-          user = username;
-          command = "hyprland";
-        };
+        animation = "matrix";
       };
     };
 
