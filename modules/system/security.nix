@@ -118,6 +118,10 @@ in
           enable = true;
         };
 
+        security.pam.services.login = lib.mkIf cfg.enableGnomeKeyring {
+          enableGnomeKeyring = true;
+        };
+
         services.fwupd = lib.mkIf cfg.enableFwupd {
           enable = true;
         };
