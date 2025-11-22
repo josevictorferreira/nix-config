@@ -97,6 +97,10 @@ in
             ];
           };
         };
+
+        systemd.user.tmpfiles.rules = [
+          "L+ %h/.config/mimeapps.list - - - - /etc/xdg/mimeapps.list"
+        ];
       }
     else
       { }
