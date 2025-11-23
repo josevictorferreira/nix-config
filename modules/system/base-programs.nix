@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  options,
-  system,
-  ...
+{ config
+, lib
+, options
+, system
+, ...
 }:
 
 let
@@ -28,12 +27,13 @@ in
   };
 
   config =
-    lib.mkIf cfg.enable {
-      programs.gnupg.agent = {
-        enable = true;
-        enableSSHSupport = true;
-      };
-    }
+    lib.mkIf cfg.enable
+      {
+        programs.gnupg.agent = {
+          enable = true;
+          enableSSHSupport = true;
+        };
+      }
     // lib.optionalAttrs (!isDarwin) {
       programs.nix-ld = {
         enable = true;

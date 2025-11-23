@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, username, ... }:
 
 {
   options.jvf.programs.zsh = {
@@ -6,6 +6,7 @@
 
     username = lib.mkOption {
       type = lib.types.str;
+      default = username;
       description = "Username for zsh configuration";
     };
 
@@ -48,8 +49,6 @@
     };
 
     secrets = {
-      enable = lib.mkEnableOption "sops-based secret management";
-
       keys = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [

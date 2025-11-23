@@ -1,14 +1,15 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
   cfg = config.jvf.programs.zsh;
 
   # Build secret exports if enabled
-  secretExports = lib.optionalString cfg.secrets.enable ''
+  secretExports = ''
     export OPENROUTER_API_KEY_TERMINAL=$(cat /run/secrets/openrouter_terminal)
     export OPENROUTER_API_KEY_COMMIT=$(cat /run/secrets/openrouter_commit)
     export OPENROUTER_API_KEY_AUTOCOMPLETE=$(cat /run/secrets/openrouter_autocomplete)

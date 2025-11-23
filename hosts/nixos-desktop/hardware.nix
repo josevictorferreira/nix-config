@@ -1,9 +1,8 @@
-{
-  pkgs,
-  username,
-  lib,
-  modulesPath,
-  ...
+{ pkgs
+, username
+, lib
+, modulesPath
+, ...
 }:
 
 {
@@ -182,7 +181,7 @@
     "d /home/${username}/Downloads 0755 ${username} users -"
   ];
 
-  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
+  swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
 
   networking.useDHCP = lib.mkDefault true;
 

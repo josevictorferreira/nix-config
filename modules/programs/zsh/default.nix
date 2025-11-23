@@ -9,8 +9,7 @@
 let
   cfg = config.jvf.programs.zsh;
 
-  # Import all submodules
-  options = import ./options.nix { inherit lib; };
+  options = import ./options.nix { inherit lib username; };
   aliases = import ./aliases.nix { inherit lib pkgs config; };
   environment = import ./environment.nix { inherit lib pkgs config; };
   functions = import ./functions { inherit lib pkgs config; };
@@ -93,10 +92,9 @@ in
       shell = pkgs.zsh;
     };
 
-    # Secrets configuration (if enabled)
-    sops.secrets = lib.mkIf cfg.secrets.enable (
+    sops.secrets = (
       lib.genAttrs cfg.secrets.keys (key: {
-        owner = config.users.users.${cfg.username}.name;
+        owner = cfg.username;
         mode = "0400";
       })
     );

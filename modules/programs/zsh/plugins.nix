@@ -14,7 +14,7 @@
         owner = "zdharma-continuum";
         repo = "fast-syntax-highlighting";
         rev = "v1.55";
-        sha256 = "sha256-DWVFBoICroKaKgByLmDEo4O+xo6eA8YO792g8t8R7kA=";
+        sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
       };
     }
 
@@ -58,7 +58,7 @@
         owner = "zsh-users";
         repo = "zsh-history-substring-search";
         rev = "v1.1.0";
-        sha256 = "sha256-qVaqZ9arNBIkbJivRz+NVD0WfUwEfp9PL/C5XQ+GBoQ=";
+        sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
       };
     }
   ]
