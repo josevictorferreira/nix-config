@@ -18,7 +18,7 @@ let
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
   plugins = import ./plugins.nix {
     inherit lib pkgs;
-    viMode = false; # cfg.features.viMode;
+    viMode = cfg.features.viMode;
   };
   prompt = import ./prompt.nix { inherit lib pkgs config; };
   completion = import ./completion.nix { inherit lib pkgs config; };
@@ -70,7 +70,7 @@ in
       loginShellInit = environment.loginInit;
 
       # Shell aliases (structured)
-      # shellAliases = aliases.structured;
+      shellAliases = aliases.structured;
     };
 
     # System-level configuration
