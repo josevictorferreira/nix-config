@@ -1,13 +1,10 @@
 {
   lib,
   pkgs,
-  config,
+  viMode,
   ...
 }:
 
-let
-  cfg = config.jvf.programs.zsh;
-in
 {
   list = [
     # Syntax highlighting
@@ -65,7 +62,7 @@ in
       };
     }
   ]
-  ++ lib.optionals cfg.features.viMode [
+  ++ lib.optionals viMode [
     # Vi mode
     {
       name = "zsh-vi-mode";

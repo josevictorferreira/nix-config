@@ -16,7 +16,10 @@ let
   functions = import ./functions { inherit lib pkgs config; };
   history = import ./history.nix { inherit lib pkgs config; };
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
-  plugins = import ./plugins.nix { inherit lib pkgs config; };
+  plugins = import ./plugins.nix {
+    inherit lib pkgs;
+    viMode = cfg.features.viMode;
+  };
   prompt = import ./prompt.nix { inherit lib pkgs config; };
   completion = import ./completion.nix { inherit lib pkgs config; };
   tests = import ./tests.nix { inherit lib pkgs config; };
