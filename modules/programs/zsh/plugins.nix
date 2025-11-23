@@ -1,8 +1,7 @@
-{
-  lib,
-  pkgs,
-  viMode,
-  ...
+{ lib
+, pkgs
+, viMode
+, ...
 }:
 
 {

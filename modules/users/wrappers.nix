@@ -192,33 +192,42 @@ let
                 let
                   targetDir = wrapper.configTargetDir;
                   darwinCopyDir = ''
-                    find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
+                    find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
                   '';
                   linuxCopyDir = ''
                     if [ -d "${wrapper.configDir}/${programName}" ]; then
-                      cp -r "${wrapper.configDir}/${programName}/"* "${targetDir}/" 2>/dev/null || true
+                      cp -r "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
                     fi
                     # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
-                    find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "${targetDir}/" \; 2>/dev/null || true
+                    find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
                   '';
                 in
                 ''
                   echo "Setting up config for ${programName}..."
-                  if [ -e "${targetDir}" ] && [ ! -L "${targetDir}" ]; then
-                    echo "Backing up existing ${programName} config..."
-                    rm -rf ${targetDir}.backup.*
-                    mv "${targetDir}" "${targetDir}.backup.$(date +%s)"
-                  fi
-                  rm -rf "${targetDir}"
-                  mkdir -p "${targetDir}"
+                  TARGET_PATH="${targetDir}"
+                  TARGET_DIR="${targetDir}.tmp"
+
+                  rm -rf "$TARGET_DIR"
+                  mkdir -p "$TARGET_DIR"
+
                   # Copy all files from config directory, dereferencing symlinks
                   if [ -d "${wrapper.configDir}" ]; then
                     ${if isDarwin then darwinCopyDir else linuxCopyDir}
-                    chown -R ${userName}:${if isDarwin then "staff" else "users"} "${targetDir}"
-                    chmod -R u+rw "${targetDir}"
-                    find "${targetDir}" -type d -exec chmod 755 {} \;
-                    find "${targetDir}" -type f -exec chmod 644 {} \;
+                    chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_DIR"
+                    chmod -R u+rw "$TARGET_DIR"
+                    find "$TARGET_DIR" -type d -exec chmod 755 {} \;
+                    find "$TARGET_DIR" -type f -exec chmod 644 {} \;
                   fi
+
+                  # Atomic swap
+                  if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
+                    echo "Backing up existing ${programName} config..."
+                    rm -rf "$TARGET_PATH".backup.*
+                    mv "$TARGET_PATH" "$TARGET_PATH".backup.$(date +%s)
+                  fi
+
+                  rm -rf "$TARGET_PATH"
+                  mv "$TARGET_DIR" "$TARGET_PATH"
                 '';
           in
           ''

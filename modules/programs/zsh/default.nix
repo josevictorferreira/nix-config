@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -43,20 +42,22 @@ in
       # Interactive shell configuration
       interactiveShellInit = lib.concatStringsSep "\n\n" [
         # Plugin configuration (manual sourcing)
-        (lib.concatMapStringsSep "\n" (plugin: ''
-          # Load ${plugin.name}
-          if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
-            source ${plugin.src}/${plugin.name}.plugin.zsh
-          elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
-            source ${plugin.src}/${plugin.name}.zsh
-          else
-            # Fallback to finding any .plugin.zsh file
-            for f in ${plugin.src}/*.plugin.zsh(N); do
-              source "$f"
-              break
-            done
-          fi
-        '') plugins.list)
+        (lib.concatMapStringsSep "\n"
+          (plugin: ''
+            # Load ${plugin.name}
+            if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
+              source ${plugin.src}/${plugin.name}.plugin.zsh
+            elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
+              source ${plugin.src}/${plugin.name}.zsh
+            else
+              # Fallback to finding any .plugin.zsh file
+              for f in ${plugin.src}/*.plugin.zsh(N); do
+                source "$f"
+                break
+              done
+            fi
+          '')
+          plugins.list)
 
         history.config
         completion.config
