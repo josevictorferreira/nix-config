@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -38,28 +37,28 @@ in
       shellInit = lib.concatStringsSep "\n" [
         environment.shellInit
         (lib.optionalString cfg.features.powerLevel10k prompt.shellInit)
-        (lib.concatMapStringsSep "\n" (key: ''
-          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-        '') cfg.secrets.keys)
-      ];
-
-      # Interactive shell configuration
-      interactiveShellInit = lib.concatStringsSep "\n\n" [
+        (lib.concatMapStringsSep "\n"
+          (key: ''
+            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+          '')
+          cfg.secrets.keys)
         # Plugin configuration (manual sourcing)
-        (lib.concatMapStringsSep "\n" (plugin: ''
-          # Load ${plugin.name}
-          if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
-            source ${plugin.src}/${plugin.name}.plugin.zsh
-          elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
-            source ${plugin.src}/${plugin.name}.zsh
-          else
-            # Fallback to finding any .plugin.zsh file
-            for f in ${plugin.src}/*.plugin.zsh(N); do
-              source "$f"
-              break
-            done
-          fi
-        '') plugins.list)
+        (lib.concatMapStringsSep "\n"
+          (plugin: ''
+            # Load ${plugin.name}
+            if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
+              source ${plugin.src}/${plugin.name}.plugin.zsh
+            elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
+              source ${plugin.src}/${plugin.name}.zsh
+            else
+              # Fallback to finding any .plugin.zsh file
+              for f in ${plugin.src}/*.plugin.zsh(N); do
+                source "$f"
+                break
+              done
+            fi
+          '')
+          plugins.list)
 
         history.config
         completion.config
@@ -67,6 +66,9 @@ in
         functions.shellInit
         aliases.config
       ];
+
+      # Interactive shell configuration
+      interactiveShellInit = "";
 
       # Login shell configuration
       loginShellInit = environment.loginInit;
@@ -78,7 +80,6 @@ in
     # System-level configuration
     environment = {
       shells = [ pkgs.zsh ];
-      variables.ZDOTDIR = "$HOME/.config/zsh";
       systemPackages =
         with pkgs;
         [
