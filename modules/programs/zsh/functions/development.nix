@@ -50,7 +50,7 @@ in
     b64
     bb64
   ];
-  functions = ''
+  shellInit = ''
     # Legacy alias for backward compatibility
     alias run_livebook="run-livebook"
   '';

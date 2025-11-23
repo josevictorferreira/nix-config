@@ -72,7 +72,7 @@ let
 in
 {
   packages = [ notes ];
-  functions = ''
+  shellInit = ''
     # Interactive alias selection and execution
     function als() {
       local cmd=$(alias | sed "s/^alias //" | \

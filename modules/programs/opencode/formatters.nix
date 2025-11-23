@@ -3,7 +3,7 @@
   config.jvf.programs.opencode.settings.formatter = {
     nixfmt = {
       command = [
-        (lib.getExe pkgs.nixfmt)
+        (lib.getExe pkgs.nixpkgs-fmt)
         "$FILE"
       ];
       extensions = [ ".nix" ];

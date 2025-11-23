@@ -26,5 +26,5 @@ let
 in
 {
   packages = [ ksc ];
-  functions = "";
+  shellInit = "";
 }

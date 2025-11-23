@@ -14,26 +14,20 @@ let
 in
 {
   # Aggregate all packages
-  packages =
-    development.packages
-    ++ kubernetes.packages
-    ++ navigation.packages
-    ++ (lib.optionals cfg.features.aiCommit gitAi.commitPackages)
-    ++ (lib.optionals cfg.features.aiCommand gitAi.commandPackages);
+  packages = development.packages ++ kubernetes.packages ++ navigation.packages ++ gitAi.packages;
 
   # Aggregate shell init scripts
   shellInit = lib.concatStringsSep "\n\n" [
     "# Development Functions"
-    development.functions
+    development.shellInit
 
     "# Kubernetes Functions"
-    kubernetes.functions
+    kubernetes.shellInit
 
     "# Navigation Functions"
-    navigation.functions
+    navigation.shellInit
 
     "# Git AI Functions"
-    (lib.optionalString cfg.features.aiCommit gitAi.commitShellInit)
-    (lib.optionalString cfg.features.aiCommand gitAi.commandShellInit)
+    gitAi.shellInit
   ];
 }

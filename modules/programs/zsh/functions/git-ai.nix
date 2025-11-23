@@ -330,34 +330,36 @@ let
     '';
   };
 
+  cfg = config.jvf.programs.zsh;
 in
 {
-  commitPackages = [
-    git-commit-message
-    gai
-    gaim
-  ];
-  commandPackages = [ ai-cmd-core ];
+  packages =
+    (lib.optionals cfg.features.aiCommit [
+      git-commit-message
+      gai
+      gaim
+    ])
+    ++ (lib.optionals cfg.features.aiCommand [ ai-cmd-core ]);
 
-  commitShellInit = "";
+  shellInit = ''
+    # AI command widget for zsh
+    ${lib.optionalString cfg.features.aiCommand ''
+      function aicmd() {
+        local prefix="''${LBUFFER}"
+        local choice
+        choice=$(ai-cmd-core "$prefix") || return
 
-  commandShellInit = ''
-     # AI command widget for zsh
-    function aicmd() {
-      local prefix="''${LBUFFER}"
-      local choice
-      choice=$(ai-cmd-core "$prefix") || return
+        if [[ -n $choice ]]; then
+          BUFFER="''${choice}"
+          CURSOR=''${#BUFFER}
+        else
+          zle reset-prompt
+        fi
 
-      if [[ -n $choice ]]; then
-        BUFFER="''${choice}"
-        CURSOR=''${#BUFFER}
-      else
-        zle reset-prompt
-      fi
+        zle redisplay
+      }
 
-      zle redisplay
-    }
-
-    zle -N aicmd
+      zle -N aicmd
+    ''}
   '';
 }
