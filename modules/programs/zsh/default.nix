@@ -5,86 +5,97 @@
   username,
   ...
 }:
+
 let
   cfg = config.jvf.programs.zsh;
+
+  # Import all submodules
+  options = import ./options.nix { inherit lib; };
+  aliases = import ./aliases.nix { inherit lib pkgs config; };
+  environment = import ./environment.nix { inherit lib pkgs config; };
+  functions = import ./functions { inherit lib pkgs config; };
+  history = import ./history.nix { inherit lib pkgs config; };
+  keybindings = import ./keybindings.nix { inherit lib pkgs config; };
+  plugins = import ./plugins.nix { inherit lib pkgs config; };
+  prompt = import ./prompt.nix { inherit lib pkgs config; };
+  completion = import ./completion.nix { inherit lib pkgs config; };
+  tests = import ./tests.nix { inherit lib pkgs config; };
+
 in
 {
-  options.jvf.programs.zsh = {
-    enable = lib.mkEnableOption "zsh, a powerful shell with advanced features";
-    username = lib.mkOption {
-      type = lib.types.str;
-      default = username;
-      description = "Username for which to clone the zsh configuration";
-    };
-    setAsDefaultShell = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to set zsh as the default shell for the user";
-    };
-  };
+  imports = [
+    options
+    tests
+  ];
 
   config = lib.mkIf cfg.enable {
-    programs.zsh.enable = true;
+    programs.zsh = {
+      enable = true;
 
+      # Merge all shell initialization
+      shellInit = lib.concatStringsSep "\n" [
+        environment.shellInit
+        (lib.optionalString cfg.features.powerLevel10k prompt.shellInit)
+      ];
+
+      # Interactive shell configuration
+      interactiveShellInit = lib.concatStringsSep "\n\n" [
+        # Plugin configuration (manual sourcing)
+        (lib.concatMapStringsSep "\n" (plugin: ''
+          # Load ${plugin.name}
+          if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
+            source ${plugin.src}/${plugin.name}.plugin.zsh
+          elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
+            source ${plugin.src}/${plugin.name}.zsh
+          else
+            # Fallback to finding any .plugin.zsh file
+            for f in ${plugin.src}/*.plugin.zsh(N); do
+              source "$f"
+              break
+            done
+          fi
+        '') plugins.list)
+
+        history.config
+        completion.config
+        keybindings.config
+        functions.all
+        aliases.config
+      ];
+
+      # Login shell configuration
+      loginShellInit = environment.loginInit;
+
+      # Shell aliases (structured)
+      shellAliases = aliases.structured;
+    };
+
+    # System-level configuration
     environment = {
       shells = [ pkgs.zsh ];
-      variables = {
-        ZDOTDIR = "$HOME/.config/zsh";
-      };
-    };
-
-    jvf.wrappers.users.${cfg.username}.programs.zsh = {
-      packages = [
-        pkgs.zsh
-        pkgs.fzf
-        pkgs.ripgrep
-        pkgs.direnv
+      variables.ZDOTDIR = "$HOME/.config/zsh";
+      systemPackages = with pkgs; [
+        zsh
+        fzf
+        ripgrep
+        direnv
+        eza
+        jq
+        curl
       ];
-      configs = {
-        "init.zsh" = builtins.readFile ./init.zsh;
-        "aliases.zsh" = builtins.readFile ./aliases.zsh;
-        "plugins.zsh" = builtins.readFile ./plugins.zsh;
-        "secrets.zsh" = builtins.readFile ./secrets.zsh;
-        "settings.zsh" = builtins.readFile ./settings.zsh;
-        "utils.zsh" = builtins.readFile ./utils.zsh;
-        ".zshrc" = ''
-          source $HOME/.config/zsh/init.zsh
-        '';
-      };
     };
 
+    # User configuration
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;
     };
 
-    sops.secrets."context7_api_key" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
-
-    sops.secrets."github_token" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
-
-    sops.secrets."openrouter_code_agent" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
-
-    sops.secrets."openrouter_autocomplete" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
-
-    sops.secrets."openrouter_terminal" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
-
-    sops.secrets."openrouter_commit" = {
-      owner = config.users.users.${cfg.username}.name;
-      mode = "0400";
-    };
+    # Secrets configuration (if enabled)
+    sops.secrets = lib.mkIf cfg.secrets.enable (
+      lib.genAttrs cfg.secrets.keys (key: {
+        owner = config.users.users.${cfg.username}.name;
+        mode = "0400";
+      })
+    );
   };
 }

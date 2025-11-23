@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
@@ -63,9 +64,10 @@ in
         sha256 = "sha256-qVaqZ9arNBIkbJivRz+NVD0WfUwEfp9PL/C5XQ+GBoQ=";
       };
     }
-
+  ]
+  ++ lib.optionals cfg.features.viMode [
     # Vi mode
-    (lib.mkIf cfg.features.viMode {
+    {
       name = "zsh-vi-mode";
       src = pkgs.fetchFromGitHub {
         owner = "jeffreytse";
@@ -73,6 +75,6 @@ in
         rev = "v0.11.0";
         sha256 = "sha256-xbchXJTFWeABTwq6h4KWLh+EvydDrDzcY9AQVK65RS8=";
       };
-    })
+    }
   ];
 }
