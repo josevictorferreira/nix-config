@@ -219,15 +219,22 @@ let
                     find "$TARGET_DIR" -type f -exec chmod 644 {} \;
                   fi
 
-                  # Atomic swap
-                  if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
-                    echo "Backing up existing ${programName} config..."
-                    rm -rf "$TARGET_PATH".backup.*
-                    mv "$TARGET_PATH" "$TARGET_PATH".backup.$(date +%s)
-                  fi
+                  # Check for changes
+                  if [ -d "$TARGET_PATH" ] && diff -r -q "$TARGET_DIR" "$TARGET_PATH" >/dev/null 2>&1; then
+                    echo "Config for ${programName} unchanged."
+                    rm -rf "$TARGET_DIR"
+                  else
+                    # Atomic swap
+                    if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
+                      echo "Backing up existing ${programName} config..."
+                      rm -rf "$TARGET_PATH".backup.*
+                      mv "$TARGET_PATH" "$TARGET_PATH".backup.$(date +%s)
+                    fi
 
-                  rm -rf "$TARGET_PATH"
-                  mv "$TARGET_DIR" "$TARGET_PATH"
+                    rm -rf "$TARGET_PATH"
+                    mv "$TARGET_DIR" "$TARGET_PATH"
+                    ${programCfg.postInstall}
+                  fi
                 '';
           in
           ''
@@ -300,6 +307,12 @@ in
                           If null, defaults to .config/{programName}.
                           Example: ".claude-code-router" installs to ~/.claude-code-router
                         '';
+                      };
+
+                      postInstall = lib.mkOption {
+                        type = lib.types.lines;
+                        default = "";
+                        description = "Script to run after config installation.";
                       };
                     };
                   }

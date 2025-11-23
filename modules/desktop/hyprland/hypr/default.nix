@@ -38,6 +38,10 @@ in
       configs = {
         "hypr" = ./.;
       };
+      postInstall = ''
+        echo "Reloading Hyprland..."
+        ${config.programs.hyprland.package}/bin/hyprctl reload || true
+      '';
     };
 
     fonts.packages = [

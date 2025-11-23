@@ -5,6 +5,7 @@
 }:
 
 {
+  commitFunctionPrompt = '''';
   commitFunctions = ''
         # Utility: Trim string to max characters
         function trim_string() {
