@@ -70,7 +70,7 @@ in
       loginShellInit = environment.loginInit;
 
       # Shell aliases (structured)
-      shellAliases = aliases.structured;
+      # shellAliases = aliases.structured;
     };
 
     # System-level configuration
