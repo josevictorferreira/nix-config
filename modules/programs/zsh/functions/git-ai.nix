@@ -1,11 +1,11 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
-  # Core scripts
   git-commit-message = pkgs.writeShellApplication {
     name = "git-commit-message";
     runtimeInputs = [

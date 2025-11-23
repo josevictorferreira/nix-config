@@ -1,14 +1,13 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  pkgs,
+  config,
+  ...
 }:
 
 let
   cfg = config.jvf.programs.zsh;
   notesDir = "${cfg.workspace.shared}/notetaking";
 
-  # Notes script wrapper
   notes = pkgs.writeShellApplication {
     name = "notes";
     runtimeInputs = [
@@ -21,8 +20,6 @@ let
       pkgs.bat
     ];
     text = ''
-      # Interactive note browser with fzf
-      # Expects NOTES_DIR env var to be set
       export NOTES_DIR="${notesDir}"
 
       if [[ -z "$NOTES_DIR" || ! -d "$NOTES_DIR" ]]; then
@@ -30,7 +27,6 @@ let
         exit 1
       fi
 
-      # Verify dependencies
       for cmd in fzf nvim; do
         if ! command -v "$cmd" >/dev/null; then
           echo "$cmd required" >&2
@@ -56,9 +52,6 @@ let
         PREVIEW_CMD='sed -n "1,200p" -- {}'
       fi
 
-      # Run FZF
-      # Note: bash arrays are "''${arr[@]}".
-      # We pipe the file list to fzf
       printf "%s\n" "''${LIST_CMD[@]}" | sort -f | fzf --multi \
         --height=80% \
         --reverse \

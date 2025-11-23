@@ -1,12 +1,11 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
-  cfg = config.jvf.programs.zsh;
-
   development = import ./development.nix { inherit lib pkgs config; };
   kubernetes = import ./kubernetes.nix { inherit lib pkgs config; };
   navigation = import ./navigation.nix { inherit lib pkgs config; };

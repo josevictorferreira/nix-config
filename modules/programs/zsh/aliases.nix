@@ -1,7 +1,7 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  config,
+  ...
 }:
 
 let
@@ -23,6 +23,8 @@ let
     v = "nvim";
     d = "docker";
     m = "make";
+
+    bcat = "bat";
 
     # Better ls
     ls = "eza -a --icons";
