@@ -67,7 +67,7 @@ in
         history.config
         completion.config
         keybindings.config
-        functions.all
+        functions.shellInit
         aliases.config
       ];
 
@@ -82,15 +82,18 @@ in
     environment = {
       shells = [ pkgs.zsh ];
       variables.ZDOTDIR = "$HOME/.config/zsh";
-      systemPackages = with pkgs; [
-        zsh
-        fzf
-        ripgrep
-        direnv
-        eza
-        jq
-        curl
-      ];
+      systemPackages =
+        with pkgs;
+        [
+          zsh
+          fzf
+          ripgrep
+          direnv
+          eza
+          jq
+          curl
+        ]
+        ++ functions.packages;
     };
 
     # User configuration
