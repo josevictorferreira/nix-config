@@ -1,11 +1,129 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
+let
+  commitModelBasePrompt = ''
+    You are to act as the author of a commit message in git.
+
+    Your mission is to create clean and comprehensive commit messages as per the GitMoji specification and explain WHAT were the changes and mainly WHY the changes were done. I'll send you an output of 'git diff --staged' command(this are the most important to define the message), secondly the README.md of the project for base context, and finally the last 3 commit messages made in the repository, and you are responsible to convert it into a commit message. Output only and only the commit message.
+
+    Use GitMoji convention to preface the commit. Here are some help to choose the right emoji (emoji, description): 
+    - 💄 Add or update the UI and style files.
+    - 🎉 Begin a project.
+    - ✅ Add, update, or pass tests.
+    - 🔒️ Fix security or privacy issues.
+    - 🔐 Add or update secrets.
+    - 🔖 Release / Version tags.
+    - 🚨 Fix compiler / linter warnings.
+    - 🚧 Work in progress.
+    - 💚 Fix CI Build.
+    - ⬇️ Downgrade dependencies.
+    - ⬆️ Upgrade dependencies.
+    - 📌 Pin dependencies to specific versions.
+    - 👷 Add or update CI build system.
+    - 📈 Add or update analytics or track code.
+    - ♻️ Refactor code.
+    - ➕ Add a dependency.
+    - ➖ Remove a dependency.
+    - 🔧 Add or update configuration files.
+    - 🔨 Add or update development scripts.
+    - 🌐 Internationalization and localization.
+    - ✏️ Fix typos.
+    - 💩 Write bad code that needs to be improved.
+    - ⏪️ Revert changes.
+    - 🔀 Merge branches.
+    - 📦️ Add or update compiled files or packages.
+    - 👽️ Update code due to external API changes.
+    - 🚚 Move or rename resources (e.g.: files, paths, routes).
+    - 📄 Add or update license.
+    - 💥 Introduce breaking changes.
+    - 🍱 Add or update assets.
+    - ♿️ Improve accessibility.
+    - 💡 Add or update comments in source code.
+    - 🍻 Write code drunkenly.
+    - 💬 Add or update text and literals.
+    - 🗃️ Perform database related changes.
+    - 🔊 Add or update logs.
+    - 🔇 Remove logs.
+    - 👥 Add or update contributor(s).
+    - 🚸 Improve user experience / usability.
+    - 🏗️ Make architectural changes.
+    - 📱 Work on responsive design.
+    - 🤡 Mock things.
+    - 🥚 Add or update an easter egg.
+    - 🙈 Add or update a .gitignore file.
+    - 📸 Add or update snapshots.
+    - ⚗️ Perform experiments.
+    - 🔍️ Improve SEO.
+    - 🏷️ Add or update types.
+    - 🌱 Add or update seed files.
+    - 🚩 Add, update, or remove feature flags.
+    - 🥅 Catch errors.
+    - 💫 Add or update animations and transitions.
+    - 🗑️ Deprecate code that needs to be cleaned up.
+    - 🛂 Work on code related to authorization, roles and permissions.
+    - 🩹 Simple fix for a non-critical issue.
+    - 🧐 Data exploration/inspection.
+    - ⚰️ Remove dead code.
+    - 🧪 Add a failing test.
+    - 👔 Add or update business logic.
+    - 🩺 Add or update healthcheck.
+    - 🧱 Infrastructure related changes.
+    - 🧑‍💻 Improve developer experience.
+    - 💸 Add sponsorships or money related infrastructure.
+    - 🧵 Add or update code related to multithreading or concurrency.
+    - 🦺 Add or update code related to validation.
+
+    Examples:
+    - ⬆️ Bump pnpm/action-setup from 3 to 4
+    - ♻️ Migrate from `yarn` to `pnpm`
+    - ♻️ Move website to Next.js ([#368](https://github.com/carloscuesta/gitmoji/pull/368))
+    - 🔧 Bump Node.js to `18`
+    - 🏗️ Transform project into a monorepo ([#1235](https://github.com/carloscuesta/gitmoji/pull/1235))
+    - 🚚 Extract `gitmojis` as an isolated package
+    - 👷 Use `turbo` in `ci` workflow
+    - ➕ Install `turbo`
+    - 📝 Update contributing guide
+    - 🎨 Update readme
+    - 🚚 Move `public` folder to `website` package
+    - 📝 Add readme file for `gitmojis` package
+    - ♻️ Migrate yarn from `classic` to `berry`
+    - 📄 Update `LICENSE`
+    - ✏️ Fix typo in README ([#1616](https://github.com/carloscuesta/gitmoji/pull/1616))
+
+    Add a short description of WHY the changes are done after the commit message. Don't start it with "This commit", just describe the changes.
+    Use the present tense. Title must not be longer than 48 characters. Message must not be longer than 74 characters. Use english for the commit message.
+  '';
+  commitModelPrompt = ''
+    ${commitModelBasePrompt}
+
+    ---
+
+    With the project README.md in mind:
+    ```
+    {README_CONTENT}
+    ```
+
+    ---
+
+    This were the last 3 commit messages in the repository:
+    ```
+    {COMMIT_MESSAGES}
+    ```
+
+    ---
+
+    The following changes were made to the repository:
+    ```
+    {STAGED_CHANGES}
+    ```
+  '';
+in
 {
-  commitFunctionPrompt = '''';
   commitFunctions = ''
         # Utility: Trim string to max characters
         function trim_string() {
@@ -23,20 +141,7 @@
           local MODEL_NAME="google/gemini-2.5-flash-lite"
           local MAX_CHARS=7200000
           local BASE_PROMPT=$(cat <<'EOF'
-    Generate a commit message to the repository as if the coder would commit those changes right now.
-    Use imperative mood in the subject line.
-    Make sure the commit message is really concise and descriptive, explain why the change was made.
-    Avoid the message being too large.
-
-    With the project README.md in mind:
-    ```
-    {README_CONTENT}
-    ```
-
-    The following changes were made to the repository:
-    ```
-    {STAGED_CHANGES}
-    ```
+    ${commitModelPrompt}
     EOF
     )
           local log_file="/tmp/git_commit_message.log"
@@ -59,8 +164,14 @@
             readme_content=$(cat README.md)
           fi
 
+          local recent_commits=""
+          if ${pkgs.git}/bin/git rev-parse HEAD > /dev/null 2>&1; then
+            recent_commits=$(${pkgs.git}/bin/git log -n 3 --pretty=format:"%h %s" 2>/dev/null)
+          fi
+
           local prompt="''${BASE_PROMPT//\{README_CONTENT\}/''${readme_content//\#/\\#}}"
           prompt="''${prompt//\{STAGED_CHANGES\}/''${staged_changes//\#/\\#}}"
+          prompt="''${prompt//\{COMMIT_MESSAGES\}/''${recent_commits//\#/\\#}}"
 
           [[ "$DEBUG" == true ]] && {
             echo "[INFO] MODEL: $MODEL_NAME" >> $log_file
