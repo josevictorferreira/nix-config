@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -33,7 +34,6 @@ in
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
 
-    # Enable AI features in Zsh
     jvf.programs.zsh.features.aiCommit = true;
     jvf.programs.zsh.features.aiCommand = true;
 
