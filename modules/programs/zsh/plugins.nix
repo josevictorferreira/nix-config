@@ -1,13 +1,30 @@
-{ lib
-, pkgs
-, viMode
-, ...
+{
+  lib,
+  pkgs,
+  viMode,
+  config,
+  ...
 }:
 
+let
+  cfg = config.jvf.programs.zsh;
+  mkPlugin =
+    { name, src }:
+    pkgs.stdenv.mkDerivation {
+      inherit name src;
+      dontBuild = true;
+      installPhase = ''
+        mkdir -p $out
+        cp -r * $out
+      '';
+    };
+in
 {
-  list = [
+  plugins = cfg.plugins;
+
+  customPkgs = [
     # Syntax highlighting
-    {
+    (mkPlugin {
       name = "zsh-fast-syntax-highlighting";
       src = pkgs.fetchFromGitHub {
         owner = "zdharma-continuum";
@@ -15,10 +32,10 @@
         rev = "v1.55";
         sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
       };
-    }
+    })
 
     # Autosuggestions
-    {
+    (mkPlugin {
       name = "zsh-autosuggestions";
       src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
@@ -26,10 +43,10 @@
         rev = "v0.7.0";
         sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
       };
-    }
+    })
 
     # Completions
-    {
+    (mkPlugin {
       name = "zsh-completions";
       src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
@@ -37,10 +54,10 @@
         rev = "0.35.0";
         sha256 = "sha256-GFHlZjIHUWwyeVoCpszgn4AmLPSSE8UVNfRmisnhkpg=";
       };
-    }
+    })
 
     # FZF tab completion
-    {
+    (mkPlugin {
       name = "fzf-tab";
       src = pkgs.fetchFromGitHub {
         owner = "Aloxaf";
@@ -48,10 +65,10 @@
         rev = "v1.1.2";
         sha256 = "sha256-Qv8zAiMtrr67CbLRrFjGaPzFZcOiMVEFLg1Z+N6VMhg=";
       };
-    }
+    })
 
     # History substring search
-    {
+    (mkPlugin {
       name = "zsh-history-substring-search";
       src = pkgs.fetchFromGitHub {
         owner = "zsh-users";
@@ -59,11 +76,11 @@
         rev = "v1.1.0";
         sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
       };
-    }
+    })
   ]
   ++ lib.optionals viMode [
     # Vi mode
-    {
+    (mkPlugin {
       name = "zsh-vi-mode";
       src = pkgs.fetchFromGitHub {
         owner = "jeffreytse";
@@ -71,6 +88,6 @@
         rev = "v0.11.0";
         sha256 = "sha256-xbchXJTFWeABTwq6h4KWLh+EvydDrDzcY9AQVK65RS8=";
       };
-    }
+    })
   ];
 }

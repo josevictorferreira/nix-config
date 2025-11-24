@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -15,10 +16,9 @@ let
   history = import ./history.nix { inherit lib pkgs config; };
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
   plugins = import ./plugins.nix {
-    inherit lib pkgs;
+    inherit lib pkgs config;
     viMode = cfg.features.viMode;
   };
-  prompt = import ./prompt.nix { inherit lib pkgs config; };
   completion = import ./completion.nix { inherit lib pkgs config; };
   tests = import ./tests.nix { inherit lib pkgs config; };
 
@@ -36,68 +36,66 @@ in
       # Merge all shell initialization
       shellInit = lib.concatStringsSep "\n" [
         environment.shellInit
-        (lib.optionalString cfg.features.powerLevel10k prompt.shellInit)
-        (lib.concatMapStringsSep "\n"
-          (key: ''
-            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-          '')
-          cfg.secrets.keys)
-        # Plugin configuration (manual sourcing)
-        (lib.concatMapStringsSep "\n"
-          (plugin: ''
-            # Load ${plugin.name}
-            if [[ -f ${plugin.src}/${plugin.name}.plugin.zsh ]]; then
-              source ${plugin.src}/${plugin.name}.plugin.zsh
-            elif [[ -f ${plugin.src}/${plugin.name}.zsh ]]; then
-              source ${plugin.src}/${plugin.name}.zsh
-            else
-              # Fallback to finding any .plugin.zsh file
-              for f in ${plugin.src}/*.plugin.zsh(N); do
-                source "$f"
-                break
-              done
-            fi
-          '')
-          plugins.list)
 
-        history.config
-        completion.config
-        keybindings.config
+        # Load secrets env variables
+        (lib.concatMapStringsSep "\n" (key: ''
+          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+        '') cfg.secrets.keys)
+
+        history.shellInit
+        completion.shellInit
+        keybindings.shellInit
         functions.shellInit
-        aliases.config
+        aliases.shellInit
       ];
 
-      # Interactive shell configuration
-      interactiveShellInit = "";
+      ohMyZsh = {
+        enable = true;
+        theme = cfg.theme;
+      }
+      // plugins;
 
-      # Login shell configuration
+      syntaxHighlighting = {
+        enable = true;
+        highlighters = [
+          "main"
+          "brackets"
+          "cursor"
+          "regexp"
+          "line"
+          "root"
+          "pattern"
+        ];
+      };
+
       loginShellInit = environment.loginInit;
 
-      # Shell aliases (structured)
+      enableLsColors = true;
+      enableCompletion = true;
+      enableBashCompletion = true;
+
+      autosuggestions = {
+        enable = true;
+        async = true;
+      };
+
+      vteIntegration = true;
+
       shellAliases = aliases.structured;
     };
 
-    # System-level configuration
-    environment = {
-      shells = [ pkgs.zsh ];
-      systemPackages =
-        with pkgs;
-        [
-          zsh
-          fzf
-          ripgrep
-          direnv
-          eza
-          jq
-          curl
-          bat
-        ]
-        ++ functions.packages;
-    };
-
-    # User configuration
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;
+      packages = [
+        pkgs.fzf
+        pkgs.ripgrep
+        pkgs.direnv
+        pkgs.eza
+        pkgs.jq
+        pkgs.curl
+        pkgs.bat
+      ]
+      ++ functions.packages;
     };
 
     sops.secrets = (

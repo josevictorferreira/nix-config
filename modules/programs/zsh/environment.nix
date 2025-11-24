@@ -1,16 +1,11 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  ...
 }:
 
-let
-  cfg = config.jvf.programs.zsh;
-
-in
 {
   shellInit = ''
     # Standard OS variables
+    export ZSH_DISABLE_COMPFIX=true
     export EDITOR='nvim'
     export VISUAL='nvim'
     export BROWSER='brave'
@@ -24,5 +19,6 @@ in
 
   loginInit = ''
     # Login shell initialization
+    export ZSH_DISABLE_COMPFIX=true
   '';
 }

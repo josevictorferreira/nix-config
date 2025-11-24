@@ -1,14 +1,14 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  config,
+  ...
 }:
 
 let
   cfg = config.jvf.programs.zsh;
 in
 {
-  config = ''
+  shellInit = ''
     # Vi mode
     ${lib.optionalString cfg.features.viMode "bindkey -v"}
 

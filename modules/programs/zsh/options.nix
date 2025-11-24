@@ -16,12 +16,40 @@
       description = "Set zsh as default shell";
     };
 
+    theme = lib.mkOption {
+      type = lib.types.str;
+      default = "cypher";
+      description = "The oh-my-zsh theme to be loaded";
+    };
+
+    plugins = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "git"
+        "sudo"
+        "kubectl"
+        "aws"
+        "postgres"
+        "podman"
+        "helm"
+        "gh"
+        "fluxcd"
+        "docker"
+        "docker-compose"
+        "macos"
+        "rsync"
+        "ssh"
+        "tmux"
+        "vi-mode"
+      ];
+      description = "List of plugins to be loaded within zsh configuration";
+    };
+
     features = {
       aiCommit = lib.mkEnableOption "AI-powered git commit messages";
       aiCommand = lib.mkEnableOption "AI command suggestions";
       advancedHistory = lib.mkEnableOption "Advanced history search with fzf";
       viMode = lib.mkEnableOption "Vi mode keybindings";
-      powerLevel10k = lib.mkEnableOption "PowerLevel10k prompt";
       workAliases = lib.mkEnableOption "Work-specific aliases (Agrosmart)";
     };
 
@@ -52,10 +80,10 @@
       keys = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
-          "openrouter_terminal"
-          "openrouter_commit"
-          "openrouter_autocomplete"
-          "openrouter_code_agent"
+          "openrouter_api_key_terminal"
+          "openrouter_api_key_commit"
+          "openrouter_api_key_autocomplete"
+          "openrouter_api_key_code_agent"
           "context7_api_key"
           "github_token"
         ];

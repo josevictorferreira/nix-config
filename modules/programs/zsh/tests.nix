@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 {
@@ -12,7 +13,8 @@
       message = "zsh package must be available";
     }
     {
-      assertion = config.jvf.programs.zsh.features.aiCommit -> config.sops.secrets ? "openrouter_commit";
+      assertion =
+        config.jvf.programs.zsh.features.aiCommit -> config.sops.secrets ? "openrouter_api_key_commit";
       message = "AI commit feature requires openrouter_commit secret";
     }
   ];

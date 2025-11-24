@@ -1,6 +1,7 @@
-{ lib
-, config
-, ...
+{
+  lib,
+  config,
+  ...
 }:
 
 let
@@ -115,7 +116,7 @@ in
     // workAliases;
 
   # Config string (if needed for advanced aliases)
-  config = ''
+  shellInit = ''
     # Advanced aliases that need shell functions can go here
   '';
 }

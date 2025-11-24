@@ -1,14 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  ...
 }:
 
-let
-  cfg = config.jvf.programs.zsh;
-in
 {
-  config = ''
+  shellInit = ''
     # History configuration
     HISTSIZE=10000
     HISTFILE=~/.zsh_history

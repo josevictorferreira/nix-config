@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
@@ -13,6 +14,8 @@ let
       pkgs.git
     ];
     text = ''
+
+
       # Utility: Trim string to max characters
       trim_string() {
         local input="$1"
@@ -26,7 +29,8 @@ let
 
       MODEL_NAME="google/gemini-2.5-flash-lite"
       MAX_CHARS=7200000
-      LOG_FILE="/tmp/git_commit_message.log"
+
+      OPENROUTER_API_KEY_COMMIT=$(cat /run/secrets/openrouter_api_key_commit)
 
       # Ensure requirements
       if ! command -v jq >/dev/null || ! command -v curl >/dev/null; then
@@ -35,14 +39,12 @@ let
       fi
 
       if ! git rev-parse --git-dir > /dev/null 2>&1; then
-        [[ "$DEBUG" == true ]] && echo "[ERROR] Not a git repository." >> "$LOG_FILE"
         exit 1
       fi
 
       STAGED_CHANGES=$(git diff --cached --no-ext-diff --unified=0)
 
       if [[ -z "$STAGED_CHANGES" ]]; then
-        [[ "$DEBUG" == true ]] && echo "[ERROR] No staged changes." >> "$LOG_FILE"
         exit 1
       fi
 
@@ -173,11 +175,6 @@ let
       \`\`\`
       "
 
-      [[ "$DEBUG" == true ]] && {
-        echo "[INFO] MODEL: $MODEL_NAME" >> "$LOG_FILE"
-        echo "[INFO] PROMPT: $PROMPT" >> "$LOG_FILE"
-      }
-
       PROMPT_TRUNCATED=$(trim_string "$PROMPT" "$MAX_CHARS")
 
       # Prepare JSON payload
@@ -192,13 +189,7 @@ let
         -X POST https://openrouter.ai/api/v1/chat/completions \
         --data-binary "$PAYLOAD" 2>&1)
 
-      HTTP_STATUS="''${RESPONSE: -3}"
       RESPONSE_BODY="''${RESPONSE%???}"
-
-      [[ "$DEBUG" == true ]] && {
-        echo "[INFO] HTTP Status: $HTTP_STATUS" >> "$LOG_FILE"
-        echo "[INFO] Response: $RESPONSE_BODY" >> "$LOG_FILE"
-      }
 
       COMMIT_MESSAGE=$(printf '%s' "$RESPONSE_BODY" | \
         jq -r '.choices[0].message.content' 2>/dev/null)
@@ -219,6 +210,7 @@ let
 
       # Check requirements
       MISSING=()
+      OPENROUTER_API_KEY_TERMINAL=$(cat /run/secrets/openrouter_api_key_terminal)
       command -v curl >/dev/null 2>&1 || MISSING+=(curl)
       command -v jq   >/dev/null 2>&1 || MISSING+=(jq)
       command -v fzf  >/dev/null 2>&1 || MISSING+=(fzf)
@@ -248,7 +240,6 @@ let
         -X POST https://openrouter.ai/api/v1/chat/completions \
         --data-binary "$PAYLOAD" 2>&1)
 
-      HTTP_STATUS="''${RESPONSE: -3}"
       RESPONSE_BODY="''${RESPONSE%???}"
 
       LIST=$(printf '%s' "$RESPONSE_BODY" | \
@@ -264,7 +255,7 @@ let
         fzf --prompt="Pick command > " \
           --height=40% --border --ansi)
 
-      if [ $? -eq 0 ]; then
+      if CHOICE; then
         printf '%s' "$CHOICE"
       else
         exit 1
