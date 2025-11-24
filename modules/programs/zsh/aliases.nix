@@ -87,7 +87,7 @@ let
   };
 
   # Work aliases (Agrosmart - conditional)
-  workAliases = lib.optionalAttrs cfg.features.workAliases {
+  workAliases = {
     agro = "cd ${workspace}/agrosmart";
     nex = "cd ${workspace}/agrosmart/nexus/nexus-backend";
     farm = "cd ${workspace}/agrosmart/booster/farm-service";
