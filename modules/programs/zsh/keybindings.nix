@@ -1,5 +1,4 @@
-{
-  ...
+{ ...
 }:
 
 {
@@ -23,7 +22,7 @@
     bindkey '^G' aicmd
 
     # FZF history search
-    bindkey '^ ' fzf_history_search_prefix_widget"}
+    bindkey '^ ' fzf_history_search_prefix_widget
 
     # Enable cursor blinking
     echo -e '\e[5 q'

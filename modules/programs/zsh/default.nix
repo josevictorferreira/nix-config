@@ -12,10 +12,9 @@ let
   options = import ./options.nix { inherit lib username; };
   aliases = import ./aliases.nix { inherit lib pkgs config; };
   environment = import ./environment.nix { inherit lib pkgs config; };
-  functions = import ./functions { inherit lib pkgs config; };
   history = import ./history.nix { inherit lib pkgs config; };
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
-  plugins = import ./plugins.nix {
+  plugins = import ./plugins {
     inherit lib pkgs config;
   };
   completion = import ./completion.nix { inherit lib pkgs config; };
@@ -44,7 +43,7 @@ in
         history.shellInit
         completion.shellInit
         keybindings.shellInit
-        functions.shellInit
+        plugins.shellInit
         aliases.shellInit
       ];
 
@@ -93,8 +92,7 @@ in
         pkgs.jq
         pkgs.curl
         pkgs.bat
-      ]
-      ++ functions.packages;
+      ];
     };
 
     sops.secrets = (
