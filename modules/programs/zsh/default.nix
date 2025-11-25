@@ -43,7 +43,6 @@ in
         history.shellInit
         completion.shellInit
         keybindings.shellInit
-        plugins.shellInit
         aliases.shellInit
       ];
 
