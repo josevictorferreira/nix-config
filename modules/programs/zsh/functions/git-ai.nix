@@ -1,7 +1,5 @@
 {
-  lib,
   pkgs,
-  config,
   ...
 }:
 
@@ -319,8 +317,6 @@ let
       git commit --edit -m "$MSG"
     '';
   };
-
-  cfg = config.jvf.programs.zsh;
 in
 {
   packages = [
