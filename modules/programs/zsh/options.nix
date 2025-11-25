@@ -18,7 +18,7 @@
 
     theme = lib.mkOption {
       type = lib.types.str;
-      default = "cypher";
+      default = "dogenpunk";
       description = "The oh-my-zsh theme to be loaded";
     };
 
