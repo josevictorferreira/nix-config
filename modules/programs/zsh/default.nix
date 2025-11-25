@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -14,7 +13,7 @@ let
   environment = import ./environment.nix { inherit lib pkgs config; };
   history = import ./history.nix { inherit lib pkgs config; };
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
-  plugins = import ./plugins {
+  zshPlugins = import ./plugins {
     inherit lib pkgs config;
   };
   completion = import ./completion.nix { inherit lib pkgs config; };
@@ -36,9 +35,11 @@ in
         environment.shellInit
 
         # Load secrets env variables
-        (lib.concatMapStringsSep "\n" (key: ''
-          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-        '') cfg.secrets.keys)
+        (lib.concatMapStringsSep "\n"
+          (key: ''
+            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+          '')
+          cfg.secrets.keys)
 
         history.shellInit
         completion.shellInit
@@ -49,10 +50,23 @@ in
       ohMyZsh = {
         enable = true;
         theme = cfg.theme;
-      }
-      // plugins;
+        plugins = zshPlugins.plugins;
+      };
+
+      # Manually source custom plugins since proper Home Manager integration is avoided
+      interactiveShellInit = lib.concatStringsSep "\n" (map
+        (pkg: ''
+          # Load ${pkg.name}
+          for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+            if [ -f "$script" ]; then
+              source "$script"
+            fi
+          done
+        '')
+        zshPlugins.customPkgs);
 
       syntaxHighlighting = {
+
         enable = true;
         highlighters = [
           "main"
