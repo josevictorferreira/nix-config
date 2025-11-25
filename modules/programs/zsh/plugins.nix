@@ -1,7 +1,5 @@
 {
-  lib,
   pkgs,
-  viMode,
   config,
   ...
 }:
@@ -78,7 +76,7 @@ in
       };
     })
   ]
-  ++ lib.optionals viMode [
+  ++ [
     # Vi mode
     (mkPlugin {
       name = "zsh-vi-mode";

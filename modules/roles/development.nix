@@ -41,9 +41,6 @@ in
       kitty.enable = true;
       neovim.enable = true;
       zsh.enable = true;
-      zsh.features.advancedHistory = true;
-      zsh.features.viMode = true;
-      zsh.features.workAliases = true;
       tmux.enable = true;
       git = {
         enable = true;

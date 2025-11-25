@@ -45,14 +45,6 @@
       description = "List of plugins to be loaded within zsh configuration";
     };
 
-    features = {
-      aiCommit = lib.mkEnableOption "AI-powered git commit messages";
-      aiCommand = lib.mkEnableOption "AI command suggestions";
-      advancedHistory = lib.mkEnableOption "Advanced history search with fzf";
-      viMode = lib.mkEnableOption "Vi mode keybindings";
-      workAliases = lib.mkEnableOption "Work-specific aliases (Agrosmart)";
-    };
-
     workspace = {
       root = lib.mkOption {
         type = lib.types.str;

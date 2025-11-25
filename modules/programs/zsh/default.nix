@@ -17,7 +17,6 @@ let
   keybindings = import ./keybindings.nix { inherit lib pkgs config; };
   plugins = import ./plugins.nix {
     inherit lib pkgs config;
-    viMode = cfg.features.viMode;
   };
   completion = import ./completion.nix { inherit lib pkgs config; };
   tests = import ./tests.nix { inherit lib pkgs config; };
