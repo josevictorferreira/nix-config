@@ -9,6 +9,8 @@
 let
   cfg = config.jvf.programs.zsh;
 
+  isDarwin = pkgs.stdenv.isDarwin;
+
   options = import ./options.nix { inherit lib username; };
   aliases = import ./aliases.nix { inherit lib pkgs config; };
   environment = import ./environment.nix { inherit lib pkgs config; };
@@ -30,10 +32,8 @@ in
   config = lib.mkIf cfg.enable {
     programs.zsh = {
       enable = true;
-      enableCompletion = true;
 
       interactiveShellInit = lib.concatStringsSep "\n" [
-
         # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
         ''
           export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
@@ -66,20 +66,25 @@ in
         ))
       ];
 
+      shellInit = lib.concatStringsSep "\n" [
+        environment.shellInit
+        (lib.concatMapStringsSep "\n" (key: ''
+          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+        '') cfg.secrets.keys)
+        history.shellInit
+        completion.shellInit
+        keybindings.shellInit
+        aliases.shellInit
+      ];
+
       loginShellInit = environment.loginInit;
+
+      enableCompletion = true;
+      enableBashCompletion = true;
+      enableGlobalCompInit = true;
     };
 
     environment.shellAliases = aliases.structured;
-    environment.shellInit = lib.concatStringsSep "\n" [
-      environment.shellInit
-      (lib.concatMapStringsSep "\n" (key: ''
-        export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-      '') cfg.secrets.keys)
-      history.shellInit
-      completion.shellInit
-      keybindings.shellInit
-      aliases.shellInit
-    ];
 
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;
