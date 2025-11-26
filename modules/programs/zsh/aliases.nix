@@ -101,8 +101,17 @@ let
     key = "cd ${workspace}/agrosmart/booster/keycloak";
   };
 
+  # Aliases that must be sourced after plugins (specifically to override OH-MY-ZSH)
+  lsAliases = ''
+    alias ls="eza -a --icons"
+    alias ll="eza -al --icons"
+    alias lt="eza -a --tree --level=1 --icons"
+  '';
+
 in
 {
+  inherit lsAliases;
+
   # Structured aliases for programs.zsh.shellAliases
   structured =
     baseAliases

@@ -30,7 +30,6 @@
         "fluxcd"
         "docker"
         "docker-compose"
-        "macos"
         "rsync"
         "ssh"
         "tmux"

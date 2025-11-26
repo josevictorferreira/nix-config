@@ -65,6 +65,9 @@ in
             '')
             zshPlugins.customPkgs
         ))
+
+        # Force ls aliases after OMZ loading
+        aliases.lsAliases
       ];
 
       shellInit = lib.concatStringsSep "\n" [

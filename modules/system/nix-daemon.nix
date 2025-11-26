@@ -1,12 +1,12 @@
 { config
 , lib
-, pkgs
+, system
 , ...
 }:
 
 let
   cfg = config.jvf.system.nix-daemon;
-  isDarwin = pkgs.stdenv.isDarwin;
+  isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
   options.jvf.system.nix-daemon = {
@@ -67,27 +67,26 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    nix = {
-      settings = {
-        experimental-features = cfg.experimentalFeatures;
-        substituters = cfg.substituters;
-        trusted-substituters = cfg.trustedSubstituters;
-        trusted-public-keys = cfg.trustedPublicKeys;
+  config =
+    lib.mkIf cfg.enable ({
+      nix = {
+        settings = {
+          experimental-features = cfg.experimentalFeatures;
+          substituters = cfg.substituters;
+          trusted-substituters = cfg.trustedSubstituters;
+          trusted-public-keys = cfg.trustedPublicKeys;
+        };
+        optimise = {
+          automatic = cfg.autoOptimiseStore;
+        };
       };
-      optimise = {
-        automatic = cfg.autoOptimiseStore;
-      };
-    };
 
-    nix.gc =
-      lib.mkIf cfg.garbageCollect
-        {
-          automatic = true;
-          options = cfg.gcOptions;
-        }
-      // lib.optionalAttrs (!isDarwin) {
-        programs.nix-ld.enable = true;
+      nix.gc = lib.mkIf cfg.garbageCollect {
+        automatic = true;
+        options = cfg.gcOptions;
       };
-  };
+    }
+    // (lib.optionalAttrs (!isDarwin) {
+      programs.nix-ld.enable = true;
+    }));
 }
