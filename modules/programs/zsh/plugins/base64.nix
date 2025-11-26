@@ -1,5 +1,8 @@
 { pkgs, ... }:
 
+let
+  copyCmd = if pkgs.stdenv.isDarwin then "pbcopy" else "${pkgs.wl-clipboard}/bin/wl-copy";
+in
 pkgs.stdenv.mkDerivation {
   name = "zsh-base64";
   src = pkgs.writeTextDir "zsh-base64.plugin.zsh" ''
@@ -9,7 +12,7 @@ pkgs.stdenv.mkDerivation {
         echo "Usage: b64 <text>" >&2
         return 1
       fi
-      echo -n "$1" | ${pkgs.coreutils}/bin/base64 -w 0 | ${pkgs.wl-clipboard}/bin/wl-copy
+      echo -n "$1" | ${pkgs.coreutils}/bin/base64 -w 0 | ${copyCmd}
     }
 
     function bb64() {

@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 
 let
@@ -82,10 +81,11 @@ in
     };
 
     nix.gc =
-      lib.mkIf cfg.garbageCollect {
-        automatic = true;
-        options = cfg.gcOptions;
-      }
+      lib.mkIf cfg.garbageCollect
+        {
+          automatic = true;
+          options = cfg.gcOptions;
+        }
       // lib.optionalAttrs (!isDarwin) {
         programs.nix-ld.enable = true;
       };
