@@ -16,12 +16,6 @@
       description = "Set zsh as default shell";
     };
 
-    theme = lib.mkOption {
-      type = lib.types.str;
-      default = "dogenpunk";
-      description = "The oh-my-zsh theme to be loaded";
-    };
-
     plugins = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [

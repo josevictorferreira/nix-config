@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -16,9 +17,9 @@ let
   zshPlugins = import ./plugins {
     inherit lib pkgs config;
   };
+
   completion = import ./completion.nix { inherit lib pkgs config; };
   tests = import ./tests.nix { inherit lib pkgs config; };
-
 in
 {
   imports = [
@@ -35,11 +36,33 @@ in
         environment.shellInit
 
         # Load secrets env variables
-        (lib.concatMapStringsSep "\n"
-          (key: ''
-            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-          '')
-          cfg.secrets.keys)
+        (lib.concatMapStringsSep "\n" (key: ''
+          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+        '') cfg.secrets.keys)
+
+        # Load custom themes
+        (lib.concatStringsSep "\n" (
+          map (pkg: ''
+            # Load ${pkg.name}
+            for script in ${pkg}/*.zsh-theme; do
+              if [ -f "$script" ]; then
+                source "$script"
+              fi
+            done
+          '') zshPlugins.customThemes
+        ))
+
+        # Load custom plugins
+        (lib.concatStringsSep "\n" (
+          map (pkg: ''
+            # Load ${pkg.name}
+            for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+              if [ -f "$script" ]; then
+                source "$script"
+              fi
+            done
+          '') zshPlugins.customPkgs
+        ))
 
         history.shellInit
         completion.shellInit
@@ -49,21 +72,19 @@ in
 
       ohMyZsh = {
         enable = true;
-        theme = cfg.theme;
         plugins = zshPlugins.plugins;
       };
 
-      # Manually source custom plugins since proper Home Manager integration is avoided
-      interactiveShellInit = lib.concatStringsSep "\n" (map
-        (pkg: ''
+      interactiveShellInit = lib.concatStringsSep "\n" (
+        map (pkg: ''
           # Load ${pkg.name}
           for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
             if [ -f "$script" ]; then
               source "$script"
             fi
           done
-        '')
-        zshPlugins.customPkgs);
+        '') zshPlugins.customPkgs
+      );
 
       syntaxHighlighting = {
 
