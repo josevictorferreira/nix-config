@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -31,17 +32,7 @@ in
       enable = true;
       enableCompletion = true;
 
-      # Use interactiveShellInit for cross-platform compatibility
-      # (shellInit is not available on nix-darwin)
       interactiveShellInit = lib.concatStringsSep "\n" [
-        environment.shellInit
-
-        # Load secrets env variables
-        (lib.concatMapStringsSep "\n"
-          (key: ''
-            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-          '')
-          cfg.secrets.keys)
 
         # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
         ''
@@ -52,42 +43,43 @@ in
 
         # Load custom themes
         (lib.concatStringsSep "\n" (
-          map
-            (pkg: ''
-              # Load ${pkg.name}
-              for script in ${pkg}/*.zsh-theme; do
-                if [ -f "$script" ]; then
-                  source "$script"
-                fi
-              done
-            '')
-            zshPlugins.customThemes
+          map (pkg: ''
+            # Load ${pkg.name}
+            for script in ${pkg}/*.zsh-theme; do
+              if [ -f "$script" ]; then
+                source "$script"
+              fi
+            done
+          '') zshPlugins.customThemes
         ))
 
         # Load custom plugins
         (lib.concatStringsSep "\n" (
-          map
-            (pkg: ''
-              # Load ${pkg.name}
-              for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-                if [ -f "$script" ]; then
-                  source "$script"
-                fi
-              done
-            '')
-            zshPlugins.customPkgs
+          map (pkg: ''
+            # Load ${pkg.name}
+            for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+              if [ -f "$script" ]; then
+                source "$script"
+              fi
+            done
+          '') zshPlugins.customPkgs
         ))
-
-        history.shellInit
-        completion.shellInit
-        keybindings.shellInit
-        aliases.shellInit
       ];
 
       loginShellInit = environment.loginInit;
-
-      shellAliases = aliases.structured;
     };
+
+    environment.shellAliases = aliases.structured;
+    environment.shellInit = lib.concatStringsSep "\n" [
+      environment.shellInit
+      (lib.concatMapStringsSep "\n" (key: ''
+        export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+      '') cfg.secrets.keys)
+      history.shellInit
+      completion.shellInit
+      keybindings.shellInit
+      aliases.shellInit
+    ];
 
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;
