@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -36,33 +35,11 @@ in
         environment.shellInit
 
         # Load secrets env variables
-        (lib.concatMapStringsSep "\n" (key: ''
-          export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-        '') cfg.secrets.keys)
-
-        # Load custom themes
-        (lib.concatStringsSep "\n" (
-          map (pkg: ''
-            # Load ${pkg.name}
-            for script in ${pkg}/*.zsh-theme; do
-              if [ -f "$script" ]; then
-                source "$script"
-              fi
-            done
-          '') zshPlugins.customThemes
-        ))
-
-        # Load custom plugins
-        (lib.concatStringsSep "\n" (
-          map (pkg: ''
-            # Load ${pkg.name}
-            for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-              if [ -f "$script" ]; then
-                source "$script"
-              fi
-            done
-          '') zshPlugins.customPkgs
-        ))
+        (lib.concatMapStringsSep "\n"
+          (key: ''
+            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+          '')
+          cfg.secrets.keys)
 
         history.shellInit
         completion.shellInit
@@ -70,48 +47,46 @@ in
         aliases.shellInit
       ];
 
-      ohMyZsh = {
-        enable = true;
-        plugins = zshPlugins.plugins;
-      };
+      interactiveShellInit = lib.concatStringsSep "\n" [
+        # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
+        ''
+          export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
+          plugins=(${lib.concatStringsSep " " zshPlugins.plugins})
+          source $ZSH/oh-my-zsh.sh
+        ''
 
-      interactiveShellInit = lib.concatStringsSep "\n" (
-        map (pkg: ''
-          # Load ${pkg.name}
-          for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-            if [ -f "$script" ]; then
-              source "$script"
-            fi
-          done
-        '') zshPlugins.customPkgs
-      );
+        # Load custom themes
+        (lib.concatStringsSep "\n" (
+          map
+            (pkg: ''
+              # Load ${pkg.name}
+              for script in ${pkg}/*.zsh-theme; do
+                if [ -f "$script" ]; then
+                  source "$script"
+                fi
+              done
+            '')
+            zshPlugins.customThemes
+        ))
 
-      syntaxHighlighting = {
-
-        enable = true;
-        highlighters = [
-          "main"
-          "brackets"
-          "cursor"
-          "regexp"
-          "line"
-          "root"
-          "pattern"
-        ];
-      };
+        # Load custom plugins
+        (lib.concatStringsSep "\n" (
+          map
+            (pkg: ''
+              # Load ${pkg.name}
+              for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+                if [ -f "$script" ]; then
+                  source "$script"
+                fi
+              done
+            '')
+            zshPlugins.customPkgs
+        ))
+      ];
 
       loginShellInit = environment.loginInit;
 
-      enableLsColors = true;
       enableCompletion = true;
-      enableBashCompletion = true;
-
-      autosuggestions = {
-        enable = true;
-        async = true;
-      };
-
-      vteIntegration = true;
 
       shellAliases = aliases.structured;
     };
@@ -119,6 +94,7 @@ in
     users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
       shell = pkgs.zsh;
       packages = [
+        pkgs.oh-my-zsh
         pkgs.fzf
         pkgs.ripgrep
         pkgs.direnv

@@ -1,6 +1,5 @@
 { config
 , lib
-, options
 , system
 , ...
 }:
@@ -35,10 +34,6 @@ in
         };
       }
     // lib.optionalAttrs (!isDarwin) {
-      programs.nix-ld = {
-        enable = true;
-        libraries = options.programs.nix-ld.libraries.default;
-      };
       programs.nm-applet.indicator = true;
       programs.mtr.enable = true;
       programs.dconf.enable = true;

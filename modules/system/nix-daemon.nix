@@ -78,6 +78,8 @@ in
       };
     };
 
+    programs.nix-ld.enable = true;
+
     nix.gc = lib.mkIf cfg.garbageCollect {
       automatic = true;
       options = cfg.gcOptions;

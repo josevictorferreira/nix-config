@@ -73,10 +73,10 @@ in
           }
         ];
         Router = {
-          default = "openrouter,google/gemini-3-pro-preview";
+          default = "openrouter,moonshotai/kimi-k2-thinking";
           background = "openrouter,openai/gpt-oss-120b:exacto";
-          think = "openrouter,google/gemini-3-pro-preview";
-          longContext = "openrouter,google/gemini-3-pro-preview";
+          think = "openrouter,moonshotai/kimi-k2-thinking";
+          longContext = "openrouter,moonshotai/kimi-k2-thinking";
           webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
           image = "openrouter,google/gemini-2.5-flash-image";
           longContextThreshold = 250000;
