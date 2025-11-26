@@ -1,10 +1,13 @@
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
   cfg = config.jvf.system.nix-daemon;
+  isDarwin = pkgs.stdenv.isDarwin;
 in
 {
   options.jvf.system.nix-daemon = {
@@ -78,11 +81,13 @@ in
       };
     };
 
-    programs.nix-ld.enable = true;
-
-    nix.gc = lib.mkIf cfg.garbageCollect {
-      automatic = true;
-      options = cfg.gcOptions;
-    };
+    nix.gc =
+      lib.mkIf cfg.garbageCollect {
+        automatic = true;
+        options = cfg.gcOptions;
+      }
+      // lib.optionalAttrs (!isDarwin) {
+        programs.nix-ld.enable = true;
+      };
   };
 }
