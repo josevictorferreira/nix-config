@@ -29,9 +29,11 @@ in
   config = lib.mkIf cfg.enable {
     programs.zsh = {
       enable = true;
+      enableCompletion = true;
 
-      # Merge all shell initialization
-      shellInit = lib.concatStringsSep "\n" [
+      # Use interactiveShellInit for cross-platform compatibility
+      # (shellInit is not available on nix-darwin)
+      interactiveShellInit = lib.concatStringsSep "\n" [
         environment.shellInit
 
         # Load secrets env variables
@@ -41,13 +43,6 @@ in
           '')
           cfg.secrets.keys)
 
-        history.shellInit
-        completion.shellInit
-        keybindings.shellInit
-        aliases.shellInit
-      ];
-
-      interactiveShellInit = lib.concatStringsSep "\n" [
         # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
         ''
           export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
@@ -82,11 +77,14 @@ in
             '')
             zshPlugins.customPkgs
         ))
+
+        history.shellInit
+        completion.shellInit
+        keybindings.shellInit
+        aliases.shellInit
       ];
 
       loginShellInit = environment.loginInit;
-
-      enableCompletion = true;
 
       shellAliases = aliases.structured;
     };
