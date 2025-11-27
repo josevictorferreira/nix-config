@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -32,6 +33,14 @@ let
           "clear"
         ];
       }
+      {
+        window_name = "NixConfig";
+        start_directory = "$HOME/.config/nvim";
+        panes = [
+          "clear"
+          "clear"
+        ];
+      }
     ];
   };
 
@@ -40,10 +49,15 @@ let
     start_directory = "$HOME/Workspace";
     windows = [
       {
+        window_name = "System";
+        panes = [
+          "btop"
+        ];
+      }
+      {
         window_name = "Cluster";
         panes = [
           "k9s"
-          "btop"
         ];
       }
     ];
