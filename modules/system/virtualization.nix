@@ -1,9 +1,10 @@
-{ lib
-, config
-, pkgs
-, username
-, system
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  system,
+  ...
 }:
 
 let
@@ -45,6 +46,20 @@ in
           pkgs.podman-compose
           pkgs.dive
         ];
+
+        virtualisation.containers = {
+          enable = true;
+
+          containersConf.settings = {
+            engine = {
+              num_workers = 8;
+            };
+
+            image.copy = {
+              max_concurrent_downloads = 8;
+            };
+          };
+        };
       }
     else
       { }
