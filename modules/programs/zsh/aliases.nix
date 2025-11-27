@@ -1,5 +1,6 @@
-{ config
-, ...
+{
+  config,
+  ...
 }:
 
 let
@@ -19,7 +20,8 @@ let
     # Common tools
     k = "kubectl";
     v = "nvim";
-    d = "docker";
+    d = "podman";
+    dc = "podman-compose";
     m = "make";
 
     bcat = "bat";
