@@ -17,22 +17,13 @@ let
     sudo = "sudo -E ";
     s = "sudo -E ";
 
-    # Common tools
-    k = "kubectl";
-    v = "nvim";
-    d = "podman";
-    dc = "podman-compose";
-    m = "make";
-
+    # Common Tools
     bcat = "bat";
 
     # Better ls
     ls = "eza -a --icons";
     ll = "eza -al --icons";
     lt = "eza -a --tree --level=1 --icons";
-
-    # Tmux
-    rtmux = "tmux source-file ~/.config/tmux/tmux.conf";
 
     # Nix shell
     nix-shell = "nix-shell --run zsh";
@@ -57,11 +48,19 @@ let
 
   # Development aliases
   devAliases = {
+    k = "kubectl";
+    v = "nvim";
+    d = "podman";
+    dc = "podman-compose";
+    docker-compose = "podman-compose";
+    docker = "podman";
+    m = "make";
     be = "bundle exec ";
     ber = "bundle exec rspec ";
     uvr = "uv run ";
     uvrp = "uv run pytest ";
     uvrd = "uv run python manage.py ";
+    rtmux = "tmux source-file ~/.config/tmux/tmux.conf";
   };
 
   # Personal project aliases
