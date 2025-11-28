@@ -1,7 +1,9 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -17,6 +19,12 @@ in
         - Dedicated servers
         - Local network game transfers
       '';
+    };
+
+    username = lib.mkOption {
+      type = lib.types.str;
+      default = username;
+      description = "Username for installing packages to.";
     };
   };
 

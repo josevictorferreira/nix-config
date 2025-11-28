@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  ...
 }:
 
 let
@@ -27,17 +28,16 @@ in
     };
   };
 
-  config =
-    lib.mkIf cfg.enable
-      {
-        users.users."${cfg.username}".packages = [
-          pkgs.lutris
+  config = lib.mkIf cfg.enable (
+    {
+      users.users."${cfg.username}".packages = [
+        pkgs.lutris
 
-          pkgs.wine64
-          pkgs.winetricks
-          pkgs.wine-wayland
-        ];
-      }
+        pkgs.wine64
+        pkgs.winetricks
+        pkgs.wine-wayland
+      ];
+    }
     // (
       if !isDarwin then
         {
@@ -45,5 +45,6 @@ in
         }
       else
         { }
-    );
+    )
+  );
 }
