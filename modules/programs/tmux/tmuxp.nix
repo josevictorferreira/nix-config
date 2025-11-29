@@ -34,7 +34,7 @@ let
         ];
       }
       {
-        window_name = "NixConfig";
+        window_name = "Neovim";
         start_directory = "$HOME/.config/nvim";
         panes = [
           "clear"
