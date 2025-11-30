@@ -74,7 +74,7 @@ in
     "gaming"
     "networkStorage"
     "documenting"
-    "security"
+    "privacy"
   ];
 
   system.stateVersion = "24.05";
