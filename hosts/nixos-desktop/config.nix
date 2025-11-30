@@ -1,7 +1,8 @@
-{ host
-, inputs
-, username
-, ...
+{
+  host,
+  inputs,
+  username,
+  ...
 }:
 let
   inherit (inputs) self;
@@ -73,6 +74,7 @@ in
     "gaming"
     "networkStorage"
     "documenting"
+    "security"
   ];
 
   system.stateVersion = "24.05";
