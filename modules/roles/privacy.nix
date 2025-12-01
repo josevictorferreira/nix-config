@@ -27,13 +27,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.${cfg.username}.packages = [
-    ]
-    ++ (lib.optional (!isDarwin) [
-      pkgs.protonmail-desktop
-      pkgs.proton-pass
-      pkgs.proton-authenticator
-      pkgs.protonvpn-gui
-    ]);
+
+    users.users."${cfg.username}".packages = lib.mkMerge (
+      lib.optional (!isDarwin) [
+        pkgs.protonmail-desktop
+        pkgs.proton-pass
+        pkgs.proton-authenticator
+        pkgs.protonvpn-gui
+      ]
+    );
   };
 }
