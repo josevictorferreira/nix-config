@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, system
-, ...
+{
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 let
   isDarwin = builtins.match ".*-darwin" system != null;
@@ -35,6 +36,17 @@ in
       headers = {
         CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
       };
+      enabled = false;
+    };
+
+    playwright = {
+      type = "local";
+      command = [
+        "${pkgs.bun}/bin/bunx"
+        "--bun"
+        "playwright@latest"
+        "mcp"
+      ];
       enabled = false;
     };
 
