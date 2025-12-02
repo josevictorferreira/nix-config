@@ -27,7 +27,7 @@ in
         "shadcn@latest"
         "mcp"
       ];
-      enabled = false;
+      enabled = true;
     };
 
     context7 = {
@@ -36,7 +36,7 @@ in
       headers = {
         CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
       };
-      enabled = false;
+      enabled = true;
     };
 
     playwright = {
@@ -47,7 +47,7 @@ in
         "playwright@latest"
         "mcp"
       ];
-      enabled = false;
+      enabled = true;
     };
 
     socket = {
@@ -67,7 +67,7 @@ in
         "--isolated=true"
         "--executablePath=${pkgs.chromium}/bin/chromium"
       ];
-      enabled = false;
+      enabled = true;
     };
   };
 }
