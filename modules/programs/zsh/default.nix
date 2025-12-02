@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -26,91 +27,95 @@ in
     tests
   ];
 
-  config = lib.mkIf cfg.enable {
-    programs.zsh = {
-      enable = true;
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      {
+        programs.zsh = {
+          enable = true;
 
-      interactiveShellInit = lib.concatStringsSep "\n" [
-        # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
-        ''
-          export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
-          plugins=(${lib.concatStringsSep " " zshPlugins.plugins})
-          source $ZSH/oh-my-zsh.sh
-        ''
+          interactiveShellInit = lib.concatStringsSep "\n" [
+            # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
+            ''
+              export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
+              plugins=(${lib.concatStringsSep " " zshPlugins.plugins})
+              source $ZSH/oh-my-zsh.sh
+            ''
 
-        # Load custom themes
-        (lib.concatStringsSep "\n" (
-          map
-            (pkg: ''
-              # Load ${pkg.name}
-              for script in ${pkg}/*.zsh-theme; do
-                if [ -f "$script" ]; then
-                  source "$script"
-                fi
-              done
-            '')
-            zshPlugins.customThemes
-        ))
+            # Load custom themes
+            (lib.concatStringsSep "\n" (
+              map (pkg: ''
+                # Load ${pkg.name}
+                for script in ${pkg}/*.zsh-theme; do
+                  if [ -f "$script" ]; then
+                    source "$script"
+                  fi
+                done
+              '') zshPlugins.customThemes
+            ))
 
-        # Load custom plugins
-        (lib.concatStringsSep "\n" (
-          map
-            (pkg: ''
-              # Load ${pkg.name}
-              for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-                if [ -f "$script" ]; then
-                  source "$script"
-                fi
-              done
-            '')
-            zshPlugins.customPkgs
-        ))
+            # Load custom plugins
+            (lib.concatStringsSep "\n" (
+              map (pkg: ''
+                # Load ${pkg.name}
+                for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+                  if [ -f "$script" ]; then
+                    source "$script"
+                  fi
+                done
+              '') zshPlugins.customPkgs
+            ))
 
-        # Force ls aliases after OMZ loading
-        aliases.lsAliases
-      ];
+            # Force ls aliases after OMZ loading
+            aliases.lsAliases
+          ];
 
-      shellInit = lib.concatStringsSep "\n" [
-        environment.shellInit
-        (lib.concatMapStringsSep "\n"
-          (key: ''
-            export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-          '')
-          cfg.secrets.keys)
-        history.shellInit
-        completion.shellInit
-        keybindings.shellInit
-        aliases.shellInit
-      ];
+          shellInit = lib.concatStringsSep "\n" [
+            environment.shellInit
+            (lib.concatMapStringsSep "\n" (key: ''
+              export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+            '') cfg.secrets.keys)
+            history.shellInit
+            completion.shellInit
+            keybindings.shellInit
+            aliases.shellInit
+          ];
 
-      loginShellInit = environment.loginInit;
+          loginShellInit = environment.loginInit;
 
-      enableCompletion = true;
-      enableBashCompletion = true;
-      enableGlobalCompInit = true;
-    };
+          enableCompletion = true;
+          enableBashCompletion = true;
+          enableGlobalCompInit = true;
+        };
 
-    environment.shellAliases = aliases.structured;
+        environment.shellAliases = aliases.structured;
 
-    users.users.${cfg.username} = lib.mkIf cfg.setAsDefaultShell {
-      shell = pkgs.zsh;
-      packages = [
-        pkgs.oh-my-zsh
-        pkgs.fzf
-        pkgs.ripgrep
-        pkgs.direnv
-        pkgs.eza
-        pkgs.jq
-        pkgs.curl
-        pkgs.bat
-      ];
-    };
+        users.users.${cfg.username} = {
+          shell = pkgs.zsh;
+          packages = [
+            pkgs.oh-my-zsh
+            pkgs.fzf
+            pkgs.ripgrep
+            pkgs.direnv
+            pkgs.eza
+            pkgs.jq
+            pkgs.curl
+            pkgs.bat
+          ];
+        };
 
-    sops.secrets = (
-      lib.genAttrs cfg.secrets.keys (key: {
-        owner = cfg.username;
-        mode = "0400";
+        sops.secrets = (
+          lib.genAttrs cfg.secrets.keys (key: {
+            owner = cfg.username;
+            mode = "0400";
+          })
+        );
+      }
+      (lib.mkIf (cfg.setAsDefaultShell) {
+        environment.shells = [
+          pkgs.zsh
+        ];
+        users.defaultUserShell = pkgs.zsh;
       })
-    );
-  };
+    ]
+  );
 }
