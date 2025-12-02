@@ -1,12 +1,15 @@
 {
   ethical-scraper = ''
     ---
-    name: "Scraping Best Practices"
-    description: "Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies"
+    description: Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies
     tools:
-      - playwright
-      - chrome-devtools
-      - context7
+      write: true
+      edit: true
+      bash: true
+      todo: true
+      playwright: true
+      chrome-devtools: true
+      context7: true
     ---
 
     # Scraping Best Practices
