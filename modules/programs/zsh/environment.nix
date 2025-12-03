@@ -10,7 +10,6 @@
     export BROWSER='brave'
     export PODMAN_COLOR=true
     export COLORTERM=truecolor
-    export DIRENV_DISABLE=1
 
     # Add homebrew to path (Darwin compatibility)
     export PATH=/opt/homebrew/bin:$PATH
