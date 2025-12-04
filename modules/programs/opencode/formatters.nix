@@ -16,5 +16,21 @@
       ];
       extensions = [ ".rs" ];
     };
+
+    rubocop = {
+      command = [
+        "bundle"
+        "exec"
+        "rubocop"
+      ];
+      extensions = [
+        ".rb"
+        "Gemfile"
+        ".gemspec"
+        ".ru"
+        ".rake"
+        ".rbs"
+      ];
+    };
   };
 }

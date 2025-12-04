@@ -107,5 +107,22 @@
       ];
       extensions = [ ".toml" ];
     };
+
+    ruby-lsp = {
+      command = [
+        "bundle"
+        "exec"
+        "ruby-lsp"
+        "stdio"
+      ];
+      extensions = [
+        ".rb"
+        "Gemfile"
+        ".gemspec"
+        ".ru"
+        ".rake"
+        ".rbs"
+      ];
+    };
   };
 }

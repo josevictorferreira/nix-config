@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -14,12 +15,10 @@ let
 
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = value;
-      })
-      attrset;
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = value;
+    }) attrset;
 
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";
