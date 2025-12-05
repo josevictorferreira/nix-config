@@ -29,7 +29,7 @@ in
           "shadcn@latest"
           "mcp"
         ];
-        enabled = false;
+        enabled = true;
       };
 
       context7 = {
@@ -38,7 +38,7 @@ in
         headers = {
           CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
         };
-        enabled = false;
+        enabled = true;
       };
 
       playwright = {
@@ -48,7 +48,7 @@ in
           "--executable-path"
           browserExecutable
         ];
-        enabled = false;
+        enabled = true;
       };
 
       socket = {
@@ -67,7 +67,7 @@ in
           "--isolated=true"
           "--executablePath=${browserExecutable}"
         ];
-        enabled = false;
+        enabled = true;
       };
     }
     // lib.optionalAttrs (!isDarwin) {
@@ -76,7 +76,7 @@ in
         command = [
           (lib.getExe pkgs.mcp-nixos)
         ];
-        enabled = false;
+        enabled = true;
       };
     }
   );

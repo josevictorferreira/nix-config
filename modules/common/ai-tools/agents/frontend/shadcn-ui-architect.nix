@@ -9,6 +9,7 @@
       bash: true
       todo: true
       context7: true
+      mcp-nixos: false
       shadcn: true
       playwright: true
       chrome-devtools: true

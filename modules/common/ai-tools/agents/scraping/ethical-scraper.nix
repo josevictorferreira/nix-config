@@ -7,9 +7,11 @@
       edit: true
       bash: true
       todo: true
+      context7: true
+      mcp-nixos: false
+      shadcn: false
       playwright: true
       chrome-devtools: true
-      context7: true
     ---
 
     # Scraping Best Practices

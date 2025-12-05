@@ -9,7 +9,10 @@
       bash: true
       todo: true
       context7: true
-      mcp-nixos: true
+      mcp-nixos: false
+      shadcn: false
+      playwright: false
+      chrome-devtools: false
     ---
 
     <options_design>
