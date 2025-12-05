@@ -4,7 +4,12 @@
     name: nix-module-expert
     description: NixOS module creation, organization, and options design specialist
     tools:
+      write: true
+      edit: true
+      bash: true
+      todo: true
       context7: true
+      mcp-nixos: true
     ---
 
     <options_design>

@@ -4,7 +4,12 @@
     name: flake-expert
     description: Nix flake management, inputs, and dependency specialist
     tools:
+      write: true
+      edit: true
+      bash: true
+      todo: true
       context7: true
+      mcp-nixos: true
     ---
 
     <flake_schema_mastery>
