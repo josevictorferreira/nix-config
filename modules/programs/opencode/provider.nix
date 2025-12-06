@@ -30,11 +30,18 @@
         "z-ai/glm-4.6:exacto" = {
           name = "GLM 4.6 Exacto";
         };
-        "x-ai/grok-4-fast" = {
-          name = "Grok 4 Fast";
+        "x-ai/grok-4.1-fast" = {
+          name = "Grok 4.1 Fast";
         };
         "minimax/minimax-m2" = {
           name = "Minimax M2";
+          options = {
+            provider = {
+              only = [
+                "minimax/fp8"
+              ];
+            };
+          };
         };
         "moonshotai/kimi-k2-0905:exacto" = {
           name = "Kimi K2 Instruct 0905 Exacto";
@@ -42,23 +49,22 @@
         "openai/gpt-oss-120b:exacto" = {
           name = "GPT OSS 120b Exacto";
         };
-        "deepseek/deepseek-v3.1-terminus:exacto" = {
-          name = "DeepSeek v3.1 Exacto";
-        };
-        "qwen/qwen3-coder:exacto" = {
-          name = "Qwen3 Coder Exacto";
-        };
-        "google/gemini-2.5-pro" = {
-          name = "Gemini 2.5 Pro";
-        };
-        "deepseek/deepseek-v3.2-exp" = {
-          name = "DeepSeek: DeepSeek V3.2 Exp";
-        };
         "moonshotai/kimi-k2-thinking" = {
           name = "Kimi K2 Thinking";
+          options = {
+            provider = {
+              only = [
+                "moonshotai/int4"
+                "moonshotai/turbo"
+              ];
+            };
+          };
         };
         "google/gemini-3-pro-preview" = {
           name = "Gemini 3 Pro Preview - Openrouter";
+        };
+        "openai/gpt-5.1-codex-max" = {
+          name = "GPT 5.1 Codex Max";
         };
       };
     };

@@ -12,48 +12,39 @@ in
   config.jvf.programs.opencode.settings = {
     mcp = (
       {
-        github = {
-          type = "local";
-          command = [
-            (lib.getExe pkgs.github-mcp-server)
-            "--read-only"
-            "stdio"
-          ];
-          enabled = false;
-        };
-
         shadcn = {
           type = "local";
+          enabled = false;
           command = [
             "${pkgs.bun}/bin/bunx"
             "--bun"
             "shadcn@latest"
             "mcp"
           ];
-          enabled = true;
         };
 
         context7 = {
           type = "remote";
+          enabled = false;
           url = "https://mcp.context7.com/mcp";
           headers = {
             CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
           };
-          enabled = true;
         };
 
         playwright = {
           type = "local";
+          enabled = false;
           command = [
             (lib.getExe pkgs.playwright-mcp)
             "--executable-path"
             browserExecutable
           ];
-          enabled = true;
         };
 
         chrome-devtools = {
           type = "local";
+          enabled = false;
           command = [
             "${pkgs.lib.getExe' pkgs.nodejs "npx"}"
             "-y"
@@ -62,16 +53,15 @@ in
             "--isolated=true"
             "--executablePath=${browserExecutable}"
           ];
-          enabled = true;
         };
       }
       // lib.optionalAttrs (!isDarwin) {
         mcp-nixos = {
           type = "local";
+          enabled = false;
           command = [
             (lib.getExe pkgs.mcp-nixos)
           ];
-          enabled = true;
         };
       }
     );
