@@ -14,7 +14,7 @@ in
       {
         shadcn = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [
             "${pkgs.bun}/bin/bunx"
             "--bun"
@@ -25,7 +25,7 @@ in
 
         context7 = {
           type = "remote";
-          enabled = false;
+          enabled = true;
           url = "https://mcp.context7.com/mcp";
           headers = {
             CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
@@ -34,7 +34,7 @@ in
 
         playwright = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [
             (lib.getExe pkgs.playwright-mcp)
             "--executable-path"
@@ -44,7 +44,7 @@ in
 
         chrome-devtools = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [
             "${pkgs.lib.getExe' pkgs.nodejs "npx"}"
             "-y"
@@ -58,7 +58,7 @@ in
       // lib.optionalAttrs (!isDarwin) {
         mcp-nixos = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [
             (lib.getExe pkgs.mcp-nixos)
           ];
@@ -67,14 +67,13 @@ in
     );
     tools = (
       {
-        chrome-devtools = false;
-        playwright = false;
-        context7 = false;
-        shadcn = false;
-        github = false;
+        "chrome-devtools*" = false;
+        "playwright*" = false;
+        "context7*" = false;
+        "shadcn*" = false;
       }
       // lib.optionalAttrs (!isDarwin) {
-        mcp-nixos = false;
+        "mcp-nixos*" = false;
       }
     );
   };

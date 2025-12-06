@@ -5,11 +5,11 @@
     description: NixOS module creation, organization, and options design specialist
     mode: primary
     tools:
-      context7: true
-      mcp-nixos: false
-      shadcn: false
-      playwright: false
-      chrome-devtools: false
+      context7*: true
+      mcp-nixos*: false
+      shadcn*: false
+      playwright*: false
+      chrome-devtools*: false
     ---
 
     <options_design>

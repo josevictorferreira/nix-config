@@ -5,7 +5,7 @@
     description: A ruby on rails event store specialist;
     mode: primary
     tools:
-      context7: true
+      context7*: true
     ---
 
     # Rails Event Store Specialist - Knowledge Base

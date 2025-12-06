@@ -5,11 +5,11 @@
     description: Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies
     mode: primary
     tools:
-      context7: true
-      mcp-nixos: false
-      shadcn: false
-      playwright: true
-      chrome-devtools: true
+      context7*: true
+      mcp-nixos*: false
+      shadcn*: false
+      playwright*: true
+      chrome-devtools*: true
     ---
 
     # Scraping Best Practices

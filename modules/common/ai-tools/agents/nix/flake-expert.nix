@@ -5,11 +5,11 @@
     description: Nix flake management, inputs, and dependency specialist
     mode: primary
     tools:
-      context7: true
-      mcp-nixos: false
-      shadcn: false
-      playwright: false
-      chrome-devtools: false
+      context7*: true
+      mcp-nixos*: false
+      shadcn*: false
+      playwright*: false
+      chrome-devtools*: false
     ---
 
     <flake_schema_mastery>
