@@ -6,12 +6,13 @@
     mode: primary
     tools:
       context7*: true
-      podman*: true
+      podman-mcp*: true
       mcp-nixos*: false
       shadcn*: false
       playwright*: false
       chrome-devtools*: false
     ---
+
     # Container Development
 
     Expert knowledge for containerization and orchestration with focus on lean, secure container images and 12-factor app methodology.
