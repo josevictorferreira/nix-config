@@ -54,6 +54,16 @@ in
             "--executablePath=${browserExecutable}"
           ];
         };
+
+        podman-mcp = {
+          type = "local";
+          enabled = true;
+          command = [
+            "${pkgs.lib.getExe' pkgs.nodejs "npx"}"
+            "-y"
+            "podman-mcp-server@latest"
+          ];
+        };
       }
       // lib.optionalAttrs (!isDarwin) {
         mcp-nixos = {
@@ -71,6 +81,7 @@ in
         "playwright*" = false;
         "context7*" = false;
         "shadcn*" = false;
+        "podman-mcp*" = false;
       }
       // lib.optionalAttrs (!isDarwin) {
         "mcp-nixos*" = false;

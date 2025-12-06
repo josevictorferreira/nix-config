@@ -17,6 +17,19 @@
       extensions = [ ".rs" ];
     };
 
+    dockerfmt = {
+      command = [
+        (lib.getExe pkgs.dockerfmt)
+      ];
+      extensions = [
+        ".dockerfile"
+        "Dockerfile"
+        "Containerfile"
+        "*Dockerfile*"
+        "*Containerfile*"
+      ];
+    };
+
     rubocop = {
       command = [
         "bundle"

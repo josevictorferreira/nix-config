@@ -7,4 +7,5 @@ lib.foldl' lib.recursiveUpdate { } [
   (import ./agents/frontend/index.nix { inherit lib; })
   (import ./agents/scraping/index.nix { inherit lib; })
   (import ./agents/rails/index.nix { inherit lib; })
+  (import ./agents/infra/index.nix { inherit lib; })
 ]

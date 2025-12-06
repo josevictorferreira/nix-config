@@ -108,6 +108,17 @@
       extensions = [ ".toml" ];
     };
 
+    dockerls = {
+      command = [ (lib.getExe pkgs.docker-ls) ];
+      extensions = [
+        ".dockerfile"
+        "Dockerfile"
+        "Containerfile"
+        "*Dockerfile*"
+        "*Containerfile*"
+      ];
+    };
+
     ruby-lsp = {
       command = [
         "bundle"
