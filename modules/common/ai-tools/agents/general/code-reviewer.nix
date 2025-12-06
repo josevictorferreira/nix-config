@@ -1,8 +1,9 @@
 {
   code-reviewer = ''
     ---
-    name: code-reviewer
+    name: Code Reviewer
     description: Specialized code review agent for development tasks
+    mode: subagent
     ---
 
     <code_review>

@@ -1,13 +1,10 @@
 {
   nix-module-expert = ''
     ---
-    name: nix-module-expert
+    name: Nix Module Expert
     description: NixOS module creation, organization, and options design specialist
+    mode: primary
     tools:
-      write: true
-      edit: true
-      bash: true
-      todo: true
       context7: true
       mcp-nixos: false
       shadcn: false

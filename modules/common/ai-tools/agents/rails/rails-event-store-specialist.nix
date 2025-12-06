@@ -3,6 +3,7 @@
     ---
     name: Rails Event Store Specialist
     description: A ruby on rails event store specialist;
+    mode: primary
     tools:
       context7: true
     ---

@@ -1,8 +1,9 @@
 {
   documenter = ''
     ---
-    name: documenter
+    name: Documenter
     description: Technical documentation and README writer
+    mode: subagent
     ---
 
     <readme_generation>

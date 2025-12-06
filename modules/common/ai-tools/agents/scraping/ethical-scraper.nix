@@ -1,12 +1,10 @@
 {
   ethical-scraper = ''
     ---
+    name: Ethical Scraper
     description: Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies
+    mode: primary
     tools:
-      write: true
-      edit: true
-      bash: true
-      todo: true
       context7: true
       mcp-nixos: false
       shadcn: false

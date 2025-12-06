@@ -3,11 +3,8 @@
     ---
     name: Nix Expert
     description: Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code
+    mode: primary
     tools:
-      write: true
-      edit: true
-      bash: true
-      todo: true
       context7: true
       mcp-nixos: false
       shadcn: false

@@ -1,13 +1,10 @@
 {
   flake-expert = ''
     ---
-    name: flake-expert
+    name: Flake Expert
     description: Nix flake management, inputs, and dependency specialist
+    mode: primary
     tools:
-      write: true
-      edit: true
-      bash: true
-      todo: true
       context7: true
       mcp-nixos: false
       shadcn: false

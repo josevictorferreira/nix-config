@@ -1,13 +1,10 @@
 {
   shadcn-ui-architect = ''
     ---
-    name: shadcn-ui-architect
+    name: Shadcn UI Architect
     description: Use this agent when you need to design, implement, or enhance frontend user interfaces using shadcn-ui components. This includes creating new UI components, implementing complex layouts, selecting appropriate shadcn components for specific use cases, integrating shadcn with existing React-TypeScript codebases, and ensuring accessibility and responsive design best practices.
+    mode: primary
     tools:
-      write: true
-      edit: true
-      bash: true
-      todo: true
       context7: true
       mcp-nixos: false
       shadcn: true

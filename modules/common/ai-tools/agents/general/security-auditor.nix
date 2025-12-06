@@ -1,8 +1,9 @@
 {
   security-auditor = ''
     ---
-    name: security-auditor
+    name: Security Auditor
     description: Security analysis and vulnerability assessment specialist
+    mode: subagent
     ---
 
     <vulnerability_assessment>
