@@ -1,65 +1,80 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.k9s;
 
   defaultSettings = {
-    k9s = {
-      liveViewAutoRefresh = false;
-      refreshRate = 2;
-      maxConnRetry = 5;
-      defaultView = "pods";
-      readOnly = false;
-      noExitOnCtrlC = false;
-      ui = {
-        enableMouse = false;
-        headless = false;
-        logoless = false;
-        crumbsless = false;
-        reactive = false;
-        noIcons = false;
-        defaultsToFullScreen = false;
-        skin = "tokyonight";
+    liveViewAutoRefresh = false;
+    refreshRate = 2;
+    maxConnRetry = 5;
+    defaultView = "pods";
+    readOnly = false;
+    noExitOnCtrlC = false;
+    ui = {
+      enableMouse = true;
+      headless = false;
+      logoless = false;
+      crumbsless = false;
+      reactive = false;
+      noIcons = false;
+      defaultsToFullScreen = false;
+      skin = "tokyonight";
+    };
+    skipLatestRevCheck = false;
+    disablePodCounting = false;
+    shellPod = {
+      image = "busybox:1.35.0";
+      namespace = "default";
+      limits = {
+        cpu = "100m";
+        memory = "100Mi";
       };
-      skipLatestRevCheck = false;
-      disablePodCounting = false;
-      shellPod = {
-        image = "busybox:1.35.0";
-        namespace = "default";
-        limits = {
-          cpu = "100m";
-          memory = "100Mi";
-        };
+    };
+    imageScans = {
+      enable = false;
+      exclusions = {
+        namespaces = [ ];
+        labels = { };
       };
-      imageScans = {
-        enable = false;
-        exclusions = {
-          namespaces = [ ];
-          labels = { };
-        };
+    };
+    logger = {
+      tail = 150;
+      buffer = 10000;
+      sinceSeconds = 3600;
+      textWrap = true;
+      showTime = false;
+      disableAutoscroll = false;
+    };
+    thresholds = {
+      cpu = {
+        critical = 90;
+        warn = 70;
       };
-      logger = {
-        tail = 150;
-        buffer = 10000;
-        sinceSeconds = 3600;
-        textWrap = true;
-        showTime = false;
-        disableAutoscroll = true;
+      memory = {
+        critical = 90;
+        warn = 70;
       };
-      thresholds = {
-        cpu = {
-          critical = 90;
-          warn = 70;
-        };
-        memory = {
-          critical = 90;
-          warn = 70;
-        };
-      };
+    };
+  };
+
+  defaultHomelabConfig = {
+    cluster = "ze-homelab";
+    readOnly = false;
+    namespace = {
+      active = "apps";
+      favorites = [
+        "all"
+        "monitoring"
+        "rook-ceph"
+      ];
+    };
+    view = {
+      active = "pods";
     };
   };
 
@@ -98,114 +113,112 @@ let
       red = "#f7768e";
     in
     {
-      k9s = {
-        body = {
+      body = {
+        fgColor = foreground;
+        bgColor = "default";
+        logoColor = blue;
+      };
+      prompt = {
+        fgColor = foreground;
+        bgColor = background;
+        suggestColor = orange;
+      };
+      info = {
+        fgColor = magenta;
+        sectionColor = foreground;
+      };
+      dialog = {
+        fgColor = foreground;
+        bgColor = "default";
+        buttonFgColor = foreground;
+        buttonBgColor = magenta;
+        buttonFocusFgColor = background;
+        buttonFocusBgColor = foreground;
+        labelFgColor = comment;
+        fieldFgColor = foreground;
+      };
+      frame = {
+        border = {
+          fgColor = selection;
+          focusColor = foreground;
+        };
+        menu = {
+          fgColor = foreground;
+          keyColor = magenta;
+          numKeyColor = magenta;
+        };
+        crumbs = {
+          fgColor = background;
+          bgColor = cyan;
+          activeColor = yellow;
+        };
+        status = {
+          newColor = magenta;
+          modifyColor = blue;
+          addColor = green;
+          errorColor = red;
+          highlightcolor = orange;
+          killColor = comment;
+          completedColor = comment;
+        };
+        title = {
           fgColor = foreground;
           bgColor = "default";
-          logoColor = blue;
+          highlightColor = blue;
+          counterColor = magenta;
+          filterColor = magenta;
         };
-        prompt = {
-          fgColor = foreground;
-          bgColor = background;
-          suggestColor = orange;
+      };
+      views = {
+        charts = {
+          bgColor = "default";
+          defaultDialColors = [
+            blue
+            red
+          ];
+          defaultChartColors = [
+            blue
+            red
+          ];
         };
-        info = {
-          fgColor = magenta;
-          sectionColor = foreground;
-        };
-        dialog = {
+        table = {
           fgColor = foreground;
           bgColor = "default";
-          buttonFgColor = foreground;
-          buttonBgColor = magenta;
-          buttonFocusFgColor = background;
-          buttonFocusBgColor = foreground;
-          labelFgColor = comment;
-          fieldFgColor = foreground;
-        };
-        frame = {
-          border = {
-            fgColor = selection;
-            focusColor = foreground;
-          };
-          menu = {
-            fgColor = foreground;
-            keyColor = magenta;
-            numKeyColor = magenta;
-          };
-          crumbs = {
-            fgColor = background;
-            bgColor = cyan;
-            activeColor = yellow;
-          };
-          status = {
-            newColor = magenta;
-            modifyColor = blue;
-            addColor = green;
-            errorColor = red;
-            highlightcolor = orange;
-            killColor = comment;
-            completedColor = comment;
-          };
-          title = {
+          cursorFgColor = background;
+          cursorBgColor = foreground;
+          markColor = "darkgoldenrod";
+          header = {
             fgColor = foreground;
             bgColor = "default";
-            highlightColor = blue;
-            counterColor = magenta;
-            filterColor = magenta;
+            sorterColor = cyan;
           };
         };
-        views = {
-          charts = {
-            bgColor = "default";
-            defaultDialColors = [
-              blue
-              red
-            ];
-            defaultChartColors = [
-              blue
-              red
-            ];
-          };
-          table = {
+        xray = {
+          fgColor = foreground;
+          bgColor = "default";
+          cursorColor = current_line;
+          graphicColor = blue;
+          showIcons = true;
+        };
+        yaml = {
+          keyColor = magenta;
+          colonColor = blue;
+          valueColor = foreground;
+        };
+        logs = {
+          fgColor = foreground;
+          bgColor = "default";
+          indicator = {
             fgColor = foreground;
-            bgColor = "default";
-            cursorFgColor = background;
-            cursorBgColor = foreground;
-            markColor = "darkgoldenrod";
-            header = {
-              fgColor = foreground;
-              bgColor = "default";
-              sorterColor = cyan;
-            };
+            bgColor = selection;
           };
-          xray = {
-            fgColor = foreground;
-            bgColor = "default";
-            cursorColor = current_line;
-            graphicColor = blue;
-            showIcons = true;
-          };
-          yaml = {
-            keyColor = magenta;
-            colonColor = blue;
-            valueColor = foreground;
-          };
-          logs = {
-            fgColor = foreground;
-            bgColor = "default";
-            indicator = {
-              fgColor = foreground;
-              bgColor = selection;
-            };
-          };
-          help = {
-            fgColor = foreground;
-            bgColor = "default";
-            indicator = {
-              fgColor = red;
-              bgColor = selection;
-            };
+        };
+        help = {
+          fgColor = foreground;
+          bgColor = "default";
+          indicator = {
+            fgColor = red;
+            bgColor = selection;
           };
         };
       };
@@ -255,9 +268,18 @@ in
         cfg.package
       ];
       configs = {
-        "config.yaml" = cfg.settings;
-        "aliases.yaml" = cfg.aliases;
-        "skins/tokyonight.yaml" = tokyonight-skin;
+        "config.yaml" = {
+          k9s = cfg.settings;
+        };
+        "aliases.yaml" = {
+          aliases = cfg.aliases;
+        };
+        "skins/tokyonight.yaml" = {
+          k9s = tokyonight-skin;
+        };
+        "clusters/ze-homelab/ze-homelab/config.yaml" = {
+          k9s = defaultHomelabConfig;
+        };
       };
     };
   };
