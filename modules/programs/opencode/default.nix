@@ -26,9 +26,8 @@ let
   # Extract MCP configs for opencode from centralized ai-tools mcp
   mcpConfigs = lib.mapAttrs (name: cfg: cfg.opencode or { }) aiTools.mcp;
 
-  # Extract all tools from MCP configs and generate disable settings
-  # NOTE: Once agents are structured (Phase 2), we can extract from agents.tools
-  allTools = lib.attrNames aiTools.mcp;
+  # Extract all tools from agents and commands for disable settings
+  allTools = lib.unique (aiTools.lib.extractTools (aiTools.agents // aiTools.commands));
   toolDisableSettings = aiTools.lib.mkToolDisableSettings allTools;
 
   openCodeFHS = pkgs.buildFHSEnv {

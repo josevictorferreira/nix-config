@@ -1,4 +1,4 @@
-{}:
+{ lib, pkgs, system }:
 
 {
   context7 = {

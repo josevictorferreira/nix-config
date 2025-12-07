@@ -1,4 +1,4 @@
-{ lib, pkgs }:
+{ lib, pkgs, system }:
 
 let
   npx = lib.getExe pkgs.nodejs "npx";
