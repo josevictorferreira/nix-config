@@ -1,7 +1,7 @@
 { lib, pkgs, system }:
 
 let
-  npx = lib.getExe pkgs.nodejs "npx";
+  npx = lib.getExe' pkgs.nodejs "npx";
 in
 {
   "podman-mcp" = {

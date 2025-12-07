@@ -6,6 +6,7 @@ let
   aiScripts = import ./scripts.nix { inherit lib pkgs; };
   aiLib = import ./lib.nix { inherit lib; };
   aiMcp = import ./mcp.nix { inherit lib pkgs system; };
+  aiChecks = import ./checks.nix { inherit lib pkgs system; };
 in
 {
   commands = aiCommands;
@@ -13,4 +14,7 @@ in
   scripts = aiScripts;
   lib = aiLib;
   mcp = aiMcp;
+  checks = aiChecks.checks;
+  validations = aiChecks.validations;
+  stats = aiChecks.stats;
 }

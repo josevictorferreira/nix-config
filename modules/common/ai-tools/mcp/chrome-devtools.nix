@@ -3,7 +3,7 @@
 let
   isDarwin = builtins.match ".*-darwin" system != null;
   browserExecutable = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
-  npx = lib.getExe pkgs.nodejs "npx";
+  npx = lib.getExe' pkgs.nodejs "npx";
 in
 {
   "chrome-devtools" = {

@@ -10,8 +10,7 @@ in
       type = "local";
       enabled = true;
       command = [
-        lib.getExe
-        pkgs.playwright-mcp
+        (lib.getExe pkgs.playwright-mcp)
         "--executable-path"
         browserExecutable
       ];

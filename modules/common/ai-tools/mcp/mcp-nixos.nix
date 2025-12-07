@@ -8,10 +8,7 @@ if isDarwin then { } else {
     opencode = {
       type = "local";
       enabled = true;
-      command = [
-        lib.getExe
-        pkgs.mcp-nixos
-      ];
+      command = [ (lib.getExe pkgs.mcp-nixos) ];
     };
   };
 }
