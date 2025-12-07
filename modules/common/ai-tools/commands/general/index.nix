@@ -1,11 +1,15 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importCommand = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./ask.nix)
-  (import ./do.nix)
-  (import ./implement-change.nix)
-  (import ./implement-feature.nix)
-  (import ./implement-fix.nix)
-  (import ./implement-refactoring.nix)
-  (import ./implement-tests.nix)
+  (importCommand ./ask.nix)
+  (importCommand ./do.nix)
+  (importCommand ./implement-change.nix)
+  (importCommand ./implement-feature.nix)
+  (importCommand ./implement-fix.nix)
+  (importCommand ./implement-refactoring.nix)
+  (importCommand ./implement-tests.nix)
 ]

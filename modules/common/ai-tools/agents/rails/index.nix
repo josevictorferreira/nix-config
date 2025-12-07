@@ -1,5 +1,9 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importAgent = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./rails-event-store-specialist.nix { inherit lib; })
+  (importAgent ./rails-event-store-specialist.nix)
 ]

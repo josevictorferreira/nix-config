@@ -9,17 +9,27 @@ let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.opencode;
 
-  aiTools = import ../../common/ai-tools { inherit lib pkgs; };
+  aiTools = import ../../common/ai-tools { inherit lib pkgs system; };
   isDarwin = builtins.match ".*-darwin" system != null;
 
+  # Convert ai-tools to markdown format for opencode
+  # Handles both structured format (Phase 2/3) and legacy markdown strings
   mkMdConfigs =
     prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = value;
+        value = aiTools.lib.toMarkdownPrompt value;
       })
       attrset;
+
+  # Extract MCP configs for opencode from centralized ai-tools mcp
+  mcpConfigs = lib.mapAttrs (name: cfg: cfg.opencode or { }) aiTools.mcp;
+
+  # Extract all tools from MCP configs and generate disable settings
+  # NOTE: Once agents are structured (Phase 2), we can extract from agents.tools
+  allTools = lib.attrNames aiTools.mcp;
+  toolDisableSettings = aiTools.lib.mkToolDisableSettings allTools;
 
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";
@@ -59,7 +69,6 @@ in
   imports = [
     ./formatters.nix
     ./lsp.nix
-    ./mcp.nix
     ./provider.nix
     ./permission.nix
   ];
@@ -81,6 +90,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Merge centralized MCP configs into settings
+    jvf.programs.opencode.settings = lib.mkMerge [
+      {
+        mcp = mcpConfigs;
+        tools = toolDisableSettings;
+      }
+    ];
+
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
       ]

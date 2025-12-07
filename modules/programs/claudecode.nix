@@ -2,20 +2,23 @@
 , pkgs
 , config
 , username
+, system
 , ...
 }:
 let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.claudecode;
 
-  aiTools = import ../common/ai-tools { inherit lib pkgs; };
+  aiTools = import ../common/ai-tools { inherit lib pkgs system; };
 
+  # Convert ai-tools to markdown format for claudecode
+  # Handles both structured format (Phase 2/3) and legacy markdown strings
   mkMdConfigs =
     prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = value;
+        value = aiTools.lib.toMarkdownPrompt value;
       })
       attrset;
 in

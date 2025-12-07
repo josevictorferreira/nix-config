@@ -1,8 +1,12 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importCommand = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./add-and-format.nix)
-  (import ./review.nix)
-  (import ./commit-msg.nix)
-  (import ./commit-changes.nix)
+  (importCommand ./add-and-format.nix)
+  (importCommand ./review.nix)
+  (importCommand ./commit-msg.nix)
+  (importCommand ./commit-changes.nix)
 ]

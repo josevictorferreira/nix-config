@@ -1,6 +1,10 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importAgent = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./shadcn-ui-architect.nix { inherit lib; })
-  (import ./ui-ux-architect.nix { inherit lib; })
+  (importAgent ./shadcn-ui-architect.nix)
+  (importAgent ./ui-ux-architect.nix)
 ]

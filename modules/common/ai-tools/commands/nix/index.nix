@@ -1,10 +1,14 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importCommand = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./refactor.nix)
-  (import ./flake-update.nix)
-  (import ./module-scaffold.nix)
-  (import ./option-migrate.nix)
-  (import ./template-new.nix)
-  (import ./nix-check.nix)
+  (importCommand ./refactor.nix)
+  (importCommand ./flake-update.nix)
+  (importCommand ./module-scaffold.nix)
+  (importCommand ./option-migrate.nix)
+  (importCommand ./template-new.nix)
+  (importCommand ./nix-check.nix)
 ]

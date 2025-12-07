@@ -1,5 +1,9 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importAgent = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./container-expert.nix { inherit lib; })
+  (importAgent ./container-expert.nix)
 ]

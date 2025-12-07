@@ -1,7 +1,11 @@
 { lib, ... }:
 
+let
+  aiLib = import ../../lib.nix { inherit lib; };
+  importAgent = aiLib.importAiFile lib;
+in
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./module-expert.nix { inherit lib; })
-  (import ./flake-expert.nix { inherit lib; })
-  (import ./nix-expert.nix { inherit lib; })
+  (importAgent ./module-expert.nix)
+  (importAgent ./flake-expert.nix)
+  (importAgent ./nix-expert.nix)
 ]
