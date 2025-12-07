@@ -11,4 +11,5 @@ in
   agents = aiAgents;
   scripts = aiScripts;
   lib = aiLib;
+  mcp = aiMcp;
 }
