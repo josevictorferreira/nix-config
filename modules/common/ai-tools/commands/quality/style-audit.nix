@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  style-audit = ''
-    ---
-    allowed-tools: Read, Grep, Bash(eslint*), Bash(prettier*), Bash(black*), Bash(flake8*), Bash(rustfmt*), Bash(gofmt*), Bash(nix fmt*), Bash(nixfmt*), Bash(treefmt*)
-    argument-hint: "[path] [--fix] [--report] [--focus=naming|structure|imports|organization]"
-    description: Comprehensive style compliance checking against project standards
-    ---
+  style-audit = lib.mkCommand
+    {
+      name = "Style Audit";
+      description = "Comprehensive code style and formatting audit with auto-fix capabilities";
+      tools = [ ];
+      prompt = ''
 
     You are a code quality auditor specializing in coding standards and best practices across various programming languages. Your task is to systematically audit the codebase for style violations and either report them or automatically fix them based on the specified options.
 
@@ -61,4 +63,5 @@
 
     Provide actionable feedback with specific file locations and suggested improvements.
   '';
+    };
 }

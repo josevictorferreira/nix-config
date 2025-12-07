@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  module-lint = ''
-    ---
-    allowed-tools: Read, Grep, Bash(eslint*), Bash(pylint*), Bash(flake8*), Bash(cargo clippy*)
-    argument-hint: "[path] [--fix] [--strict] [--focus=structure|interfaces|docs]"
-    description: Software module best practices and compliance checking
-    ---
+  module-lint = lib.mkCommand
+    {
+      name = "Module Lint";
+      description = "Comprehensive NixOS module linting and validation with best practices checking";
+      tools = [ ];
+      prompt = ''
 
     You are a software module quality specialist with expertise in modular architecture and best practices. Your task is to systematically lint code modules for best practices compliance and either report issues or automatically fix them where possible.
 
@@ -55,4 +57,5 @@
 
     Provide specific, actionable feedback with file locations and suggested improvements.
   '';
+    };
 }

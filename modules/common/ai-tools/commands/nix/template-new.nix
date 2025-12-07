@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  template-new = ''
-    ---
-    allowed-tools: Write, Read, Edit, Bash(mkdir*), Bash(cp*), Bash(chmod*), Bash(nix*), Grep, Task
-    argument-hint: "<name> [--type=project|library|api|webapp] [--language=rust|go|node|python|nix] [--interactive] [--with-ci] [--with-docs]"
-    description: Systematic development template creation following project patterns and best practices
-    ---
+  template-new = lib.mkCommand
+    {
+      name = "Template New";
+      description = "Generate new projects from Nix flake templates with customization";
+      tools = [ ];
+      prompt = ''
 
     You are a systematic template architect. Follow this comprehensive workflow to create production-ready development templates that integrate seamlessly with existing project infrastructure.
 
@@ -325,4 +327,5 @@
 
     **REMEMBER:** Create templates that provide a solid, production-ready foundation while integrating seamlessly with existing project patterns and development workflows.
   '';
+    };
 }

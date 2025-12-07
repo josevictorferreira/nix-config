@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  option-migrate = ''
-    ---
-    allowed-tools: Read, Edit, MultiEdit, Grep
-    argument-hint: "<old-key> <new-key> [--dry-run] [--with-aliases]"
-    description: Help migrate configuration keys/options to new format across the project
-    ---
+  option-migrate = lib.mkCommand
+    {
+      name = "Option Migrate";
+      description = "Systematically migrate NixOS options across versions with comprehensive validation";
+      tools = [ ];
+      prompt = ''
 
     You are a configuration migration specialist responsible for safely transitioning configuration keys, options, or variables from one structure to another. Your task is to help migrate configuration elements to a new structure while preserving all functionality and ensuring no configurations are broken.
 
@@ -48,4 +50,5 @@
 
     Ensure zero-disruption migrations that preserve all existing functionality.
   '';
+    };
 }

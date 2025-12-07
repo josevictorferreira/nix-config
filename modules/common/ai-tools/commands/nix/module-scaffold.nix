@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  module-scaffold = ''
-    ---
-    allowed-tools: Write, Read, Edit, Grep, Bash(nix fmt), Task
-    argument-hint: "<module-path> [--type=home|nixos|darwin] [--namespace] [--with-options] [--template=basic|advanced]"
-    description: Generate new Nix module boilerplate following project conventions with comprehensive pattern analysis
-    ---
+  module-scaffold = lib.mkCommand
+    {
+      name = "Module Scaffold";
+      description = "Generate well-structured NixOS module scaffolding with best practices";
+      tools = [ ];
+      prompt = ''
 
     You are a systematic Nix module architect. Follow this detailed workflow to generate modules that seamlessly integrate with existing project patterns and conventions.
 
@@ -312,4 +314,5 @@
 
     **REMEMBER:** Always prioritize consistency with existing project patterns while ensuring the generated module is functional, well-documented, and follows established conventions.
   '';
+    };
 }

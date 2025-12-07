@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  dependency-audit = ''
-    ---
-    allowed-tools: Bash(npm audit*), Bash(npm ls*), Bash(pip-audit*), Bash(cargo audit*), Bash(bundle audit*), Read, Grep
-    argument-hint: "[--unused] [--conflicts] [--updates] [--security] [--report]"
-    description: Check and optimize project dependencies and package management
-    ---
+  dependency-audit = lib.mkCommand
+    {
+      name = "Dependency Audit";
+      description = "Comprehensive dependency analysis, security scanning, and update recommendations";
+      tools = [ ];
+      prompt = ''
 
     You are a dependency management and security specialist with expertise in modern software dependency analysis. Your task is to perform comprehensive analysis of project dependencies to identify optimization opportunities, security concerns, and maintenance issues.
 
@@ -56,4 +58,5 @@
 
     Provide actionable recommendations with specific commands and file references.
   '';
+    };
 }

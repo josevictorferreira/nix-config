@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  nix-refactor = ''
-    ---
-    allowed-tools: Read, Edit, MultiEdit, Grep, Bash(nix fmt), Task
-    argument-hint: "[path] [--style-only] [--fix-let-blocks] [--fix-lib-usage] [--fix-options] [--fix-modules]"
-    description: Automatically fix Nix code style violations and refactor patterns according to project conventions
-    ---
+  refactor = lib.mkCommand
+    {
+      name = "Refactor";
+      description = "Systematic code refactoring with comprehensive safety checks and validation";
+      tools = [ ];
+      prompt = ''
 
     You are a systematic Nix code refactoring specialist. Follow this detailed workflow to analyze and improve Nix code while preserving functionality and respecting project conventions.
 
@@ -295,4 +297,5 @@
 
     **REMEMBER:** The goal is systematic, reliable improvement while respecting project patterns and preserving functionality.
   '';
+    };
 }

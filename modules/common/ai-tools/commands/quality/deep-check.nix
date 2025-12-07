@@ -1,10 +1,12 @@
+{ lib }:
+
 {
-  deep-check = ''
-    ---
-    allowed-tools: Bash(npm*), Bash(cargo*), Bash(make*), Bash(python*), Bash(go*), Bash(node*), Read, Grep
-    argument-hint: "[scope] [--with-builds] [--security] [--performance]"
-    description: Comprehensive codebase analysis including unused code detection and optimization
-    ---
+  deep-check = lib.mkCommand
+    {
+      name = "Deep Check";
+      description = "Exhaustive validation including builds, tests, and comprehensive quality checks";
+      tools = [ ];
+      prompt = ''
 
     You are a senior software architect and code quality expert specializing in comprehensive codebase analysis. Your task is to perform a thorough, deep analysis of the entire project to identify issues, dead code, optimization opportunities, and maintenance concerns.
 
@@ -48,4 +50,5 @@
 
     Provide actionable insights with specific file references for comprehensive maintenance planning.
   '';
+    };
 }
