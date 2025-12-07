@@ -45,19 +45,36 @@ rec {
   # Helper to import agent/command files that may be functions or plain attrsets
   # This handles the transition period where some files use mkAgent/mkCommand (functions)
   # and others are still plain attrsets with markdown strings
+  # DEPRECATED: Plain attrset format is deprecated. Use mkAgent/mkCommand instead.
   importAiFile = lib: file:
-    let imported = import file;
-    in if builtins.isFunction imported
-    then imported { inherit lib; }
-    else imported;
+    let
+      imported = import file;
+      result =
+        if builtins.isFunction imported
+        then imported { inherit lib; }
+        else imported;
+
+      # Check if this is using the old plain string format and warn
+      hasLegacyFormat = builtins.isAttrs result &&
+        (lib.any (name: let value = result.${name}; in builtins.isString value || (builtins.isAttrs value && !(value ? name && value ? description && value ? prompt))) (builtins.attrNames result));
+
+      warning =
+        if hasLegacyFormat
+        then builtins.trace "WARNING: ${file} uses deprecated Markdown string format. Please migrate to mkAgent/mkCommand. See AGENTS.md for details." result
+        else result;
+    in
+    warning;
 
   # Convert agent/command to Markdown format (for backward compatibility)
   # This is used by opencode/claudecode which expect markdown strings
   # Handles both structured format { name, description, prompt, ... } and plain markdown strings
+  # DEPRECATED: This function exists only for backward compatibility during migration.
   toMarkdownPrompt = value:
     if builtins.isAttrs value && value ? prompt
     then value.prompt  # Structured format - extract prompt field
-    else value; # Plain markdown string - return as is
+    else
+    # Plain markdown string - DEPRECATED format
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
   # Extract all tools from a set of agents/commands
   extractTools = agentsOrCommands:

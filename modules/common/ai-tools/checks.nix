@@ -87,7 +87,6 @@ let
     AI-Tools Module Validation Report
     ==================================
     Platform: ${system}
-    Date: ${toString (builtins.currentTime)}
 
     AGENTS
     ------
