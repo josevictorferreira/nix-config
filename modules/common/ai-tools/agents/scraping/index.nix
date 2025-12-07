@@ -1,5 +1,5 @@
 { lib, ... }:
 
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./ethical-scraper.nix)
+  (import ./ethical-scraper.nix { inherit lib; })
 ]

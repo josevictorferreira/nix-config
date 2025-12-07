@@ -1,5 +1,5 @@
 { lib, ... }:
 
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./container-expert.nix)
+  (import ./container-expert.nix { inherit lib; })
 ]

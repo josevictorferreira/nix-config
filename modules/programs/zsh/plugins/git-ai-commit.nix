@@ -143,7 +143,7 @@ pkgs.stdenv.mkDerivation {
       - ✏️ Fix typo in README ([#1616](https://github.com/carloscuesta/gitmoji/pull/1616))
 
       Add a short description of WHY the changes are done after the commit message. Don't start it with \"This commit\", just describe the changes.
-      Use the present tense. Title must not be longer than 48 characters. Message must not be longer than 74 characters. Use english for the commit message. Don't put any "```" characters in the commit message;  
+      Use the present tense. Title must not be longer than 48 characters. Message must not be longer than 74 characters. Use english for the commit message. Don't put any \`\`\` characters in the output and commit message;  
 
       # Replace placeholders locally in bash
       PROMPT="$COMMIT_MODEL_BASE_PROMPT

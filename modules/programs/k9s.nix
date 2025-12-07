@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   cfg = config.jvf.programs.k9s;
@@ -16,7 +15,7 @@ let
     readOnly = false;
     noExitOnCtrlC = false;
     ui = {
-      enableMouse = true;
+      enableMouse = false;
       headless = false;
       logoless = false;
       crumbsless = false;

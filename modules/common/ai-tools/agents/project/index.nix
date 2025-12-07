@@ -1,5 +1,5 @@
 { lib, ... }:
 
 lib.foldl' lib.recursiveUpdate { } [
-  (import ./system-config-expert.nix)
+  (import ./system-config-expert.nix { inherit lib; })
 ]

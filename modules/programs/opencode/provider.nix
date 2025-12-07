@@ -64,7 +64,7 @@
           name = "Gemini 3 Pro Preview - Openrouter";
         };
         "openai/gpt-5.1-codex-max" = {
-          name = "GPT 5.1 Codex Max";
+          name = "GPT 5.1 Codex Max - Openrouter";
         };
       };
     };
