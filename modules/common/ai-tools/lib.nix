@@ -72,7 +72,7 @@ rec {
   toMarkdownPrompt = value:
     if builtins.isAttrs value && value ? prompt
     then
-      # SKILL.md format with YAML frontmatter
+    # SKILL.md format with YAML frontmatter
       let
         yamlHeader = ''
           ---
@@ -84,7 +84,51 @@ rec {
 
         '';
       in
-        yamlHeader + value.prompt
+      yamlHeader + value.prompt
+    else
+    # Plain markdown string - DEPRECATED format
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
+  # Convert agent/command to Claude-specific Markdown format
+  # Uses "allowed-tools" key with comma-separated string instead of YAML dict
+  toClaudeMarkdownPrompt = value:
+    if builtins.isAttrs value && value ? prompt
+    then
+    # SKILL.md format with YAML frontmatter (Claude format)
+      let
+        toolsString = lib.concatStringsSep ", " value.tools;
+        yamlHeader = ''
+          ---
+          name: "${value.name or "unknown"}"
+          description: "${value.description or ""}"
+          ${lib.optionalString (value ? tools && value.tools != [ ]) "allowed-tools: \"${toolsString}\""}
+          ---
+
+        '';
+      in
+      yamlHeader + value.prompt
+    else
+    # Plain markdown string - DEPRECATED format
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
+  # Convert agent/command to opencode-specific Markdown format
+  # Adds "*" suffix and lowercases tool names (opencode requirement)
+  toOpencodeMarkdownPrompt = value:
+    if builtins.isAttrs value && value ? prompt
+    then
+    # SKILL.md format with YAML frontmatter (opencode format)
+      let
+        yamlHeader = ''
+          ---
+          name: "${value.name or "unknown"}"
+          description: "${value.description or ""}"
+          ${if (value ? tools && value.tools != [ ]) then "tools:" else ""}
+          ${lib.optionalString (value ? tools && value.tools != [ ]) (lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") value.tools)}
+          ---
+
+        '';
+      in
+      yamlHeader + value.prompt
     else
     # Plain markdown string - DEPRECATED format
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;

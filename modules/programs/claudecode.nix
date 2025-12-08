@@ -19,7 +19,7 @@ let
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}/SKILL.md";
-        value = aiTools.lib.toMarkdownPrompt value;
+        value = aiTools.lib.toClaudeMarkdownPrompt value;
       })
       attrset;
 in
