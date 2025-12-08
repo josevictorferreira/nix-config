@@ -13,11 +13,12 @@ let
 
   # Convert ai-tools to markdown format for claudecode
   # Handles both structured format (Phase 2/3) and legacy markdown strings
+  # Creates skills in format: skills/{name}/SKILL.md
   mkMdConfigs =
     prefix: attrset:
     lib.mapAttrs'
       (name: value: {
-        name = "${prefix}/${name}.md";
+        name = "${prefix}/${name}/SKILL.md";
         value = aiTools.lib.toMarkdownPrompt value;
       })
       attrset;
@@ -98,7 +99,7 @@ in
         ];
         configPath = ".claude";
         configs = lib.mkMerge [
-          (mkMdConfigs "agents" aiTools.agents)
+          (mkMdConfigs "skills" aiTools.agents)
           (mkMdConfigs "commands" aiTools.commands)
         ];
       };
