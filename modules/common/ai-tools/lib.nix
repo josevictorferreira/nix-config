@@ -71,7 +71,20 @@ rec {
   # DEPRECATED: This function exists only for backward compatibility during migration.
   toMarkdownPrompt = value:
     if builtins.isAttrs value && value ? prompt
-    then value.prompt  # Structured format - extract prompt field
+    then
+      # SKILL.md format with YAML frontmatter
+      let
+        yamlHeader = ''
+          ---
+          name: "${value.name or "unknown"}"
+          description: "${value.description or ""}"
+          ${if (value ? tools && value.tools != [ ]) then "tools:" else ""}
+          ${lib.optionalString (value ? tools && value.tools != [ ]) (lib.concatMapStringsSep "\n" (tool: "  ${tool}: true") value.tools)}
+          ---
+
+        '';
+      in
+        yamlHeader + value.prompt
     else
     # Plain markdown string - DEPRECATED format
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;

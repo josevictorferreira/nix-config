@@ -2,7 +2,6 @@
 
 {
   review = lib.mkCommand {
-
     name = "Review";
     description = "Analyze staged git changes and provide thorough code review";
     tools = [ ];
