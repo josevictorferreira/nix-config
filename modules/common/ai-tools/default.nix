@@ -13,6 +13,10 @@ let
   legacyChecks = import ./checks.nix { inherit lib pkgs system; };
 in
 {
+  imports = [
+    ./mcp/default.nix
+  ];
+
   options.jvf.aiTools = {
     enable = lib.mkEnableOption "AI tools integration";
 
@@ -33,9 +37,18 @@ in
       default = { };
       description = lib.mdDoc "MCP servers definitions.";
     };
+
+    mcpOutputs = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.attrsOf lib.types.anything);
+      default = { };
+      readOnly = true;
+      description = lib.mdDoc "Computed MCP outputs for consumers.";
+    };
   };
 
-  config = lib.mkIf cfg.enable { };
+  config = lib.mkIf cfg.enable {
+    jvf.aiTools.mcpOutputs = lib.mapAttrs (_: mcpCfg: mcpCfg._output or { }) cfg.mcp;
+  };
 
   # Legacy exports retained to avoid breaking existing consumers during migration
   commands = legacyCommands;

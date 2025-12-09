@@ -541,14 +541,14 @@ in
 - [x] **TEST**: Run `nix flake check` and verify basic evaluation
 
 ### Phase 2: MCP Modules (Day 2-3)
-- [ ] 2.1 Create `mcp/default.nix` aggregator module
-- [ ] 2.2 Convert `playwright.nix` to module format
-- [ ] 2.3 Convert `context7.nix` to module format
-- [ ] 2.4 Convert `mcp-nixos.nix` to module format (platform-specific)
-- [ ] 2.5 Convert `chrome-devtools.nix` to module format
-- [ ] 2.6 Convert `shadcn.nix` to module format
-- [ ] 2.7 Convert `podman-mcp.nix` to module format
-- [ ] 2.8 Update main default.nix to aggregate MCP outputs
+- [x] 2.1 Create `mcp/default.nix` aggregator module
+- [x] 2.2 Convert `playwright.nix` to module format
+- [x] 2.3 Convert `context7.nix` to module format
+- [x] 2.4 Convert `mcp-nixos.nix` to module format (platform-specific)
+- [x] 2.5 Convert `chrome-devtools.nix` to module format
+- [x] 2.6 Convert `shadcn.nix` to module format
+- [x] 2.7 Convert `podman-mcp.nix` to module format
+- [x] 2.8 Update main default.nix to aggregate MCP outputs
 - [ ] **TEST**: Verify MCP enable/disable works and output format is correct
 
 ### Phase 3: Agent Modules (Day 4-5)
