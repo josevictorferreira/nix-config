@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands."implement-refactoring" = (lib.mkCommandModule {
     name = "Implement Refactoring";
@@ -8,4 +8,6 @@
       !`prompt-enhancer refactoring "$ARGUMENTS";`
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

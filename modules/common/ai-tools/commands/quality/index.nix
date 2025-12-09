@@ -7,4 +7,8 @@
     ./dependency-audit.nix
     ./module-lint.nix
   ];
+
+  config = {
+    # no-op; commands are pure data modules
+  };
 }

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands."commit-changes" = (lib.mkCommandModule {
     name = "Commit Changes";
@@ -326,4 +326,6 @@
       **REMEMBER:** Create atomic commits that follow repository conventions while ensuring each commit represents a complete, logical change that maintains codebase integrity.
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

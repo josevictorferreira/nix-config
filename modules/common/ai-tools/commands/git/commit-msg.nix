@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands."commit-msg" = (lib.mkCommandModule {
     name = "Commit Message";
@@ -9,4 +9,6 @@
       staged changes, following the project's commit standards.
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

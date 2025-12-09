@@ -8,4 +8,8 @@
     ./template-new.nix
     ./nix-check.nix
   ];
+
+  config = {
+    # no-op; commands are pure data modules
+  };
 }

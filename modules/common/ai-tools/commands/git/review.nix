@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands.review = (lib.mkCommandModule {
     name = "Review";
@@ -10,4 +10,6 @@
       code quality, security, and maintainability.
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

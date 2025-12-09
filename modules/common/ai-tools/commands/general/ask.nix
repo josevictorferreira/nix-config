@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands.ask = (lib.mkCommandModule {
     name = "Ask";
@@ -8,4 +8,6 @@
       !`prompt-enhancer question "$ARGUMENTS";`
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

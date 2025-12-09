@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands."implement-feature" = (lib.mkCommandModule {
     name = "Implement Feature";
@@ -8,4 +8,6 @@
       !`prompt-enhancer feature "$ARGUMENTS";`
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   options.jvf.aiTools.commands."add-and-format" = (lib.mkCommandModule {
     name = "Add and Format";
@@ -41,4 +41,6 @@
       Follow project conventions and ensure all staged files are properly formatted.
     '';
   }).options;
+
+  config = lib.mkIf config.jvf.aiTools.enable { };
 }

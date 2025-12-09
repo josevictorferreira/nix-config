@@ -58,15 +58,15 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.aiTools.mcpOutputs = lib.mapAttrs (_: mcpCfg: mcpCfg._output or { }) cfg.mcp;
+    _module.args.legacyAiTools = {
+      commands = legacyCommands;
+      agents = legacyAgents;
+      scripts = legacyScripts;
+      lib = legacyLib;
+      mcp = legacyMcp;
+      checks = legacyChecks.checks;
+      validations = legacyChecks.validations;
+      stats = legacyChecks.stats;
+    };
   };
-
-  # Legacy exports retained to avoid breaking existing consumers during migration
-  commands = legacyCommands;
-  agents = legacyAgents;
-  scripts = legacyScripts;
-  lib = legacyLib;
-  mcp = legacyMcp;
-  checks = legacyChecks.checks;
-  validations = legacyChecks.validations;
-  stats = legacyChecks.stats;
 }
