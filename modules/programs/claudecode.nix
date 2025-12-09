@@ -9,19 +9,7 @@ let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.claudecode;
 
-  aiTools = import ../common/ai-tools { inherit lib pkgs system; };
-
-  # Convert ai-tools to markdown format for claudecode
-  # Handles both structured format (Phase 2/3) and legacy markdown strings
-  # Creates skills in format: skills/{name}/SKILL.md
-  mkMdConfigs =
-    prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}/SKILL.md";
-        value = aiTools.lib.toClaudeMarkdownPrompt value;
-      })
-      attrset;
+  aiToolsClaude = config.jvf.aiTools.consumers.claudecode or { };
 in
 {
   options.jvf.programs.claudecode = {
@@ -98,10 +86,7 @@ in
           pkgs.claude-code
         ];
         configPath = ".claude";
-        configs = lib.mkMerge [
-          (mkMdConfigs "skills" aiTools.agents)
-          (mkMdConfigs "commands" aiTools.commands)
-        ];
+        configs = aiToolsClaude.skills or { } // aiToolsClaude.commands or { };
       };
       claude-code-router = {
         packages = [

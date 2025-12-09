@@ -9,26 +9,14 @@ let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.opencode;
 
-  aiTools = import ../../common/ai-tools { inherit lib pkgs system; };
+  aiToolsOpencode = config.jvf.aiTools.consumers.opencode or { };
   isDarwin = builtins.match ".*-darwin" system != null;
 
-  # Convert ai-tools to markdown format for opencode
-  # Handles both structured format (Phase 2/3) and legacy markdown strings
-  mkMdConfigs =
-    prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = aiTools.lib.toOpencodeMarkdownPrompt value;
-      })
-      attrset;
+  mcpConfigs = aiToolsOpencode.mcp or { };
+  toolDisableSettings = aiToolsOpencode.toolSettings or { };
 
-  # Extract MCP configs for opencode from centralized ai-tools mcp
-  mcpConfigs = lib.mapAttrs (name: cfg: cfg.opencode or { }) aiTools.mcp;
-
-  # Extract all tools from agents and commands for disable settings
-  allTools = lib.unique (aiTools.lib.extractTools (aiTools.agents // aiTools.commands));
-  toolDisableSettings = aiTools.lib.mkToolDisableSettings allTools;
+  agentConfigs = aiToolsOpencode.agents or { };
+  commandConfigs = aiToolsOpencode.commands or { };
 
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";
@@ -103,8 +91,8 @@ in
       ++ lib.optional isDarwin pkgs.opencode
       ++ lib.optional (!isDarwin) shellScriptBin;
       configs = lib.mkMerge [
-        (mkMdConfigs "agent" aiTools.agents)
-        (mkMdConfigs "command" aiTools.commands)
+        agentConfigs
+        commandConfigs
         {
           "config.json" = cfg.settings;
         }

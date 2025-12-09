@@ -580,9 +580,9 @@ in
 - [ ] **TEST**: Verify consumer output format matches expected structure
 
 ### Phase 6: Update Consumers (Day 8)
-- [ ] 6.1 Update `modules/programs/opencode/default.nix`
-- [ ] 6.2 Update `modules/programs/claudecode.nix`
-- [ ] 6.3 Remove deprecated code from consumers
+- [x] 6.1 Update `modules/programs/opencode/default.nix`
+- [x] 6.2 Update `modules/programs/claudecode.nix`
+- [x] 6.3 Remove deprecated code from consumers
 - [ ] **TEST**: Full system rebuild and verify config files are correct
 
 ### Phase 7: Validation and Cleanup (Day 9)

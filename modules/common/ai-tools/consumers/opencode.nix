@@ -4,10 +4,14 @@ let
   aiLib = import ../lib.nix { inherit lib; };
   cfg = config.jvf.aiTools;
 
-  mkMd = lib.mapAttrs' (name: value: {
-    name = name;
-    value = aiLib.toOpencodeMarkdownPrompt value;
-  });
+  mkPrefixed =
+    prefix: entries:
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = aiLib.toOpencodeMarkdownPrompt value;
+      })
+      entries;
 
   toMcp = mcpCfg: mcpCfg._output.opencode or { };
 
@@ -22,10 +26,11 @@ in
 {
   config = lib.mkIf cfg.enable {
     jvf.aiTools.consumers.opencode = {
-      agents = mkMd enabledAgents;
-      commands = mkMd enabledCommands;
+      agents = mkPrefixed "agent" enabledAgents;
+      commands = mkPrefixed "command" enabledCommands;
       mcp = lib.mapAttrs (_: toMcp) enabledMcp;
       toolSettings = toolDisableSettings;
     };
   };
 }
+
