@@ -1,7 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  changelog = lib.mkCommand {
+  options.jvf.aiTools.commands.changelog = (lib.mkCommandModule {
     name = "Changelog";
     description = "Generate comprehensive changelogs from git history following conventional commits";
     tools = [ ];
@@ -66,7 +65,7 @@
             - Since last tagged version
             - Since last changelog entry
             - All unreleased changes
-        
+
       ELSE:
           Include all changes since last changelog update
       ```
@@ -128,7 +127,7 @@
       ```
       For each change, assess:
         - Breaking changes (MAJOR version impact)
-        - New features (MINOR version impact)  
+        - New features (MINOR version impact)
         - Bug fixes (PATCH version impact)
         - User-facing vs internal changes
         - Migration requirements or notes
@@ -146,9 +145,9 @@
       IF --auto flag:
           Determine next version based on changes:
             - Breaking changes → increment MAJOR
-            - New features → increment MINOR  
+            - New features → increment MINOR
             - Only fixes → increment PATCH
-        
+
       ELSE:
           Use "Unreleased" as version placeholder
 
@@ -165,7 +164,7 @@
       ## [Version] - YYYY-MM-DD
       ### Added
       - New feature descriptions
-      ### Changed  
+      ### Changed
       - Changed functionality descriptions
       ### Fixed
       - Bug fix descriptions
@@ -176,7 +175,7 @@
       # Version (YYYY-MM-DD)
       ## Features
       - feat: new feature descriptions
-      ## Bug Fixes  
+      ## Bug Fixes
       - fix: bug fix descriptions
       ## Performance
       - perf: performance improvements
@@ -265,7 +264,7 @@
       ## Features
       - **auth:** add OAuth2 integration for external providers
       - **ui:** implement dark mode toggle with user preferences
-      ## Performance Improvements  
+      ## Performance Improvements
       - **data:** optimize query performance reducing load time by 40%
       ## Bug Fixes
       - **memory:** fix background process memory leak (#123)
@@ -278,7 +277,7 @@
       # Generate unreleased changes entry
       /changelog
 
-      # Create entry for specific version  
+      # Create entry for specific version
       /changelog 1.2.0
 
       # Auto-generate next version based on changes
@@ -293,5 +292,5 @@
 
       **REMEMBER:** Create changelog entries that are user-focused, clearly organized, and follow established project conventions while providing valuable information for users and maintainers.
     '';
-  };
+  }).options;
 }

@@ -1,7 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  nix-check = lib.mkCommand {
+  options.jvf.aiTools.commands."nix-check" = (lib.mkCommandModule {
     name = "Nix Check";
     description = "Comprehensive Nix code validation and formatting with detailed error reporting";
     tools = [ ];
@@ -118,126 +117,49 @@
       ### **Step 3.1: Code Quality Assessment**
       **Static analysis patterns:**
       ```
-      FOR each .nix file:
-          Check for anti-patterns:
-            - Use of `with` statements
-            - Hardcoded paths and values
-            - Missing error handling
-            - Inefficient attribute access
-            - Unused imports and variables
+      Identify available linters: statix, deadnix, etc.
+      Run linting tools in check mode
+      Record style violations and best-practice deviations
+      Look for unused bindings, with-statements, and shadowing issues
       ```
       
-      **Project-specific patterns:**
+      ### **Step 3.2: Performance Considerations**
+      **Evaluation performance:**
       ```
-      IF jvf project detected:
-          Launch Task with Nix Expert: "Analyze this Nix code for jvf compliance and optimization opportunities"
-      ELSE:
-          Apply general Nix best practices analysis
-      ```
-      
-      ### **Step 3.2: Formatting Validation**
-      ```
-      IF --format flag OR --full flag:
-          Run available formatters:
-            - nix fmt (if treefmt configured)
-            - nixfmt (if available)
-          Report formatting inconsistencies
-          IF format issues found AND no --check flag:
-              Offer to auto-fix formatting
+      Note attribute recursion risks
+      Suggest memoization or refactoring of heavy expressions
+      Recommend output splitting to reduce closure sizes
+      Identify opportunities to use callPackage for reuse
       ```
       
-      ### **Step 3.3: Optimization Opportunities**
-      **Performance analysis:**
+      ### **Step 3.3: Best Practice Recommendations**
       ```
-      Identify optimization opportunities:
-        - Lazy evaluation improvements
-        - Attribute access optimization
-        - Import organization
-        - Function call efficiency
-        - Memory usage patterns
-      ```
-      
-      ## **PHASE 4: REPORTING AND RECOMMENDATIONS**
-      
-      ### **Step 4.1: Issue Classification**
-      **Categorize all findings:**
-      ```
-      CRITICAL: Syntax errors preventing evaluation
-      HIGH: Evaluation errors breaking functionality
-      MEDIUM: Build issues or significant anti-patterns
-      LOW: Style issues and minor optimizations
-      INFO: Suggestions and best practices
+      Apply Nix best practices:
+        - Prefer explicit attrsets over with
+        - Use let/in for clarity instead of rec when possible
+        - Standardize module option naming and typing
+        - Ensure platform conditionals are explicit
+        - Recommend overlays/overrides over ad-hoc rewrites
       ```
       
-      ### **Step 4.2: Actionable Report Generation**
-      **For each issue found:**
+      ## **PHASE 4: ACTIONABLE OUTPUT**
       ```
-      Report format:
-      [SEVERITY] File:Line - Issue Description
-      
-      Problem: Detailed explanation of the issue
-      Impact: Why this matters (performance, maintainability, correctness)
-      Solution: Specific steps to fix the issue
-      Example: Code snippet showing the fix (if applicable)
+      Produce a concise report:
+        - Critical errors with file:line references
+        - Evaluation/build blockers and suggested fixes
+        - Style/lint violations with recommendations
+        - Performance and closure-size tips
+        - Quick commands to run (flake check, fmt, statix, deadnix)
       ```
       
-      ### **Step 4.3: Summary and Next Steps**
-      ```
-      Provide summary:
-        - Total files checked
-        - Issues found by category
-        - Critical issues requiring immediate attention
-        - Recommended next steps
-        - Commands to run for fixes
-      ```
-      
-      ## **COMMAND FLAGS AND BEHAVIOR**
-      
-      **Flag-specific execution:**
-      ```
-      --build: Include build testing and derivation validation
-      --eval: Include comprehensive evaluation testing
-      --format: Focus on formatting validation and auto-fix offers
-      --full: Run all validation phases (syntax + eval + build + quality)
-      No flags: Run syntax + basic evaluation + quality analysis
-      ```
-      
-      ## **ERROR HANDLING AND RECOVERY**
-      
-      **Graceful failure handling:**
-      ```
-      FOR each validation failure:
-          - Continue checking other files/aspects
-          - Provide detailed error context
-          - Suggest recovery strategies
-          - Offer to isolate problems for debugging
-      ```
-      
-      **Progress reporting:**
-      ```
-      Show progress for long-running operations:
-        - File-by-file validation status
-        - Current phase and estimated completion
-        - Summary of issues found so far
-      ```
-      
-      ## **USAGE EXAMPLES**
-      
-      ```bash
-      # Quick syntax and quality check
-      /nix-check
-      
-      # Comprehensive validation with builds
-      /nix-check --full
-      
-      # Check specific module with formatting
-      /nix-check modules/home/programs/git --format
-      
-      # Evaluation-focused testing
-      /nix-check flake.nix --eval
-      ```
-      
-      **REMEMBER:** Provide clear, actionable feedback that helps developers improve their Nix code quality while ensuring functionality and maintainability.
+      **Command Arguments:**
+      - [path]: File or directory to validate (defaults to current directory)
+      - --eval: Include evaluation tests
+      - --build: Include build tests (dry-run)
+      - --full: Run eval + build + quality analysis
+      - --fix: Apply safe formatter/linter fixes when available
+      - --strict: Treat warnings as errors and stop early
+      - --report: Output structured report for CI
     '';
-  };
+  }).options;
 }

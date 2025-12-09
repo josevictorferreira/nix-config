@@ -1,14 +1,12 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  template-new = lib.mkCommand
-    {
-      name = "Template New";
-      description = "Generate new projects from Nix flake templates with customization";
-      tools = [ ];
-      prompt = ''
+  options.jvf.aiTools.commands."template-new" = (lib.mkCommandModule {
+    name = "Template New";
+    description = "Generate new projects from Nix flake templates with customization";
+    tools = [ ];
+    prompt = ''
 
-    You are a systematic template architect. Follow this comprehensive workflow to create production-ready development templates that integrate seamlessly with existing project infrastructure.
+  You are a systematic template architect. Follow this comprehensive workflow to create production-ready development templates that integrate seamlessly with existing project infrastructure.
 
     ## **WORKFLOW OVERVIEW**
 
@@ -199,133 +197,65 @@
       - CI/CD test pipeline integration
     ```
 
-    **Documentation system:**
+    **Documentation and onboarding:**
     ```
-    IF --with-docs flag:
-        Create documentation infrastructure:
-          - README with comprehensive setup instructions
-          - API documentation generation setup
-          - User guides and tutorials structure
-          - Contributing guidelines
-          - Change log and release notes template
+    Create comprehensive documentation:
+      - README with clear setup instructions
+      - Architecture overview
+      - Coding standards and contribution guide
+      - Common tasks and workflows
+      - Troubleshooting and FAQ
     ```
 
     **CI/CD integration:**
     ```
-    IF --with-ci flag:
-        Generate CI/CD configurations:
-          - GitHub Actions / GitLab CI / etc.
-          - Build, test, and deployment pipelines
-          - Quality checks and automated reviews
-          - Release automation and versioning
-          - Security scanning and compliance
+    Include pipeline templates:
+      - Build and test stages
+      - Linting and formatting checks
+      - Deployment steps (if applicable)
+      - Artifact publishing configuration
     ```
 
-    ### **Step 3.4: Interactive Customization**
+    ### **Step 3.4: Template Validation and Packaging**
     ```
-    IF --interactive flag:
-        Prompt for customization:
-          - Project metadata (author, description, license)
-          - Specific tool preferences and configurations
-          - Optional feature inclusions
-          - Target deployment platforms
-          - Integration preferences
-    ```
-
-    ## **PHASE 4: VALIDATION AND TESTING**
-
-    ### **Step 4.1: Template Structure Validation**
-    ```
-    Validate template structure:
-      1. Check flake.nix syntax: nix flake check
-      2. Verify development shell: nix develop --command echo "test"
-      3. Test template instantiation in temporary directory
-      4. Validate build processes work correctly
+    Validate template:
+      - Run formatting tools (nixfmt, prettier, black, etc.)
+      - Execute test commands if provided
+      - Validate flake outputs with nix flake check
+      - Ensure template builds without errors
+    Package template:
+      - Create example usage instructions
+      - Add sample configuration files
+      - Provide versioning metadata
     ```
 
-    ### **Step 4.2: Functionality Testing**
-    ```
-    Comprehensive functionality tests:
-      - Test all build commands and scripts
-      - Verify development environment setup
-      - Check testing framework functionality
-      - Validate documentation generation
-      - Test CI/CD pipeline configurations (if included)
-    ```
+    ## **PHASE 4: DELIVERY AND CUSTOMIZATION**
 
-    ### **Step 4.3: Integration Verification**
+    ### **Step 4.1: Template Publication**
     ```
-    Verify project integration:
-      - Check template appears in flake outputs
-      - Test template initialization from different locations
-      - Verify integration with project development workflows
-      - Check compatibility with existing project tooling
+    Publish template:
+      - Document how to instantiate the template
+      - Provide example commands using `nix flake init -t`
+      - Include customization flags and options
     ```
 
-    ### **Step 4.4: Documentation and Welcome Message**
+    ### **Step 4.2: Customization Guidance**
     ```
-    Generate comprehensive documentation:
-      - Template README with setup and usage instructions
-      - Welcome message for flake template initialization
-      - Example usage and common workflows
-      - Troubleshooting guide and common issues
-      - Links to relevant documentation and resources
-    ```
-
-    ## **TEMPLATE OUTPUT STRUCTURE**
-
-    **Standard template organization:**
-    ```
-    templates/<name>/
-    ├── flake.nix              # Template flake configuration
-    ├── README.md              # Template documentation
-    ├── .envrc                 # direnv configuration
-    ├── .gitignore            # Language-specific gitignore
-    ├── .editorconfig         # Editor configuration
-    ├── src/                  # Source code structure
-    ├── tests/                # Testing structure
-    ├── docs/                 # Documentation (if --with-docs)
-    ├── .github/workflows/    # CI/CD (if --with-ci)
-    └── [language-specific files and directories]
+    Provide customization instructions:
+      - How to adjust devshell packages
+      - How to add CI steps
+      - How to switch language/tooling variants
+      - How to add sample code or tests
     ```
 
-    ## **ERROR HANDLING AND EDGE CASES**
-
-    **Common issue handling:**
+    ### **Step 4.3: Support and Maintenance**
     ```
-    - Template name conflicts with existing templates
-    - Unsupported language/framework combinations
-    - Missing project infrastructure for integration
-    - Invalid template specifications or requirements
-    - Template generation failures or incomplete setups
+    Maintenance plan:
+      - Keep dependencies up to date
+      - Track breaking changes in upstream templates
+      - Provide changelog for template updates
+      - Add examples for new best practices
     ```
-
-    **Recovery strategies:**
-    ```
-    - Offer alternative names for conflicting templates
-    - Provide fallback configurations for unsupported setups
-    - Guide users through manual integration steps
-    - Validate all components before finalizing template
-    - Provide rollback options for failed generations
-    ```
-
-    ## **USAGE EXAMPLES**
-
-    ```bash
-    # Create basic Rust project template
-    /template-new rust-api --type=api --language=rust
-
-    # Interactive webapp template with full features
-    /template-new my-webapp --type=webapp --language=node --interactive --with-ci --with-docs
-
-    # Simple library template
-    /template-new utils-lib --type=library --language=python
-
-    # Custom Nix module template
-    /template-new nix-module --language=nix --with-docs
-    ```
-
-    **REMEMBER:** Create templates that provide a solid, production-ready foundation while integrating seamlessly with existing project patterns and development workflows.
-  '';
-    };
+    '';
+  }).options;
 }
