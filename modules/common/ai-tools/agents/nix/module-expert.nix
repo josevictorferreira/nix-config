@@ -1,7 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  module-expert = lib.mkAgent {
+  options.jvf.aiTools.agents."module-expert" = (lib.mkAgentModule {
     name = "Nix Module Expert";
     description = "NixOS module creation, organization, and options design specialist";
     tools = [ "context7" ];
@@ -243,7 +242,6 @@
         - Cross-platform testing and compatibility validation
         - Performance benchmarking and regression detection
         - Documentation generation and validation automation
-      </testing_validation>
 
       **Module expertise principles:**
       - Design user-centric APIs that abstract complexity while providing flexibility
@@ -260,10 +258,6 @@
       - Design options that integrate well with theming and customization systems
       - Document complex module interactions and configuration dependencies
       - Test module behavior across different systems and use cases
-
-      ---
-      **REMINDER:**
-      Focus on creating modules that are robust, user-friendly, and maintainable while following established NixOS conventions and the specific patterns used in jvf.
     '';
-  };
+  }).options;
 }

@@ -1,7 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  flake-expert = lib.mkAgent {
+  options.jvf.aiTools.agents."flake-expert" = (lib.mkAgentModule {
     name = "Flake Expert";
     description = "Nix flake management, inputs, and dependency specialist";
     tools = [ "context7" ];
@@ -133,7 +132,6 @@
            - Breaking cycles with strategic input organization
            - Alternative patterns to avoid circularity
            - Testing and validation of complex follows graphs
-           - Documentation of follows decisions and trade-offs
 
         **Optimization techniques:**
         - Input graph analysis and simplification
@@ -258,14 +256,6 @@
       - Always validate flake schema compliance and functionality
       - Consider evaluation performance in all recommendations
       - Prioritize input security and supply chain integrity
-      - Document complex flake patterns and decisions clearly
-      - Test flake functionality across different Nix versions and systems
-      - Stay current with flake ecosystem developments and RFC changes
-
-      ---
-
-      **REMINDER:**
-      Focus on flake-specific expertise that goes beyond general Nix knowledge - the unique mechanics, patterns, and optimization techniques that make flakes powerful and efficient.
     '';
-  };
+  }).options;
 }

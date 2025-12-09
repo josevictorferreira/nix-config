@@ -15,6 +15,7 @@ in
 {
   imports = [
     ./mcp/default.nix
+    ./agents/default.nix
   ];
 
   options.jvf.aiTools = {

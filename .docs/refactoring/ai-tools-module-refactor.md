@@ -552,15 +552,15 @@ in
 - [ ] **TEST**: Verify MCP enable/disable works and output format is correct
 
 ### Phase 3: Agent Modules (Day 4-5)
-- [ ] 3.1 Create `agents/default.nix` aggregator module
-- [ ] 3.2 Create `agents/nix/default.nix` category module
-- [ ] 3.3 Convert nix-expert, flake-expert, module-expert to modules
-- [ ] 3.4 Create and convert `agents/general/` category
-- [ ] 3.5 Create and convert `agents/frontend/` category
-- [ ] 3.6 Create and convert `agents/infra/` category
-- [ ] 3.7 Create and convert `agents/project/` category
-- [ ] 3.8 Create and convert `agents/rails/` category
-- [ ] 3.9 Create and convert `agents/scraping/` category
+- [x] 3.1 Create `agents/default.nix` aggregator module
+- [x] 3.2 Create `agents/nix/default.nix` category module
+- [x] 3.3 Convert nix-expert, flake-expert, module-expert to modules
+- [x] 3.4 Create and convert `agents/general/` category
+- [x] 3.5 Create and convert `agents/frontend/` category
+- [x] 3.6 Create and convert `agents/infra/` category
+- [x] 3.7 Create and convert `agents/project/` category
+- [x] 3.8 Create and convert `agents/rails/` category
+- [x] 3.9 Create and convert `agents/scraping/` category
 - [ ] **TEST**: Verify all agents can be enabled/disabled individually
 
 ### Phase 4: Command Modules (Day 6)

@@ -1,0 +1,6 @@
+{ ... }:
+{
+  imports = [
+    ./ethical-scraper.nix
+  ];
+}
