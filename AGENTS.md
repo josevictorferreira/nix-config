@@ -90,27 +90,28 @@ lib.optionalString (os == "nixos") ''
 
 ## AI-Tools Module Usage
 
-The `modules/common/ai-tools/` module provides structured definitions for AI agents, commands, and MCP (Model Context Protocol) servers. As of the Phase 7 refactor, all definitions use pure Nix attrsets instead of Markdown strings.
+The `modules/common/ai-tools/` tree is now a first-class NixOS module (Phase 7). Agents, commands, and MCP servers live under `jvf.aiTools.*` with enable flags and computed consumer outputs under `config.jvf.aiTools.consumers.*`. Legacy Markdown-string definitions are deprecated and will emit traces when encountered.
 
 ### Creating New Agents or Commands
 
-All agents and commands should use the structured format defined in `lib.nix`:
+Use the module form with `lib.mkAgentModule` / `lib.mkCommandModule` inside an options assignment:
 
 ```nix
 # Example: modules/common/ai-tools/agents/frontend/my-agent.nix
-{ lib }:
-
-lib.mkAgent {
-  name = "My Agent";
-  description = "Brief description of what this agent does";
-  tools = [ "shadcn" "playwright" ];  # Optional, defaults to []
-  prompt = ''
-    You are a specialized agent...
-    
-    Your responsibilities include:
-    - Task 1
-    - Task 2
-  '';
+{ lib, ... }:
+{
+  options.jvf.aiTools.agents."my-agent" = (lib.mkAgentModule {
+    name = "My Agent";
+    description = "Brief description of what this agent does";
+    tools = [ "shadcn" "playwright" ];
+    prompt = ''
+      You are a specialized agent...
+      
+      Your responsibilities include:
+      - Task 1
+      - Task 2
+    '';
+  }).options;
 }
 ```
 
@@ -121,6 +122,7 @@ lib.mkAgent {
 
 **Optional Fields:**
 - `tools`: List of MCP tools this agent uses (e.g., `["shadcn", "playwright"]`)
+- `_output`: Computed consumer output (read-only; normally set by consumer modules)
 
 ### Directory Structure for Agents/Commands
 
@@ -138,33 +140,75 @@ modules/common/ai-tools/
 │   ├── git/            # Git-related commands
 │   ├── nix/            # Nix-specific commands
 │   └── ...
+├── mcp/                # MCP servers (local/remote)
+├── consumers/          # Consumer transformations (opencode, claudecode)
+└── types.nix / lib.nix # Shared helpers and types
 ```
 
 Each subdirectory contains:
-- Individual `.nix` files (one per agent/command)
-- An `index.nix` that folds all files in the directory
+- Individual `.nix` files (one per agent/command/MCP)
+- Category `default.nix` aggregators
+- A top-level `default.nix` that imports aggregators and exports options/consumers
 
 ### Adding a New MCP Server
 
-MCP servers are defined in `modules/common/ai-tools/mcp/` with one file per server:
+MCP servers are defined in `modules/common/ai-tools/mcp/` with one file per server, using `lib.mkMcpModule`:
 
 ```nix
 # Example: modules/common/ai-tools/mcp/my-mcp.nix
-{ lib, system, ... }:
+{ lib, pkgs, config, system, ... }:
 
+let
+  cfg = config.jvf.aiTools.mcp.my-mcp;
+  isDarwin = builtins.match ".*-darwin" system != null;
+inn
 {
-  my-mcp = {
-    opencode = {
-      type = "local";  # or "remote"
-      enabled = true;
-      command = [ "npx" "-y" "@my-org/my-mcp" ];
-      args = [ "--some-arg" ];
+  options.jvf.aiTools.mcp.my-mcp = (lib.mkMcpModule {
+    options = {
+      package = lib.mkPackageOption pkgs "my-mcp" { };
+      args = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = lib.mdDoc "Arguments passed to the MCP executable.";
+      };
     };
-    # Optional: claudecode-specific config
-    # claudecode = { ... };
+  }).options;
+
+  config = lib.mkIf cfg.enable {
+    jvf.aiTools.mcp.my-mcp._output = {
+      opencode = {
+        type = "local";
+        enabled = true;
+        command = [ (lib.getExe cfg.package) ] ++ cfg.args;
+      };
+    };
   };
 }
 ```
+
+**MCP Configuration Fields:**
+- `enable`: Toggle for the MCP server
+- `package`: Package providing the MCP (for local MCPs)
+- `url`/`headers`: For remote MCPs
+- `_output`: Computed consumer output (read-only; set in `config`)
+
+**Platform-Specific MCPs:**
+Use conditionals for platform-specific servers:
+```nix
+{ lib, system, ... }:
+
+let
+  isDarwin = builtins.match ".*-darwin" system != null;
+inn
+lib.mkIf (!isDarwin) {
+  options.jvf.aiTools.mcp."mcp-nixos" = (lib.mkMcpModule { }).options;
+
+  config = lib.mkIf config.jvf.aiTools.mcp."mcp-nixos".enable {
+    # linux-only output
+  };
+}
+```
+
 
 **MCP Configuration Fields:**
 - `type`: Either `"local"` (spawned process) or `"remote"` (network)
@@ -188,16 +232,34 @@ lib.optionalAttrs (!isDarwin) {
 
 ### Consumer Integration
 
-The AI-Tools module exports all definitions via `modules/common/ai-tools/default.nix`:
+The AI-Tools module exports all definitions via `modules/common/ai-tools/default.nix` and computed consumer outputs under `config.jvf.aiTools.consumers`:
 
 ```nix
+# In modules/common/ai-tools/default.nix
+imports = [
+  ./mcp/default.nix
+  ./agents/default.nix
+  ./commands/default.nix
+  ./consumers/default.nix
+];
+
+config = lib.mkIf cfg.enable {
+  jvf.aiTools.mcpOutputs = lib.mapAttrs (_: mcpCfg: mcpCfg._output or { }) cfg.mcp;
+};
+```
+
+Consumers (like `opencode` or `claudecode`) now use computed outputs:
+```nix
 {
-  agents = { ... };    # All agents as attrset
-  commands = { ... };  # All commands as attrset
-  mcp = { ... };       # All MCP servers as attrset
-  scripts = { ... };   # Additional scripts
+  settings = {
+    agents = config.jvf.aiTools.consumers.opencode.agents;
+    commands = config.jvf.aiTools.consumers.opencode.commands;
+    mcp = config.jvf.aiTools.consumers.opencode.mcp;
+    toolSettings = config.jvf.aiTools.consumers.opencode.toolSettings;
+  };
 }
 ```
+
 
 Consumers (like `opencode` or `claudecode`) import via:
 ```nix
@@ -218,13 +280,12 @@ in
 
 ### Helper Functions (from lib.nix)
 
-- `mkAgent { name, description, prompt, tools ? [] }`: Create structured agent
-- `mkCommand { ... }`: Alias for `mkAgent` (same structure)
-- `foldAiDefinitions`: Fold multiple definitions into single attrset
-- `importAiFile`: Import agent/command file (handles functions or plain attrsets)
-- `toMarkdownPrompt`: Extract prompt string (for backward compatibility)
+- `mkAgentModule { ... }`: Create an agent options module
+- `mkCommandModule { ... }`: Create a command options module
+- `mkMcpModule { ... }`: Create an MCP options module
 - `extractTools`: Get all tools from agents/commands
 - `mkToolDisableSettings`: Generate tool disable settings from tool list
+- (Deprecated during migration) `toMarkdownPrompt`/`toClaudeMarkdownPrompt`/`toOpencodeMarkdownPrompt`
 
 ### Migration from Old Format
 
@@ -238,20 +299,32 @@ in
 }
 ```
 
-**New Format:**
+**New Module Format:**
 ```nix
-{ lib }:
-
-lib.mkAgent {
-  name = "Agent Name";
-  description = "Brief description";
-  prompt = ''
-    You are a specialized agent...
-  '';
+{ lib, ... }:
+{
+  options.jvf.aiTools.agents."my-agent" = (lib.mkAgentModule {
+    name = "Agent Name";
+    description = "Brief description";
+    prompt = ''
+      You are a specialized agent...
+    '';
+  }).options;
 }
 ```
 
-**Note:** The old Markdown string format is deprecated but still supported during the transition period via `toMarkdownPrompt` helper.
+**Consumer Usage (opencode example):**
+```nix
+{
+  settings = {
+    agents = config.jvf.aiTools.consumers.opencode.agents;
+    commands = config.jvf.aiTools.consumers.opencode.commands;
+    mcp = config.jvf.aiTools.consumers.opencode.mcp;
+  };
+}
+```
+
+**Note:** The old Markdown string format is deprecated; helper functions remain only for migration warnings.
 
 ### Validation
 

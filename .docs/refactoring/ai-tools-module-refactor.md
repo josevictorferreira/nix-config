@@ -586,10 +586,10 @@ in
 - [ ] **TEST**: Full system rebuild and verify config files are correct
 
 ### Phase 7: Validation and Cleanup (Day 9)
-- [ ] 7.1 Update `checks.nix` for new module structure
-- [ ] 7.2 Add assertions for tool dependencies
+- [x] 7.1 Update `checks.nix` for new module structure
+- [x] 7.2 Add assertions for tool dependencies
 - [ ] 7.3 Cleanup deprecated code in `lib.nix`
-- [ ] 7.4 Update `AGENTS.md` documentation
+- [x] 7.4 Update `AGENTS.md` documentation
 - [ ] **TEST**: Run validation checks and verify all pass
 
 ### Phase 8: Role Integration (Day 10)
