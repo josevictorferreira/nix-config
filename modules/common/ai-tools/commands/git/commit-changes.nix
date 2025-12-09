@@ -1,8 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  commit-changes = lib.mkCommand {
-
+  options.jvf.aiTools.commands."commit-changes" = (lib.mkCommandModule {
     name = "Commit Changes";
     description = "Systematically analyze, group, and commit changes following repository conventions";
     tools = [ ];
@@ -327,5 +325,5 @@
     
       **REMEMBER:** Create atomic commits that follow repository conventions while ensuring each commit represents a complete, logical change that maintains codebase integrity.
     '';
-  };
+  }).options;
 }

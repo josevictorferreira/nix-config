@@ -1,7 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  review = lib.mkCommand {
+  options.jvf.aiTools.commands.review = (lib.mkCommandModule {
     name = "Review";
     description = "Analyze staged git changes and provide thorough code review";
     tools = [ ];
@@ -10,5 +9,5 @@
       code review with suggestions for improvement, focusing on
       code quality, security, and maintainability.
     '';
-  };
+  }).options;
 }

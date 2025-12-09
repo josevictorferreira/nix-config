@@ -1,12 +1,10 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  option-migrate = lib.mkCommand
-    {
-      name = "Option Migrate";
-      description = "Systematically migrate NixOS options across versions with comprehensive validation";
-      tools = [ ];
-      prompt = ''
+  options.jvf.aiTools.commands."option-migrate" = (lib.mkCommandModule {
+    name = "Option Migrate";
+    description = "Systematically migrate NixOS options across versions with comprehensive validation";
+    tools = [ ];
+    prompt = ''
 
     You are a configuration migration specialist responsible for safely transitioning configuration keys, options, or variables from one structure to another. Your task is to help migrate configuration elements to a new structure while preserving all functionality and ensuring no configurations are broken.
 
@@ -50,5 +48,5 @@
 
     Ensure zero-disruption migrations that preserve all existing functionality.
   '';
-    };
+  }).options;
 }

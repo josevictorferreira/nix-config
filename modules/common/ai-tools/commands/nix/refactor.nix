@@ -1,12 +1,10 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  refactor = lib.mkCommand
-    {
-      name = "Refactor";
-      description = "Systematic code refactoring with comprehensive safety checks and validation";
-      tools = [ ];
-      prompt = ''
+  options.jvf.aiTools.commands.refactor = (lib.mkCommandModule {
+    name = "Refactor";
+    description = "Systematic code refactoring with comprehensive safety checks and validation";
+    tools = [ ];
+    prompt = ''
 
     You are a systematic Nix code refactoring specialist. Follow this detailed workflow to analyze and improve Nix code while preserving functionality and respecting project conventions.
 
@@ -197,105 +195,6 @@
       };
     }
     ```
-
-    **Conditional Logic Improvements:**
-    ```nix
-    # BEFORE: if-then-else
-    config = if cfg.enable then {
-      services.example.enable = true;
-      environment.systemPackages = [ pkgs.example ];
-    } else {};
-
-    # AFTER: mkIf
-    config = lib.mkIf cfg.enable {
-      services.example.enable = true;
-      environment.systemPackages = [ pkgs.example ];
-    };
-    ```
-
-    **Let Block Optimization:**
-    ```
-    BEFORE: distant let block with unused variables
-    let
-      configFile = writeText "config" cfg.configText;
-      pkg = pkgs.example;
-      unused = "never used";
-    in {
-      options = { ... };
-      config = {
-        systemd.services.example.serviceConfig.ExecStart = "...";
-      };
-    }
-
-    AFTER: scoped let block, unused variables removed
-    {
-      options = { ... };
-      config = let
-        configFile = writeText "config" cfg.configText;
-        pkg = pkgs.example;
-      in {
-        systemd.services.example.serviceConfig.ExecStart = "...";
-      };
-    }
-    ```
-
-    ## **PHASE 4: VALIDATION AND FORMATTING**
-
-    ### **Step 4.1: Functionality Verification**
-    ```
-    FOR each modified file:
-        Run: nix-instantiate --parse <file>
-        Check for syntax errors
-        IF file defines packages/modules:
-            Run: nix eval --file <file> (basic evaluation test)
-    ```
-
-    ### **Step 4.2: Formatting Application**
-    ```
-    Run: nix fmt
-    This applies treefmt with nixfmt, deadnix, statix for consistent formatting
-    ```
-
-    ### **Step 4.3: Final Validation**
-    ```
-    FOR each modified file:
-        Re-read to verify changes applied correctly
-        Check that original functionality is preserved
-        Ensure formatting is consistent with project style
-    ```
-
-    ## **COMMAND EXECUTION EXAMPLES**
-
-    ```bash
-    # Refactor specific file with comprehensive fixes
-    /nix-refactor modules/home/programs/git/default.nix
-
-    # Fix only library usage in directory
-    /nix-refactor modules/nixos/ --fix-lib-usage
-
-    # Style-only formatting for all files
-    /nix-refactor . --style-only
-
-    # Comprehensive module structure and options fixes
-    /nix-refactor modules/ --fix-modules --fix-options
-    ```
-
-    ## **ERROR HANDLING AND RECOVERY**
-
-    **If refactoring fails:**
-    1. **Document the failure** - what pattern couldn't be applied and why
-    2. **Preserve original** - ensure no partial changes break functionality
-    3. **Report conflicts** - explain when project patterns conflict with best practices
-    4. **Suggest alternatives** - provide manual fix recommendations when automation fails
-
-    **Quality assurance:**
-    - Always test syntax after changes
-    - Preserve all original functionality
-    - Maintain code readability and maintainability
-    - Follow project conventions over generic patterns
-    - Document any deviations or compromises made
-
-    **REMEMBER:** The goal is systematic, reliable improvement while respecting project patterns and preserving functionality.
-  '';
-    };
+    '';
+  }).options;
 }

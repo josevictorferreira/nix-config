@@ -1,8 +1,6 @@
-{ lib }:
-
+{ lib, ... }:
 {
-  add-and-format = lib.mkCommand {
-
+  options.jvf.aiTools.commands."add-and-format" = (lib.mkCommandModule {
     name = "Add and Format";
     description = "Smart git add with automatic formatting and style checking for files";
     tools = [ ];
@@ -42,5 +40,5 @@
     
       Follow project conventions and ensure all staged files are properly formatted.
     '';
-  };
+  }).options;
 }
