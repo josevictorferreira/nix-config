@@ -28,6 +28,10 @@ let
   };
 in
 rec {
+  aiToolsLib = {
+    inherit toMarkdownPrompt toClaudeMarkdownPrompt toOpencodeMarkdownPrompt extractTools mkToolDisableSettings;
+  };
+
   types = {
     aiDefinition = types.submodule ({ ... }: {
       options = aiOptions;
@@ -36,6 +40,7 @@ rec {
   };
 
   mkAgentModule = def: {
+
     options = {
       enable = lib.mkEnableOption "AI agent";
       name = lib.mkOption { type = types.str; default = def.name or ""; description = lib.mdDoc "Display name for the agent."; };
@@ -168,7 +173,7 @@ rec {
 
   # Extract all tools from a set of agents/commands
   extractTools = agentsOrCommands:
-    lib.flatten (lib.mapAttrsToList (name: cfg: cfg.tools or [ ]) agentsOrCommands);
+    lib.flatten (lib.mapAttrsToList (_: cfg: cfg.tools or [ ]) agentsOrCommands);
 
   # Generate tool disable settings from a list of tool names
   # Example: ["shadcn" "playwright"] -> { "shadcn*" = false; "playwright*" = false; }

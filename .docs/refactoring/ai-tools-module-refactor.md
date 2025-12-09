@@ -573,10 +573,10 @@ in
 - [ ] **TEST**: Verify all commands can be enabled/disabled individually
 
 ### Phase 5: Consumer Integration (Day 7)
-- [ ] 5.1 Create `consumers/default.nix` aggregator
-- [ ] 5.2 Create `consumers/opencode.nix` with transformations
-- [ ] 5.3 Create `consumers/claudecode.nix` with transformations
-- [ ] 5.4 Expose computed consumer configs in main module
+- [x] 5.1 Create `consumers/default.nix` aggregator
+- [x] 5.2 Create `consumers/opencode.nix` with transformations
+- [x] 5.3 Create `consumers/claudecode.nix` with transformations
+- [x] 5.4 Expose computed consumer configs in main module
 - [ ] **TEST**: Verify consumer output format matches expected structure
 
 ### Phase 6: Update Consumers (Day 8)

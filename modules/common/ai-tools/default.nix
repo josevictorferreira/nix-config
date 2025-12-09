@@ -16,6 +16,8 @@ in
   imports = [
     ./mcp/default.nix
     ./agents/default.nix
+    ./commands/default.nix
+    ./consumers/default.nix
   ];
 
   options.jvf.aiTools = {
@@ -44,6 +46,13 @@ in
       default = { };
       readOnly = true;
       description = lib.mdDoc "Computed MCP outputs for consumers.";
+    };
+
+    consumers = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.attrsOf lib.types.anything);
+      default = { };
+      readOnly = true;
+      description = lib.mdDoc "Computed consumer-specific aiTools outputs.";
     };
   };
 
