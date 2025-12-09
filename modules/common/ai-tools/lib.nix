@@ -2,6 +2,7 @@
 
 let
   types = lib.types;
+  aiTypes = import ./types.nix { inherit lib; };
 
   aiOptions = {
     name = lib.mkOption {
@@ -31,8 +32,40 @@ rec {
     aiDefinition = types.submodule ({ ... }: {
       options = aiOptions;
     });
+    inherit (aiTypes) agentType commandType mcpLocalType mcpRemoteType mcpType;
   };
 
+  mkAgentModule = def: {
+    options = {
+      enable = lib.mkEnableOption "AI agent";
+      name = lib.mkOption { type = types.str; default = def.name or ""; description = lib.mdDoc "Display name for the agent."; };
+      description = lib.mkOption { type = types.str; default = def.description or ""; description = lib.mdDoc "Short description of the agent."; };
+      tools = lib.mkOption { type = types.listOf types.str; default = def.tools or [ ]; description = lib.mdDoc "List of tools the agent may use."; };
+      prompt = lib.mkOption { type = types.lines; default = def.prompt or ""; description = lib.mdDoc "Multi-line prompt defining the agent."; };
+      _output = lib.mkOption { type = types.attrsOf types.anything; default = { }; readOnly = true; description = lib.mdDoc "Computed consumer output (reserved)."; };
+    };
+  };
+
+  mkCommandModule = def: {
+    options = {
+      enable = lib.mkEnableOption "AI command";
+      name = lib.mkOption { type = types.str; default = def.name or ""; description = lib.mdDoc "Display name for the command."; };
+      description = lib.mkOption { type = types.str; default = def.description or ""; description = lib.mdDoc "Short description of the command."; };
+      tools = lib.mkOption { type = types.listOf types.str; default = def.tools or [ ]; description = lib.mdDoc "List of tools the command may use."; };
+      prompt = lib.mkOption { type = types.lines; default = def.prompt or ""; description = lib.mdDoc "Multi-line prompt defining the command."; };
+      _output = lib.mkOption { type = types.attrsOf types.anything; default = { }; readOnly = true; description = lib.mdDoc "Computed consumer output (reserved)."; };
+    };
+  };
+
+  mkMcpModule = def: {
+    options = {
+      enable = lib.mkEnableOption "MCP server";
+      _output = lib.mkOption { type = types.attrsOf types.anything; default = { }; readOnly = true; description = lib.mdDoc "Computed consumer output (reserved)."; };
+    } // (def.options or { });
+    config = def.config or { };
+  };
+
+  # Legacy helpers (kept for backward compatibility during migration)
   mkAgent = { name ? throw "mkAgent requires 'name'", description ? throw "mkAgent requires 'description'", prompt ? throw "mkAgent requires 'prompt'", tools ? [ ], ... }: {
     inherit name description tools prompt;
   };
