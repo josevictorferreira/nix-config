@@ -137,23 +137,5 @@
       };
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
-
-      # AI-Tools validation checks
-      checks = forAllSystems (system:
-        let
-          pkgs = mkPkgs system;
-          lib = pkgs.lib;
-          aiTools = import ./modules/common/ai-tools/checks.nix {
-            inherit lib pkgs system;
-          };
-        in
-        {
-          ai-tools-all = aiTools.checks.all;
-          ai-tools-assertions = aiTools.checks.assertionsCheck;
-          ai-tools-required-fields = aiTools.checks.requiredFieldsCheck;
-          ai-tools-eval = aiTools.checks.evalCheck;
-        }
-
-      );
     };
 }

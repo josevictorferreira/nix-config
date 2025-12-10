@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -27,10 +26,12 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}/SKILL.md";
-      value = toClaudeMarkdownPrompt value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}/SKILL.md";
+        value = toClaudeMarkdownPrompt value;
+      })
+      attrset;
 in
 {
   options.jvf.programs.claudecode = {
@@ -43,21 +44,21 @@ in
     };
 
     agents = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
-      description = "Agents to install into the configuration";
+      description = "Agents to install into the configuration (string prompts or structured objects)";
     };
 
     commands = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
-      description = "Commands to install into the configuration";
+      description = "Commands to install into the configuration (string prompts or structured objects)";
     };
 
     mcps = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf json.type;
       default = { };
-      description = "MCP tools to install into the configuration";
+      description = "MCP tools to install into the configuration (structured objects)";
     };
 
     skills = lib.mkOption {

@@ -11,6 +11,33 @@ let
   cfg = config.jvf.programs.opencode;
   isDarwin = builtins.match ".*-darwin" system != null;
 
+  toOpencodeMarkdownPrompt =
+    value:
+    if builtins.isAttrs value && value ? prompt then
+      let
+        yamlHeader = ''
+          ---
+          name: "${value.name or "unknown"}"
+          description: "${value.description or ""}"
+          ${if (value ? tools && value.tools != [ ]) then "tools:" else ""}
+          ${lib.optionalString (value ? tools && value.tools != [ ]) (
+            lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") value.tools
+          )}
+          ---
+
+        '';
+      in
+      yamlHeader + value.prompt
+    else
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
+  mkMdConfigs =
+    prefix: attrset:
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = toOpencodeMarkdownPrompt value;
+    }) attrset;
+
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";
     targetPkgs =
@@ -63,21 +90,21 @@ in
     };
 
     agents = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
-      description = "Agents to install into the configuration";
+      description = "Agents to install into the configuration (string prompts or structured objects)";
     };
 
     commands = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
-      description = "Commands to install into the configuration";
+      description = "Commands to install into the configuration (string prompts or structured objects)";
     };
 
     mcps = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf json.type;
       default = { };
-      description = "MCP tools to install into the configuration";
+      description = "MCP tools to install into the configuration (structured objects)";
     };
 
     settings = lib.mkOption {
@@ -94,18 +121,15 @@ in
       ++ lib.optional isDarwin pkgs.opencode
       ++ lib.optional (!isDarwin) shellScriptBin;
       configs = lib.mkMerge [
+        (mkMdConfigs "agent" cfg.agents)
+        (mkMdConfigs "command" cfg.commands)
         {
-          "config.json" =
+          "config.json" = (
             cfg.settings
             // {
               mcp = cfg.mcps;
             }
-            // {
-              agent = cfg.agents;
-            }
-            // {
-              command = cfg.commands;
-            };
+          );
         }
       ];
     };

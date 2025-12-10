@@ -1,7 +1,6 @@
-{
-  lib,
-  config,
-  ...
+{ lib
+, config
+, ...
 }:
 
 let
@@ -17,4 +16,6 @@ in
   options.jvf.aiTools = {
     enable = lib.mkEnableOption "AI tools integration";
   };
+
+  config = lib.mkIf cfg.enable { };
 }
