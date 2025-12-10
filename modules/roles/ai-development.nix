@@ -14,6 +14,7 @@ in
     ../programs/opencode
     ../programs/claudecode.nix
     ../programs/droid.nix
+    ../common/ai-tools/default.nix
   ];
 
   options.jvf.roles.aiDevelopment = {

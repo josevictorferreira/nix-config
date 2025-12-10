@@ -8,8 +8,29 @@
 let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.claudecode;
+  toClaudeMarkdownPrompt =
+    value:
+    if builtins.isAttrs value && value ? prompt then
+      let
+        toolsString = lib.concatStringsSep ", " value.tools;
+        yamlHeader = ''
+          ---
+          name: "${value.name or "unknown"}"
+          description: "${value.description or ""}"
+          ${lib.optionalString (value ? tools && value.tools != [ ]) "allowed-tools: \"${toolsString}\""}
+          ---
 
-  aiToolsClaude = config.jvf.aiTools.consumers.claudecode or { };
+        '';
+      in
+      yamlHeader + value.prompt
+    else
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+  mkMdConfigs =
+    prefix: attrset:
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}/SKILL.md";
+      value = toClaudeMarkdownPrompt value;
+    }) attrset;
 in
 {
   options.jvf.programs.claudecode = {
@@ -116,7 +137,15 @@ in
           pkgs.claude-code
         ];
         configPath = ".claude";
-        configs = aiToolsClaude.skills or { } // aiToolsClaude.commands or { };
+        configs = lib.mkMerge [
+          (mkMdConfigs "skills" cfg.agents)
+          (mkMdConfigs "commands" cfg.commands)
+          {
+            "settings.json" = {
+              "mcpTools" = cfg.mcps;
+            };
+          }
+        ];
       };
       claude-code-router = {
         packages = [

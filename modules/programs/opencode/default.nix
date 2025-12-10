@@ -9,15 +9,7 @@
 let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.opencode;
-
-  aiToolsOpencode = config.jvf.aiTools.consumers.opencode or { };
   isDarwin = builtins.match ".*-darwin" system != null;
-
-  mcpConfigs = aiToolsOpencode.mcp or { };
-  toolDisableSettings = aiToolsOpencode.toolSettings or { };
-
-  agentConfigs = aiToolsOpencode.agents or { };
-  commandConfigs = aiToolsOpencode.commands or { };
 
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";
@@ -96,23 +88,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.settings = lib.mkMerge [
-      {
-        mcp = mcpConfigs;
-        tools = toolDisableSettings;
-      }
-    ];
-
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
       ]
       ++ lib.optional isDarwin pkgs.opencode
       ++ lib.optional (!isDarwin) shellScriptBin;
       configs = lib.mkMerge [
-        agentConfigs
-        commandConfigs
         {
-          "config.json" = cfg.settings;
+          "config.json" =
+            cfg.settings
+            // {
+              mcp = cfg.mcps;
+            }
+            // {
+              agent = cfg.agents;
+            }
+            // {
+              command = cfg.commands;
+            };
         }
       ];
     };
