@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.agents."module-expert" = (lib.mkAgentModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.agents."module-expert";
+  agentOptions = {
     name = "Nix Module Expert";
     description = "NixOS module creation, organization, and options design specialist";
     tools = [ "context7" ];
@@ -259,5 +261,15 @@
       - Document complex module interactions and configuration dependencies
       - Test module behavior across different systems and use cases
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.agents."module-expert" = {
+    enable = lib.mkEnableOption "Enable the module-expert agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."module-expert" = agentOptions;
+    jvf.programs.claudecode.agents."module-expert" = agentOptions;
+  };
 }

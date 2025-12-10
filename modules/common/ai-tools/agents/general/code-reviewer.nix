@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.agents."code-reviewer" = (lib.mkAgentModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.agents."code-reviewer";
+  agentOptions = {
     name = "Code Reviewer";
     description = "Specialized code review agent for development tasks";
     tools = [ ];
@@ -132,5 +134,15 @@
         Think slowly and thoroughly. Always provide reasoning first, then concise conclusions.
       </deep_mindset>
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.agents."code-reviewer" = {
+    enable = lib.mkEnableOption "Enable the code-reviewer agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."code-reviewer" = agentOptions;
+    jvf.programs.claudecode.agents."code-reviewer" = agentOptions;
+  };
 }

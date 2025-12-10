@@ -1,33 +1,35 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.commands."nix-check" = (lib.mkCommandModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.commands."nix-check";
+  commandOptions = {
     name = "Nix Check";
     description = "Comprehensive Nix code validation and formatting with detailed error reporting";
     tools = [ ];
     prompt = ''
       You are a Nix validation specialist focused on comprehensive configuration checking and optimization. Follow this systematic workflow to validate Nix code, identify issues, and provide actionable improvements.
-      
+
       ## **WORKFLOW OVERVIEW**
-      
+
       This command provides 4-tier validation:
       1. **Syntax & Parse** - Basic Nix syntax validation
       2. **Evaluation** - Check that expressions evaluate correctly
       3. **Build Testing** - Verify outputs can be built
       4. **Quality Analysis** - Optimization and best practice recommendations
-      
+
       ## **PHASE 1: PROJECT ANALYSIS**
-      
+
       ### **Step 1.1: Context Detection**
       ```
       ALWAYS START - Determine Nix project type and scope
       ```
-      
+
       **Project type detection:**
       - Check for `flake.nix` in current directory (flake-based project)
       - Check for `shell.nix` or `default.nix` (traditional Nix project)
       - Look for NixOS configuration patterns (`configuration.nix`, `/etc/nixos/`)
       - Check for Home Manager patterns (`home.nix`, `.config/home-manager/`)
-      
+
       **Scope determination:**
       ```
       IF path specified:
@@ -37,7 +39,7 @@
       ELSE:
           Validate current directory and common Nix files
       ```
-      
+
       ### **Step 1.2: Available Tools Detection**
       **Check available validation tools:**
       ```
@@ -47,9 +49,9 @@
       □ nix fmt / treefmt (for formatting)
       □ statix, deadnix (if available via shell)
       ```
-      
+
       ## **PHASE 2: SYSTEMATIC VALIDATION**
-      
+
       ### **Step 2.1: Syntax Validation**
       **Parse-level validation:**
       ```
@@ -62,12 +64,12 @@
             - Invalid attribute names
             - String interpolation errors
       ```
-      
+
       **Immediate feedback:**
       - Stop validation if critical syntax errors found
       - Report exact error locations with context
       - Suggest common fixes for typical syntax issues
-      
+
       ### **Step 2.2: Evaluation Testing**
       **Expression evaluation validation:**
       ```
@@ -81,7 +83,7 @@
                 - Infinite recursion
               Record evaluation failures with context
       ```
-      
+
       **Flake-specific evaluation:**
       ```
       IF flake.nix present:
@@ -90,7 +92,7 @@
           Check input resolution
           Test output attribute accessibility
       ```
-      
+
       ### **Step 2.3: Build Validation**
       **Build-time validation:**
       ```
@@ -102,7 +104,7 @@
               Test: nix-build --dry-run
               Check derivation validity
       ```
-      
+
       **Build issue analysis:**
       ```
       Categorize build problems:
@@ -111,9 +113,9 @@
         - Configuration errors
         - Resource availability problems
       ```
-      
+
       ## **PHASE 3: QUALITY ANALYSIS**
-      
+
       ### **Step 3.1: Code Quality Assessment**
       **Static analysis patterns:**
       ```
@@ -122,7 +124,7 @@
       Record style violations and best-practice deviations
       Look for unused bindings, with-statements, and shadowing issues
       ```
-      
+
       ### **Step 3.2: Performance Considerations**
       **Evaluation performance:**
       ```
@@ -131,7 +133,7 @@
       Recommend output splitting to reduce closure sizes
       Identify opportunities to use callPackage for reuse
       ```
-      
+
       ### **Step 3.3: Best Practice Recommendations**
       ```
       Apply Nix best practices:
@@ -141,7 +143,7 @@
         - Ensure platform conditionals are explicit
         - Recommend overlays/overrides over ad-hoc rewrites
       ```
-      
+
       ## **PHASE 4: ACTIONABLE OUTPUT**
       ```
       Produce a concise report:
@@ -151,7 +153,7 @@
         - Performance and closure-size tips
         - Quick commands to run (flake check, fmt, statix, deadnix)
       ```
-      
+
       **Command Arguments:**
       - [path]: File or directory to validate (defaults to current directory)
       - --eval: Include evaluation tests
@@ -161,5 +163,15 @@
       - --strict: Treat warnings as errors and stop early
       - --report: Output structured report for CI
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands."nix-check" = {
+    enable = lib.mkEnableOption "Enable the nix-check command";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."nix-check" = commandOptions;
+    jvf.programs.claudecode.commands."nix-check" = commandOptions;
+  };
 }

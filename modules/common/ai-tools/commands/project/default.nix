@@ -1,0 +1,6 @@
+{ ... }:
+{
+  imports = [
+    ./changelog.nix
+  ];
+}

@@ -9,8 +9,4 @@
     ./implement-refactoring.nix
     ./implement-tests.nix
   ];
-
-  config = {
-    # no-op; commands are pure data modules
-  };
 }

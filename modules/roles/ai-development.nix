@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -30,6 +31,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    jvf.aiTools.enable = true;
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
 

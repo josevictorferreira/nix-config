@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.commands."flake-update" = (lib.mkCommandModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.commands."flake-update";
+  commandOptions = {
     name = "Flake Update";
     description = "Comprehensive flake input management and update workflow";
     tools = [ ];
@@ -38,8 +40,17 @@
       - --commit: Automatically commit the update with a descriptive message
       - --test: Run comprehensive tests including template builds
       - --interactive: Prompt for user confirmation at key steps
-
       Always prioritize system stability over getting the latest versions.
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands."flake-update" = {
+    enable = lib.mkEnableOption "Enable the flake-update command";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."flake-update" = commandOptions;
+    jvf.programs.claudecode.commands."flake-update" = commandOptions;
+  };
 }

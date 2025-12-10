@@ -1,13 +1,22 @@
-{ lib, config, ... }:
-{
-  options.jvf.aiTools.commands."implement-tests" = (lib.mkCommandModule {
+{ config, lib, ... }:
+let
+  cfg = config.jvf.aiTools.commands.implement-tests;
+  commandOptions = {
     name = "Implement Tests";
     description = "Plan and proceed to implement tests based on a prompt enhanced by a specified (or defaulted) model.";
     tools = [ ];
     prompt = ''
-      !`prompt-enhancer tests "$ARGUMENTS";`
+      $ARGUMENTS
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands.implement-tests = {
+    enable = lib.mkEnableOption "Enable the implement-tests command";
+  };
 
-  config = lib.mkIf config.jvf.aiTools.enable { };
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."implement-tests" = commandOptions;
+    jvf.programs.claudecode.commands."implement-tests" = commandOptions;
+  };
 }

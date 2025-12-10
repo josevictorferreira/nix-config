@@ -1,72 +1,45 @@
-{ lib, config ? { }, pkgs ? null, system ? null, ... }:
+{
+  lib,
+  config ? { },
+  ...
+}@args:
 
 let
-  aiTypes = import ./types.nix { inherit lib; };
-  cfg = config.jvf.aiTools or { enable = false; };
-
-  # Legacy exports (pre-module refactor) for backward compatibility
-  legacyCommands = import ./commands.nix { inherit lib; };
-  legacyAgents = import ./agents.nix { inherit lib; };
-  legacyScripts = import ./scripts.nix { inherit lib pkgs; };
-  legacyLib = import ./lib.nix { inherit lib; };
-  legacyMcp = import ./mcp.nix { inherit lib pkgs system; };
-  legacyChecks = import ./checks.nix { inherit lib pkgs system; };
+  aiLib = import ./lib.nix args;
+  cfg = config.jvf.aiTools;
 in
 {
   imports = [
-    ./mcp/default.nix
-    ./agents/default.nix
-    ./commands/default.nix
-    ./consumers/default.nix
+    (import ./mcp/default.nix { inherit lib aiLib; })
+    (import ./agents/default.nix { inherit lib aiLib; })
+    (import ./commands/default.nix { inherit lib aiLib; })
   ];
 
   options.jvf.aiTools = {
     enable = lib.mkEnableOption "AI tools integration";
 
-    agents = lib.mkOption {
-      type = lib.types.attrsOf aiTypes.agentType;
+    commands = lib.mkOption {
+      type = lib.types.attrs;
       default = { };
-      description = lib.mdDoc "AI agents definitions.";
+      description = "Custom AI commands to register.";
     };
 
-    commands = lib.mkOption {
-      type = lib.types.attrsOf aiTypes.commandType;
+    agents = lib.mkOption {
+      type = lib.types.attrs;
       default = { };
-      description = lib.mdDoc "AI commands definitions.";
+      description = "Custom AI agents to register.";
     };
 
     mcp = lib.mkOption {
-      type = lib.types.attrsOf aiTypes.mcpType;
+      type = lib.types.attrs;
       default = { };
-      description = lib.mdDoc "MCP servers definitions.";
-    };
-
-    mcpOutputs = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.attrsOf lib.types.anything);
-      default = { };
-      readOnly = true;
-      description = lib.mdDoc "Computed MCP outputs for consumers.";
-    };
-
-    consumers = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.attrsOf lib.types.anything);
-      default = { };
-      readOnly = true;
-      description = lib.mdDoc "Computed consumer-specific aiTools outputs.";
+      description = "Custom AI MCP tools to register.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.aiTools.mcpOutputs = lib.mapAttrs (_: mcpCfg: mcpCfg._output or { }) cfg.mcp;
-    _module.args.legacyAiTools = {
-      commands = legacyCommands;
-      agents = legacyAgents;
-      scripts = legacyScripts;
-      lib = legacyLib;
-      mcp = legacyMcp;
-      checks = legacyChecks.checks;
-      validations = legacyChecks.validations;
-      stats = legacyChecks.stats;
-    };
+    jvf.aiTools.commands = lib.mapAttrs (name: cmd: { enable = true; }) cfg.commands;
+    jvf.aiTools.agents = lib.mapAttrs (name: cmd: { enable = true; }) cfg.agents;
+    jvf.aiTools.mcp = lib.mapAttrs (name: cmd: { enable = true; }) cfg.mcp;
   };
 }

@@ -1,10 +1,10 @@
 { ... }:
 {
   imports = [
-    ./git/default.nix
+    ./git/index.nix
     ./nix/index.nix
-    ./general/default.nix
-    ./quality/default.nix
-    ./project/default.nix
+    ./general/index.nix
+    ./quality/index.nix
+    ./project/index.nix
   ];
 }

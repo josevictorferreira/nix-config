@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.agents."flake-expert" = (lib.mkAgentModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.agents."flake-expert";
+  agentOptions = {
     name = "Flake Expert";
     description = "Nix flake management, inputs, and dependency specialist";
     tools = [ "context7" ];
@@ -257,5 +259,15 @@
       - Consider evaluation performance in all recommendations
       - Prioritize input security and supply chain integrity
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.agents."flake-expert" = {
+    enable = lib.mkEnableOption "Enable the flake-expert agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."flake-expert" = agentOptions;
+    jvf.programs.claudecode.agents."flake-expert" = agentOptions;
+  };
 }

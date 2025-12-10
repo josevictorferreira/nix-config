@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.commands."template-new" = (lib.mkCommandModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.commands."template-new";
+  commandOptions = {
     name = "Template New";
     description = "Generate new projects from Nix flake templates with customization";
     tools = [ ];
@@ -257,5 +259,15 @@
       - Add examples for new best practices
     ```
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands."template-new" = {
+    enable = lib.mkEnableOption "Enable the template-new command";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."template-new" = commandOptions;
+    jvf.programs.claudecode.commands."template-new" = commandOptions;
+  };
 }

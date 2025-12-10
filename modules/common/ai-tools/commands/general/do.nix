@@ -1,13 +1,22 @@
-{ lib, config, ... }:
-{
-  options.jvf.aiTools.commands.do = (lib.mkCommandModule {
+{ config, lib, ... }:
+let
+  cfg = config.jvf.aiTools.commands.do;
+  commandOptions = {
     name = "Do";
     description = "Enhance and run a prompt using a specified (or defaulted) model.";
     tools = [ ];
     prompt = ''
-      !`prompt-enhancer bare "$ARGUMENTS";`
+      $ARGUMENTS
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands.do = {
+    enable = lib.mkEnableOption "Enable the do command";
+  };
 
-  config = lib.mkIf config.jvf.aiTools.enable { };
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."do" = commandOptions;
+    jvf.programs.claudecode.commands."do" = commandOptions;
+  };
 }

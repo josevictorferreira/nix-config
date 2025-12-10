@@ -1,7 +1,8 @@
-{ lib }:
+{ config, lib, ... }:
 
-{
-  system-config-expert = lib.mkAgent {
+let
+  cfg = config.jvf.aiTools.agents."system-config-expert";
+  agentOptions = {
     name = "System Config Expert";
     description = "NixOS system configuration and administration specialist";
     tools = [ ];
@@ -26,5 +27,15 @@
       Consider the impact of changes on existing services and configurations.
       Follow NixOS best practices and security guidelines.
     '';
+  };
+in
+{
+  options.jvf.aiTools.agents."system-config-expert" = {
+    enable = lib.mkEnableOption "Enable the system-config-expert agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."system-config-expert" = agentOptions;
+    jvf.programs.claudecode.agents."system-config-expert" = agentOptions;
   };
 }

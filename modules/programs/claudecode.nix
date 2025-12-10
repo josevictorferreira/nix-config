@@ -1,9 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -21,7 +21,37 @@ in
       description = "Username for which to install the configuration";
     };
 
+    agents = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Agents to install into the configuration";
+    };
+
+    commands = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Commands to install into the configuration";
+    };
+
+    mcps = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "MCP tools to install into the configuration";
+    };
+
+    skills = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Skills to install into the configuration";
+    };
+
     settings = lib.mkOption {
+      type = json.type;
+      default = { };
+      description = "ClaudeCode settings.";
+    };
+
+    routerSettings = lib.mkOption {
       type = json.type;
       default = {
         LOG = true;
@@ -94,7 +124,7 @@ in
         ];
         configPath = ".claude-code-router";
         configs = {
-          "config.json" = cfg.settings;
+          "config.json" = cfg.routerSettings;
         };
       };
     };

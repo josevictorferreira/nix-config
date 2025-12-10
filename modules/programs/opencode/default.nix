@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -69,6 +70,24 @@ in
       description = "Username for which to install the configuration";
     };
 
+    agents = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Agents to install into the configuration";
+    };
+
+    commands = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Commands to install into the configuration";
+    };
+
+    mcps = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "MCP tools to install into the configuration";
+    };
+
     settings = lib.mkOption {
       type = json.type;
       default = { };
@@ -77,7 +96,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Merge centralized MCP configs into settings
     jvf.programs.opencode.settings = lib.mkMerge [
       {
         mcp = mcpConfigs;

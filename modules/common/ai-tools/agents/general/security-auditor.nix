@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.agents."security-auditor" = (lib.mkAgentModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.agents."security-auditor";
+  agentOptions = {
     name = "Security Auditor";
     description = "Security analysis and vulnerability assessment specialist";
     tools = [ ];
@@ -292,5 +294,15 @@
       **REMINDER:**
       Conduct thorough, systematic security assessments that prioritize critical risks and provide clear, actionable remediation guidance to improve overall security posture.
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.agents."security-auditor" = {
+    enable = lib.mkEnableOption "Enable the security-auditor agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."security-auditor" = agentOptions;
+    jvf.programs.claudecode.agents."security-auditor" = agentOptions;
+  };
 }

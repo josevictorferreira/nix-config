@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.commands.changelog = (lib.mkCommandModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.commands."changelog";
+  commandOptions = {
     name = "Changelog";
     description = "Generate comprehensive changelogs from git history following conventional commits";
     tools = [ ];
@@ -292,5 +294,15 @@
 
       **REMEMBER:** Create changelog entries that are user-focused, clearly organized, and follow established project conventions while providing valuable information for users and maintainers.
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands."changelog" = {
+    enable = lib.mkEnableOption "Enable the changelog command";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."changelog" = commandOptions;
+    jvf.programs.claudecode.commands."changelog" = commandOptions;
+  };
 }

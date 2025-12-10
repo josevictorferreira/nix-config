@@ -142,9 +142,9 @@
       checks = forAllSystems (system:
         let
           pkgs = mkPkgs system;
-          aiTools = import ./modules/common/ai-tools {
-            lib = pkgs.lib;
-            inherit pkgs system;
+          lib = pkgs.lib;
+          aiTools = import ./modules/common/ai-tools/checks.nix {
+            inherit lib pkgs system;
           };
         in
         {
@@ -153,6 +153,7 @@
           ai-tools-required-fields = aiTools.checks.requiredFieldsCheck;
           ai-tools-eval = aiTools.checks.evalCheck;
         }
+
       );
     };
 }

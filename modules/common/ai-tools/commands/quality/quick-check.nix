@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.commands."quick-check" = (lib.mkCommandModule {
+{ lib, config, ... }:
+
+let
+  cfg = config.jvf.aiTools.commands."quick-check";
+  commandOptions = {
     name = "Quick Check";
     description = "Fast syntax, build, and format validation for immediate feedback";
     tools = [ ];
@@ -48,5 +50,15 @@
 
       Prioritize speed and actionable feedback for active development workflows.
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.commands."quick-check" = {
+    enable = lib.mkEnableOption "Enable the quick-check command";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.commands."quick-check" = commandOptions;
+    jvf.programs.claudecode.commands."quick-check" = commandOptions;
+  };
 }

@@ -1,6 +1,8 @@
-{ lib, ... }:
-{
-  options.jvf.aiTools.agents."documenter" = (lib.mkAgentModule {
+{ config, lib, ... }:
+
+let
+  cfg = config.jvf.aiTools.agents."documenter";
+  agentOptions = {
     name = "Documenter";
     description = "Technical documentation and README writer";
     tools = [ ];
@@ -220,5 +222,15 @@
       - Validate all examples and instructions against the codebase
       - Maintain consistent voice, style, and formatting
     '';
-  }).options;
+  };
+in
+{
+  options.jvf.aiTools.agents."documenter" = {
+    enable = lib.mkEnableOption "Enable the documenter agent";
+  };
+
+  config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.agents."documenter" = agentOptions;
+    jvf.programs.claudecode.agents."documenter" = agentOptions;
+  };
 }
