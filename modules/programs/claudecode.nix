@@ -36,7 +36,7 @@ in
       description = "MCP tools to install into the configuration (structured objects)";
     };
     skills = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
       description = "Skills to install into the configuration";
     };
