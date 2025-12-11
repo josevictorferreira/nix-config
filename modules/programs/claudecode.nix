@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -26,12 +27,10 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
   mkMdConfigs =
     prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}/SKILL.md";
-        value = toClaudeMarkdownPrompt value;
-      })
-      attrset;
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}/SKILL.md";
+      value = toClaudeMarkdownPrompt value;
+    }) attrset;
 in
 {
   options.jvf.programs.claudecode = {
@@ -141,11 +140,6 @@ in
         configs = lib.mkMerge [
           (mkMdConfigs "skills" cfg.agents)
           (mkMdConfigs "commands" cfg.commands)
-          {
-            "settings.json" = {
-              "mcpTools" = cfg.mcps;
-            };
-          }
         ];
       };
       claude-code-router = {
@@ -157,6 +151,10 @@ in
           "config.json" = cfg.routerSettings;
         };
       };
+    };
+
+    environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
+      mcpServers = cfg.mcps;
     };
   };
 }
