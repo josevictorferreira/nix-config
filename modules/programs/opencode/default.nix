@@ -111,6 +111,9 @@ in
               mcp = cfg.mcps;
             }
           );
+          "opencode.json" = {
+            plugin = cfg.settings.plugin;
+          };
         }
       ];
     };
