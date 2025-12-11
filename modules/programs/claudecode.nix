@@ -3,11 +3,15 @@
   pkgs,
   config,
   username,
+  system,
   ...
 }:
 let
   json = pkgs.formats.json { };
+  isDarwin = builtins.match ".*-darwin" system != null;
   cfg = config.jvf.programs.claudecode;
+
+  # ... (Keep existing prompt logic) ...
   toClaudeMarkdownPrompt =
     value:
     if builtins.isAttrs value && value ? prompt then
@@ -19,12 +23,12 @@ let
           description: "${value.description or ""}"
           ${lib.optionalString (value ? tools && value.tools != [ ]) "allowed-tools: \"${toolsString}\""}
           ---
-
         '';
       in
       yamlHeader + value.prompt
     else
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
   mkMdConfigs =
     prefix: attrset:
     lib.mapAttrs' (name: value: {
@@ -35,43 +39,36 @@ in
 {
   options.jvf.programs.claudecode = {
     enable = lib.mkEnableOption "Install claude-code router and write per-user ~/.claude-code-router/config.json";
-
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
       description = "Username for which to install the configuration";
     };
-
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
       description = "Agents to install into the configuration (string prompts or structured objects)";
     };
-
     commands = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
       description = "Commands to install into the configuration (string prompts or structured objects)";
     };
-
     mcps = lib.mkOption {
       type = lib.types.attrsOf json.type;
       default = { };
       description = "MCP tools to install into the configuration (structured objects)";
     };
-
     skills = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
       description = "Skills to install into the configuration";
     };
-
     settings = lib.mkOption {
       type = json.type;
       default = { };
       description = "ClaudeCode settings.";
     };
-
     routerSettings = lib.mkOption {
       type = json.type;
       default = {
@@ -130,31 +127,49 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    jvf.wrappers.users.${cfg.username}.programs = {
-      claude = {
-        packages = [
-          pkgs.claude-code
-        ];
-        configPath = ".claude";
-        configs = lib.mkMerge [
-          (mkMdConfigs "skills" cfg.agents)
-          (mkMdConfigs "commands" cfg.commands)
-        ];
-      };
-      claude-code-router = {
-        packages = [
-          pkgs.claude-code-router
-        ];
-        configPath = ".claude-code-router";
-        configs = {
-          "config.json" = cfg.routerSettings;
+  config = lib.mkIf cfg.enable (
+    {
+      jvf.wrappers.users.${cfg.username}.programs = {
+        claude = {
+          packages = [
+            pkgs.claude-code
+          ];
+          configPath = ".claude";
+          configs = lib.mkMerge [
+            (mkMdConfigs "skills" cfg.agents)
+            (mkMdConfigs "commands" cfg.commands)
+          ];
+        };
+        claude-code-router = {
+          packages = [
+            pkgs.claude-code-router
+          ];
+          configPath = ".claude-code-router";
+          configs = {
+            "config.json" = cfg.routerSettings;
+          };
         };
       };
-    };
+    }
+    // lib.optionalAttrs (!isDarwin) {
+      environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
+        mcpServers = cfg.mcps;
+      };
+    }
+    // lib.optionalAttrs isDarwin {
+      system.activationScripts.claudeCodeMcp.text = ''
+        targetDir="/Library/Application Support/ClaudeCode"
+        targetFile="$targetDir/managed-mcp.json"
 
-    environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
-      mcpServers = cfg.mcps;
-    };
-  };
+        # Define the content in the Nix store (immutable)
+        sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = cfg.mcps; })}"
+
+        echo "Configuring Claude Code Managed MCP..."
+        mkdir -p "$targetDir"
+
+        # Symlink the immutable file to the target location
+        ln -sf "$sourceFile" "$targetFile"
+      '';
+    }
+  );
 }
