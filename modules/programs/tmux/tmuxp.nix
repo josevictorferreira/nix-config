@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -70,6 +71,28 @@ let
         window_name = "Homelab";
         layout = "tiled";
         start_directory = "homelab";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "Valoris";
+        layout = "tiled";
+        start_directory = "valoris";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "AiWorkspace";
+        layout = "tiled";
+        start_directory = "ai-workspace";
         panes = [
           "clear"
           "clear"

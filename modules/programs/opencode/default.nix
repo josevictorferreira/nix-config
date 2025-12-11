@@ -130,6 +130,9 @@ in
               mcp = cfg.mcps;
             }
           );
+          "opencode.json" = builtins.toJSON {
+            plugin = [ "opencode-skills" ];
+          };
         }
       ];
     };
