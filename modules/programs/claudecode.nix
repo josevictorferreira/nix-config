@@ -4,37 +4,13 @@
   config,
   username,
   system,
+  inputs,
   ...
 }:
 let
   json = pkgs.formats.json { };
   isDarwin = builtins.match ".*-darwin" system != null;
   cfg = config.jvf.programs.claudecode;
-
-  # ... (Keep existing prompt logic) ...
-  toClaudeMarkdownPrompt =
-    value:
-    if builtins.isAttrs value && value ? prompt then
-      let
-        toolsString = lib.concatStringsSep ", " value.tools;
-        yamlHeader = ''
-          ---
-          name: "${value.name or "unknown"}"
-          description: "${value.description or ""}"
-          ${lib.optionalString (value ? tools && value.tools != [ ]) "allowed-tools: \"${toolsString}\""}
-          ---
-        '';
-      in
-      yamlHeader + value.prompt
-    else
-      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
-
-  mkMdConfigs =
-    prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}/SKILL.md";
-      value = toClaudeMarkdownPrompt value;
-    }) attrset;
 in
 {
   options.jvf.programs.claudecode = {
@@ -136,8 +112,9 @@ in
           ];
           configPath = ".claude";
           configs = lib.mkMerge [
-            (mkMdConfigs "skills" cfg.agents)
-            (mkMdConfigs "commands" cfg.commands)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
+            (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
           ];
         };
         claude-code-router = {

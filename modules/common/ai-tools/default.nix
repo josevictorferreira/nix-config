@@ -1,11 +1,11 @@
-{
-  ...
+{ ...
 }:
 
 {
   imports = [
-    (import ./mcp/default.nix)
-    (import ./agents/default.nix)
-    (import ./commands/default.nix)
+    (import ./mcp)
+    (import ./agents)
+    (import ./commands)
+    (import ./skills)
   ];
 }

@@ -225,9 +225,72 @@ let
         - Use datacenter proxies for development/testing
         - Reserve residential proxies for production only
       '';
+      "user-agent-rotation" = ''
+        # User-Agent Rotation
+
+        ## Why Rotate User Agents
+
+        Even with proxy rotation, duplicate IPs can occur. Different user agents make it harder to link requests back to the same scraper.
+
+        ## User Agent Pool
+
+        ```ruby
+        USER_AGENTS = [
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        ]
+        ```
+
+        ## User-Agent Client Hints
+
+        Modern browsers send client hints that must match the user agent:
+
+        ```ruby
+        def user_agent_hints(user_agent_string)
+          chrome_version = user_agent_string.match(/Chrome\/(\d+)\./)[1]
+          
+          # Detect platform from user agent
+          platform = case user_agent_string
+                     when /Macintosh/ then "macOS"
+                     when /Windows/ then "Windows"
+                     when /Linux/ then "Linux"
+                     else "macOS"
+                     end
+
+          {
+            "Sec-Ch-Ua" => "\"Google Chrome\";v=\"#{chrome_version}\", \"Chromium\";v=\"#{chrome_version}\", \"Not_A Brand\";v=\"24\"",
+            "Sec-Ch-Ua-Mobile" => "?0",
+            "Sec-Ch-Ua-Platform" => "\"#{platform}\"",
+            "Sec-Fetch-Dest" => "document",
+            "Sec-Fetch-Mode" => "navigate",
+            "Sec-Fetch-Site" => "cross-site",
+            "Sec-Fetch-User" => "?1"
+          }
+        end
+        ```
+
+        ## Integration
+
+        ```ruby
+        user_agent = USER_AGENTS.sample
+        headers = base_headers
+          .merge("User-Agent" => user_agent)
+          .merge(user_agent_hints(user_agent))
+
+        browser.headers.set(headers)
+        ```
+
+        ## Important
+
+        - Match user-agent hints to the user agent string
+        - Keep Chrome versions current (update every few months)
+        - Platform in hints must match platform in user agent
+      '';
     };
-    scripts = {
-    };
+    scripts = { };
     prompt = ''
 
       # Ruby Stealth Web Scraping with Ferrum
@@ -298,70 +361,6 @@ let
       - Block rate exceeds 10%
       - Cloudflare challenges persist
       - IP bans occur within hours
-    '';
-    "user-agent-rotation" = ''
-      # User-Agent Rotation
-
-      ## Why Rotate User Agents
-
-      Even with proxy rotation, duplicate IPs can occur. Different user agents make it harder to link requests back to the same scraper.
-
-      ## User Agent Pool
-
-      ```ruby
-      USER_AGENTS = [
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-      ]
-      ```
-
-      ## User-Agent Client Hints
-
-      Modern browsers send client hints that must match the user agent:
-
-      ```ruby
-      def user_agent_hints(user_agent_string)
-        chrome_version = user_agent_string.match(/Chrome\/(\d+)\./)[1]
-        
-        # Detect platform from user agent
-        platform = case user_agent_string
-                   when /Macintosh/ then "macOS"
-                   when /Windows/ then "Windows"
-                   when /Linux/ then "Linux"
-                   else "macOS"
-                   end
-
-        {
-          "Sec-Ch-Ua" => "\"Google Chrome\";v=\"#{chrome_version}\", \"Chromium\";v=\"#{chrome_version}\", \"Not_A Brand\";v=\"24\"",
-          "Sec-Ch-Ua-Mobile" => "?0",
-          "Sec-Ch-Ua-Platform" => "\"#{platform}\"",
-          "Sec-Fetch-Dest" => "document",
-          "Sec-Fetch-Mode" => "navigate",
-          "Sec-Fetch-Site" => "cross-site",
-          "Sec-Fetch-User" => "?1"
-        }
-      end
-      ```
-
-      ## Integration
-
-      ```ruby
-      user_agent = USER_AGENTS.sample
-      headers = base_headers
-        .merge("User-Agent" => user_agent)
-        .merge(user_agent_hints(user_agent))
-
-      browser.headers.set(headers)
-      ```
-
-      ## Important
-
-      - Match user-agent hints to the user agent string
-      - Keep Chrome versions current (update every few months)
-      - Platform in hints must match platform in user agent
     '';
   };
 in
