@@ -1,11 +1,11 @@
 { lib, pkgs, ... }:
 
 let
-  openCodeSkillsPkg = lib.buildNpmPackage rec {
+  openCodeSkillsPkg = pkgs.buildNpmPackage rec {
     pname = "opencode-skills";
     version = "0.1.1";
 
-    src = lib.fetchFromGitHub {
+    src = pkgs.fetchFromGitHub {
       owner = "malhashemi";
       repo = "opencode-skills";
       rev = "v${version}";

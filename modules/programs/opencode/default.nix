@@ -109,7 +109,6 @@ in
             cfg.settings
             // {
               mcp = cfg.mcps;
-              plugin = [ "opencode-skills" ];
             }
           );
         }
