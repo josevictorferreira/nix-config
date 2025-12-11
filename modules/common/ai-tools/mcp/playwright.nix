@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.mcp.playwright = {
-    enable = lib.mkEnableOption "Playwright MCP server";
+    enable = (lib.mkEnableOption "Playwright MCP server") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

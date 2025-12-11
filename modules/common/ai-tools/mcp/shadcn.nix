@@ -9,7 +9,7 @@ let
 in
 {
   options.jvf.aiTools.mcp.shadcn = {
-    enable = lib.mkEnableOption "shadcn MCP server";
+    enable = (lib.mkEnableOption "shadcn MCP server") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

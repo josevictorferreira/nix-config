@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.implement-fix = {
-    enable = lib.mkEnableOption "Enable the implement-fix command";
+    enable = (lib.mkEnableOption "Enable the implement-fix command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

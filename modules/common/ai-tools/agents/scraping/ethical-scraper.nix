@@ -601,7 +601,7 @@ let
 in
 {
   options.jvf.aiTools.agents."ethical-scraper" = {
-    enable = lib.mkEnableOption "Enable the ethical-scraper agent";
+    enable = (lib.mkEnableOption "Enable the ethical-scraper agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

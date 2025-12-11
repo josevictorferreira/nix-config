@@ -14,7 +14,7 @@ let
 in
 {
   options.jvf.aiTools.commands.review = {
-    enable = lib.mkEnableOption "Enable the review command";
+    enable = (lib.mkEnableOption "Enable the review command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

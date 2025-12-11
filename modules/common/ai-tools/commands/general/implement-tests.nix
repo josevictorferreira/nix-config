@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.implement-tests = {
-    enable = lib.mkEnableOption "Enable the implement-tests command";
+    enable = (lib.mkEnableOption "Enable the implement-tests command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

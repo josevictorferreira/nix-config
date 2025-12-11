@@ -176,7 +176,7 @@ let
 in
 {
   options.jvf.aiTools.agents."nix-expert" = {
-    enable = lib.mkEnableOption "Enable the nix-expert agent";
+    enable = (lib.mkEnableOption "Enable the nix-expert agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

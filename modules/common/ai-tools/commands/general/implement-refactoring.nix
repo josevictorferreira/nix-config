@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.implement-refactory = {
-    enable = lib.mkEnableOption "Enable the implement-refactory command";
+    enable = (lib.mkEnableOption "Enable the implement-refactory command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

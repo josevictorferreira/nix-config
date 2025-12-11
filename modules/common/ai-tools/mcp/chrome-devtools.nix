@@ -13,7 +13,7 @@ let
 in
 {
   options.jvf.aiTools.mcp."chrome-devtools" = {
-    enable = lib.mkEnableOption "Chrome DevTools MCP server";
+    enable = (lib.mkEnableOption "Chrome DevTools MCP server") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

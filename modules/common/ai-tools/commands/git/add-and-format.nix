@@ -43,7 +43,7 @@ let
 in
 {
   options.jvf.aiTools.commands."add-and-format" = {
-    enable = lib.mkEnableOption "Enable the add-and-format command";
+    enable = (lib.mkEnableOption "Enable the add-and-format command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

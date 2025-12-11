@@ -138,7 +138,9 @@ let
 in
 {
   options.jvf.aiTools.agents."code-reviewer" = {
-    enable = lib.mkEnableOption "Enable the code-reviewer agent";
+    enable = (lib.mkEnableOption "Enable the code-reviewer agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

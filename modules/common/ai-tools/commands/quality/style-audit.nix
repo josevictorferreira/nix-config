@@ -67,7 +67,7 @@ let
 in
 {
   options.jvf.aiTools.commands."style-audit" = {
-    enable = lib.mkEnableOption "Enable the style-audit command";
+    enable = (lib.mkEnableOption "Enable the style-audit command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

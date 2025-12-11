@@ -62,7 +62,7 @@ let
 in
 {
   options.jvf.aiTools.commands."dependency-audit" = {
-    enable = lib.mkEnableOption "Enable the dependency-audit command";
+    enable = (lib.mkEnableOption "Enable the dependency-audit command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

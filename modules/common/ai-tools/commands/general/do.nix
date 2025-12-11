@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.do = {
-    enable = lib.mkEnableOption "Enable the do command";
+    enable = (lib.mkEnableOption "Enable the do command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

@@ -9,7 +9,7 @@ let
 in
 {
   options.jvf.aiTools.mcp."mcp-nixos" = {
-    enable = lib.mkEnableOption "NixOS MCP server (Linux only)";
+    enable = (lib.mkEnableOption "NixOS MCP server (Linux only)") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

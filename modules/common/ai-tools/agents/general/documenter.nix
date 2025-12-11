@@ -226,7 +226,9 @@ let
 in
 {
   options.jvf.aiTools.agents."documenter" = {
-    enable = lib.mkEnableOption "Enable the documenter agent";
+    enable = (lib.mkEnableOption "Enable the documenter agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

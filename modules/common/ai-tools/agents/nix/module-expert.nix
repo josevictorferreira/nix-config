@@ -265,7 +265,7 @@ let
 in
 {
   options.jvf.aiTools.agents."module-expert" = {
-    enable = lib.mkEnableOption "Enable the module-expert agent";
+    enable = (lib.mkEnableOption "Enable the module-expert agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

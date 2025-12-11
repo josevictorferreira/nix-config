@@ -54,7 +54,7 @@ let
 in
 {
   options.jvf.aiTools.commands."deep-check" = {
-    enable = lib.mkEnableOption "Enable the deep-check command";
+    enable = (lib.mkEnableOption "Enable the deep-check command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

@@ -298,7 +298,7 @@ let
 in
 {
   options.jvf.aiTools.agents."security-auditor" = {
-    enable = lib.mkEnableOption "Enable the security-auditor agent";
+    enable = (lib.mkEnableOption "Enable the security-auditor agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

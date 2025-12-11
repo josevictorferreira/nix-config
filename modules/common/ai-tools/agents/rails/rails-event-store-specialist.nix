@@ -586,7 +586,7 @@ let
 in
 {
   options.jvf.aiTools.agents."rails-event-store-specialist" = {
-    enable = lib.mkEnableOption "Enable the rails-event-store-specialist agent";
+    enable = (lib.mkEnableOption "Enable the rails-event-store-specialist agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

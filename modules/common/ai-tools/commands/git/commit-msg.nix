@@ -13,7 +13,7 @@ let
 in
 {
   options.jvf.aiTools.commands."commit-msg" = {
-    enable = lib.mkEnableOption "Enable the commit-msg command";
+    enable = (lib.mkEnableOption "Enable the commit-msg command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

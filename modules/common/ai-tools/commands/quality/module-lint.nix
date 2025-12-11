@@ -61,7 +61,7 @@ let
 in
 {
   options.jvf.aiTools.commands."module-lint" = {
-    enable = lib.mkEnableOption "Enable the module-lint command";
+    enable = (lib.mkEnableOption "Enable the module-lint command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

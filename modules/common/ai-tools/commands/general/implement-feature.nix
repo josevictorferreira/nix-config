@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.implement-feature = {
-    enable = lib.mkEnableOption "Enable the implement-feature command";
+    enable = (lib.mkEnableOption "Enable the implement-feature command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

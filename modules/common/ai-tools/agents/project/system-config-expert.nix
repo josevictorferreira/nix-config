@@ -31,7 +31,7 @@ let
 in
 {
   options.jvf.aiTools.agents."system-config-expert" = {
-    enable = lib.mkEnableOption "Enable the system-config-expert agent";
+    enable = (lib.mkEnableOption "Enable the system-config-expert agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

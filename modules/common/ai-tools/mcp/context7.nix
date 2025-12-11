@@ -5,7 +5,7 @@ let
 in
 {
   options.jvf.aiTools.mcp.context7 = {
-    enable = lib.mkEnableOption "Context7 MCP server";
+    enable = (lib.mkEnableOption "Context7 MCP server") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

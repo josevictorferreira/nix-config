@@ -46,7 +46,7 @@ let
 in
 {
   options.jvf.aiTools.commands."flake-update" = {
-    enable = lib.mkEnableOption "Enable the flake-update command";
+    enable = (lib.mkEnableOption "Enable the flake-update command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

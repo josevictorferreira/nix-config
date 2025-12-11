@@ -167,7 +167,7 @@ let
 in
 {
   options.jvf.aiTools.commands."nix-check" = {
-    enable = lib.mkEnableOption "Enable the nix-check command";
+    enable = (lib.mkEnableOption "Enable the nix-check command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

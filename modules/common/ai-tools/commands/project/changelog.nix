@@ -298,7 +298,7 @@ let
 in
 {
   options.jvf.aiTools.commands."changelog" = {
-    enable = lib.mkEnableOption "Enable the changelog command";
+    enable = (lib.mkEnableOption "Enable the changelog command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

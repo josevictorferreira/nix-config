@@ -54,7 +54,7 @@ let
 in
 {
   options.jvf.aiTools.commands."option-migrate" = {
-    enable = lib.mkEnableOption "Enable the option-migrate command";
+    enable = (lib.mkEnableOption "Enable the option-migrate command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

@@ -32,7 +32,9 @@ let
 in
 {
   options.jvf.aiTools.agents."ui-ux-architect" = {
-    enable = lib.mkEnableOption "Enable the ui-ux-architect agent";
+    enable = (lib.mkEnableOption "Enable the ui-ux-architect agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

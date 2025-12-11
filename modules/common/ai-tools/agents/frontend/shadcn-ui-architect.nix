@@ -101,7 +101,9 @@ let
 in
 {
   options.jvf.aiTools.agents."shadcn-ui-architect" = {
-    enable = lib.mkEnableOption "Enable the shadcn-ui-architect agent";
+    enable = (lib.mkEnableOption "Enable the shadcn-ui-architect agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

@@ -12,7 +12,7 @@ let
 in
 {
   options.jvf.aiTools.commands.ask = {
-    enable = lib.mkEnableOption "Enable the ask command";
+    enable = (lib.mkEnableOption "Enable the ask command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

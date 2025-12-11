@@ -54,7 +54,7 @@ let
 in
 {
   options.jvf.aiTools.commands."quick-check" = {
-    enable = lib.mkEnableOption "Enable the quick-check command";
+    enable = (lib.mkEnableOption "Enable the quick-check command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

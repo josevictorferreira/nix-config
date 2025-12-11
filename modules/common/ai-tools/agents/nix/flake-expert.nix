@@ -263,7 +263,7 @@ let
 in
 {
   options.jvf.aiTools.agents."flake-expert" = {
-    enable = lib.mkEnableOption "Enable the flake-expert agent";
+    enable = (lib.mkEnableOption "Enable the flake-expert agent") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

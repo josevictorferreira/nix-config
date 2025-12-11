@@ -122,7 +122,7 @@ let
 in
 {
   options.jvf.aiTools.commands."module-scaffold" = {
-    enable = lib.mkEnableOption "Enable the module-scaffold command";
+    enable = (lib.mkEnableOption "Enable the module-scaffold command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

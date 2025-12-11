@@ -263,7 +263,7 @@ let
 in
 {
   options.jvf.aiTools.commands."template-new" = {
-    enable = lib.mkEnableOption "Enable the template-new command";
+    enable = (lib.mkEnableOption "Enable the template-new command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

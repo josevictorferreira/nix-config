@@ -1205,7 +1205,9 @@ let
 in
 {
   options.jvf.aiTools.agents."container-expert" = {
-    enable = lib.mkEnableOption "Enable the container-expert agent";
+    enable = (lib.mkEnableOption "Enable the container-expert agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

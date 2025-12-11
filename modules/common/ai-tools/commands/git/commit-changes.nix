@@ -328,7 +328,7 @@ let
 in
 {
   options.jvf.aiTools.commands."commit-changes" = {
-    enable = lib.mkEnableOption "Enable the commit-changes command";
+    enable = (lib.mkEnableOption "Enable the commit-changes command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

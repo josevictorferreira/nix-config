@@ -202,7 +202,7 @@ let
 in
 {
   options.jvf.aiTools.commands."refactor" = {
-    enable = lib.mkEnableOption "Enable the refactor command";
+    enable = (lib.mkEnableOption "Enable the refactor command") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {

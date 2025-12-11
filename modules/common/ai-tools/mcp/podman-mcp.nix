@@ -9,7 +9,7 @@ let
 in
 {
   options.jvf.aiTools.mcp."podman-mcp" = {
-    enable = lib.mkEnableOption "Podman MCP server";
+    enable = (lib.mkEnableOption "Podman MCP server") // { default = true; };
   };
 
   config = lib.mkIf cfg.enable {
