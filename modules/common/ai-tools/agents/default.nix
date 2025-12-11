@@ -8,5 +8,6 @@
     ./project
     ./rails
     ./scraping
+    ./skill-writer.nix
   ];
 }
