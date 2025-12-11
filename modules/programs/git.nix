@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -193,7 +194,7 @@ in
     lfs = {
       enable = mkOption {
         type = types.bool;
-        default = false;
+        default = true;
         description = lib.mdDoc "Whether to enable Git Large File Storage (LFS)";
       };
     };
@@ -219,6 +220,9 @@ in
     ]
     ++ optional cfg.lfs.enable pkgs.git-lfs;
 
+    programs.git.enable = true;
+    programs.git.lfs.enable = cfg.lfs.enable;
+
     jvf.wrappers.users.${cfg.username}.programs.git = {
       packages = [
         cfg.package
@@ -229,15 +233,14 @@ in
       ++ optional cfg.lfs.enable pkgs.git-lfs;
       configs = {
         "config" =
-          generators.toINI { }
-            (
-              (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
-              // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
-              // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-              // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-              // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-              // cfg.extraConfig
-            )
+          generators.toINI { } (
+            (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+            // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
+            // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+            // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+            // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+            // cfg.extraConfig
+          )
           + ''
             [diff]
               external = ${pkgs.difftastic}/bin/difft
@@ -246,11 +249,5 @@ in
         "hooks/pre-commit" = builtins.toString preCommit;
       };
     };
-
-    system.activationScripts.git-lfs-setup = optionalString cfg.lfs.enable ''
-      if [ ! -f /etc/profile.d/git-lfs.sh ]; then
-        ${cfg.package}/bin/git lfs install --system
-      fi
-    '';
   };
 }

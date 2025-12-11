@@ -51,7 +51,7 @@ in
     ./formatters.nix
     ./lsp.nix
     ./provider.nix
-    ./permission.nix
+    ./plugins.nix
   ];
 
   options.jvf.programs.opencode = {
@@ -109,11 +109,9 @@ in
             cfg.settings
             // {
               mcp = cfg.mcps;
+              plugin = [ "opencode-skills" ];
             }
           );
-          "opencode.json" = builtins.toJSON {
-            plugin = [ "opencode-skills" ];
-          };
         }
       ];
     };
