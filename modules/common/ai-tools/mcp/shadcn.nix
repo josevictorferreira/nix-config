@@ -10,7 +10,6 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "shadcn";
     tags = [
-      "react"
       "frontend"
     ];
     config = {
