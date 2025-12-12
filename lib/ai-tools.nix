@@ -4,6 +4,32 @@
 }:
 
 let
+  toolTags = [
+    "frontend"
+    "browser"
+    "code-explorer"
+    "documentation-search"
+  ];
+
+  mkMcpModule =
+    {
+      name ? "MCP Server",
+      tags ? [ ],
+      config ? { },
+    }:
+    {
+      options = {
+        enable = lib.mkEnableOption name;
+        tags = lib.mkOption {
+          type = lib.types.listOf (lib.types.enum toolTags);
+          default = tags;
+          description = "Capability tags for ${name}";
+          example = [ "documentation-search" ];
+        };
+      };
+      config = config;
+    };
+
   toClaudeMarkdownPrompt =
     value:
     if builtins.isAttrs value && value ? prompt then
@@ -119,5 +145,6 @@ in
     toClaudeMarkdownPrompt
     mkOpencodeMdConfigs
     mkClaudecodeMdConfigs
+    mkMcpModule
     ;
 }

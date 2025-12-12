@@ -5,7 +5,15 @@ let
 in
 {
   options.jvf.aiTools.mcp.context7 = {
-    enable = (lib.mkEnableOption "Context7 MCP server") // { default = true; };
+    enable = (lib.mkEnableOption "Context7 MCP server") // {
+      default = true;
+    };
+
+    tags = lib.mkOption {
+      type = with lib.types; listOf str;
+      description = "List of tags to identify this MCP server";
+      default = [ "documentation-search" ];
+    };
   };
 
   config = lib.mkIf cfg.enable {

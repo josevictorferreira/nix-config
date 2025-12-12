@@ -12,6 +12,12 @@ in
     enable = (lib.mkEnableOption "CK Search MCP server") // {
       default = true;
     };
+
+    tags = lib.mkOption {
+      type = with lib.types; listOf str;
+      description = "List of tags to identify this MCP server";
+      default = [ "code-explore" ];
+    };
   };
 
   config = lib.mkIf cfg.enable {

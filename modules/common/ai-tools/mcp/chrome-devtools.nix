@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  ...
 }:
 
 let
@@ -13,7 +14,15 @@ let
 in
 {
   options.jvf.aiTools.mcp."chrome-devtools" = {
-    enable = (lib.mkEnableOption "Chrome DevTools MCP server") // { default = true; };
+    enable = (lib.mkEnableOption "Chrome DevTools MCP server") // {
+      default = true;
+    };
+
+    tags = lib.mkOption {
+      type = with lib.types; listOf str;
+      description = "List of tags to identify this MCP server";
+      default = [ "browser" ];
+    };
   };
 
   config = lib.mkIf cfg.enable {
