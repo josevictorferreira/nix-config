@@ -1,6 +1,0 @@
-{ ... }:
-{
-  imports = [
-    ./container-expert.nix
-  ];
-}

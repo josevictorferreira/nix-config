@@ -1,7 +1,7 @@
 { lib, config, ... }:
 
 let
-  cfg = config.jvf.aiTools.commands."module-lint";
+  cfg = config.jvf.aiTools.commands."nix-module-lint";
   commandOptions = {
     name = "Module Lint";
     description = "Comprehensive NixOS module linting and validation with best practices checking";
@@ -60,12 +60,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."module-lint" = {
-    enable = (lib.mkEnableOption "Enable the module-lint command") // { default = true; };
+  options.jvf.aiTools.commands."nix-module-lint" = {
+    enable = (lib.mkEnableOption "Enable the nix-module-lint command") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."module-lint" = commandOptions;
-    jvf.programs.claudecode.commands."module-lint" = commandOptions;
+    jvf.programs.opencode.commands."nix-module-lint" = commandOptions;
+    jvf.programs.claudecode.commands."nix-module-lint" = commandOptions;
   };
 }

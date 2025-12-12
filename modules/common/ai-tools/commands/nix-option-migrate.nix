@@ -1,9 +1,9 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.commands."option-migrate";
+  cfg = config.jvf.aiTools.commands."nix-option-migrate";
   commandOptions = {
-    name = "Option Migrate";
+    name = "Nix Option Migrate";
     description = "Systematically migrate NixOS options across versions with comprehensive validation";
     tools = [ ];
     prompt = ''
@@ -53,12 +53,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."option-migrate" = {
-    enable = (lib.mkEnableOption "Enable the option-migrate command") // { default = true; };
+  options.jvf.aiTools.commands."nix-option-migrate" = {
+    enable = (lib.mkEnableOption "Enable the nix-option-migrate command") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."option-migrate" = commandOptions;
-    jvf.programs.claudecode.commands."option-migrate" = commandOptions;
+    jvf.programs.opencode.commands."nix-option-migrate" = commandOptions;
+    jvf.programs.claudecode.commands."nix-option-migrate" = commandOptions;
   };
 }

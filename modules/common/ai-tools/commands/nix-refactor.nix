@@ -1,9 +1,9 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.commands."refactor";
+  cfg = config.jvf.aiTools.commands."nix-refactor";
   commandOptions = {
-    name = "Refactor";
+    name = "Nix Refactor";
     description = "Systematic code refactoring with comprehensive safety checks and validation";
     tools = [ ];
     prompt = ''
@@ -201,12 +201,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."refactor" = {
-    enable = (lib.mkEnableOption "Enable the refactor command") // { default = true; };
+  options.jvf.aiTools.commands."nix-refactor" = {
+    enable = (lib.mkEnableOption "Enable the refactor command") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."refactor" = commandOptions;
-    jvf.programs.claudecode.commands."refactor" = commandOptions;
+    jvf.programs.opencode.commands."nix-refactor" = commandOptions;
+    jvf.programs.claudecode.commands."nix-refactor" = commandOptions;
   };
 }

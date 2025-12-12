@@ -12,7 +12,9 @@ let
 in
 {
   options.jvf.aiTools.commands.implement-change = {
-    enable = (lib.mkEnableOption "Enable the implement-change command") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the implement-change command") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

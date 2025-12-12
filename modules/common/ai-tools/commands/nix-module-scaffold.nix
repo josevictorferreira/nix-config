@@ -1,9 +1,9 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.commands."module-scaffold";
+  cfg = config.jvf.aiTools.commands."nix-module-scaffold";
   commandOptions = {
-    name = "Module Scaffold";
+    name = "Nix Module Scaffold";
     description = "Generate well-structured NixOS module scaffolding with best practices";
     tools = [ ];
     prompt = ''
@@ -121,12 +121,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."module-scaffold" = {
-    enable = (lib.mkEnableOption "Enable the module-scaffold command") // { default = true; };
+  options.jvf.aiTools.commands."nix-module-scaffold" = {
+    enable = (lib.mkEnableOption "Enable the nix-module-scaffold command") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."module-scaffold" = commandOptions;
-    jvf.programs.claudecode.commands."module-scaffold" = commandOptions;
+    jvf.programs.opencode.commands."nix-module-scaffold" = commandOptions;
+    jvf.programs.claudecode.commands."nix-module-scaffold" = commandOptions;
   };
 }
