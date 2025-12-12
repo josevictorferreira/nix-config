@@ -1,14 +1,15 @@
-{ lib
-, config
-, inputs
-, ...
+{
+  lib,
+  config,
+  inputs,
+  ...
 }:
 
 let
   cfg = config.jvf.aiTools.mcp.context7;
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "context7";
-    tags = [ "documentation-search" ];
+    tags = [ "documentation" ];
     config = {
       jvf.programs.opencode.mcps."context7" = {
         enabled = true;

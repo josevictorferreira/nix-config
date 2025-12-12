@@ -5,9 +5,11 @@ let
   agentOptions = {
     name = "Container Expert";
     description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
-    tools = [
-      "context7"
-      "podman-mcp"
+    tools = [ ];
+    tags = [
+      "explorer"
+      "documentation"
+      "container"
     ];
     prompt = ''
       # Container Development

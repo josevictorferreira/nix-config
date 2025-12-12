@@ -1,25 +1,29 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 let
   toolTags = [
     "frontend"
     "browser"
-    "code-explorer"
-    "containers"
-    "documentation-search"
+    "explorer"
+    "container"
+    "documentation"
+    "nix"
   ];
 
   mkMcpModule =
-    { name ? "MCP Server"
-    , tags ? [ ]
-    , config ? { }
-    ,
+    {
+      name ? "MCP Server",
+      tags ? [ ],
+      config ? { },
     }:
     {
       options = {
-        enable = lib.mkEnableOption name;
+        enable = (lib.mkEnableOption name) // {
+          default = true;
+        };
         tags = lib.mkOption {
           type = lib.types.listOf (lib.types.enum toolTags);
           default = tags;
@@ -30,16 +34,28 @@ let
       config = config;
     };
 
+  findToolsByTags =
+    mcpConfigs: tags:
+    let
+      matchingMcps = lib.filterAttrs (
+        _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
+      ) mcpConfigs;
+    in
+    builtins.attrNames matchingMcps;
+
   toClaudeMarkdownPrompt =
-    value:
+    mcpConfigs: value:
     if builtins.isAttrs value && value ? prompt then
       let
-        toolsString = lib.concatStringsSep ", " value.tools;
+        explicitTools = value.tools or [ ];
+        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
+        allTools = lib.unique (explicitTools ++ tagTools);
+        toolsString = lib.concatStringsSep ", " allTools;
         yamlHeader = ''
           ---
           name: "${value.name or "unknown"}"
           description: "${value.description or ""}"
-          ${lib.optionalString (value ? tools && value.tools != [ ]) "allowed-tools: \"${toolsString}\""}
+          ${lib.optionalString (allTools != [ ]) "allowed-tools: \"${toolsString}\""}
           ---
         '';
       in
@@ -48,16 +64,19 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
   toOpencodeMarkdownPrompt =
-    value:
+    mcpConfigs: value:
     if builtins.isAttrs value && value ? prompt then
       let
+        explicitTools = value.tools or [ ];
+        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
+        allTools = lib.unique (explicitTools ++ tagTools);
         yamlHeader = ''
           ---
           name: "${value.name or "unknown"}"
           description: "${value.description or ""}"
-          ${if (value ? tools && value.tools != [ ]) then "tools:" else ""}
-          ${lib.optionalString (value ? tools && value.tools != [ ]) (
-            lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") value.tools
+          ${if (allTools != [ ]) then "tools:" else ""}
+          ${lib.optionalString (allTools != [ ]) (
+            lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") allTools
           )}
           ---
 
@@ -97,24 +116,20 @@ let
       # Reference files
       references =
         if skill ? references && skill.references != { } then
-          lib.mapAttrs'
-            (refName: refContent: {
-              name = "skills/${skillName}/references/${refName}.md";
-              value = refContent;
-            })
-            skill.references
+          lib.mapAttrs' (refName: refContent: {
+            name = "skills/${skillName}/references/${refName}.md";
+            value = refContent;
+          }) skill.references
         else
           { };
 
       # Script files
       scripts =
         if skill ? scripts && skill.scripts != { } then
-          lib.mapAttrs'
-            (scriptName: scriptContent: {
-              name = "skills/${skillName}/scripts/${scriptName}";
-              value = scriptContent;
-            })
-            skill.scripts
+          lib.mapAttrs' (scriptName: scriptContent: {
+            name = "skills/${skillName}/scripts/${scriptName}";
+            value = scriptContent;
+          }) skill.scripts
         else
           { };
     in
@@ -127,22 +142,18 @@ let
     );
 
   mkOpencodeMdConfigs =
-    prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = toOpencodeMarkdownPrompt value;
-      })
-      attrset;
+    mcpConfigs: prefix: attrset:
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = toOpencodeMarkdownPrompt mcpConfigs value;
+    }) attrset;
 
   mkClaudecodeMdConfigs =
-    prefix: attrset:
-    lib.mapAttrs'
-      (name: value: {
-        name = "${prefix}/${name}.md";
-        value = toClaudeMarkdownPrompt value;
-      })
-      attrset;
+    mcpConfigs: prefix: attrset:
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.md";
+      value = toClaudeMarkdownPrompt mcpConfigs value;
+    }) attrset;
 in
 {
   inherit
@@ -154,5 +165,6 @@ in
     mkOpencodeMdConfigs
     mkClaudecodeMdConfigs
     mkMcpModule
+    findToolsByTags
     ;
 }

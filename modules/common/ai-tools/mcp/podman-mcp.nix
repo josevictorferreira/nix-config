@@ -1,15 +1,16 @@
-{ lib
-, pkgs
-, config
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  inputs,
+  ...
 }:
 
 let
   cfg = config.jvf.aiTools.mcp."podman-mcp";
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "podman-mcp";
-    tags = [ "containers" ];
+    tags = [ "container" ];
     config = {
       jvf.programs.opencode.mcps."podman-mcp" = {
         type = "local";

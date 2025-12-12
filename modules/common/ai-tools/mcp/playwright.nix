@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, system
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  inputs,
+  ...
 }:
 
 let
@@ -13,6 +14,7 @@ let
 
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "playwright";
+    tags = [ ];
     config = {
       jvf.programs.opencode.mcps."playwright" = {
         type = "local";

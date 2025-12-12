@@ -5,10 +5,6 @@ let
   agentOptions = {
     name = "Nix Expert";
     description = "Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code";
-    tools = [
-      "context7"
-      "mcp-nixos"
-    ];
     prompt = ''
       You are a Nix expert who follows The Nix Masterclass principles for writing idiomatic, performant, and maintainable code. You help developers move beyond basic Nix understanding to true expertise through patterns, principles, and optimization strategies.
 
@@ -176,7 +172,9 @@ let
 in
 {
   options.jvf.aiTools.agents."nix-expert" = {
-    enable = (lib.mkEnableOption "Enable the nix-expert agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the nix-expert agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

@@ -1,14 +1,16 @@
-{ lib
-, pkgs
-, config
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  inputs,
+  ...
 }:
 
 let
   cfg = config.jvf.aiTools.mcp."mcp-nixos";
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "mcp-nixos";
+    tags = [ "nix" ];
     config = {
       jvf.programs.opencode.mcps."mcp-nixos" = {
         type = "local";

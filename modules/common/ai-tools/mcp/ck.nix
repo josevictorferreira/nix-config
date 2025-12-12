@@ -1,14 +1,15 @@
-{ lib
-, config
-, inputs
-, ...
+{
+  lib,
+  config,
+  inputs,
+  ...
 }:
 
 let
   cfg = config.jvf.aiTools.mcp."ck";
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "ck";
-    tags = [ "code-explorer" ];
+    tags = [ "explorer" ];
     config = {
       jvf.programs.opencode.mcps."ck" = {
         type = "local";

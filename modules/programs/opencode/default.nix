@@ -100,8 +100,8 @@ in
       ++ lib.optional isDarwin pkgs.opencode
       ++ lib.optional (!isDarwin) shellScriptBin;
       configs = lib.mkMerge [
-        (inputs.lib.aiTools.mkOpencodeMdConfigs "agent" cfg.agents)
-        (inputs.lib.aiTools.mkOpencodeMdConfigs "command" cfg.commands)
+        (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "agent" cfg.agents)
+        (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "config.json" = (

@@ -111,8 +111,8 @@ in
           ];
           configPath = ".claude";
           configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
             (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
           ];
         };
