@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  ...
+{ config
+, lib
+, pkgs
+, username
+, ...
 }:
 
 let
@@ -233,14 +232,15 @@ in
       ++ optional cfg.lfs.enable pkgs.git-lfs;
       configs = {
         "config" =
-          generators.toINI { } (
-            (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
-            // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
-            // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-            // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-            // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-            // cfg.extraConfig
-          )
+          generators.toINI { }
+            (
+              (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+              // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
+              // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+              // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+              // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+              // cfg.extraConfig
+            )
           + ''
             [diff]
               external = ${pkgs.difftastic}/bin/difft

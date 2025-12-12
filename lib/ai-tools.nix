@@ -1,6 +1,5 @@
-{
-  lib,
-  ...
+{ lib
+, ...
 }:
 
 let
@@ -8,14 +7,15 @@ let
     "frontend"
     "browser"
     "code-explorer"
+    "containers"
     "documentation-search"
   ];
 
   mkMcpModule =
-    {
-      name ? "MCP Server",
-      tags ? [ ],
-      config ? { },
+    { name ? "MCP Server"
+    , tags ? [ ]
+    , config ? { }
+    ,
     }:
     {
       options = {
@@ -97,20 +97,24 @@ let
       # Reference files
       references =
         if skill ? references && skill.references != { } then
-          lib.mapAttrs' (refName: refContent: {
-            name = "skills/${skillName}/references/${refName}.md";
-            value = refContent;
-          }) skill.references
+          lib.mapAttrs'
+            (refName: refContent: {
+              name = "skills/${skillName}/references/${refName}.md";
+              value = refContent;
+            })
+            skill.references
         else
           { };
 
       # Script files
       scripts =
         if skill ? scripts && skill.scripts != { } then
-          lib.mapAttrs' (scriptName: scriptContent: {
-            name = "skills/${skillName}/scripts/${scriptName}";
-            value = scriptContent;
-          }) skill.scripts
+          lib.mapAttrs'
+            (scriptName: scriptContent: {
+              name = "skills/${skillName}/scripts/${scriptName}";
+              value = scriptContent;
+            })
+            skill.scripts
         else
           { };
     in
@@ -124,17 +128,21 @@ let
 
   mkOpencodeMdConfigs =
     prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toOpencodeMarkdownPrompt value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toOpencodeMarkdownPrompt value;
+      })
+      attrset;
 
   mkClaudecodeMdConfigs =
     prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toClaudeMarkdownPrompt value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toClaudeMarkdownPrompt value;
+      })
+      attrset;
 in
 {
   inherit

@@ -1,9 +1,9 @@
-{
-  lib,
-  pkgs,
-  config,
-  system,
-  ...
+{ lib
+, pkgs
+, config
+, inputs
+, system
+, ...
 }:
 
 let
@@ -11,44 +11,40 @@ let
   isDarwin = builtins.match ".*-darwin" system != null;
   defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
   npx = lib.getExe' pkgs.nodejs "npx";
+
+  mcpDef = inputs.lib.aiTools.mkMcpModule {
+    name = "chrome-devtools";
+    tags = [ "browser" ];
+    config = {
+      jvf.programs.opencode.mcps."chrome-devtools" = {
+        type = "local";
+        enabled = true;
+        command = [
+          npx
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--headless=true"
+          "--isolated=true"
+          "--executablePath=${defaultBrowser}"
+        ];
+      };
+
+      jvf.programs.claudecode.mcps."chrome-devtools" = {
+        type = "stdio";
+        command = "npx";
+        args = [
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--headless=true"
+          "--isolated=true"
+          "--executablePath=${defaultBrowser}"
+        ];
+      };
+    };
+  };
 in
 {
-  options.jvf.aiTools.mcp."chrome-devtools" = {
-    enable = (lib.mkEnableOption "Chrome DevTools MCP server") // {
-      default = true;
-    };
+  options.jvf.aiTools.mcp."chrome-devtools" = mcpDef.options;
 
-    tags = lib.mkOption {
-      type = with lib.types; listOf str;
-      description = "List of tags to identify this MCP server";
-      default = [ "browser" ];
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.mcps."chrome-devtools" = {
-      type = "local";
-      enabled = true;
-      command = [
-        npx
-        "-y"
-        "chrome-devtools-mcp@latest"
-        "--headless=true"
-        "--isolated=true"
-        "--executablePath=${defaultBrowser}"
-      ];
-    };
-
-    jvf.programs.claudecode.mcps."chrome-devtools" = {
-      type = "stdio";
-      command = "npx";
-      args = [
-        "-y"
-        "chrome-devtools-mcp@latest"
-        "--headless=true"
-        "--isolated=true"
-        "--executablePath=${defaultBrowser}"
-      ];
-    };
-  };
+  config = lib.mkIf cfg.enable mcpDef.config;
 }

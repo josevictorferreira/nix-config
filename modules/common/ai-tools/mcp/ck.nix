@@ -1,41 +1,36 @@
-{
-  lib,
-  config,
-  ...
+{ lib
+, config
+, inputs
+, ...
 }:
 
 let
   cfg = config.jvf.aiTools.mcp."ck";
+  mcpDef = inputs.lib.aiTools.mkMcpModule {
+    name = "ck";
+    tags = [ "code-explorer" ];
+    config = {
+      jvf.programs.opencode.mcps."ck" = {
+        type = "local";
+        enabled = true;
+        command = [
+          "${lib.getExe config.jvf.programs."ck-search".package}"
+          "--serve"
+        ];
+      };
+
+      jvf.programs.claudecode.mcps."ck" = {
+        type = "stdio";
+        command = "${lib.getExe config.jvf.programs."ck-search".package}";
+        args = [
+          "--serve"
+        ];
+      };
+    };
+  };
 in
 {
-  options.jvf.aiTools.mcp."ck" = {
-    enable = (lib.mkEnableOption "CK Search MCP server") // {
-      default = true;
-    };
+  options.jvf.aiTools.mcp."ck" = mcpDef.options;
 
-    tags = lib.mkOption {
-      type = with lib.types; listOf str;
-      description = "List of tags to identify this MCP server";
-      default = [ "code-explore" ];
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.mcps."ck" = {
-      type = "local";
-      enabled = true;
-      command = [
-        "${lib.getExe config.jvf.programs."ck-search".package}"
-        "--serve"
-      ];
-    };
-
-    jvf.programs.claudecode.mcps."ck" = {
-      type = "stdio";
-      command = "${lib.getExe config.jvf.programs."ck-search".package}";
-      args = [
-        "--serve"
-      ];
-    };
-  };
+  config = lib.mkIf cfg.enable mcpDef.config;
 }

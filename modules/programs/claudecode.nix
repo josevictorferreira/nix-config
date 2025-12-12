@@ -1,11 +1,10 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  system,
-  inputs,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, system
+, inputs
+, ...
 }:
 let
   json = pkgs.formats.json { };
