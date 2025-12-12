@@ -7,7 +7,6 @@
     ./commit-changes.nix
     ./commit-msg.nix
     ./deep-check.nix
-    ./default.nix
     ./dependency-audit.nix
     ./do.nix
     ./flake-update.nix
@@ -16,9 +15,9 @@
     ./implement-fix.nix
     ./implement-refactoring.nix
     ./implement-tests.nix
+    ./nix-check.nix
     ./nix-module-lint.nix
     ./nix-module-scaffold.nix
-    ./nix-check.nix
     ./nix-option-migrate.nix
     ./nix-refactor.nix
     ./nix-template-new.nix

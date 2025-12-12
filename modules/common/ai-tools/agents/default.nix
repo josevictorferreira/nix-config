@@ -3,7 +3,6 @@
   imports = [
     ./code-reviewer.nix
     ./container-expert.nix
-    ./default.nix
     ./documenter.nix
     ./ethical-scraper.nix
     ./flake-expert.nix
