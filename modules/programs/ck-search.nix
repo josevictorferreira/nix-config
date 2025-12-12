@@ -1,22 +1,13 @@
 {
   lib,
+  pkgs,
   config,
   username,
   ...
 }:
 let
   cfg = config.jvf.programs."ck-search";
-  rust_overlay = import (
-    builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"
-  );
-  pkgs = import <nixpkgs> { overlays = [ rust_overlay ]; };
-  rustVersion = "1.88.0";
-  rust = pkgs.rust-bin.stable.${rustVersion}.default;
-  rustPlatform = pkgs.makeRustPlatform {
-    cargo = rust;
-    rustc = rust;
-  };
-  ckSearchPkg = rustPlatform.buildRustPackage rec {
+  ckSearchPkg = pkgs.rustPlatform.buildRustPackage rec {
     pname = "ck-search";
     version = "0.7.0";
 
@@ -24,10 +15,10 @@ let
       owner = "BeaconBay";
       repo = "ck";
       rev = version;
-      hash = "sha256-qUzrKbv5OTmXyIb3N67c4R/49eYkegp/5RbqUSq/ixg=";
+      hash = "sha256-CZsayq1JxOhGaT9iTNVKcyqGGnJlxcjDAbcMKArtR6k=";
     };
 
-    cargoHash = "sha256-0fKfGis3h8sMs1lXWStEXpnLA/hUo5NTeL2KcU96qfg=";
+    cargoHash = "sha256-+74XPcv/mnG7GAG6H8QJe6EtyO2xWhHXvdyTGSPwZeI=";
 
     nativeBuildInputs = with pkgs; [
       pkg-config
