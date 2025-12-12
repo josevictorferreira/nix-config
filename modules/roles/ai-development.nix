@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -11,6 +12,7 @@ in
 {
   imports = [
     ../common/ai-tools/default.nix
+    ../programs/ck-search.nix
     ../programs/opencode
     ../programs/claudecode.nix
     ../programs/droid.nix
@@ -31,6 +33,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    jvf.programs."ck-search".enable = true;
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
 
