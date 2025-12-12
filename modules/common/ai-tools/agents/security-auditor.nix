@@ -5,7 +5,10 @@ let
   agentOptions = {
     name = "Security Auditor";
     description = "Security analysis and vulnerability assessment specialist";
-    tools = [ ];
+    tags = [
+      "explorer"
+      "documentation"
+    ];
     prompt = ''
       <vulnerability_assessment>
         Conduct comprehensive security vulnerability assessments of code, configurations, and systems.
@@ -298,7 +301,9 @@ let
 in
 {
   options.jvf.aiTools.agents."security-auditor" = {
-    enable = (lib.mkEnableOption "Enable the security-auditor agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the security-auditor agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

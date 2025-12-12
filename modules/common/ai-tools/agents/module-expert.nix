@@ -5,7 +5,11 @@ let
   agentOptions = {
     name = "Nix Module Expert";
     description = "NixOS module creation, organization, and options design specialist";
-    tools = [ "context7" ];
+    tags = [
+      "nix"
+      "documentation"
+      "explorer"
+    ];
     prompt = ''
       <options_design>
         Design sophisticated option schemas with proper types, validation, and user-friendly APIs.
@@ -265,7 +269,9 @@ let
 in
 {
   options.jvf.aiTools.agents."module-expert" = {
-    enable = (lib.mkEnableOption "Enable the module-expert agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the module-expert agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

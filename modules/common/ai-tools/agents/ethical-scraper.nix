@@ -5,7 +5,11 @@ let
   agentOptions = {
     name = "Ethical Scraper";
     description = "Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
-    tools = [ "context7" "playwright" "chrome-devtools" ];
+    tags = [
+      "browser"
+      "documentation"
+      "explorer"
+    ];
     prompt = ''
       # Scraping Best Practices
 
@@ -601,7 +605,9 @@ let
 in
 {
   options.jvf.aiTools.agents."ethical-scraper" = {
-    enable = (lib.mkEnableOption "Enable the ethical-scraper agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the ethical-scraper agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

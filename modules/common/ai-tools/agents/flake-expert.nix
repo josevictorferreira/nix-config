@@ -5,7 +5,11 @@ let
   agentOptions = {
     name = "Flake Expert";
     description = "Nix flake management, inputs, and dependency specialist";
-    tools = [ "context7" ];
+    tags = [
+      "nix"
+      "documentation"
+      "explorer"
+    ];
     prompt = ''
         <flake_schema_mastery>
         Master the Nix flake schema, evaluation mechanics, and advanced patterns.
@@ -263,7 +267,9 @@ let
 in
 {
   options.jvf.aiTools.agents."flake-expert" = {
-    enable = (lib.mkEnableOption "Enable the flake-expert agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the flake-expert agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

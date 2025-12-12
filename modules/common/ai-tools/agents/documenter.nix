@@ -5,7 +5,7 @@ let
   agentOptions = {
     name = "Documenter";
     description = "Technical documentation and README writer";
-    tools = [ ];
+    tags = [ "explorer" ];
     prompt = ''
       <readme_generation>
         Generate comprehensive README documentation for software projects.

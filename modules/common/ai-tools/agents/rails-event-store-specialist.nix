@@ -5,7 +5,10 @@ let
   agentOptions = {
     name = "Rails Event Store Specialist";
     description = "A ruby on rails event store specialist";
-    tools = [ "context7" ];
+    tags = [
+      "explorer"
+      "documentation"
+    ];
     prompt = ''
       # Rails Event Store Specialist - Knowledge Base
 
@@ -77,7 +80,7 @@ let
       class AsyncHandler < ActiveJob::Base
         prepend RailsEventStore::CorrelatedHandler
         prepend RailsEventStore::AsyncHandler
-      
+
         def perform(event)
           # Events published here will be correlated with the triggering event
         end
@@ -173,7 +176,7 @@ let
       ```ruby
       class Order
         include AggregateRoot
-      
+
         # Custom apply strategy
         def apply_strategy
           ->(aggregate, event) do
@@ -184,7 +187,7 @@ let
             end
           end
         end
-      
+
         # Repository convenience methods
         def with_order(order_id, &block)
           repository.with_aggregate(Order.new, "Order$#{order_id}", &block)
@@ -228,7 +231,7 @@ let
         def call(klass, serialized_record)
           klass.perform_async(serialized_record.to_h)
         end
-      
+
         def verify(subscriber)
           Class === subscriber && subscriber.respond_to?(:perform_async)
         end
@@ -322,7 +325,7 @@ let
       class OrderHandler < ActiveJob::Base
         prepend RubyEventStore::AsyncHandler
         prepend MetadataHandler
-      
+
         def perform(event)
           # New events published here inherit original metadata
         end
@@ -586,7 +589,9 @@ let
 in
 {
   options.jvf.aiTools.agents."rails-event-store-specialist" = {
-    enable = (lib.mkEnableOption "Enable the rails-event-store-specialist agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the rails-event-store-specialist agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {

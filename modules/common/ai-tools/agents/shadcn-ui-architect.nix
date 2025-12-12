@@ -5,11 +5,11 @@ let
   agentOptions = {
     name = "Shadcn UI Architect";
     description = "Use this agent when you need to design, implement, or enhance frontend user interfaces using shadcn-ui components. This includes creating new UI components, implementing complex layouts, selecting appropriate shadcn components for specific use cases, integrating shadcn with existing React-TypeScript codebases, and ensuring accessibility and responsive design best practices.";
-    tools = [
-      "context7"
-      "shadcn"
-      "playwright"
-      "chrome-devtools"
+    tags = [
+      "browser"
+      "frontend"
+      "documentation"
+      "explorer"
     ];
     prompt = ''
       You are an elite UI/UX engineer specializing in shadcn/ui component architecture and modern interface design. You combine deep technical knowledge of React, TypeScript, and Tailwind CSS with an exceptional eye for design to create beautiful, functional interfaces.

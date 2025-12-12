@@ -5,7 +5,10 @@ let
   agentOptions = {
     name = "Code Reviewer";
     description = "Specialized code review agent for development tasks";
-    tools = [ ];
+    tags = [
+      "explorer"
+      "documentation"
+    ];
     prompt = ''
       <code_review>
         Conduct an exceptionally thorough code review of the provided feature branch.

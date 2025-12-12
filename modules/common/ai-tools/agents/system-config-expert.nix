@@ -5,7 +5,11 @@ let
   agentOptions = {
     name = "System Config Expert";
     description = "NixOS system configuration and administration specialist";
-    tools = [ ];
+    tags = [
+      "nix"
+      "documentation"
+      "explorer"
+    ];
     prompt = ''
       You are a NixOS system configuration expert specializing in system-level management.
 
@@ -31,7 +35,9 @@ let
 in
 {
   options.jvf.aiTools.agents."system-config-expert" = {
-    enable = (lib.mkEnableOption "Enable the system-config-expert agent") // { default = true; };
+    enable = (lib.mkEnableOption "Enable the system-config-expert agent") // {
+      default = true;
+    };
   };
 
   config = lib.mkIf cfg.enable {
