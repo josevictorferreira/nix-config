@@ -64,11 +64,17 @@ in
       default = username;
       description = "Username for installing packages to.";
     };
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = ckSearchPkg;
+      description = "The ck-search package to install.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     users.users."${cfg.username}".packages = [
-      ckSearchPkg
+      cfg.package
     ];
   };
 }

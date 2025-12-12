@@ -19,14 +19,14 @@ in
       type = "local";
       enabled = true;
       command = [
-        "ck"
-        "serve"
+        "${lib.getExe config.jvf.programs."ck-search".package}"
+        "--serve"
       ];
     };
 
     jvf.programs.claudecode.mcps."ck" = {
       type = "stdio";
-      command = "ck";
+      command = "${lib.getExe config.jvf.programs."ck-search".package}";
       args = [
         "--serve"
       ];

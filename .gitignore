@@ -11,3 +11,5 @@ secrets/*.yml
 result/
 result
 .claude/
+.ck/
+.ckignore
