@@ -3,7 +3,7 @@
 let
   skillName = "managing-rails-events";
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
+  skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "Expert in Rails Event Store patterns including event publishing, subscriptions (sync/async), event sourcing with AggregateRoot, projections, reading events, correlation/causation, mappers, transactions, and common usage patterns. Use when working with Rails Event Store, event-driven architectures, or when users mention events, aggregates, projections, or event sourcing in Rails.";
@@ -12,7 +12,7 @@ let
       "documentation"
     ];
     prompt = ''
-      # ${skillHumanName}
+      # ${skillFullName}
 
       This skill provides comprehensive expertise in Rails Event Store (RES) patterns and best practices for building event-driven applications in Rails.
 
@@ -436,7 +436,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillFullName} agent") // {
       default = true;
     };
   };

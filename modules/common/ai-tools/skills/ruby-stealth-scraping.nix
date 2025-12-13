@@ -3,7 +3,7 @@
 let
   skillName = "ruby-stealth-scraping";
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
+  skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "Specialist in stealthy web scraping with Ruby using Ferrum headless browser. Use when building scrapers that need to evade bot detection, bypass anti-scraping measures, or when working with Cloudflare-protected sites. Triggers include requests for web scraping, data extraction, headless browsing, bot evasion, proxy rotation, user-agent rotation, or Ferrum configuration in Ruby/Rails projects.";
@@ -294,7 +294,7 @@ let
     };
     scripts = { };
     prompt = ''
-      # ${skillHumanName}
+      # ${skillFullName}
 
       Expert guidance for building undetectable web scrapers using Ruby and Ferrum.
 
@@ -367,7 +367,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillHumanName} skill") // {
+    enable = (lib.mkEnableOption "Enable the ${skillFullName} skill") // {
       default = true;
     };
   };
