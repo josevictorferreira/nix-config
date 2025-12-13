@@ -1,6 +1,5 @@
-{
-  lib,
-  ...
+{ lib
+, ...
 }:
 
 let
@@ -14,10 +13,10 @@ let
   ];
 
   mkMcpModule =
-    {
-      name ? "MCP Server",
-      tags ? [ ],
-      config ? { },
+    { name ? "MCP Server"
+    , tags ? [ ]
+    , config ? { }
+    ,
     }:
     {
       options = {
@@ -37,9 +36,11 @@ let
   findToolsByTags =
     mcpConfigs: tags:
     let
-      matchingMcps = lib.filterAttrs (
-        _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
-      ) mcpConfigs;
+      matchingMcps = lib.filterAttrs
+        (
+          _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
+        )
+        mcpConfigs;
     in
     builtins.attrNames matchingMcps;
 
@@ -116,20 +117,24 @@ let
       # Reference files
       references =
         if skill ? references && skill.references != { } then
-          lib.mapAttrs' (refName: refContent: {
-            name = "skills/${skillName}/references/${refName}.md";
-            value = refContent;
-          }) skill.references
+          lib.mapAttrs'
+            (refName: refContent: {
+              name = "skills/${skillName}/references/${refName}.md";
+              value = refContent;
+            })
+            skill.references
         else
           { };
 
       # Script files
       scripts =
         if skill ? scripts && skill.scripts != { } then
-          lib.mapAttrs' (scriptName: scriptContent: {
-            name = "skills/${skillName}/scripts/${scriptName}";
-            value = scriptContent;
-          }) skill.scripts
+          lib.mapAttrs'
+            (scriptName: scriptContent: {
+              name = "skills/${skillName}/scripts/${scriptName}";
+              value = scriptContent;
+            })
+            skill.scripts
         else
           { };
     in
@@ -143,17 +148,21 @@ let
 
   mkOpencodeMdConfigs =
     mcpConfigs: prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toOpencodeMarkdownPrompt mcpConfigs value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toOpencodeMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
 
   mkClaudecodeMdConfigs =
     mcpConfigs: prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toClaudeMarkdownPrompt mcpConfigs value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toClaudeMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
 in
 {
   inherit

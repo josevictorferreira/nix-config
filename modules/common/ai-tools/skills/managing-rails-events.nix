@@ -1,17 +1,18 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "rails-event-store-specialist";
-  cfg = config.jvf.aiTools.skills.${skillName};
-  agentOptions = {
-    name = "rails-event-store-specialist";
+  skillName = "managing-rails-events";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
+  skillOptions = {
+    name = skillName;
     description = "Expert in Rails Event Store patterns including event publishing, subscriptions (sync/async), event sourcing with AggregateRoot, projections, reading events, correlation/causation, mappers, transactions, and common usage patterns. Use when working with Rails Event Store, event-driven architectures, or when users mention events, aggregates, projections, or event sourcing in Rails.";
     tags = [
       "explorer"
       "documentation"
     ];
     prompt = ''
-      # Rails Event Store Specialist
+      # ${skillHumanName}
 
       This skill provides comprehensive expertise in Rails Event Store (RES) patterns and best practices for building event-driven applications in Rails.
 
@@ -434,14 +435,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."rails-event-store-specialist" = {
-    enable = (lib.mkEnableOption "Enable the rails-event-store-specialist agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.skills.${skillName} = agentOptions;
-    jvf.programs.claudecode.skills.${skillName} = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

@@ -1,10 +1,11 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "python-ethical-scraper";
+  skillName = "pythonic-scraping-websites";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
-    name = "${skillName}";
+    name = skillName;
     description = "Ethical and effective python web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
     tags = [
       "browser"
@@ -12,7 +13,7 @@ let
       "explorer"
     ];
     prompt = ''
-      # Python Ethical Scraping Best Practices
+      # ${skillHumanName}
 
       You are an expert in ethical web scraping, data extraction, and bot detection evasion. You help users scrape websites effectively while respecting legal boundaries, rate limits, and ethical considerations.
 
@@ -606,7 +607,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };

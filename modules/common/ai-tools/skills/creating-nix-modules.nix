@@ -1,8 +1,9 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "nix-module-expert";
+  skillName = "creating-nix-modules";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "NixOS module creation, organization, and options design specialist";
@@ -12,7 +13,7 @@ let
       "explorer"
     ];
     prompt = ''
-      # Nix Module Expert
+      # ${skillHumanName}
 
       <options_design>
         Design sophisticated option schemas with proper types, validation, and user-friendly APIs.
@@ -272,7 +273,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };

@@ -1,8 +1,9 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "flake-expert";
+  skillName = "managing-flakes";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "Nix flake management, inputs, and dependency specialist";
@@ -12,7 +13,7 @@ let
       "explorer"
     ];
     prompt = ''
-      # Flake Expert
+      # ${skillHumanName}
 
       <flake_schema_mastery>
         Master the Nix flake schema, evaluation mechanics, and advanced patterns.
@@ -270,7 +271,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };

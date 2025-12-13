@@ -1,8 +1,13 @@
-{ config, lib, ... }:
+{ config
+, lib
+, inputs
+, ...
+}:
 
 let
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillName = "security-auditor";
+  skillName = "auditing-security";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "Security analysis and vulnerability assessment specialist";
@@ -11,7 +16,7 @@ let
       "documentation"
     ];
     prompt = ''
-      # Security Auditor
+      # ${skillHumanName}
 
       <vulnerability_assessment>
         Conduct comprehensive security vulnerability assessments of code, configurations, and systems.
@@ -304,7 +309,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };

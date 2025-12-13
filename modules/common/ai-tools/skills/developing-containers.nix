@@ -1,8 +1,9 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "${skillName}";
+  skillName = "developing-containers";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
@@ -13,7 +14,7 @@ let
       "container"
     ];
     prompt = ''
-      # Container Development
+      # ${skillHumanName}
 
       Expert knowledge for containerization and orchestration with focus on lean, secure container images and 12-factor app methodology.
 
@@ -1208,7 +1209,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} skill") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} skill") // {
       default = true;
     };
   };

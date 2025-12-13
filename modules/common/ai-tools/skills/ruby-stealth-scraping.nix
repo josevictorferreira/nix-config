@@ -1,9 +1,11 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  cfg = config.jvf.aiTools.skills."ruby-stealth-scraper";
+  skillName = "ruby-stealth-scraping";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
-    name = "ruby-stealth-scraper";
+    name = skillName;
     description = "Specialist in stealthy web scraping with Ruby using Ferrum headless browser. Use when building scrapers that need to evade bot detection, bypass anti-scraping measures, or when working with Cloudflare-protected sites. Triggers include requests for web scraping, data extraction, headless browsing, bot evasion, proxy rotation, user-agent rotation, or Ferrum configuration in Ruby/Rails projects.";
     allowed-tools = [ "context7" ];
     references = {
@@ -292,7 +294,7 @@ let
     };
     scripts = { };
     prompt = ''
-      # Ruby Stealth Web Scraping with Ferrum
+      # ${skillHumanName}
 
       Expert guidance for building undetectable web scrapers using Ruby and Ferrum.
 
@@ -364,14 +366,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.skills."ruby-stealth-scraper" = {
-    enable = (lib.mkEnableOption "Enable the ruby-stealth-scraper skill") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} skill") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.skills."ruby-stealth-scraper" = skillOptions;
-    jvf.programs.claudecode.skills."ruby-stealth-scraper" = skillOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

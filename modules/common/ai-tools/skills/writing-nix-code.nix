@@ -1,8 +1,9 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
-  skillName = "nix-expert";
+  skillName = "writing-nix-code";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  skillHumanName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
     tags = [
@@ -12,7 +13,7 @@ let
     ];
     description = "Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code";
     prompt = ''
-      # Nix Expert
+      # ${skillHumanName}
 
       You are a Nix expert who follows The Nix Masterclass principles for writing idiomatic, performant, and maintainable code. You help developers move beyond basic Nix understanding to true expertise through patterns, principles, and optimization strategies.
 
@@ -180,7 +181,7 @@ let
 in
 {
   options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${skillHumanName} agent") // {
       default = true;
     };
   };

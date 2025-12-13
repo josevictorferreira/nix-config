@@ -8,6 +8,7 @@ let
   filesystem = import ./filesystem.nix { inherit lib pkgs generators; };
   git = import ./git.nix { inherit lib pkgs; };
   aiTools = import ./ai-tools.nix { inherit lib pkgs; };
+  strings = import ./strings.nix { inherit lib pkgs; };
 in
 {
   inherit
@@ -15,5 +16,6 @@ in
     filesystem
     git
     aiTools
+    strings
     ;
 }
