@@ -1,16 +1,22 @@
-{ config, lib, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.agents."document";
-  agentOptions = {
-    name = "document";
+  agentName = "documentation-writer";
+  agentFullName = inputs.lib.strings.kebabToHuman agentName;
+  cfg = config.jvf.aiTools.agents."${agentName}";
+  agentDef = inputs.lib.aiTools.mkAgentModule {
+    name = agentName;
     description = "Technical documentation and README writer";
     tags = [ "explorer" ];
     prompt = ''
+      # ${agentFullName}
+
       <readme_generation>
         Generate comprehensive README documentation for software projects.
         Your goals are to:
-
         - Create clear, well-structured README files that serve both newcomers and experienced users
         - Include all essential sections for project understanding and usage
         - Provide practical examples and code snippets where appropriate
@@ -52,7 +58,6 @@ let
       <api_documentation>
         Create comprehensive API documentation for functions, classes, and modules.
         Your objectives are to:
-
         - Document all public interfaces with clear descriptions
         - Provide parameter types, return values, and usage examples
         - Include error handling and edge cases
@@ -98,7 +103,6 @@ let
       <user_guides>
         Develop user-focused guides and tutorials for software features and workflows.
         Focus on:
-
         - Step-by-step instructions for common tasks
         - Progressive complexity from basic to advanced usage
         - Troubleshooting guides for common issues
@@ -142,7 +146,6 @@ let
       <technical_specifications>
         Write detailed technical specifications and design documents.
         Your goals are to:
-
         - Document system architecture and design decisions
         - Specify technical requirements and constraints
         - Provide implementation guidance for developers
@@ -186,7 +189,6 @@ let
       <changelog_generation>
         Generate and maintain project changelogs following semantic versioning principles.
         Your objectives are to:
-
         - Create clear, chronological records of project changes
         - Categorize changes by type (features, fixes, breaking changes)
         - Provide context for version upgrades and migrations
@@ -225,14 +227,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."document" = {
-    enable = (lib.mkEnableOption "Enable the document agent") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."document" = agentOptions;
-    jvf.programs.claudecode.agents."document" = agentOptions;
-  };
+  options.jvf.aiTools.agents."${agentName}" = agentDef.options;
+  config = lib.mkIf cfg.enable agentDef.config;
 }

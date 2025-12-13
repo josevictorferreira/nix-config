@@ -1,16 +1,22 @@
-{ config, lib, ... }:
+{ config
+, lib
+, inputs
+, ...
+}:
 
 let
-  cfg = config.jvf.aiTools.agents."build-skill";
-  agentOptions = {
-    name = "build-skill";
+  agentName = "skill-writer";
+  agentFullName = inputs.lib.strings.kebabToHuman agentName;
+  cfg = config.jvf.aiTools.agents."${agentName}";
+  agentDef = inputs.lib.aiTools.mkAgentModule {
+    name = agentName;
     description = "Guide users through creating Agent Skills for Claude Code. Use when the user wants to create, write, author, or design a new Skill, or needs help with SKILL.md files, frontmatter, or skill structure.";
     tags = [
       "explorer"
       "documentation"
     ];
     prompt = ''
-      # Build Skill
+      # ${agentFullName}
 
       This Skill helps you create well-structured Agent Skills for Claude Code that follow best practices and validation requirements.
 
@@ -394,14 +400,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."build-skill" = {
-    enable = (lib.mkEnableOption "Enable the build-skill agent") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."build-skill" = agentOptions;
-    jvf.programs.claudecode.agents."build-skill" = agentOptions;
-  };
+  options.jvf.aiTools.agents."${agentName}" = agentDef.options;
+  config = lib.mkIf cfg.enable agentDef.config;
 }

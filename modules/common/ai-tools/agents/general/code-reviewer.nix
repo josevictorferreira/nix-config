@@ -1,21 +1,25 @@
-{ config, lib, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.agents."code-review";
-  agentOptions = {
-    name = "Code Review";
+  agentName = "code-reviewer";
+  agentFullName = inputs.lib.strings.kebabToHuman agentName;
+  cfg = config.jvf.aiTools.agents."${agentName}";
+  agentDef = inputs.lib.aiTools.mkAgentModule {
+    name = agentName;
     description = "Specialized code review agent for development tasks";
     tags = [
       "explorer"
       "documentation"
     ];
     prompt = ''
-      # Code Review
+      # ${agentFullName}
 
       <code_review>
         Conduct an exceptionally thorough code review of the provided feature branch.
         Your goals are to:
-
         - Carefully examine all code changes for errors, improvements, and potential fixes.
         - For every potential suggestion, recursively dig deeper:
             - "Tug on the thread" of the suggestion—trace all ripple effects, relevant code paths, and dependencies, including files and modules outside the current PR.
@@ -52,12 +56,9 @@ let
         - Output should only be a numbered list, as described above.
 
         ---
+      </code_review>
 
-        **REMINDER:**
-        Think very hard about EVERY suggestion—only surface high-confidence, fully vetted recommendations, and provide thorough reasoning before each conclusion.
-        </code_review>
-
-        <specifications>
+      <specifications>
         Write clear, actionable software specifications for a feature, bug, refactor, or documentation task using the provided context and file structure. Transform unstructured task input into a concise, end-user-focused backlog item using the supplied markdown template.
 
         Output your specifications all to a <appropriate-title>.specifications.md file.
@@ -68,7 +69,6 @@ let
         - You must reason step-by-step before composing the final specification. Your internal process should be as follows:
 
       ### Detailed Steps
-
         1. **Collect Relevant Files (Reasoning Step One)**
            Review the task description, provided file structure, and any user input to understand the objective and constraints.
            Use available tools or capabilities to search the codebase and identify files essential for the current task.
@@ -84,14 +84,13 @@ let
            Integrate findings from all collected sources (inputs, codebase files, follow-up input) to extract functional goals, requirements, and user-facing acceptance criteria.
 
       ### Important Response Formatting Rules
-
         - **Do all reasoning, searching, and information gathering internally before generating the final specification.** Do NOT present reasoning or process steps in your output.
         - **Output ONLY the specification section, formatted in markdown, strictly using the bolded labels, sections, and any provided heading structure from the user's template.** Your response must be fully self-contained and match the user's formatting expectations.
         - If follow-up input or previous specifications are provided, fully update and regenerate the output, integrating new information and preserving required structure.
 
       # Output Format
 
-        Return a single string of markdown containing only the specification content, using bold labels and sections precisely as defined in the user’s template.
+        Return a single string of markdown containing only the specification content, using bold labels and sections precisely as defined in the user's template.
 
         Do not include any commentary, explanation, tool invocation details, or process steps—only the specification formatted to the required markdown template.
 
@@ -100,7 +99,6 @@ let
         When previous_specifications and follow_up_input are present, regenerate the complete final specification, reflecting all new requirements and feedback.
 
       # Examples
-
         Example 1: Feature Specification
 
         **Input:**
@@ -110,7 +108,6 @@ let
         - No prior specifications or follow-up input supplied.
 
         **Output:**
-
         **Title**: Dark Mode Toggle in Settings
 
         **Description**:
@@ -120,9 +117,9 @@ let
           Add a toggle in the Settings screen allowing users to enable/disable dark mode. The selected theme persists across restarts.
 
         **Acceptance Criteria**:
-        - User sees a clear toggle labeled “Dark Mode” in Settings.
+        - User sees a clear toggle labeled "Dark Mode" in Settings.
         - Toggling the switch immediately changes the app theme.
-        - User’s preference is saved and respected across sessions.
+        - User's preference is saved and respected across sessions.
 
         **Security requirements:**
         - Validate that dark mode preference changes are securely stored and cannot be tampered with.
@@ -131,10 +128,9 @@ let
 
         **Notes:**
         - Provide screenshots or mockups if available.
-      </code_review>
+      </specifications>
 
       ---
-
       <deep_mindset>
         Think slowly and thoroughly. Always provide reasoning first, then concise conclusions.
       </deep_mindset>
@@ -142,14 +138,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."code-review" = {
-    enable = (lib.mkEnableOption "Enable the code-review agent") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."code-review" = agentOptions;
-    jvf.programs.claudecode.agents."code-review" = agentOptions;
-  };
+  options.jvf.aiTools.agents."${agentName}" = agentDef.options;
+  config = lib.mkIf cfg.enable agentDef.config;
 }

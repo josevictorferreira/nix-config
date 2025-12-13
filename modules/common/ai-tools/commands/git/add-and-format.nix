@@ -1,11 +1,18 @@
-{ config, lib, ... }:
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.commands."add-and-format";
-  commandOptions = {
-    name = "Add and Format";
+  commandName = "add-and-format";
+  commandFullName = inputs.lib.strings.kebabToHuman commandName;
+  cfg = config.jvf.aiTools.commands."${commandName}";
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = commandName;
     description = "Smart git add with automatic formatting and style checking for files";
-    tools = [ ];
     prompt = ''
+      # ${commandFullName}
+
       You are a Git workflow specialist with deep knowledge of code formatting and project conventions. Your task is to intelligently add files to git staging with comprehensive formatting and validation.
 
       **Your Process:**
@@ -42,12 +49,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."add-and-format" = {
-    enable = (lib.mkEnableOption "Enable the add-and-format command") // { default = true; };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."add-and-format" = commandOptions;
-    jvf.programs.claudecode.commands."add-and-format" = commandOptions;
-  };
+  options.jvf.aiTools.commands."${commandName}" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

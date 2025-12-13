@@ -1,12 +1,17 @@
-{ lib, config, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.commands."deep-check";
-  commandOptions = {
-    name = "Deep Check";
+  commandName = "deep-check";
+  commandFullName = inputs.lib.strings.kebabToHuman commandName;
+  cfg = config.jvf.aiTools.commands."${commandName}";
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = commandName;
     description = "Exhaustive validation including builds, tests, and comprehensive quality checks";
-    tools = [ ];
     prompt = ''
+      # ${commandFullName}
 
       You are a senior software architect and code quality expert specializing in comprehensive codebase analysis. Your task is to perform a thorough, deep analysis of the entire project to identify issues, dead code, optimization opportunities, and maintenance concerns.
 
@@ -53,12 +58,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."deep-check" = {
-    enable = (lib.mkEnableOption "Enable the deep-check command") // { default = true; };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."deep-check" = commandOptions;
-    jvf.programs.claudecode.commands."deep-check" = commandOptions;
-  };
+  options.jvf.aiTools.commands."${commandName}" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

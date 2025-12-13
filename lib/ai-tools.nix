@@ -12,6 +12,51 @@ let
     "nix"
   ];
 
+  mkAgentModule =
+    { name
+    , description ? ""
+    , prompt ? ""
+    , tags ? [ ]
+    , tools ? [ ]
+    ,
+    }:
+    {
+      options = {
+        enable = (lib.mkEnableOption name) // {
+          default = true;
+        };
+        tags = lib.mkOption {
+          type = lib.types.listOf (lib.types.enum toolTags);
+          default = tags;
+          description = "Capability tags for ${name}";
+          example = [
+            "explorer"
+            "documentation"
+          ];
+        };
+      };
+      config = {
+        jvf.programs.opencode.agents.${name} = {
+          inherit
+            name
+            description
+            prompt
+            tags
+            tools
+            ;
+        };
+        jvf.programs.claudecode.agents.${name} = {
+          inherit
+            name
+            description
+            prompt
+            tags
+            tools
+            ;
+        };
+      };
+    };
+
   mkMcpModule =
     { name ? "MCP Server"
     , tags ? [ ]
@@ -31,6 +76,28 @@ let
         };
       };
       config = config;
+    };
+
+  mkCommandModule =
+    { name
+    , description ? ""
+    , prompt ? ""
+    ,
+    }:
+    {
+      options = {
+        enable = (lib.mkEnableOption name) // {
+          default = true;
+        };
+      };
+      config = {
+        jvf.programs.opencode.commands.${name} = {
+          inherit name description prompt;
+        };
+        jvf.programs.claudecode.commands.${name} = {
+          inherit name description prompt;
+        };
+      };
     };
 
   findToolsByTags =
@@ -174,6 +241,8 @@ in
     mkOpencodeMdConfigs
     mkClaudecodeMdConfigs
     mkMcpModule
+    mkAgentModule
+    mkCommandModule
     findToolsByTags
     ;
 }

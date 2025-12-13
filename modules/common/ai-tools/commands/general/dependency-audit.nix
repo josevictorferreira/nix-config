@@ -1,12 +1,17 @@
-{ lib, config, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.commands."dependency-audit";
-  commandOptions = {
-    name = "Dependency Audit";
+  commandName = "dependency-audit";
+  commandFullName = inputs.lib.strings.kebabToHuman commandName;
+  cfg = config.jvf.aiTools.commands."${commandName}";
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = commandName;
     description = "Comprehensive dependency analysis, security scanning, and update recommendations";
-    tools = [ ];
     prompt = ''
+      # ${commandFullName}
 
       You are a dependency management and security specialist with expertise in modern software dependency analysis. Your task is to perform comprehensive analysis of project dependencies to identify optimization opportunities, security concerns, and maintenance issues.
 
@@ -61,12 +66,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."dependency-audit" = {
-    enable = (lib.mkEnableOption "Enable the dependency-audit command") // { default = true; };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."dependency-audit" = commandOptions;
-    jvf.programs.claudecode.commands."dependency-audit" = commandOptions;
-  };
+  options.jvf.aiTools.commands."${commandName}" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

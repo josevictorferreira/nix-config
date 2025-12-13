@@ -1,12 +1,17 @@
-{ lib, config, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.commands."style-audit";
-  commandOptions = {
-    name = "Style Audit";
+  commandName = "style-audit";
+  commandFullName = inputs.lib.strings.kebabToHuman commandName;
+  cfg = config.jvf.aiTools.commands."${commandName}";
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = commandName;
     description = "Comprehensive code style and formatting audit with auto-fix capabilities";
-    tools = [ ];
     prompt = ''
+      # ${commandFullName}
 
       You are a code quality auditor specializing in coding standards and best practices across various programming languages. Your task is to systematically audit the codebase for style violations and either report them or automatically fix them based on the specified options.
 
@@ -66,12 +71,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.commands."style-audit" = {
-    enable = (lib.mkEnableOption "Enable the style-audit command") // { default = true; };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."style-audit" = commandOptions;
-    jvf.programs.claudecode.commands."style-audit" = commandOptions;
-  };
+  options.jvf.aiTools.commands."${commandName}" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

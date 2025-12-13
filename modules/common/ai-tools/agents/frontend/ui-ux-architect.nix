@@ -1,13 +1,18 @@
-{ config, lib, ... }:
-
+{ config
+, lib
+, inputs
+, ...
+}:
 let
-  cfg = config.jvf.aiTools.agents."ui-ux-plan";
-  agentOptions = {
-    name = "UI and UX Architect";
-    description = "Use this agent when you need comprehensive UI/UX design and development work, including creating multi-level design systems, translating design concepts into code, or building complete user interfaces from descriptions. Examples: <example>Context: User needs a complete dashboard design and implementation. user: 'I need a analytics dashboard for tracking user engagement metrics with clean, modern design' assistant: 'I'll use the ui-ux-plan agent to create a comprehensive design system and implementation for your analytics dashboard' <commentary>Since the user needs both design and development of a complete UI system, use the ui-ux-plan agent to handle the multi-level design process and code implementation.</commentary></example> <example>Context: User wants to improve existing interface design. user: 'This form feels clunky and users are dropping off. Can you redesign it?' assistant: 'Let me use the ui-ux-plan agent to analyze the current form and create an improved design with better user experience' <commentary>The user needs UX analysis and redesign work, which requires the ui-ux-plan agent's expertise in user experience optimization.</commentary></example>";
+  agentName = "ui-ux-architect";
+  agentFullName = inputs.lib.strings.kebabToHuman agentName;
+  cfg = config.jvf.aiTools.agents."${agentName}";
+  agentDef = inputs.lib.aiTools.mkAgentModule {
+    name = agentName;
+    description = "Use this agent when you need comprehensive UI/UX design and development work, including creating multi-level design systems, translating design concepts into code, or building complete user interfaces from descriptions. Examples: &lt;example&gt;Context: User needs a complete dashboard design and implementation. user: 'I need a analytics dashboard for tracking user engagement metrics with clean, modern design' assistant: 'I'll use the ui-ux-architect agent to create a comprehensive design system and implementation for your analytics dashboard' &lt;commentary&gt;Since the user needs both design and development of a complete UI system, use the ui-ux-architect agent to handle the multi-level design process and code implementation.&lt;/commentary&gt;&lt;/example&gt; &lt;example&gt;Context: User wants to improve existing interface design. user: 'This form feels clunky and users are dropping off. Can you redesign it?' assistant: 'Let me use the ui-ux-architect agent to analyze the current form and create an improved design with better user experience' &lt;commentary&gt;The user needs UX analysis and redesign work, which requires the ui-ux-architect agent's expertise in user experience optimization.&lt;/commentary&gt;&lt;/example&gt;";
     tags = [ ];
     prompt = ''
-      # UI-UX Plan
+      # ${agentFullName}
 
       You are a Senior UI/UX Architect with 15+ years of development experience and a PhD in Design. You possess deep expertise in user-centered design principles, modern development frameworks, design systems, and accessibility standards. You approach every project with both analytical rigor and creative vision.
 
@@ -33,14 +38,6 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."ui-ux-plan" = {
-    enable = (lib.mkEnableOption "Enable the ui-ux-plan agent") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."ui-ux-plan" = agentOptions;
-    jvf.programs.claudecode.agents."ui-ux-plan" = agentOptions;
-  };
+  options.jvf.aiTools.agents."${agentName}" = agentDef.options;
+  config = lib.mkIf cfg.enable agentDef.config;
 }
