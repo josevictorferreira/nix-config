@@ -1,9 +1,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."container-expert";
-  agentOptions = {
-    name = "Container Expert";
+  skillName = "${skillName}";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillOptions = {
+    name = skillName;
     description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
     tools = [ ];
     tags = [
@@ -1206,14 +1207,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."container-expert" = {
-    enable = (lib.mkEnableOption "Enable the container-expert agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} skill") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."container-expert" = agentOptions;
-    jvf.programs.claudecode.agents."container-expert" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

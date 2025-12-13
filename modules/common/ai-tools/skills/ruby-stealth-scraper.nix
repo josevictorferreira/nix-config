@@ -292,7 +292,6 @@ let
     };
     scripts = { };
     prompt = ''
-
       # Ruby Stealth Web Scraping with Ferrum
 
       Expert guidance for building undetectable web scrapers using Ruby and Ferrum.

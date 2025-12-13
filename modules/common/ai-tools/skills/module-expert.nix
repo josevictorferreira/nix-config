@@ -1,9 +1,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."module-expert";
-  agentOptions = {
-    name = "Nix Module Expert";
+  skillName = "nix-module-expert";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillOptions = {
+    name = skillName;
     description = "NixOS module creation, organization, and options design specialist";
     tags = [
       "nix"
@@ -11,6 +12,8 @@ let
       "explorer"
     ];
     prompt = ''
+      # Nix Module Expert
+
       <options_design>
         Design sophisticated option schemas with proper types, validation, and user-friendly APIs.
         Your expertise encompasses:
@@ -268,14 +271,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."module-expert" = {
-    enable = (lib.mkEnableOption "Enable the module-expert agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."module-expert" = agentOptions;
-    jvf.programs.claudecode.agents."module-expert" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

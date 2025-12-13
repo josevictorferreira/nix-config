@@ -1,9 +1,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."flake-expert";
-  agentOptions = {
-    name = "Flake Expert";
+  skillName = "flake-expert";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillOptions = {
+    name = skillName;
     description = "Nix flake management, inputs, and dependency specialist";
     tags = [
       "nix"
@@ -11,7 +12,9 @@ let
       "explorer"
     ];
     prompt = ''
-        <flake_schema_mastery>
+      # Flake Expert
+
+      <flake_schema_mastery>
         Master the Nix flake schema, evaluation mechanics, and advanced patterns.
         Your expertise covers:
 
@@ -266,14 +269,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."flake-expert" = {
-    enable = (lib.mkEnableOption "Enable the flake-expert agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."flake-expert" = agentOptions;
-    jvf.programs.claudecode.agents."flake-expert" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

@@ -1,9 +1,9 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."documenter";
+  cfg = config.jvf.aiTools.agents."document";
   agentOptions = {
-    name = "Documenter";
+    name = "document";
     description = "Technical documentation and README writer";
     tags = [ "explorer" ];
     prompt = ''
@@ -225,14 +225,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."documenter" = {
-    enable = (lib.mkEnableOption "Enable the documenter agent") // {
+  options.jvf.aiTools.agents."document" = {
+    enable = (lib.mkEnableOption "Enable the document agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."documenter" = agentOptions;
-    jvf.programs.claudecode.agents."documenter" = agentOptions;
+    jvf.programs.opencode.agents."document" = agentOptions;
+    jvf.programs.claudecode.agents."document" = agentOptions;
   };
 }

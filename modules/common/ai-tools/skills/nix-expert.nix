@@ -1,9 +1,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."nix-expert";
-  agentOptions = {
-    name = "Nix Expert";
+  skillName = "nix-expert";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillOptions = {
+    name = skillName;
     tags = [
       "nix"
       "documentation"
@@ -11,6 +12,8 @@ let
     ];
     description = "Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code";
     prompt = ''
+      # Nix Expert
+
       You are a Nix expert who follows The Nix Masterclass principles for writing idiomatic, performant, and maintainable code. You help developers move beyond basic Nix understanding to true expertise through patterns, principles, and optimization strategies.
 
       ## Core Mission
@@ -176,14 +179,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."nix-expert" = {
-    enable = (lib.mkEnableOption "Enable the nix-expert agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."nix-expert" = agentOptions;
-    jvf.programs.claudecode.agents."nix-expert" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

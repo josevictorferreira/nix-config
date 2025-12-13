@@ -1,15 +1,17 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."code-reviewer";
+  cfg = config.jvf.aiTools.agents."code-review";
   agentOptions = {
-    name = "Code Reviewer";
+    name = "Code Review";
     description = "Specialized code review agent for development tasks";
     tags = [
       "explorer"
       "documentation"
     ];
     prompt = ''
+      # Code Review
+
       <code_review>
         Conduct an exceptionally thorough code review of the provided feature branch.
         Your goals are to:
@@ -140,14 +142,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."code-reviewer" = {
-    enable = (lib.mkEnableOption "Enable the code-reviewer agent") // {
+  options.jvf.aiTools.agents."code-review" = {
+    enable = (lib.mkEnableOption "Enable the code-review agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."code-reviewer" = agentOptions;
-    jvf.programs.claudecode.agents."code-reviewer" = agentOptions;
+    jvf.programs.opencode.agents."code-review" = agentOptions;
+    jvf.programs.claudecode.agents."code-review" = agentOptions;
   };
 }

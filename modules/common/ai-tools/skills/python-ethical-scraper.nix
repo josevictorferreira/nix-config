@@ -1,17 +1,18 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."ethical-scraper";
-  agentOptions = {
-    name = "Ethical Scraper";
-    description = "Ethical and effective web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
+  skillName = "python-ethical-scraper";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillOptions = {
+    name = "${skillName}";
+    description = "Ethical and effective python web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
     tags = [
       "browser"
       "documentation"
       "explorer"
     ];
     prompt = ''
-      # Scraping Best Practices
+      # Python Ethical Scraping Best Practices
 
       You are an expert in ethical web scraping, data extraction, and bot detection evasion. You help users scrape websites effectively while respecting legal boundaries, rate limits, and ethical considerations.
 
@@ -122,7 +123,7 @@ let
 
       **Realistic User-Agent Strings:**
       ```python
-      USER_AGENTS = [
+      USER_skills = [
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -135,7 +136,7 @@ let
       def get_random_headers():
           """Generate realistic HTTP headers"""
           return {
-              'User-Agent': random.choice(USER_AGENTS),
+              'User-Agent': random.choice(USER_skills),
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.5',
               'Accept-Encoding': 'gzip, deflate, br',
@@ -160,7 +161,7 @@ let
           with sync_playwright() as p:
               browser = p.chromium.launch(headless=True)
               context = browser.new_context(
-                  user_agent=random.choice(USER_AGENTS),
+                  user_agent=random.choice(USER_skills),
                   viewport={'width': 1920, 'height': 1080},
                   locale='en-US',
                   timezone_id='America/New_York'
@@ -554,7 +555,7 @@ let
       - [ ] Set up error handling
 
       **During Scraping:**
-      - [ ] Use realistic user agents
+      - [ ] Use realistic user skills
       - [ ] Implement random delays
       - [ ] Respect rate limits (429 errors)
       - [ ] Handle errors gracefully
@@ -604,14 +605,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."ethical-scraper" = {
-    enable = (lib.mkEnableOption "Enable the ethical-scraper agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."ethical-scraper" = agentOptions;
-    jvf.programs.claudecode.agents."ethical-scraper" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }

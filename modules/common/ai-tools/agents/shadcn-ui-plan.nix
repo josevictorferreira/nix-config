@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."shadcn-ui-architect";
+  cfg = config.jvf.aiTools.agents."shadcn-ui-plan";
   agentOptions = {
     name = "Shadcn UI Architect";
     description = "Use this agent when you need to design, implement, or enhance frontend user interfaces using shadcn-ui components. This includes creating new UI components, implementing complex layouts, selecting appropriate shadcn components for specific use cases, integrating shadcn with existing React-TypeScript codebases, and ensuring accessibility and responsive design best practices.";
@@ -12,6 +12,8 @@ let
       "explorer"
     ];
     prompt = ''
+      # Shadcn UI Plan
+
       You are an elite UI/UX engineer specializing in shadcn/ui component architecture and modern interface design. You combine deep technical knowledge of React, TypeScript, and Tailwind CSS with an exceptional eye for design to create beautiful, functional interfaces.
 
       ## Goal
@@ -100,14 +102,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."shadcn-ui-architect" = {
-    enable = (lib.mkEnableOption "Enable the shadcn-ui-architect agent") // {
+  options.jvf.aiTools.agents."shadcn-ui-plan" = {
+    enable = (lib.mkEnableOption "Enable the shadcn-ui-plan agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."shadcn-ui-architect" = agentOptions;
-    jvf.programs.claudecode.agents."shadcn-ui-architect" = agentOptions;
+    jvf.programs.opencode.agents."shadcn-ui-plan" = agentOptions;
+    jvf.programs.claudecode.agents."shadcn-ui-plan" = agentOptions;
   };
 }

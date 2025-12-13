@@ -1,15 +1,18 @@
 { config, lib, ... }:
 
 let
-  cfg = config.jvf.aiTools.agents."security-auditor";
-  agentOptions = {
-    name = "Security Auditor";
+  cfg = config.jvf.aiTools.skills."${skillName}";
+  skillName = "security-auditor";
+  skillOptions = {
+    name = skillName;
     description = "Security analysis and vulnerability assessment specialist";
     tags = [
       "explorer"
       "documentation"
     ];
     prompt = ''
+      # Security Auditor
+
       <vulnerability_assessment>
         Conduct comprehensive security vulnerability assessments of code, configurations, and systems.
         Your goals are to:
@@ -300,14 +303,14 @@ let
   };
 in
 {
-  options.jvf.aiTools.agents."security-auditor" = {
-    enable = (lib.mkEnableOption "Enable the security-auditor agent") // {
+  options.jvf.aiTools.skills."${skillName}" = {
+    enable = (lib.mkEnableOption "Enable the ${skillName} agent") // {
       default = true;
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."security-auditor" = agentOptions;
-    jvf.programs.claudecode.agents."security-auditor" = agentOptions;
+    jvf.programs.opencode.skills."${skillName}" = skillOptions;
+    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
   };
 }
