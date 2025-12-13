@@ -5,6 +5,7 @@ let
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
+    allowed-tools = [ "Read" "Grep" "Glob" "Bash" "BashOutput" ];
     name = skillName;
     description = "Nix flake management, inputs, and dependency specialist";
     tags = [

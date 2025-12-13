@@ -8,6 +8,7 @@ let
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
+    tools = [ "Read" "Glob" "Grep" "Bash" "BashOutput" ];
     name = agentName;
     description = "Specialized code review agent for development tasks";
     tags = [

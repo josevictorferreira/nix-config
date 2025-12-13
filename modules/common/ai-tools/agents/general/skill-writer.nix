@@ -9,6 +9,7 @@ let
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
+    tools = [ "Read" "Glob" "Grep" "Write" "Edit" ];
     name = agentName;
     description = "Guide users through creating Agent Skills for Claude Code. Use when the user wants to create, write, author, or design a new Skill, or needs help with SKILL.md files, frontmatter, or skill structure.";
     tags = [

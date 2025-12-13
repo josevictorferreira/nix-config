@@ -5,6 +5,7 @@ let
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
+    allowed-tools = [ "Read" "Write" "Bash" "WebFetch" ];
     name = skillName;
     description = "Ethical and effective python web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
     tags = [

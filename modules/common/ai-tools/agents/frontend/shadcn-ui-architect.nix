@@ -8,6 +8,7 @@ let
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
+    tools = [ "Read" "Glob" "Grep" "Write" "Edit" "Bash" ];
     name = agentName;
     description = "Use this agent when you need to design, implement, or enhance frontend user interfaces using shadcn-ui components. This includes creating new UI components, implementing complex layouts, selecting appropriate shadcn components for specific use cases, integrating shadcn with existing React-TypeScript codebases, and ensuring accessibility and responsive design best practices.";
     tags = [

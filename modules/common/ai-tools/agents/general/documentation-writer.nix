@@ -8,6 +8,7 @@ let
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
+    tools = [ "Read" "Glob" "Grep" "Write" "Edit" "WebFetch" ];
     name = agentName;
     description = "Technical documentation and README writer";
     tags = [ "explorer" ];

@@ -8,6 +8,7 @@ let
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
+    tools = [ "Read" "Glob" "Grep" "WebFetch" "WebSearch" ];
     name = agentName;
     description = "Use this agent when you need comprehensive UI/UX design and development work, including creating multi-level design systems, translating design concepts into code, or building complete user interfaces from descriptions. Examples: &lt;example&gt;Context: User needs a complete dashboard design and implementation. user: 'I need a analytics dashboard for tracking user engagement metrics with clean, modern design' assistant: 'I'll use the ui-ux-architect agent to create a comprehensive design system and implementation for your analytics dashboard' &lt;commentary&gt;Since the user needs both design and development of a complete UI system, use the ui-ux-architect agent to handle the multi-level design process and code implementation.&lt;/commentary&gt;&lt;/example&gt; &lt;example&gt;Context: User wants to improve existing interface design. user: 'This form feels clunky and users are dropping off. Can you redesign it?' assistant: 'Let me use the ui-ux-architect agent to analyze the current form and create an improved design with better user experience' &lt;commentary&gt;The user needs UX analysis and redesign work, which requires the ui-ux-architect agent's expertise in user experience optimization.&lt;/commentary&gt;&lt;/example&gt;";
     tags = [ ];

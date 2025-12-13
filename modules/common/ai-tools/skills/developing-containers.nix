@@ -4,6 +4,7 @@ let
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
+    allowed-tools = [ "Read" "Grep" "Glob" "Bash" "BashOutput" ];
     name = skillName;
     description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
     tags = [ "explorer" "documentation" "container" ];

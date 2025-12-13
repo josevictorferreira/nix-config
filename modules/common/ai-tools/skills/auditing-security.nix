@@ -4,6 +4,7 @@ let
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
+    allowed-tools = [ "Read" "Grep" "Glob" ];
     name = skillName;
     description = "Security analysis and vulnerability assessment specialist";
     tags = [ "explorer" "documentation" ];
