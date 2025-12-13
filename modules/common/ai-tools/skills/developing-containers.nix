@@ -1,13 +1,28 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   skillName = "developing-containers";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
-    allowed-tools = [ "Read" "Grep" "Glob" "Bash" "BashOutput" ];
+    allowed-tools = [
+      "Read"
+      "Grep"
+      "Glob"
+      "Bash"
+      "BashOutput"
+    ];
     name = skillName;
     description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
-    tags = [ "explorer" "documentation" "container" ];
+    tags = [
+      "explorer"
+      "documentation"
+      "container"
+    ];
     prompt = ''
       # ${skillFullName}
 
@@ -207,9 +222,9 @@ let
       ARG VCS_REF
 
       # Use build args
-      LABEL org.opencontainers.image.version="${VERSION}" \
-            org.opencontainers.image.created="${BUILD_DATE}" \
-            org.opencontainers.image.revision="${VCS_REF}"
+      LABEL org.opencontainers.image.version="$${VERSION}" \
+            org.opencontainers.image.created="$${BUILD_DATE}" \
+            org.opencontainers.image.revision="$${VCS_REF}"
 
       # Conditional builds
       ARG BUILD_ENV=production
