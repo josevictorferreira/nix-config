@@ -109,10 +109,14 @@ in
             cfg.settings
             // {
               mcp = cfg.mcps;
-              tools = lib.mapAttrs' (name: _: {
-                name = "${name}*";
-                value = false;
-              }) cfg.mcps;
+              tools =
+                (lib.mapAttrs' (name: _: {
+                  name = "${name}*";
+                  value = false;
+                }) cfg.mcps)
+                // {
+                  "skills*" = false;
+                };
             }
           );
         }
