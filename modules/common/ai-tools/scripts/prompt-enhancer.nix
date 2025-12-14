@@ -23,28 +23,28 @@ let
 
     In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized.  This document defines these words as they should be interpreted in IETF documents.  Authors who follow these guidelines should incorporate this phrase near the beginning of their document:
 
-    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", 
-    "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+    The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", 
+    \"RECOMMENDED\", \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.
 
     ### 1. MUST
 
-    This word, or the terms "REQUIRED" or "SHALL", mean that the definition is an absolute requirement of the specification.
+    This word, or the terms \"REQUIRED\" or \"SHALL\", mean that the definition is an absolute requirement of the specification.
 
     ### 2. MUST NOT
 
-    This phrase, or the phrase "SHALL NOT", mean that the definition is an absolute prohibition of the specification.
+    This phrase, or the phrase \"SHALL NOT\", mean that the definition is an absolute prohibition of the specification.
 
     ### 3. SHOULD
 
-    This word, or the adjective "RECOMMENDED", mean that there may exist valid reasons in particular circumstances to ignore a particular item, but the full implications must be understood and carefully weighed before choosing a different course.
+    This word, or the adjective \"RECOMMENDED\", mean that there may exist valid reasons in particular circumstances to ignore a particular item, but the full implications must be understood and carefully weighed before choosing a different course.
 
     ### 4. SHOULD NOT
 
-    This phrase, or the phrase "NOT RECOMMENDED" mean that there may exist valid reasons in particular circumstances when the particular behavior is acceptable or even useful, but the full implications should be understood and the case carefully weighed before implementing any behavior described with this label.
+    This phrase, or the phrase \"NOT RECOMMENDED\" mean that there may exist valid reasons in particular circumstances when the particular behavior is acceptable or even useful, but the full implications should be understood and the case carefully weighed before implementing any behavior described with this label.
 
     ### 5. MAY
 
-    This word, or the adjective "OPTIONAL", mean that an item is truly optional.  One vendor may choose to include the item because a particular marketplace requires it or because the vendor feels that it enhances the product while another vendor may omit the same item. An implementation which does not include a particular option MUST be prepared to interoperate with another implementation which does include the option, though perhaps with reduced functionality. In the same vein an implementation which does include a particular option MUST be prepared to interoperate with another implementation which does not include the option (except, of course, for the feature the option provides.)
+    This word, or the adjective \"OPTIONAL\", mean that an item is truly optional.  One vendor may choose to include the item because a particular marketplace requires it or because the vendor feels that it enhances the product while another vendor may omit the same item. An implementation which does not include a particular option MUST be prepared to interoperate with another implementation which does include the option, though perhaps with reduced functionality. In the same vein an implementation which does include a particular option MUST be prepared to interoperate with another implementation which does not include the option (except, of course, for the feature the option provides.)
 
     ### 6. Guidance in the use of these Imperatives
 
@@ -83,26 +83,30 @@ let
     ];
     text = ''
       #!/bin/bash
-      # -*- fill-column: 100; sh-basic-offset: 2; eval: (display-fill-column-indicator-mode 1); -*-
-      OPENCODE_PERMISSION="{\"edit\":\"deny\", \"bash\": { \"git\": \"deny\", \"*\": \"allow\" }, \"webfetch\":\"allow\"}"
       PROMPT_ENHANCER_PRELUDE="${preludePrompt}"
       RFC2119="${rfc2119}"
-      # v If command's first argument is not in `opencode models`, we'll use this as the enhancer model instead:
-      DEFAULT_ENHANCER_MODEL="x-ai/grok-4.1-fast"; 
-      # v Include the entirety of RFC2119 and a complience statement:
       INCLUDE_RFC2119=2; # 1 for compliance phrase only, 2 for full (well, partially trimmed) RFC test.
+      DEFAULT_ENHANCER_MODEL="openrouter/x-ai/grok-4.1-fast"; 
+      DEBUG__LOG_ARGUMENTS="0";
+      DEBUG__OUTPUT_FENCES="0";
+      DEBUG__SKIP_ENHANCING="0";
+      PUNCTUATION=""
+      ENHANCER_ACTION=""
+      OBJECT=""
+      DEFINITE_OBJECT_FRAGMENT=""
+      DEMONSTRATIVE_OBJECT_FRAGMENT=""
+      ENHANCED_PROMPT_TITLE_HEADING=""
+      EPILOGUE_INDEPENDANT_CLAUSE=""
+      ENHANCER_SUPPLEMENTAL_PHRASE=""
       ARGS="$*";
-
-      # Reassemble whatever opencode passed:
+      gsed() { sed "$@"; }
       if [[ "$ARGS" == *" "* ]]; then
-        PROMPT_OBJECT_ARG=$${ARGS%% *};
-        REST=$${ARGS#* };
+        PROMPT_OBJECT_ARG="''${ARGS%% *}";
+        REST="''${ARGS#* }";
       else
         PROMPT_OBJECT_ARG="$ARGS";
         REST="";
       fi;
-
-      # Set the ENHANCED_PROMPT_TITLE_HEADING and related variables:
       case $PROMPT_OBJECT_ARG in
         feature) 
           ENHANCED_PROMPT_TITLE_HEADING="New Feature Request";
@@ -146,7 +150,6 @@ let
           EPILOGUE_INDEPENDANT_CLAUSE="EPILOGUE_INDEPENDANT_CLAUSE";
           ;;
       esac;
-
       [[ -z $PUNCTUATION ]] &&\
         PUNCTUATION=".";
       [[ -z $ENHANCER_ACTION ]] &&\
@@ -157,24 +160,18 @@ let
         DEMONSTRATIVE_OBJECT_FRAGMENT="this $OBJECT";
       [[ -z $EPILOGUE_INDEPENDANT_CLAUSE ]] &&\
         EPILOGUE_INDEPENDANT_CLAUSE="thinking the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT through thoroughly";
-
-      # Split the MODEL from REST:
       if [[ "$REST" == *" "* ]]; then
-        MODEL=$${REST%% *}           # second word
-        USER_PROMPT=$${REST#* }      # everything after second word
+        MODEL="''${REST%% *}"           # second word
+        USER_PROMPT="''${REST#* }"      # everything after second word
       else
         MODEL="$REST"               # if no space, second = rest
         USER_PROMPT=""              # nothing left
       fi
-
-      # If $MODEL isn't actually a model we'll just fall back to using DEFAULT_ENHANCER_MODEL.
       if ! ${opencodeExec} models | grep -q "$MODEL"; then
         USER_PROMPT="$MODEL $USER_PROMPT";
         MODEL=$DEFAULT_ENHANCER_MODEL;
       fi;
-
-      # Print some debug details about the argument slicing/merging:
-      if [[ ! -z $DEBUG__LOG_ARGUMENTS ]]; then 
+      if [[ "$DEBUG__LOG_ARGUMENTS" == "1" ]]; then 
         echo -e "# Debug Information:\n";
         echo "ARGS='$ARGS'";
         echo "PROMPT_OBJECT_ARG='$PROMPT_OBJECT_ARG'"
@@ -188,58 +185,48 @@ let
         i=0;
         for arg in "$@"; do
           echo "$i: $arg";
-          ((i++));
+          i=$((i+1))
         done;
         echo;
       fi;
-
-      # Abort if arguments were bad:
       if [[ -z "$ENHANCED_PROMPT_TITLE_HEADING" ]] || [[ -z "$USER_PROMPT" ]]; then
         echo "FATAL ERROR: The user has provided bad arguments to the command they tried to use, and as a result this prompt's content has been corrupted. Please remind the user that this command's first argument should be a model listed by the \`opencode models\` command and the remainder must constitute a non-empty string.";
         exit 0;
       fi;
-
-      # This is where the magic happens. Run the prompt enhancement by involing another `opencode'
-      # process and piping in the PROMPT_ENHANCER_PRELUDE.md and the USER_PROMPT.
       ENHANCED=$({
-                  echo $PROMPT_ENHANCER_PRELUDE
-                  [[ $OBJECT != "BARE" ]] && echo -en "$ENHANCER_ACTION $ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT: ";
-                  echo -e "$${USER_PROMPT}$${PUNCTUATION}";
-                  [[ $ENHANCER_SUPPLEMENTAL_PHRASE ]] && echo -e "\n$ENHANCER_SUPPLEMENTAL_PHRASE\n";
-                });
-
-      if [[ -z $DEBUG__SKIP_ENHANCING ]]; then
-        ENHANCED=$(echo "$ENHANCED" | ${opencodeExec} --model $MODEL --agent plan run 2>/dev/null);
+        echo "$PROMPT_ENHANCER_PRELUDE"
+        
+        if [[ "$OBJECT" != "BARE" ]]; then
+            echo -en "$ENHANCER_ACTION $ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT: "
+        fi
+        
+        echo -e "''${USER_PROMPT}''${PUNCTUATION}"
+        
+        if [[ -n "$ENHANCER_SUPPLEMENTAL_PHRASE" ]]; then
+            echo -e "\n$ENHANCER_SUPPLEMENTAL_PHRASE\n"
+        fi
+      });
+      if [[ "$DEBUG__SKIP_ENHANCING" == "0" ]]; then
+        if ! RAW_OUTPUT=$(echo "$ENHANCED" | ${opencodeExec} --model "$MODEL" --agent plan run); then
+            echo "ERROR: 'opencode' execution failed. Please check your API keys and network connection."
+            exit 1
+        fi
+        ENHANCED="$RAW_OUTPUT"
       else
-        ENHANCED="$ENHANCED\n\nDEBUG__SKIP_ENHANCING is set, this is dummy data!";
+        ENHANCED+=$'\n\n'"DEBUG__SKIP_ENHANCING is set, this is dummy data!";
       fi;
-
-      # v some models will insist on addding an 'Enhanced Prompt' section header despite
-      #   prompt-enhancer-prelude.md instructing it not to, so we'll filter it out just in case:
       ENHANCED=$(echo "$ENHANCED" | gsed 's/^#\+ *Enhanced.*//i');
-      # v 'deepen' all headings by one:
       ENHANCED=$(echo "$ENHANCED" | gsed 's/^#/##/');
-      # v compress consecutive blank lines:
       ENHANCED=$(echo -e "$ENHANCED" | gsed -Ez 's/\n{3,}/\n\n/g');
-      # v remove leading newlines:
       ENHANCED=$(echo -e "$ENHANCED" | awk 'NF{p=1} p');
-
-      # if [ "${"RFC2119:-0"}" -ge 1 ]; then echo YES; else echo NO; fi
-      # Tack on RFC2119 compliance phrase:
-      [[ "${"RFC2119:-0"}" -ge 1 && $OBJECT != "BARE" && $OBJECT != "question" ]] &&\
-        ENHANCED="The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\",  \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.\n\n$${ENHANCED}\n";
-
-      # Augment ENHANCED with some boileplate:
+      [[ $INCLUDE_RFC2119 -ge 1 && $OBJECT != "BARE" && $OBJECT != "question" ]] &&\
+        ENHANCED="The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\",  \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.\n\n''${ENHANCED}\n";
       [[ $OBJECT != "BARE" ]] &&\
-        ENHANCED="# $${ENHANCED_PROMPT_TITLE_HEADING}:\n\n$${ENHANCED}";
-
+        ENHANCED="# ''${ENHANCED_PROMPT_TITLE_HEADING}:\n\n''${ENHANCED}";
       if [[ $OBJECT != "BARE" && $OBJECT != "question" ]]; then
         ENHANCED=$({              
-                    # Tack on RFC2119 itself:
-                    [[ "${"RFC2119:-0"}" -ge 2  ]] && echo "$RFC2119";
-
+                    [[ $INCLUDE_RFC2119 -ge 2 ]] && echo "$RFC2119";
                     echo -e "$ENHANCED\n";
-
                     echo -e "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!\n";
                     echo -e "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:\n"
                     echo -e "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed.";
@@ -248,17 +235,15 @@ let
                     echo -e "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.";
                   });
       fi;
-
-      # finally, print the enhanced prompt:
-      [[ ! -z "$DEBUG__OUTPUT_FENCES" ]] && echo "BEGIN";
-      echo -e "$${ENHANCED}";
-      [[ ! -z "$DEBUG__OUTPUT_FENCES" ]] && echo "END";
+      [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "BEGIN";
+      echo -e "''${ENHANCED}";
+      [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "END";
       exit 0;
     '';
   };
 in
 {
-  jvf.aiTools.scripts."prompt-enhancer".options = {
+  options.jvf.aiTools.scripts."prompt-enhancer" = {
     enable = (lib.mkEnableOption "Enable prompt enhancer") // {
       default = true;
     };

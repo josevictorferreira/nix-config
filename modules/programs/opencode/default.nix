@@ -109,6 +109,10 @@ in
             cfg.settings
             // {
               mcp = cfg.mcps;
+              tools = lib.mapAttrs' (name: _: {
+                name = "${name}*";
+                value = false;
+              }) cfg.mcps;
             }
           );
           "opencode.json" = {
