@@ -105,7 +105,7 @@ in
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
-          "config.json" = (
+          "opencode.json" = (
             cfg.settings
             // {
               mcp = cfg.mcps;
@@ -115,13 +115,6 @@ in
               }) cfg.mcps;
             }
           );
-          "opencode.json" = {
-            plugin = cfg.settings.plugin;
-            tools = lib.mapAttrs' (name: _: {
-              name = "${name}*";
-              value = false;
-            }) cfg.mcps;
-          };
         }
       ];
     };
