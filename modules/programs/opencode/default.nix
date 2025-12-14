@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  inputs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -112,6 +113,10 @@ in
           );
           "opencode.json" = {
             plugin = cfg.settings.plugin;
+            tools = lib.mapAttrs' (name: _: {
+              name = "${name}*";
+              value = false;
+            }) cfg.mcps;
           };
         }
       ];
