@@ -10,5 +10,6 @@
     ./pythonic-scraping-websites.nix
     ./ruby-stealth-scraping.nix
     ./writing-nix-code.nix
+    ./creating-skills.nix
   ];
 }
