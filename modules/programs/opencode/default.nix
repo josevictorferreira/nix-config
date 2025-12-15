@@ -112,7 +112,7 @@ in
               tools =
                 (lib.mapAttrs' (name: _: {
                   name = "${name}*";
-                  value = false;
+                  value = (if (name == "ck" || name == "context7") then true else false);
                 }) cfg.mcps)
                 // {
                   "skills*" = false;
