@@ -6,6 +6,8 @@
     ./general/deep-check.nix
     ./general/dependency-audit.nix
     ./general/style-audit.nix
+    ./implementation/ask.nix
+    ./implementation/do.nix
     ./implementation/implement-feature.nix
     ./implementation/implement-fix.nix
     ./implementation/implement-refactoring.nix

@@ -5,14 +5,14 @@
   ...
 }:
 let
-  commandName = "implement-feature";
+  commandName = "ask";
   cfg = config.jvf.aiTools.commands."${commandName}";
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
-    description = "Plan and proceed to implement a new feature based on a prompt enhanced by a specified (or defaulted) model.";
+    description = "Answer a question based on a prompt enhanced by a specified (or defaulted) model.";
     agent = "build";
     prompt = ''
-      !`prompt-enhancer feature \"$ARGUMENTS\";`
+      !`prompt-enhancer change \"$ARGUMENTS\";`
     '';
   };
 in

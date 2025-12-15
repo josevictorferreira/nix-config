@@ -123,6 +123,7 @@ let
     {
       name,
       description ? "",
+      agent ? "",
       prompt ? "",
     }:
     {
@@ -133,10 +134,20 @@ let
       };
       config = {
         jvf.programs.opencode.commands.${name} = {
-          inherit name description prompt;
+          inherit
+            name
+            description
+            agent
+            prompt
+            ;
         };
         jvf.programs.claudecode.commands.${name} = {
-          inherit name description prompt;
+          inherit
+            name
+            description
+            agent
+            prompt
+            ;
         };
       };
     };
@@ -163,7 +174,9 @@ let
           name: "${value.name or "unknown"}"
           description: "${value.description or ""}"
           ${lib.optionalString (allTools != [ ]) "allowed-tools: \"${toolsString}\""}
+          ${if (value.agent != "") then "agent: ${value.agent}" else ""}
           ---
+
         '';
       in
       yamlHeader + value.prompt
@@ -185,6 +198,7 @@ let
           ${lib.optionalString (allTools != [ ]) (
             lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") allTools
           )}
+          ${if (value.agent != "") then "agent: ${value.agent}" else ""}
           ---
 
         '';
