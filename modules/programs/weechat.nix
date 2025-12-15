@@ -133,6 +133,10 @@ let
       description = "weechat-scripts package";
       autoload = "on";
     };
+    python = lib.mkIf cfg.slack.enable {
+      description = "Python plugin";
+      autoload = "on";
+    };
   };
 
   spellConfig = {
@@ -221,6 +225,21 @@ let
     };
     completion = { };
   };
+
+  slackConfig = {
+    look = {
+      channel_name_typing_prefix = ">";
+      part_closes_buffer = "on";
+      show_buflist_duplicates = "on";
+      workspace_name_display = "short";
+    };
+    notifications = {
+      rich_text = "on";
+      show_reaction_adds = "on";
+      show_reaction_adds_changed = "on";
+      show_typing = "off";
+    };
+  };
 in
 {
   options.jvf.programs.weechat = {
@@ -228,7 +247,7 @@ in
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
-      description = "Username for which to install the configuration";
+      description = "Username for which to install configuration";
     };
     package = lib.mkPackageOption pkgs "weechat-unwrapped" { };
     additionalScripts = lib.mkOption {
@@ -241,6 +260,36 @@ in
       default = defaultPlugins;
       description = "List of weechat scripts to install.";
     };
+    slack = {
+      enable = lib.mkEnableOption "Slack integration via wee-slack plugin";
+      token = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "Slack API token for workspace connection (xoxb-...)";
+      };
+      autoConnect = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to automatically connect to Slack on WeeChat startup";
+      };
+      workspaces = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule {
+          options = {
+            token = lib.mkOption {
+              type = lib.types.str;
+              description = "Slack API token for this workspace (xoxb-...)";
+            };
+            autoConnect = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+              description = "Whether to auto-connect this workspace";
+            };
+          };
+        });
+        default = { };
+        description = "Multiple Slack workspaces with their tokens";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -250,6 +299,7 @@ in
         pkgs.aspell
         pkgs.aspellDicts.en
         pkgs.aspellDicts.pt_BR
+        pkgs.python3
       ]
       ++ cfg.plugins;
       configs = {
@@ -260,7 +310,19 @@ in
         "buflist.conf" = buflistConfig;
         "trigger.conf" = triggerConfig;
         "alias.conf" = aliasConfig;
+      } // lib.optionalAttrs cfg.slack.enable {
+        "slack.conf" = slackConfig;
       };
+      postInstall = lib.mkIf cfg.slack.enable ''
+        # Add wee-slack script loading to startup
+        if [ -f "$HOME/.weechat/python/autoload/wee_slack.py" ]; then
+          echo "wee-slack.py properly linked to autoload"
+        elif [ -f "$HOME/.local/share/weechat/python/wee_slack.py" ]; then
+          mkdir -p "$HOME/.weechat/python/autoload"
+          ln -sf "$HOME/.local/share/weechat/python/wee_slack.py" "$HOME/.weechat/python/autoload/wee_slack.py"
+          echo "wee-slack.py linked to autoload directory"
+        fi
+      '';
     };
   };
 }

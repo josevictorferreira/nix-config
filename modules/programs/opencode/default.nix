@@ -1,11 +1,10 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  system,
-  inputs,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, system
+, inputs
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -110,10 +109,12 @@ in
             // {
               mcp = cfg.mcps;
               tools =
-                (lib.mapAttrs' (name: _: {
-                  name = "${name}*";
-                  value = (if (name == "ck" || name == "context7") then true else false);
-                }) cfg.mcps)
+                (lib.mapAttrs'
+                  (name: _: {
+                    name = "${name}*";
+                    value = (if (name == "ck" || name == "context7") then true else false);
+                  })
+                  cfg.mcps)
                 // {
                   "skills*" = false;
                 };

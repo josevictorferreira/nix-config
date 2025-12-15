@@ -29,6 +29,7 @@ in
 
   config = lib.mkIf cfg.enable {
     jvf.programs.weechat.enable = true;
+    jvf.programs.weechat.slack.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.discord
