@@ -1,12 +1,9 @@
 {
   lib,
-  config,
   ...
 }:
 
 let
-  cfg = config.jvf.aiTools.lib;
-
   toolTags = [
     "frontend"
     "browser"
@@ -272,23 +269,6 @@ let
       name = "${prefix}/${name}.md";
       value = toClaudeMarkdownPrompt mcpConfigs value;
     }) attrset;
-
-  defaultFunctions = {
-    inherit
-      mkSingleSkillConfigs
-      mkSkillConfigs
-      toSkillMarkdown
-      toOpencodeMarkdownPrompt
-      toClaudeMarkdownPrompt
-      mkOpencodeMdConfigs
-      mkClaudecodeMdConfigs
-      mkMcpModule
-      mkAgentModule
-      mkCommandModule
-      mkSkillModule
-      findToolsByTags
-      ;
-  };
 in
 {
   inherit
@@ -305,19 +285,4 @@ in
     mkSkillModule
     findToolsByTags
     ;
-
-  options.jvf.aiTools.lib = {
-    enable = (lib.mkEnableOption "aiTools libraries") // {
-      default = true;
-    };
-
-    functions = lib.mkOption {
-      type = lib.types.attrsOf lib.types.any;
-      descriptions = "Functions to be used across the Nix AI Tools module system.";
-      default = defaultFunctions;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-  };
 }

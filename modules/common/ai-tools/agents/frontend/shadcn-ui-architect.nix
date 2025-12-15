@@ -8,7 +8,7 @@ let
   agentName = "shadcn-ui-architect";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   cfg = config.jvf.aiTools.agents."${agentName}";
-  agentDef = config.jvf.lib.functions.mkAgentModule {
+  agentDef = inputs.lib.aiTools.mkAgentModule {
     tools = [
       "Read"
       "Glob"

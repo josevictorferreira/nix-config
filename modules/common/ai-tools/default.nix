@@ -4,7 +4,6 @@
 
 {
   imports = [
-    (import ./lib.nix)
     (import ./rules.nix)
     (import ./scripts)
     (import ./mcp)
