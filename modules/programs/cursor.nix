@@ -113,7 +113,7 @@ in
       jvf.wrappers.users.${cfg.username}.programs = {
         claude = {
           packages = [
-            pkgs.claude-code
+            pkgs.code-cursor
           ];
           configPath = ".claude";
           configs = lib.mkMerge [
@@ -125,10 +125,10 @@ in
         claude-code-router = {
           packages = [
             pkgs.claude-code-router
-            pkgs.cursor-cli
           ];
-          configPath = ".cursor";
+          configPath = ".claude-code-router";
           configs = {
+            "CLAUDE.md" = cfg.baseRules;
             "config.json" = cfg.routerSettings;
           };
         };

@@ -144,7 +144,7 @@ let
 
     ############################################################################################################
     scripts = {
-      "init_skill" = ''
+      "init_skill.py" = ''
         #!/usr/bin/env python3
         """
         Skill Initializer - Creates a new skill from template
@@ -451,7 +451,7 @@ let
       '';
 
       ############################################################################################################
-      package_skill = ''
+      "package_skill.py" = ''
         #!/usr/bin/env python3
                 """
                 Skill Packager - Creates a distributable .skill file of a skill folder
@@ -565,7 +565,7 @@ let
       '';
 
       ############################################################################################################
-      quick_validate = ''
+      "quick_validate.py" = ''
         #!/usr/bin/env python3
         """
         Quick validation script for skills - minimal version
@@ -573,6 +573,7 @@ let
 
         import sys
         import os
+
         import re
         import yaml
         from pathlib import Path
@@ -624,7 +625,7 @@ let
                 return False, "Missing 'description' in frontmatter"
 
             # Extract name for validation
-            name = frontmatter.get('name', \'\')
+            name = frontmatter.get('name', ''')
             if not isinstance(name, str):
                 return False, f"Name must be a string, got {type(name).__name__}"
             name = name.strip()
@@ -639,7 +640,7 @@ let
                     return False, f"Name is too long ({len(name)} characters). Maximum is 64 characters."
 
             # Extract and validate description
-            description = frontmatter.get('description', \'\')
+            description = frontmatter.get('description', ''')
             if not isinstance(description, str):
                 return False, f"Description must be a string, got {type(description).__name__}"
             description = description.strip()
