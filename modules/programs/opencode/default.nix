@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  inputs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -62,6 +63,12 @@ in
       description = "Username for which to install the configuration";
     };
 
+    baseRules = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "A set of base rules to apply to the OpenCode configuration.";
+    };
+
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
@@ -104,17 +111,16 @@ in
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
+          "AGENTS.md" = cfg.baseRules;
           "opencode.json" = (
             cfg.settings
             // {
               mcp = cfg.mcps;
               tools =
-                (lib.mapAttrs'
-                  (name: _: {
-                    name = "${name}*";
-                    value = (if (name == "ck" || name == "context7") then true else false);
-                  })
-                  cfg.mcps)
+                (lib.mapAttrs' (name: _: {
+                  name = "${name}*";
+                  value = (if (name == "ck" || name == "context7") then true else false);
+                }) cfg.mcps)
                 // {
                   "skills*" = false;
                 };

@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  inputs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -18,6 +19,11 @@ in
       type = lib.types.str;
       default = username;
       description = "Username for which to install the configuration";
+    };
+    baseRules = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "A set of base rules to apply to the Claude configuration.";
     };
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
@@ -122,6 +128,7 @@ in
           ];
           configPath = ".claude-code-router";
           configs = {
+            "CLAUDE.md" = cfg.baseRules;
             "config.json" = cfg.routerSettings;
           };
         };

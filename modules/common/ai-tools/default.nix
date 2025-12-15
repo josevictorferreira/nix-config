@@ -1,4 +1,5 @@
-{ ...
+{
+  ...
 }:
 
 {
@@ -8,5 +9,6 @@
     (import ./agents)
     (import ./commands)
     (import ./skills)
+    (import ./rules.nix)
   ];
 }
