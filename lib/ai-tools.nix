@@ -169,15 +169,13 @@ let
         tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
         allTools = lib.unique (explicitTools ++ tagTools);
         toolsString = lib.concatStringsSep ", " allTools;
-        yamlHeader = ''
-          ---
-          name: "${value.name or "unknown"}"
-          description: "${value.description or ""}"
-          ${lib.optionalString (allTools != [ ]) "allowed-tools: \"${toolsString}\""}
-          ${if (value.agent != "") then "agent: ${value.agent}" else ""}
-          ---
-
-        '';
+        headerLines = [
+          "name: \"${value.name or "unknown"}\""
+          "description: \"${value.description or ""}\""
+        ]
+        ++ lib.optional (allTools != [ ]) "allowed-tools: \"${toolsString}\""
+        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}";
+        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
     else
@@ -190,18 +188,14 @@ let
         explicitTools = value.tools or [ ];
         tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
         allTools = lib.unique (explicitTools ++ tagTools);
-        yamlHeader = ''
-          ---
-          name: "${value.name or "unknown"}"
-          description: "${value.description or ""}"
-          ${if (allTools != [ ]) then "tools:" else ""}
-          ${lib.optionalString (allTools != [ ]) (
-            lib.concatMapStringsSep "\n" (tool: "  ${lib.toLower tool}*: true") allTools
-          )}
-          ${if (value.agent != "") then "agent: ${value.agent}" else ""}
-          ---
-
-        '';
+        headerLines = [
+          "name: \"${value.name or "unknown"}\""
+          "description: \"${value.description or ""}\""
+        ]
+        ++ lib.optional (allTools != [ ]) "tools:"
+        ++ lib.optionals (allTools != [ ]) (map (tool: "  ${lib.toLower tool}*: true") allTools)
+        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}";
+        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
     else
