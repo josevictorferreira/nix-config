@@ -201,6 +201,45 @@ let
     else
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
+  toCursorMarkdownPrompt =
+    mcpConfigs: value:
+    if builtins.isAttrs value && value ? prompt then
+      let
+        explicitTools = value.tools or [ ];
+        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
+        allTools = lib.unique (explicitTools ++ tagTools);
+
+        fmtTool = tool: if lib.hasPrefix "@" tool then tool else "@${tool}";
+
+        headerLines = [
+          "description: \"${value.description or (value.name or "")}\""
+        ]
+        ++
+          lib.optional (value ? alwaysApply)
+            "alwaysApply: ${if value.alwaysApply then "true" else "false"}"
+        ++ lib.optionals (value ? globs && value.globs != [ ]) (
+          [ "globs:" ] ++ map (g: "  - \"${g}\"") value.globs
+        );
+
+        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
+
+        toolsPreamble =
+          if allTools == [ ] then
+            ""
+          else
+            "\n## Preferred MCP tools\n" + (lib.concatStringsSep ", " (map fmtTool allTools)) + "\n\n";
+      in
+      yamlHeader + toolsPreamble + value.prompt
+    else
+      builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
+  mkCursorMdcConfigs =
+    mcpConfigs: prefix: attrset:
+    lib.mapAttrs' (name: value: {
+      name = "${prefix}/${name}.mdc";
+      value = toCursorMarkdownPrompt mcpConfigs value;
+    }) attrset;
+
   toSkillMarkdown =
     skillName: skill:
     let
@@ -279,6 +318,7 @@ in
     toClaudeMarkdownPrompt
     mkOpencodeMdConfigs
     mkClaudecodeMdConfigs
+    mkCursorMdcConfigs
     mkMcpModule
     mkAgentModule
     mkCommandModule

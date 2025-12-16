@@ -3,18 +3,16 @@
   pkgs,
   config,
   username,
-  system,
   inputs,
   ...
 }:
 let
   json = pkgs.formats.json { };
-  isDarwin = builtins.match ".*-darwin" system != null;
-  cfg = config.jvf.programs.claudecode;
+  cfg = config.jvf.programs.cursor;
 in
 {
-  options.jvf.programs.claudecode = {
-    enable = lib.mkEnableOption "Install claude-code router and write per-user ~/.claude-code-router/config.json";
+  options.jvf.programs.cursor = {
+    enable = lib.mkEnableOption "Install cursor router and write per-user ~/.cursor-router/config.json";
     username = lib.mkOption {
       type = lib.types.str;
       default = username;
@@ -23,7 +21,7 @@ in
     baseRules = lib.mkOption {
       type = lib.types.str;
       default = "";
-      description = "A set of base rules to apply to the Claude configuration.";
+      description = "A set of base rules to apply to the Cursor configuration.";
     };
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
@@ -48,111 +46,21 @@ in
     settings = lib.mkOption {
       type = json.type;
       default = { };
-      description = "ClaudeCode settings.";
-    };
-    routerSettings = lib.mkOption {
-      type = json.type;
-      default = {
-        LOG = true;
-        HOST = "127.0.0.1";
-        PORT = 3456;
-        API_TIMEOUT_MS = 600000;
-        NON_INTERACTIVE_MODE = false;
-        APIKEY = "local-dev";
-        Providers = [
-          {
-            name = "openrouter";
-            api_base_url = "https://openrouter.ai/api/v1/chat/completions";
-            api_key = "\${OPENROUTER_API_KEY_CODE_AGENT}";
-            models = [
-              # In, Out
-              "anthropic/claude-sonnet-4.5" # $3, $15
-              "anthropic/claude-haiku-4.5" # $1, $5
-              "google/gemini-2.5-flash-image" # $0.3, $2.5
-              "google/gemini-2.5-flash-lite:online" # $0.1, $0.4
-              "google/gemini-2.5-pro" # $1.25, $10
-              "moonshotai/kimi-k2-0905" # $0.39, $1.90
-              "moonshotai/kimi-k2-0905:exacto" # $0.60, $2.50
-              "moonshotai/kimi-k2" # $0.14, $2.49
-              "qwen/qwen3-coder-480b" # $0.22, $0.95
-              "qwen/qwen3-235b-a22b-2507" # $0.08, $0.55
-              "x-ai/grok-4-fast" # $0.20, $0.50
-              "x-ai/grok-code-fast-1" # $0.20, $1.50
-              "x-ai/grok-4" # $3, $15
-              "z-ai/glm-4.6" # $0.40, $1.75
-              "z-ai/glm-4.6:exacto" # $0.60, $1.90
-              "minimax/minimax-m2:free" # $0, $0
-              "openai/gpt-oss-120b:exacto" # $0.04, $0.40
-              "deepseek/deepseek-v3.1-terminus:exacto" # $0.27, $1
-              "deepseek/deepseek-v3.2-exp" # $0.27, $0.40
-              "moonshotai/kimi-k2-thinking" # $0.60, $2.50
-              "google/gemini-3-pro-preview"
-              "openai/gpt-5.1-codex-max"
-            ];
-            transformer = {
-              use = [ "openrouter" ];
-            };
-          }
-        ];
-        Router = {
-          default = "openrouter,openai/gpt-5.1-codex-max";
-          background = "openrouter,openai/gpt-oss-120b:exacto";
-          think = "openrouter,moonshotai/kimi-k2-thinking";
-          longContext = "openrouter,openai/gpt-5.1-codex-max";
-          webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
-          image = "openrouter,google/gemini-2.5-flash-image";
-          longContextThreshold = 250000;
-        };
-      };
-      description = "Settings written to ~/.claude-code-router/config.json";
+      description = "Cursor settings.";
     };
   };
 
-  config = lib.mkIf cfg.enable (
-    {
-      jvf.wrappers.users.${cfg.username}.programs = {
-        claude = {
-          packages = [
-            pkgs.code-cursor
-          ];
-          configPath = ".claude";
-          configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
-            (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
-          ];
-        };
-        claude-code-router = {
-          packages = [
-            pkgs.claude-code-router
-          ];
-          configPath = ".claude-code-router";
-          configs = {
-            "CLAUDE.md" = cfg.baseRules;
-            "config.json" = cfg.routerSettings;
-          };
-        };
-      };
-    }
-    // lib.optionalAttrs (!isDarwin) {
-      environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
-        mcpServers = cfg.mcps;
-      };
-    }
-    // lib.optionalAttrs isDarwin {
-      system.activationScripts.claudeCodeMcp.text = ''
-        targetDir="/Library/Application Support/ClaudeCode"
-        targetFile="$targetDir/managed-mcp.json"
-
-        # Define the content in the Nix store (immutable)
-        sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = cfg.mcps; })}"
-
-        echo "Configuring Claude Code Managed MCP..."
-        mkdir -p "$targetDir"
-
-        # Symlink the immutable file to the target location
-        ln -sf "$sourceFile" "$targetFile"
-      '';
-    }
-  );
+  config = lib.mkIf cfg.enable ({
+    jvf.wrappers.users.${cfg.username}.programs.cursor = {
+      packages = [
+        pkgs.code-cursor
+      ];
+      configPath = ".cursor";
+      configs = lib.mkMerge [
+        (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
+        (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
+        (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
+      ];
+    };
+  });
 }
