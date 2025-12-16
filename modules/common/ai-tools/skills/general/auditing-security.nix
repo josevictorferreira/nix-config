@@ -1,13 +1,25 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   skillName = "auditing-security";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
-    allowed-tools = [ "Read" "Grep" "Glob" ];
+    allowed-tools = [
+      "Read"
+      "Grep"
+      "Glob"
+    ];
     name = skillName;
     description = "Security analysis and vulnerability assessment specialist";
-    tags = [ "explorer" "documentation" ];
+    tags = [
+      "explorer"
+      "documentation"
+    ];
     prompt = ''
       # ${skillFullName}
 

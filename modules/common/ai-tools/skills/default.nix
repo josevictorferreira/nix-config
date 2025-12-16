@@ -2,14 +2,16 @@
 
 {
   imports = [
-    ./auditing-security.nix
-    ./creating-nix-modules.nix
-    ./developing-containers.nix
-    ./managing-flakes.nix
-    ./managing-rails-events.nix
-    ./pythonic-scraping-websites.nix
-    ./ruby-stealth-scraping.nix
-    ./writing-nix-code.nix
-    ./creating-skills.nix
+    ./general/auditing-security.nix
+    ./general/creating-skills.nix
+    ./container/developing-containers.nix
+    ./nix/creating-nix-modules.nix
+    ./nix/managing-flakes.nix
+    ./nix/writing-nix-code.nix
+    ./python/pythonic-scraping-websites.nix
+    ./ruby/rails-background-jobs.nix
+    ./ruby/ruby-stealth-scraping.nix
+    ./ruby/managing-rails-events.nix
+    ./ruby/rspec-testing.nix
   ];
 }
