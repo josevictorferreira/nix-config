@@ -1,9 +1,10 @@
-{ lib
-, config
-, pkgs
-, username
-, system
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  system,
+  ...
 }:
 
 let
@@ -48,6 +49,14 @@ in
 
         virtualisation.containers = {
           enable = true;
+
+          policy = {
+            default = [
+              {
+                type = "insecureAcceptAnything";
+              }
+            ];
+          };
 
           containersConf.settings = {
             engine = {
