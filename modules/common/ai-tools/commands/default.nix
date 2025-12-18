@@ -19,5 +19,10 @@
     ./nix/nix-option-migrate.nix
     ./nix/nix-refactor.nix
     ./nix/nix-template-new.nix
+    ./feature/feat-implement.nix
+    ./feature/feat-plan.nix
+    ./feature/feat-research.nix
+    ./feature/feat-spec.nix
+    ./feature/feat-tasks.nix
   ];
 }
