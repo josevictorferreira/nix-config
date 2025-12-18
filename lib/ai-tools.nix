@@ -58,11 +58,12 @@ let
       name,
       model ? "",
       temperature ? null,
-      permission ? {},
+      permission ? { },
       description ? "",
       prompt ? "",
       tags ? [ ],
       tools ? [ ],
+      disabledTools ? [ ],
     }:
     {
       options = {
@@ -90,6 +91,7 @@ let
             prompt
             tags
             tools
+            disabledTools
             ;
         };
         jvf.programs.claudecode.agents.${name} = {
@@ -102,6 +104,7 @@ let
             prompt
             tags
             tools
+            disabledTools
             ;
         };
       };
@@ -185,7 +188,9 @@ let
         ++ lib.optional (allTools != [ ]) "allowed-tools: \"${toolsString}\""
         ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
         ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
-        ++ lib.optional ((builtins.hasAttr "temperature" value) && value.temperature != null) "temperature: ${toString value.temperature}";
+        ++ lib.optional (
+          (builtins.hasAttr "temperature" value) && value.temperature != null
+        ) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -197,6 +202,7 @@ let
     if builtins.isAttrs value && value ? prompt then
       let
         explicitTools = value.tools or [ ];
+        disabledTools = value.disabledTools or [ ];
         tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
         allTools = lib.unique (explicitTools ++ tagTools);
         headerLines = [
@@ -204,10 +210,15 @@ let
           "description: \"${value.description or ""}\""
         ]
         ++ lib.optional (allTools != [ ]) "tools:"
-        ++ lib.optionals (allTools != [ ]) (map (tool: "  ${lib.toLower tool}*: true") allTools)
+        ++ lib.optionals (allTools != [ ]) (
+          (map (tool: "  ${lib.toLower tool}*: true") allTools)
+          ++ (map (tool: "  ${lib.toLower tool}*: false") disabledTools)
+        )
         ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
         ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
-        ++ lib.optional ((builtins.hasAttr "temperature" value) && value.temperature != null) "temperature: ${toString value.temperature}";
+        ++ lib.optional (
+          (builtins.hasAttr "temperature" value) && value.temperature != null
+        ) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
