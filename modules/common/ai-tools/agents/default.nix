@@ -6,5 +6,6 @@
     ./frontend/swiss-minimalist-designer.nix
     ./general/code-reviewer.nix
     ./general/documentation-writer.nix
+    ./ruby/ruby-developer.nix
   ];
 }
