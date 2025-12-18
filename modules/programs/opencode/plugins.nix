@@ -3,16 +3,16 @@
 let
   openCodeSkillsPkg = pkgs.buildNpmPackage rec {
     pname = "opencode-skills";
-    version = "0.1.1";
+    version = "v0.1.7";
 
     src = pkgs.fetchFromGitHub {
       owner = "malhashemi";
       repo = "opencode-skills";
-      rev = "v${version}";
-      hash = "sha256-VWDtrGuedZLvr9HXVrZbjFQOcRKw3jN6i5+3XUe4TMs=";
+      rev = "${version}";
+      hash = "sha256-YajcjnJCOmY+cgtCDx6eySQa2f6acmzWR7AftZBBsTY=";
     };
 
-    npmDepsHash = "sha256-FlIf4TiEK2QhN+Cyv/7p7BEZa5rGgppVYPwsdgWV2jc=";
+    npmDepsHash = "sha256-w4REdyRFe5Ix0YBXVj/1LKfiS7LmIbq0jp8XOyttFdc=";
 
     postPatch = ''
       ${lib.getExe pkgs.jq} '
@@ -33,16 +33,16 @@ let
   };
   openCodeDynamicContextPkg = pkgs.buildNpmPackage rec {
     pname = "opencode-dynamic-context-pruning";
-    version = "v0.4.17";
+    version = "v1.0.3";
 
     src = pkgs.fetchFromGitHub {
       owner = "Tarquinen";
       repo = "opencode-dynamic-context-pruning";
       rev = "${version}";
-      hash = "sha256-nEbt+/70Fhm7zEBq7j7Ay4jwSZNjdfjMNcEX4xfZCug=";
+      hash = "sha256-rpPeOhUBz+3PXf3w+1h3b98n8/ipi/LOhIH+gSEbiVs=";
     };
 
-    npmDepsHash = "sha256-Ma2/bgPS1dYz6WXL1FVHKZW1vVbxfVxCGSJNWg9vX9o=";
+    npmDepsHash = "sha256-ipmy0zQySPvW3Ztw7SR1wmcRj7KAqSaXtZg1gjDyugE=";
 
     postPatch = ''
       ${lib.getExe pkgs.jq} '
