@@ -56,6 +56,9 @@ let
   mkAgentModule =
     {
       name,
+      model ? "",
+      temperature ? null,
+      permission ? {},
       description ? "",
       prompt ? "",
       tags ? [ ],
@@ -80,6 +83,9 @@ let
         jvf.programs.opencode.agents.${name} = {
           inherit
             name
+            model
+            temperature
+            permission
             description
             prompt
             tags
@@ -89,6 +95,9 @@ let
         jvf.programs.claudecode.agents.${name} = {
           inherit
             name
+            model
+            temperature
+            permission
             description
             prompt
             tags
@@ -174,7 +183,9 @@ let
           "description: \"${value.description or ""}\""
         ]
         ++ lib.optional (allTools != [ ]) "allowed-tools: \"${toolsString}\""
-        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}";
+        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
+        ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
+        ++ lib.optional ((builtins.hasAttr "temperature" value) && value.temperature != null) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -194,7 +205,9 @@ let
         ]
         ++ lib.optional (allTools != [ ]) "tools:"
         ++ lib.optionals (allTools != [ ]) (map (tool: "  ${lib.toLower tool}*: true") allTools)
-        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}";
+        ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
+        ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
+        ++ lib.optional ((builtins.hasAttr "temperature" value) && value.temperature != null) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
