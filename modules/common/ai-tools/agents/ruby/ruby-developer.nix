@@ -98,7 +98,7 @@ let
 
       ## Operational Constraints
 
-      1.  **No Execution**: Never write code or run commands directly. Use `task` to call the skill tool.
+      1.  **No Execution**: Never write code or run commands directly. the skill tool for that is most capable of running that task.
       2.  **Context Hygiene**: Use `ls`, `scandir`, or `grep` to quickly find file paths to pass to skill tool. Do not read huge files yourself.
       3.  **Prompt Engineering**: When calling a skill tool, be specific.
           *   *Bad*: `prompt="make the frontend"`
@@ -110,7 +110,7 @@ let
 
       ```markdown
       ### Routing Decision
-      - **Skill Tool**: @skill-name (or chain: @skill1 -> @skill2)
+      - **Skill Tool**: @skills_name (or chain: @skills_1 -> @skills_2)
       - **Strategy**: (Optional brief note)
       ### Delegation
       [Tool call to `task`]
