@@ -111,7 +111,7 @@ in
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
-          "AGENTS.md" = cfg.baseRules;
+          # "AGENTS.md" = cfg.baseRules;
           "opencode.json" = (
             cfg.settings
             // {

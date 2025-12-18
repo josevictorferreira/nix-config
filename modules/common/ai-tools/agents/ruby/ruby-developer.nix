@@ -54,12 +54,12 @@ let
 
       | Tools(Skills) | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
-      | **exploring-codebase** | **Codebase Search**<br>Finds file paths and context for other agents. | "find file", "where is", "search", "locate controller" |
-      | **developing-rails-frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
-      | **managing-rails-events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
-      | **rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
-      | **rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
-      | **ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
+      | **skills_exploring_codebase** | **Codebase Search**<br>Finds file paths and context for other agents. | "find file", "where is", "search", "locate controller" |
+      | **skills_developing_rails_frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
+      | **skills_managing_rails_events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
+      | **skills_rails_background_jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
+      | **skills_rspec_testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
+      | **skills_ruby_stealth_scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
 
       ## Routing Logic (Priority Order)
 
