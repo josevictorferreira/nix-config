@@ -18,7 +18,7 @@ let
       "Bash"
       "Blob"
     ];
-    mode = "primary";
+    mode = "subagent";
     tags = [
       "explorer"
       "documentation"

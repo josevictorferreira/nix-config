@@ -19,7 +19,7 @@ let
       "WebFetch"
       "Blob"
     ];
-    mode = "primary";
+    mode = "subagent";
     tags = [
       "explorer"
       "documentation"

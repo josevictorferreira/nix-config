@@ -57,7 +57,7 @@ let
     {
       name,
       model ? "",
-      mode ? "subagent",
+      mode ? "primary",
       temperature ? null,
       permission ? { },
       description ? "",

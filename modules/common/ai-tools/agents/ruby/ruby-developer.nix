@@ -20,7 +20,7 @@ let
       "get_symbols_overview"
       "task"
     ];
-    mode = "subagent";
+    mode = "primary";
     disabledTools = [
       "write"
       "edit"
