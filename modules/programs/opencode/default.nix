@@ -115,11 +115,14 @@ in
           "opencode.json" = (
             cfg.settings
             // {
+              theme = "one-dark";
               mcp = cfg.mcps;
               disabled_providers = [
                 "opencode"
+                "copilot"
                 "github-copilot"
-                "github"
+                "github-copilot-enterprise:"
+                "github-models"
               ];
               tools =
                 (lib.mapAttrs' (name: _: {
