@@ -119,6 +119,7 @@ in
               disabled_providers = [
                 "opencode"
                 "github-copilot"
+                "github"
               ];
               tools =
                 (lib.mapAttrs' (name: _: {
