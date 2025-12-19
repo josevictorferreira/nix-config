@@ -116,6 +116,10 @@ in
             cfg.settings
             // {
               mcp = cfg.mcps;
+              disabled_providers = [
+                "opencode"
+                "github-copilot"
+              ];
               tools =
                 (lib.mapAttrs' (name: _: {
                   name = "${name}*";

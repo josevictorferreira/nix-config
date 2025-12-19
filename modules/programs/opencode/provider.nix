@@ -25,6 +25,20 @@
       };
     };
 
+    minimax = {
+      npm = "@ai-sdk/vercel-minimax-ai-provider";
+      name = "Minimax";
+      options = {
+        baseURL = "https://api.minimax.io/anthropic";
+        apiKey = "{env:MINIMAX_API_KEY}";
+      };
+      models = {
+        "MiniMax-M2" = {
+          name = "Minimax M2";
+        };
+      };
+    };
+
     openrouter = {
       models = {
         "z-ai/glm-4.6:exacto" = {

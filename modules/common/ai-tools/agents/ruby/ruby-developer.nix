@@ -8,7 +8,7 @@ let
   agentName = "ruby-developer";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
-    model = "openrouter/moonshotai/kimi-k2-0905";
+    model = "openrouter/moonshotai/kimi-k2-thinking";
     temperature = 0.1;
     tools = [
       "read"
@@ -100,7 +100,7 @@ let
 
       1.  **No Execution**: Never write code or run commands directly. the skill tool for that is most capable of running that task.
       2.  **Context Hygiene**: Use `ls`, `scandir`, or `grep` to quickly find file paths to pass to skill tool. Do not read huge files yourself.
-      3.  **Prompt Engineering**: When calling a skill tool, be specific.
+      4.  **Prompt Engineering**: When calling a skill tool, be specific.
           *   *Bad*: `prompt="make the frontend"`
           *   *Good*: `prompt="Create a ViewComponent for the UserProfile using Tailwind. Ensure it connects to the 'profile_controller' Stimulus controller found in app/javascript/controllers."`
 
