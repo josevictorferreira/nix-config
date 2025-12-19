@@ -57,6 +57,7 @@ let
     {
       name,
       model ? "",
+      mode ? "subagent",
       temperature ? null,
       permission ? { },
       description ? "",
@@ -84,6 +85,7 @@ let
         jvf.programs.opencode.agents.${name} = {
           inherit
             name
+            mode
             model
             temperature
             permission
@@ -97,6 +99,7 @@ let
         jvf.programs.claudecode.agents.${name} = {
           inherit
             name
+            mode
             model
             temperature
             permission
@@ -208,6 +211,7 @@ let
         headerLines = [
           "name: \"${value.name or "unknown"}\""
           "description: \"${value.description or ""}\""
+          "mode: \"${value.mode or "subagent"}\""
         ]
         ++ lib.optional (allTools != [ ]) "tools:"
         ++ lib.optionals (allTools != [ ]) (
