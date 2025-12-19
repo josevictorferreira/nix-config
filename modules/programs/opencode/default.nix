@@ -121,8 +121,10 @@ in
                 "opencode"
                 "copilot"
                 "github-copilot"
-                "github-copilot-enterprise:"
+                "github-copilot-enterprise"
+                "copilot-enterprise"
                 "github-models"
+                "minimax-cn"
               ];
               tools =
                 (lib.mapAttrs' (name: _: {

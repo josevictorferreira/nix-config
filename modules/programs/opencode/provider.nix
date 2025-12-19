@@ -26,10 +26,10 @@
     };
 
     minimax = {
-      npm = "@ai-sdk/vercel-minimax-ai-provider";
+      npm = "@ai-sdk/anthropic";
       name = "Minimax";
       options = {
-        baseURL = "https://api.minimax.io/anthropic";
+        baseURL = "https://api.minimax.io/anthropic/v1";
         apiKey = "{env:MINIMAX_API_KEY}";
       };
       models = {
