@@ -10,7 +10,6 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Implement a specific phase of a feature, create and run validation tests";
-    agent = "inherit";
     prompt = ''
       <objective>
       Implement "Phase $2" of feature "$1".

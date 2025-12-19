@@ -1,7 +1,8 @@
-{ config
-, lib
-, system
-, ...
+{
+  config,
+  lib,
+  system,
+  ...
 }:
 
 let
@@ -19,13 +20,16 @@ in
 
     allowedTCPPorts = lib.mkOption {
       type = lib.types.listOf lib.types.port;
-      default = [ 8000 ];
+      default = [
+        8000
+        8188
+      ];
       description = "List of allowed TCP ports.";
     };
 
     allowedUDPPorts = lib.mkOption {
       type = lib.types.listOf lib.types.port;
-      default = [ ];
+      default = [ 8188 ];
       description = "List of allowed UDP ports.";
     };
   };

@@ -10,7 +10,7 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Generate an implementation plan acting as the Plan Agent";
-    agent = "inherit";
+    agent = "build";
     prompt = ''
       <objective>
       Act as a "Plan Agent" to create a technical implementation plan for "$ARGUMENTS".

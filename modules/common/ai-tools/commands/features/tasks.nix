@@ -10,7 +10,7 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Create a phased TODO list with testing gates";
-    agent = "inherit";
+    agent = "build";
     prompt = ''
       <objective>
       Convert the implementation plan and product spec for "$ARGUMENTS" into a strictly ordered, phased task list stored in `tasks.md`.
