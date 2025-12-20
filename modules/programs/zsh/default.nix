@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -47,30 +48,26 @@ in
 
             # Load custom themes
             (lib.concatStringsSep "\n" (
-              map
-                (pkg: ''
-                  # Load ${pkg.name}
-                  for script in ${pkg}/*.zsh-theme; do
-                    if [ -f "$script" ]; then
-                      source "$script"
-                    fi
-                  done
-                '')
-                zshPlugins.customThemes
+              map (pkg: ''
+                # Load ${pkg.name}
+                for script in ${pkg}/*.zsh-theme; do
+                  if [ -f "$script" ]; then
+                    source "$script"
+                  fi
+                done
+              '') zshPlugins.customThemes
             ))
 
             # Load custom plugins
             (lib.concatStringsSep "\n" (
-              map
-                (pkg: ''
-                  # Load ${pkg.name}
-                  for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-                    if [ -f "$script" ]; then
-                      source "$script"
-                    fi
-                  done
-                '')
-                zshPlugins.customPkgs
+              map (pkg: ''
+                # Load ${pkg.name}
+                for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+                  if [ -f "$script" ]; then
+                    source "$script"
+                  fi
+                done
+              '') zshPlugins.customPkgs
             ))
 
             # Force ls aliases after OMZ loading
@@ -79,11 +76,9 @@ in
 
           shellInit = lib.concatStringsSep "\n" [
             environment.shellInit
-            (lib.concatMapStringsSep "\n"
-              (key: ''
-                export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-              '')
-              cfg.secrets.keys)
+            (lib.concatMapStringsSep "\n" (key: ''
+              export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+            '') cfg.secrets.keys)
             history.shellInit
             completion.shellInit
             keybindings.shellInit
@@ -124,7 +119,6 @@ in
         environment.shells = [
           pkgs.zsh
         ];
-        users.defaultUserShell = pkgs.zsh;
       })
     ]
   );
