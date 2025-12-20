@@ -8,7 +8,6 @@ let
   agentName = "ruby-developer";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
-    model = "openrouter/moonshotai/kimi-k2-thinking";
     temperature = 0.1;
     tools = [
       "read"
