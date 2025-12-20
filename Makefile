@@ -41,6 +41,9 @@ rebuild: ## Rebuild NixOS configuration.
       (notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  " 2>/dev/null || echo "✅ Rebuild completed"); \
 	fi
 
+rebuildd: ## Rebuild only Nix Darwin config
+	nix build .#darwinConfigurations.macos-macbook.system
+
 clean: ## Clean up the Nix store.
 	nix-collect-garbage -d
 
