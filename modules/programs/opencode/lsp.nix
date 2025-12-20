@@ -109,7 +109,7 @@
     };
 
     dockerls = {
-      command = [ (lib.getExe pkgs.docker-ls) ];
+      command = [ "${pkgs.docker-ls}/bin/docker-ls" ];
       extensions = [
         ".dockerfile"
         "Dockerfile"
