@@ -1,8 +1,10 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  system,
+  ...
 }:
 
 let
@@ -12,13 +14,14 @@ let
     types
     optional
     optionalAttrs
-    optionalString
     concatStringsSep
     generators
     literalExpression
     ;
 
   cfg = config.jvf.programs.git;
+
+  isDarwin = builtins.match ".*-darwin" system != null;
 
   preCommit = ''
     #!${pkgs.bash}/bin/bash
@@ -199,41 +202,38 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.name != null;
-        message = "jvf.programs.git.name must be set when jvf.programs.git.enable = true";
-      }
-      {
-        assertion = cfg.email != null;
-        message = "jvf.programs.git.email must be set when jvf.programs.git.enable = true";
-      }
-    ];
+  config =
+    lib.mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = cfg.name != null;
+          message = "jvf.programs.git.name must be set when jvf.programs.git.enable = true";
+        }
+        {
+          assertion = cfg.email != null;
+          message = "jvf.programs.git.email must be set when jvf.programs.git.enable = true";
+        }
+      ];
 
-    environment.systemPackages = [
-      cfg.package
-      pkgs.yq
-      pkgs.difftastic
-      pkgs.gitleaks
-    ]
-    ++ optional cfg.lfs.enable pkgs.git-lfs;
-
-    programs.git.enable = true;
-    programs.git.lfs.enable = cfg.lfs.enable;
-
-    jvf.wrappers.users.${cfg.username}.programs.git = {
-      packages = [
+      environment.systemPackages = [
         cfg.package
         pkgs.yq
         pkgs.difftastic
         pkgs.gitleaks
       ]
       ++ optional cfg.lfs.enable pkgs.git-lfs;
-      configs = {
-        "config" =
-          generators.toINI { }
-            (
+
+      jvf.wrappers.users.${cfg.username}.programs.git = {
+        packages = [
+          cfg.package
+          pkgs.yq
+          pkgs.difftastic
+          pkgs.gitleaks
+        ]
+        ++ optional cfg.lfs.enable pkgs.git-lfs;
+        configs = {
+          "config" =
+            generators.toINI { } (
               (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
               // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
               // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
@@ -241,13 +241,17 @@ in
               // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
               // cfg.extraConfig
             )
-          + ''
-            [diff]
-              external = ${pkgs.difftastic}/bin/difft
-          '';
-        "ignore" = concatStringsSep "\n" cfg.ignores;
-        "hooks/pre-commit" = builtins.toString preCommit;
+            + ''
+              [diff]
+                external = ${pkgs.difftastic}/bin/difft
+            '';
+          "ignore" = concatStringsSep "\n" cfg.ignores;
+          "hooks/pre-commit" = builtins.toString preCommit;
+        };
       };
+    }
+    // lib.optionalAttrs (!isDarwin) {
+      programs.git.enable = true;
+      programs.git.lfs.enable = cfg.lfs.enable;
     };
-  };
 }
