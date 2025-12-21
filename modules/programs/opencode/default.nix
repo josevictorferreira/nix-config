@@ -119,9 +119,6 @@ in
                 build = {
                   disable = true;
                 };
-                plan = {
-                  disable = true;
-                };
                 explore = {
                   disable = true;
                 };

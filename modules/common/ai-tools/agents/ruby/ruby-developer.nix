@@ -10,19 +10,23 @@ let
   agentDef = inputs.lib.aiTools.mkAgentModule {
     temperature = 0.1;
     tools = [
-      "read"
-      "list"
-      "glob"
-      "grep"
-      "line_view"
-      "find_symbol"
-      "get_symbols_overview"
-      "task"
+      "List"
+      "TodoRead"
+      "TodoWrite"
+      "Grep"
+      "Glob"
+      "Read"
+      "Task"
+      "TaskOutput"
+      "SlashCommand"
+      "EnterPlanMode"
+      "ExitPlanMode"
     ];
     mode = "primary";
     disabledTools = [
       "write"
       "edit"
+      "patch"
       "bash"
       "webfetch"
     ];
