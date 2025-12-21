@@ -25,7 +25,7 @@ let
       1. **Directory Setup**:
           - Analyze the "Existing features" list to find the highest sequential number (e.g., if `001-login` exists, next is `002`).
           - Determine a short "slug" name for the feature based on "$ARGUMENTS" (e.g., `auth-system`).
-          - Define the target path: `.docs/features/XXX-{slug}/research.md`.
+          - Define the target path: `./.docs/features/XXX-{slug}/research.md`.
 
       2. **Conduct Research**:
           - content: Analyze current academic literature, technical documentation, and recent studies regarding "$ARGUMENTS".
@@ -43,7 +43,7 @@ let
 
       <output>
       Files created:
-      - `.docs/features/{number}-{name}/research.md`
+      - `./.docs/features/{number}-{name}/research.md`
       </output>
 
       <success_criteria>

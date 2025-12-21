@@ -17,9 +17,9 @@ let
       </objective>
 
       <context>
-      Feature Documentation: ! `find .docs/features -name "*$1*" -type d`
+      Feature Documentation: ! `find ./.docs/features -name "*$1*" -type d`
       Project Source State: ! `ls -R src/`
-      Current Tasks: ! `find .docs/features -name "*$1*" -exec cat {}/tasks.md \;`
+      Current Tasks: ! `find ./.docs/features -name "*$1*" -exec cat {}/tasks.md \;`
       </context>
 
       <process>
@@ -41,7 +41,7 @@ let
           - **CRITICAL**: DO NOT EVER CHANGE THE EXPECTED BEHAVIOUR OF A FEATURE TO MAKE THE TESTS PASS.
 
       4. **Administrative Update**:
-          - Once tests pass, update `.docs/features/{folder}/tasks.md`.
+          - Once tests pass, update `./.docs/features/{folder}/tasks.md`.
           - Mark the specific tasks and the "Phase Test Gate" as `[x]`.
       </process>
 

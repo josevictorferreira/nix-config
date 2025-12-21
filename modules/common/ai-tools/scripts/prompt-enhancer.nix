@@ -1,8 +1,9 @@
-{ lib
-, config
-, pkgs
-, username
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -229,7 +230,7 @@ let
                     echo -e "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!\n";
                     echo -e "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:\n"
                     echo -e "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed.";
-                    echo -e "- Next, write the plan into an appropriately named new Markdown file in the project's ./plans directory which includes checkboxes in which to mark the completion of each step.";
+                    echo -e "- Next, write the plan into an appropriately named new Markdown file in the project's ./.docs/plans/ directory which includes checkboxes in which to mark the completion of each step.";
                     echo -e "- Proceed to systematically implement the plan that you just wrote in the Markdown file. You MUST check off each step you've completed in the Markdown file immediately as you complete it, you MAY NOT proceed to the next step until you have checked off the current step.";
                     echo -e "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.";
                   });
