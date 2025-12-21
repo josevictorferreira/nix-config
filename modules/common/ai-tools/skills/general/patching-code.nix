@@ -126,7 +126,7 @@ let
     };
     prompt = ''
       # ${skillFullName}
-         
+               
       This skill allows you to patch code files using `relace-apply-3` via OpenRouter. This is significantly more token-efficient than rewriting full files because you only generate the changes.
 
       ## Workflow
@@ -147,7 +147,7 @@ let
           2. If the initial code is ```code \n Block \n code```, and you want to remove Block, you can also specify ```// ... keep existing code ... \n // remove Block \n // ... rest of code ...```.
       - You must use the comment format applicable to the specific code provided to express these truncations.
       - Preserve the indentation and code structure of exactly how you believe the final code will look (do not output lines that will not be in the final code after they are merged).
-      - Be as length efficient as possible without omitting key context.xploring Codebase: Semantic Code Search
+      - Be as length efficient as possible without omitting key context.
 
       **Valid Abbreviation Patterns:**
       - `// ... rest of code ...`
@@ -159,7 +159,35 @@ let
       ```javascript
       // ... keep existing code ...
       // remove BlockName
-      // ... rest of code ... '';
+      // ... rest of code ... 
+      ```
+
+      ## Execution Instructions
+
+      The python script expects the patch parameters via **Standard Input (stdin)** as a JSON object, and the target file path as an argument.
+
+      **Parameters:**
+      1. `--file-path` (Argument): The relative path to the file you are modifying.
+      2. `stdin` (Input): A JSON object containing:
+         - `instruction`: Natural language description of changes.
+         - `edit_snippet`: The sparse code block (must be properly escaped string).
+
+      **Command Protocol:**
+      To avoid shell escaping issues with code snippets, you **must** use a HEREDOC pattern to write the JSON to a temporary file first, then pipe it to the script.
+
+      ```bash
+      # 1. Construct the Payload (Ensure strict JSON formatting)
+      cat <<EOF > /tmp/patch_payload.json
+      {
+        "instruction": "Your instruction here",
+        "edit_snippet": "Your sparse code here with \\n for newlines"
+      }
+      EOF
+
+      # 2. Run the Script
+      python3 scripts/patch.py --file-path "src/target_file.py" < /tmp/patch_payload.json
+      ```
+    '';
   };
 in
 {

@@ -18,6 +18,7 @@ let
       name,
       description ? "",
       prompt ? "",
+      model ? "",
       tags ? [ ],
       allowed-tools ? [ ],
       references ? { },
@@ -28,6 +29,7 @@ let
         inherit
           name
           description
+          model
           prompt
           tags
           references
@@ -276,14 +278,13 @@ let
           "allowed-tools:\n" + lib.concatMapStringsSep "\n" (tool: "  - ${tool}*") skill.allowed-tools
         else
           "";
-      yamlHeader = ''
-        ---
-        name: ${skillName}
-        description: ${skill.description or ""}
-        ${lib.optionalString (skill ? license) "license: ${skill.license}"}
-        ${allowedToolsYaml}
-        ---
-      '';
+      headerLines = [
+        "name: \"${skillName}\""
+        "description: \"${skill.description or ""}\""
+      ]
+      ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
+      ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml;
+      yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
     in
     yamlHeader + "\n" + (skill.prompt or "");
 
