@@ -115,6 +115,20 @@ in
           "opencode.json" = (
             cfg.settings
             // {
+              agent = {
+                build = {
+                  disable = true;
+                };
+                plan = {
+                  disable = true;
+                };
+                explore = {
+                  disable = true;
+                };
+                general = {
+                  disable = true;
+                };
+              };
               theme = "one-dark";
               mcp = cfg.mcps;
               disabled_providers = [
