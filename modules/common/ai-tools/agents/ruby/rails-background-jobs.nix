@@ -12,6 +12,7 @@ let
   skillOptions = {
     name = skillName;
     description = "Specialized skill for Rails background jobs with Solid Queue. Use when creating jobs, scheduling tasks, implementing recurring jobs, testing jobs, or monitoring job queues. Includes best practices for reliable background processing.";
+    model = "openrouter/moonshotai/kimi-k2-thinking";
     allowed-tools = [
       "Read"
       "Write"

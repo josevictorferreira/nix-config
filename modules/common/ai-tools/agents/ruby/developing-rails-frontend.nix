@@ -12,6 +12,7 @@ let
   skillOptions = {
     name = skillName;
     mode = "subagent";
+    model = "openrouter/z-ai/glm-4.6:exacto";
     description = "Rails frontend development guidelines using Hotwire (Turbo + Stimulus), Tailwind CSS, and ViewComponent. Modern patterns for server-rendered HTML with progressive enhancement, zero-build frontend architecture, and Rails conventions. Use when creating views, components, Stimulus controllers, partials, or working with frontend code.";
     allowed-tools = [
       "Read"

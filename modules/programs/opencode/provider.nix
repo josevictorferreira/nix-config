@@ -8,19 +8,8 @@
         baseURL = "http://10.10.10.10:1234/v1";
       };
       models = {
-        "apriel-nemotron-15b-thinker" = {
-          name = "Apriel Nemotron 15b Thinker";
-        };
-        "qwen3-coder-30b-a3b-instruct" = {
-          name = "Qwen3 Coder 30b a3b Instruct";
-        };
-        "openai/gpt-oss-20b" = {
-          name = "GPT OSS 20b";
-          options = {
-            reasoningEffort = "high";
-            textVerbosity = "low";
-            reasoningSummary = "auto";
-          };
+        "nvidia_orchestrator-8b" = {
+          name = "NVIDIA Orchestrator 8B";
         };
       };
     };

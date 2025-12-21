@@ -48,7 +48,8 @@ let
 
       | Agent | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
-      | **@exploring-codebase** | **Codebase Search**<br>Finds file paths and context for other agents. | "find file", "where is", "search", "locate controller" |
+      | **@explorer** | **Codebase Search**<br>Finds file paths and context for other agents. | "find file", "where is", "search", "locate controller" |
+      | **@code-patcher** | **Codebase File Patch**<br>Apply patches(edit) semantically in files of the codebase. | "patch file", "update tasks", "update file" |
       | **@developing-rails-frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
       | **@managing-rails-events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |

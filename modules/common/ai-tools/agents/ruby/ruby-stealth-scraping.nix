@@ -13,6 +13,7 @@ let
     name = skillName;
     description = "Specialist in stealthy web scraping with Ruby using Ferrum headless browser. Use when building scrapers that need to evade bot detection, bypass anti-scraping measures, or when working with Cloudflare-protected sites. Triggers include requests for web scraping, data extraction, headless browsing, bot evasion, proxy rotation, user-agent rotation, or Ferrum configuration in Ruby/Rails projects.";
     mode = "subagent";
+    model = "openrouter/anthropic/claude-haiku-4.5";
     allowed-tools = [
       "Read"
       "Write"

@@ -12,6 +12,7 @@ let
   skillOptions = {
     name = skillName;
     description = "This skill should be used when writing, reviewing, or improving RSpec tests for Ruby on Rails applications. Use this skill for all testing tasks including model specs, controller specs, system specs, component specs, service specs, and integration tests. The skill provides comprehensive RSpec best practices from Better Specs and thoughtbot guides.";
+    model = "minimax/MiniMax-M2";
     allowed-tools = [
       "Read"
       "Write"
