@@ -13,7 +13,7 @@ let
     prompt = ''
       <objective>
       Act as a "Plan Agent" to create a technical implementation plan for "$ARGUMENTS".
-      This plan dictates *how* the feature will be built based on available research and specs.
+      This plan dictates *how* the feature will be built based on available research(if exists) and specs.
       </objective>
 
       <context>
@@ -23,10 +23,10 @@ let
       <process>
       1. **Locate Context**:
           - Identify the correct directory within `.docs/features/` that matches "$ARGUMENTS".
-          - Read `research.md` and `spec.md` in that directory if they exist.
+          - Read `research.md`(if exists) and `spec.md` in that directory if they exist.
 
       2. **Develop Plan**:
-          - Analyze the requirements and research.
+          - Analyze the requirements and research(if exists).
           - Break down the architecture and logic flow.
           - detailed step-by-step implementation strategy.
 
