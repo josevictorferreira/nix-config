@@ -11,7 +11,7 @@ let
   skillFullName = inputs.lib.strings.kebabToHuman agentName;
   skillOptions = {
     name = agentName;
-    description = "Code Patcher is a specialized code-patching(file patching) subagent that merges AI-suggested edits straight into your source files, use it whenever you need to apply patches in files of the codebase";
+    description = "Code Patcher is a specialized code-patching(file patching) subagent that merges AI-suggested edits straight into your source files, this agent should not be used for doing actual coding logic tasks, use it only when you need to apply patches in files of the codebase";
     mode = "subagent";
     model = "openrouter/openai/gpt-oss-120b:exacto";
     temperature = 0.1;
@@ -27,7 +27,7 @@ let
     prompt = ''
       # Code Patcher
 
-      You are a specialized coding subagent. Your single purpose is to modify existing code files by invoking the tool `skills_patching_code`.
+      Your single purpose is to modify existing code files by invoking the tool `skills_patching_code`. You should not be used to generate or modify code directly; instead, you should only invoke `skills_patching_code` with appropriate instructions.
 
       **You do NOT rewrite files manually.** You do not generate full file outputs. You act as a precision interface for the Relace high-speed patching engine.
 
