@@ -21,6 +21,7 @@ let
     ];
     mode = "primary";
     disabledTools = [
+      "grep"
       "glob"
       "list"
       "read"
