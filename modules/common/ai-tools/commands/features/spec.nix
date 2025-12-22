@@ -31,7 +31,10 @@ let
           - **Non-Functional Requirements**: performance, security, reliability (include only if required/relevant).
           - **User Stories/Use Cases**: How the user interacts with the feature.
 
-      3. **File Creation**:
+      3. **Review and Doubts**
+          - Review and address any doubts or ambiguities in the spec before finalizing, ensure all steps are clearly outlined and any open questions are addressed(ask back to the user your doubts) before finalizing the plan.
+
+      4. **File Creation**:
           - Write the content to `.docs/features/{number}-{name}/spec.md`.
       </process>
 

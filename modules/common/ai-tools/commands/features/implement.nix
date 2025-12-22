@@ -25,7 +25,7 @@ let
       <process>
       1. **Pre-Implementation Review**:
           - Locate the feature folder for "$1".
-          - Read `research.md`, `spec.md`, `plan.md`, and `tasks.md`.
+          - Read `spec.md`, `plan.md`, and `tasks.md`.
           - Verify that the *previous* phase is complete (checked off in `tasks.md`). If not, STOP and warn the user.
 
       2. **Implementation (Phase $2)**:

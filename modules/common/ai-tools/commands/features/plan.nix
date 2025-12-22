@@ -30,7 +30,10 @@ let
           - Break down the architecture and logic flow.
           - detailed step-by-step implementation strategy.
 
-      3. **Output**:
+      3. **Review and Doubts**
+          - Review and address any doubts or ambiguities in the plan before finalizing, ensure all steps are clearly outlined and any open questions are addressed(ask back to the user your doubts) before finalizing the plan.
+
+      4. **Output**:
           - Write the content to `.docs/features/{matched-folder}/plan.md`.
       </process>
 
