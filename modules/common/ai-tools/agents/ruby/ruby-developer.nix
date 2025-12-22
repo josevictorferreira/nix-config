@@ -58,7 +58,7 @@ let
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
       | **@rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
       | **@ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
-      | **@code-patcher** | **Markdown File Patch**<br>Apply patches(edit) semantically in documentation files of the codebase. **IMPORTANT** NEVER USE THIS AGENT WHEN WRITING ACTUAL CODE, USE ONLY IN MARKDOWN | "patch file", "create tasks", "update tasks", "update file" |
+      | **@code-patcher** | **Markdown File Patch**<br>Apply edit patches semantically in documentation files of the codebase. **IMPORTANT** NEVER USE THIS AGENT WHEN WRITING ACTUAL CODE, USE ONLY IN MARKDOWN | "patch file", "create tasks", "update tasks", "update file" |
 
       ## Routing Logic (Priority Order)
 
@@ -102,6 +102,7 @@ let
       4.  **Prompt Engineering**: When calling a skill tool, be specific.
           *   *Bad*: `prompt="make the frontend"`
           *   *Good*: `prompt="Create a ViewComponent for the UserProfile using Tailwind. Ensure it connects to the 'profile_controller' Stimulus controller found in app/javascript/controllers."`
+      5. **Never Use Code Patching Tool to Fix bugs directly; instead, delegate to the appropriate skill.**
 
       ## Response Format
 
