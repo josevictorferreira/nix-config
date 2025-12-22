@@ -53,12 +53,12 @@ let
       | Agent | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
       | **@explorer** | **Codebase Search**<br>Finds file paths and context for other agents. | "find file", "where is", "search", "locate controller" |
-      | **@code-patcher** | **Codebase File Patch**<br>Apply patches(edit) semantically in files of the codebase. | "patch file", "update tasks", "update file" |
       | **@developing-rails-frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
       | **@managing-rails-events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
       | **@rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
       | **@ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
+      | **@code-patcher** | **Markdown File Patch**<br>Apply patches(edit) semantically in documentation files of the codebase. **IMPORTANT** NEVER USE THIS AGENT WHEN WRITING ACTUAL CODE, USE ONLY IN MARKDOWN | "patch file", "create tasks", "update tasks", "update file" |
 
       ## Routing Logic (Priority Order)
 

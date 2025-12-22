@@ -13,7 +13,8 @@ let
     name = agentName;
     description = "Code Patcher is a specialized code-patching(file patching) subagent that merges AI-suggested edits straight into your source files, use it whenever you need to apply patches in files of the codebase";
     mode = "subagent";
-    model = "openai/gpt-oss-120b:exacto";
+    model = "openrouter/openai/gpt-oss-120b:exacto";
+    temperature = 0.1;
     allowed-tools = [
       "Read"
       "Bash"
