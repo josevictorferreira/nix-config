@@ -10,7 +10,6 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Create a Product Requirement Document (PRD) for a feature";
-    agent = "build";
     prompt = ''
       <objective>
       Create a Product Definition Specification for "$ARGUMENTS".

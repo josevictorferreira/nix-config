@@ -10,7 +10,6 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Research best practices and elegant solutions for a feature topic";
-    agent = "build";
     prompt = ''
       <objective>
       Research the topic "$ARGUMENTS" to identify best practices and the most elegant implementation strategies.

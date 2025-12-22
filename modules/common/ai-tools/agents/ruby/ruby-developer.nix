@@ -8,14 +8,11 @@ let
   agentName = "ruby-developer";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentDef = inputs.lib.aiTools.mkAgentModule {
-    temperature = 0.1;
+    name = agentName;
+    description = "Senior Rails Architect that routes tasks to specialized skillls (Frontend, Events, Jobs, Testing, Scraping)";
     tools = [
-      "List"
       "TodoRead"
       "TodoWrite"
-      "Grep"
-      "Glob"
-      "Read"
       "Task"
       "TaskOutput"
       "SlashCommand"
@@ -24,12 +21,16 @@ let
     ];
     mode = "primary";
     disabledTools = [
+      "glob"
+      "list"
+      "read"
       "write"
       "edit"
       "patch"
       "bash"
       "webfetch"
     ];
+    tags = [ "explorer" ];
     permission = {
       edit = "deny";
       bash = {
@@ -37,10 +38,7 @@ let
       };
       webfetch = "deny";
     };
-    name = agentName;
-    description = "Senior Rails Architect that routes tasks to specialized skillls (Frontend, Events, Jobs, Testing, Scraping)";
-    tags = [
-    ];
+    temperature = 0.1;
     prompt = ''
       # The Rails Developer (Orchestrator)
 
