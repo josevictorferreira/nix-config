@@ -5,7 +5,7 @@
     ./general/auditing-security.nix
     ./general/creating-skills.nix
     ./general/exploring-codebase.nix
-    ./general/patching-code.nix
+    ./general/patching-files.nix
     ./container/developing-containers.nix
     ./nix/creating-nix-modules.nix
     ./nix/managing-flakes.nix

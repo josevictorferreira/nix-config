@@ -5,7 +5,7 @@
   ...
 }:
 let
-  skillName = "patching-code";
+  skillName = "patching-files";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {

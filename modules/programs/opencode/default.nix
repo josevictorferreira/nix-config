@@ -117,10 +117,10 @@ in
             // {
               agent = {
                 build = {
-                  disable = true;
+                  disable = false;
                 };
                 explore = {
-                  disable = true;
+                  disable = false;
                 };
                 general = {
                   disable = true;

@@ -215,6 +215,10 @@ let
           "description: \"${value.description or ""}\""
           "mode: \"${value.mode or "subagent"}\""
         ]
+        ++ lib.optional (builtins.hasAttr "permission" value && value.permission != { }) "permission:"
+        ++ lib.optionals (builtins.hasAttr "permission" value && value.permission != { }) (
+  lib.mapAttrsToList (skill: perm: "  ${skill}: \"${perm}\"") value.permission
+)
         ++ lib.optional (allTools != [ ]) "tools:"
         ++ lib.optionals (allTools != [ ]) (
           (map (tool: "  ${lib.toLower tool}*: true") allTools)
