@@ -14,10 +14,6 @@ let
     description = "Semantic codebase navigation and search. Use when the user asks to find code, understand feature implementation, locate logic patterns, or map code relationships. This skill leverages the 'ck' engine to perform semantic, regex, and hybrid searches.";
     model = "openrouter/openai/gpt-oss-120b:exacto";
     mode = "subagent";
-    allowed-tools = [
-      "Read"
-      "Bash"
-    ];
     tags = [
       "explorer"
     ];
@@ -25,6 +21,9 @@ let
       # Exploring Codebase: Semantic Code Search
 
       This skill operates the `ck` search engine to find code by **meaning**, not just keywords.
+
+      **IMPORTANT** Never focus on resolving the logic of the problem, just focus on retrieving the most relevant code snippets in the context of what was asked.
+      **IMPORTANT** Output only the real file content that was found, never change the output of a file or summarize it.
 
       ## Workflow Strategy
 
