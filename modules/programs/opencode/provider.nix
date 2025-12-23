@@ -25,6 +25,9 @@
         "MiniMax-M2" = {
           name = "Minimax M2";
         };
+        "MiniMax-M2.1" = {
+          name = "Minimax M2.1";
+        };
       };
     };
 

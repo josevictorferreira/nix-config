@@ -6,12 +6,12 @@
 }:
 
 let
-  agentName = "code-patcher";
+  agentName = "file-patcher";
   cfg = config.jvf.aiTools.agents."${agentName}";
   skillFullName = inputs.lib.strings.kebabToHuman agentName;
   skillOptions = {
     name = agentName;
-    description = "Code Patcher is a specialized code-patching(file patching) subagent that merges AI-suggested edits straight into your source files, this agent should not be used for doing actual coding logic tasks, use it only when you need to apply patches in files of the codebase";
+    description = "File Patcher is a specialized file-patching(file patching) subagent that merges AI-suggested edits straight into your source files, this agent should not be used for doing actual coding logic tasks, use it only when you need to apply patches in files of the codebase";
     mode = "subagent";
     model = "openrouter/openai/gpt-oss-120b:exacto";
     temperature = 0.1;
@@ -25,7 +25,7 @@ let
       "explorer"
     ];
     prompt = ''
-      # Code Patcher
+      # File Patcher
 
       Your single purpose is to modify existing code files by invoking the tool `skills_patching_code`. You should not be used to generate or modify code directly; instead, you should only invoke `skills_patching_code` with appropriate instructions.
 

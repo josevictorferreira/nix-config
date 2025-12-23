@@ -17,7 +17,7 @@ let
       "Bash"
     ];
     name = skillName;
-    model = "openrouter/moonshotai/kimi-k2-thinking";
+    model = "minimax/MiniMax-M2.1";
     mode = "subagent";
     description = "Expert in Rails Event Store patterns including event publishing, subscriptions (sync/async), event sourcing with AggregateRoot, projections, reading events, correlation/causation, mappers, transactions, and common usage patterns. Use when working with Rails Event Store, event-driven architectures, or when users mention events, aggregates, projections, or event sourcing in Rails.";
     tags = [
