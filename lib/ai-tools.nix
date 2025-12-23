@@ -55,6 +55,18 @@ let
       };
     };
 
+  formatPermissions = perms: indent:
+    let
+      formatValue = key: value:
+        if builtins.isString value then
+          "${indent}${key}: \"${value}\""
+        else if builtins.isAttrs value then
+          "${indent}${key}:\n${formatPermissions value "${indent}  "}"
+        else
+          "";
+    in
+    lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue perms);
+
   mkAgentModule =
     {
       name,
@@ -217,8 +229,15 @@ let
         ]
         ++ lib.optional (builtins.hasAttr "permission" value && value.permission != { }) "permission:"
         ++ lib.optionals (builtins.hasAttr "permission" value && value.permission != { }) (
-  lib.mapAttrsToList (skill: perm: "  ${skill}: \"${perm}\"") value.permission
-)
+          lib.mapAttrsToList (key: perm: 
+            if builtins.isString perm then
+              "  ${key}: \"${perm}\""
+            else if builtins.isAttrs perm then
+              "  ${key}:\n${formatPermissions perm "    "}"
+            else
+              ""
+          ) value.permission
+        )
         ++ lib.optional (allTools != [ ]) "tools:"
         ++ lib.optionals (allTools != [ ]) (
           (map (tool: "  ${lib.toLower tool}*: true") allTools)
