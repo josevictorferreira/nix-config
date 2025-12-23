@@ -293,14 +293,14 @@ let
     let
       # Main SKILL.md file
       skillMd = {
-        "skills/${skillName}/SKILL.md" = toSkillMarkdown skillName skill;
+        "skill/${skillName}/SKILL.md" = toSkillMarkdown skillName skill;
       };
 
       # Reference files
       references =
         if skill ? references && skill.references != { } then
           lib.mapAttrs' (refName: refContent: {
-            name = "skills/${skillName}/references/${refName}.md";
+            name = "skill/${skillName}/references/${refName}.md";
             value = refContent;
           }) skill.references
         else
@@ -310,7 +310,7 @@ let
       scripts =
         if skill ? scripts && skill.scripts != { } then
           lib.mapAttrs' (scriptName: scriptContent: {
-            name = "skills/${skillName}/scripts/${scriptName}";
+            name = "skill/${skillName}/scripts/${scriptName}";
             value = scriptContent;
           }) skill.scripts
         else
