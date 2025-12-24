@@ -59,9 +59,9 @@ let
     let
       formatValue = key: value:
         if builtins.isString value then
-          "${indent}${key}: \"${value}\""
+          "${indent}\"${key}\": \"${value}\""
         else if builtins.isAttrs value then
-          "${indent}${key}:\n${formatPermissions value "${indent}  "}"
+          "${indent}\"${key}\":\n${formatPermissions value "${indent}  "}"
         else
           "";
     in
@@ -231,9 +231,9 @@ let
         ++ lib.optionals (builtins.hasAttr "permission" value && value.permission != { }) (
           lib.mapAttrsToList (key: perm: 
             if builtins.isString perm then
-              "  ${key}: \"${perm}\""
+              "  \"${key}\": \"${perm}\""
             else if builtins.isAttrs perm then
-              "  ${key}:\n${formatPermissions perm "    "}"
+              "  \"${key}\":\n${formatPermissions perm "    "}"
             else
               ""
           ) value.permission
