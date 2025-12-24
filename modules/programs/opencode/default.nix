@@ -115,22 +115,22 @@ in
           "oh-my-opencode.json" = {
             agents = {
               Sisyphus = {
-                model = "opencode/big-pickle";
+                model = "openrouter/z-ai/glm-4.7";
               };
               librarian = {
-                model = "opencode/big-pickle";
+                model = "openrouter/x-ai/grok-code-fast-1";
               };
               oracle = {
-                model = "opencode/big-pickle";
+                model = "openrouter/moonshotai/kimi-k2-thinking";
               };
               frontend-ui-ux-engineer = {
-                model = "opencode/big-pickle";
+                model = "minimax/Minimax-M2.1";
               };
               document-writer = {
-                model = "opencode/big-pickle";
+                model = "openrouter/openai/gpt-oss-120b:exacto";
               };
               multimodal-looker = {
-                model = "opencode/big-pickle";
+                model = "openrouter/openai/gpt-oss-120b:exacto";
               };
             };
           };
