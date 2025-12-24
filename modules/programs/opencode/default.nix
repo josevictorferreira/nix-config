@@ -115,7 +115,7 @@ in
           "oh-my-opencode.json" = {
             agents = {
               Sisyphus = {
-                model = "openrouter/z-ai/glm-4.7";
+                model = "openrouter/z-ai/glm-4.6:exacto";
               };
               librarian = {
                 model = "openrouter/x-ai/grok-code-fast-1";
