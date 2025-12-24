@@ -10,6 +10,8 @@
     distro-grub-themes.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    bun2nix.url = "github:nix-community/bun2nix";
+    bun2nix.inputs.nixpkgs.follows = "nixpkgs";
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -45,7 +47,7 @@
           (if builtins.match ".*-darwin" systemArc != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
           {
             system = systemArc;
-            overlays = [ ];
+            overlays = [ inputs.bun2nix.overlays.default ];
             config = {
               allowUnfree = true;
             };

@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, username
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -40,6 +41,7 @@ in
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.goose-cli
+      pkgs.gemini-cli
     ];
   };
 }

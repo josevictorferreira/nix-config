@@ -103,6 +103,7 @@ in
   config = lib.mkIf cfg.enable {
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
+        pkgs.bun
       ]
       ++ lib.optional isDarwin pkgs.opencode
       ++ lib.optional (!isDarwin) shellScriptBin;
@@ -111,7 +112,28 @@ in
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
-          # "AGENTS.md" = cfg.baseRules;
+          "oh-my-opencode.json" = {
+            agents = {
+              Sisyphus = {
+                model = "opencode/big-pickle";
+              };
+              librarian = {
+                model = "opencode/big-pickle";
+              };
+              oracle = {
+                model = "opencode/big-pickle";
+              };
+              frontend-ui-ux-engineer = {
+                model = "opencode/big-pickle";
+              };
+              document-writer = {
+                model = "opencode/big-pickle";
+              };
+              multimodal-looker = {
+                model = "opencode/big-pickle";
+              };
+            };
+          };
           "opencode.json" = (
             cfg.settings
             // {
