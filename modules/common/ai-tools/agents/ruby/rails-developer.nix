@@ -24,6 +24,7 @@ let
       "glob"
       "list"
       "read"
+      "task"
       "write"
       "edit"
       "patch"

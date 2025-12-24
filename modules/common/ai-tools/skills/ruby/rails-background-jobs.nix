@@ -22,6 +22,7 @@ let
       "explorer"
       "documentation"
     ];
+    model = "openrouter/z-ai/glm-4.7";
     references = {
       "background_jobs" = ''
         # Background Jobs Reference

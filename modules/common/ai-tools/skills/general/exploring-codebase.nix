@@ -16,6 +16,7 @@ let
       "Read"
       "Bash"
     ];
+    model = "openai/gpt-oss-120b:exacto";
     tags = [
       "explorer"
     ];

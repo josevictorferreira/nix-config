@@ -24,6 +24,7 @@ let
       "documentation"
       "browser"
     ];
+    model = "openrouter/z-ai/glm-4.7";
     references = {
       complete_examples = ''
         # Complete Examples

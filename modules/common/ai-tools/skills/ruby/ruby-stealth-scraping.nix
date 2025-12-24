@@ -1,7 +1,8 @@
-{ config
-, lib
-, inputs
-, ...
+{
+  config,
+  lib,
+  inputs,
+  ...
 }:
 
 let
@@ -22,6 +23,7 @@ let
       "documentation"
       "browser"
     ];
+    model = "openrouter/z-ai/glm-4.7";
     references = {
       "bandwidth-optimization" = ''
         # Bandwidth Optimization
