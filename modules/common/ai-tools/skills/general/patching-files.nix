@@ -14,7 +14,7 @@ let
       "Bash"
     ];
     name = skillName;
-    model = "openai/gpt-oss-120b:exacto";
+    model = "openrouter/openai/gpt-oss-120b:exacto";
     description = "High-speed code patching tool. Use this skill when you need to apply edits to files without rewriting the entire file context, or when specifically asked to use Relace/Instant Apply. It uses a specialized model to merge sparse edits into source code at high speed.";
     tags = [
     ];

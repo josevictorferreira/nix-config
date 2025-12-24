@@ -87,7 +87,7 @@ in
               "deepseek/deepseek-v3.2-exp" # $0.27, $0.40
               "moonshotai/kimi-k2-thinking" # $0.60, $2.50
               "google/gemini-3-pro-preview"
-              "openai/gpt-5.1-codex-max"
+              "z-ai/glm-4.7"
             ];
             transformer = {
               use = [ "openrouter" ];
@@ -95,10 +95,10 @@ in
           }
         ];
         Router = {
-          default = "openrouter,openai/gpt-5.1-codex-max";
+          default = "openrouter,z-ai/glm-4.7";
           background = "openrouter,openai/gpt-oss-120b:exacto";
           think = "openrouter,moonshotai/kimi-k2-thinking";
-          longContext = "openrouter,openai/gpt-5.1-codex-max";
+          longContext = "openrouter,z-ai/glm-4.7";
           webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
           image = "openrouter,google/gemini-2.5-flash-image";
           longContextThreshold = 250000;

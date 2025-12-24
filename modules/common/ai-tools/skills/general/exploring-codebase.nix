@@ -16,15 +16,14 @@ let
       "Read"
       "Bash"
     ];
-    model = "openai/gpt-oss-120b:exacto";
+    model = "openrouter/openai/gpt-oss-120b:exacto";
     tags = [
       "explorer"
     ];
     references = {
       "cli_guide" = ''
-        # ck CLI Command Reference
 
-        Use these patterns when the user asks how to run commands in their terminal.
+        Use the ck search tools to find files.
 
         ## Core Search Commands
 
@@ -33,11 +32,6 @@ let
         | **Semantic** | `--sem` | `ck --sem "error handling" src/` |
         | **Regex** | `-n` / `-R` | `ck -n "TODO" *.rs` |
         | **Hybrid** | `--hybrid` | `ck --hybrid "connection timeout" src/` |
-
-        ## Output Formats
-        For integration with other tools (like LLMs or scripts), recommend JSONL:
-        ```bash
-        ck --jsonl --sem "query" src/
       '';
     };
 
@@ -45,6 +39,8 @@ let
       # Exploring Codebase: Semantic Code Search
 
       This skill operates the `ck` search engine to find code by **meaning**, not just keywords.
+
+      **IMPORTANT** Return the file outputs to the user, never worry about logic or implementing something.
 
       ## Workflow Strategy
 

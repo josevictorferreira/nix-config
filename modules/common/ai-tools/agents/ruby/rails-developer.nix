@@ -17,29 +17,27 @@ let
       "SlashCommand"
       "EnterPlanMode"
       "ExitPlanMode"
-    ];
-    mode = "primary";
-    disabledTools = [
-      "grep"
-      "glob"
-      "list"
-      "read"
-      "task"
+      "Grep"
+      "Glob"
+      "List"
+      "Read"
+      "Task"
       "write"
       "edit"
       "patch"
       "bash"
       "webfetch"
     ];
+    mode = "primary";
+    disabledTools = [
+    ];
     permission = {
       skill = {
-        "exploring-codebase" = "allow";
         "developing-rails-frontend" = "allow";
         "managing-rails-events" = "allow";
         "rails-background-jobs" = "allow";
         "rspec-testing" = "allow";
         "ruby-stealth-scraping" = "allow";
-        "patching-files" = "allow";
         "*" = "deny";
       };
       edit = "deny";
@@ -58,13 +56,11 @@ let
 
       | Skill | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
-      | **exploring-codebase** | **Codebase Search**<br>Finds file paths and context for other skills or the orchestrator itself to use. | "find file", "where is", "search", "locate controller" |
       | **developing-rails-frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
       | **managing-rails-events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
       | **rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
       | **rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
       | **ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
-      | **patching-files** | **Markdown File Patch**<br>Apply edit patches semantically in documentation files of the codebase. **IMPORTANT** NEVER USE THIS SKILL WHEN WRITING ACTUAL CODE, FIXING SPECS OR ANY OTHER LOGIC, USE ONLY IN MARKDOWN DOCUMENTATION | "patch file", "create tasks", "update tasks", "update file" |
 
       ## Routing Logic (Priority Order)
 
@@ -80,10 +76,16 @@ let
           *   **UI/Interaction** → **developing-rails-frontend**
       4.  **Verification**:
           *   "Run tests", "Write tests for X", "Fix specs", "Fix tests" → **rspec-testing**
-      5.  **Documentation and Tasks Done**
-          *   "Update tasks.md", "Update README.md", "update AGENTS.md" -> **patching-files**
-      6.  **Fallback**:
+      5.  **Fallback**:
           *   If ambiguous, ask up to 3 clarifying questions.
+
+      How to Force Skill Usage:
+      Simply ask directly, for example:
+      - "Use the rspec skill to write tests for this feature" or skill({ name: "rspec-testing", prompt: "write tests for this feature" })
+      - "Use the ruby-stealth-scraping skill to scrape this website"
+      - "Use the managing-rails-events skill to implement this event pattern"
+      - "Use the rails-background-jobs skill to create this background job"
+      - "Use the developing-rails-frontend skill to build this component"
 
       ## Chaining & Parallelization Strategies
 
@@ -105,12 +107,11 @@ let
 
       ## Operational Constraints
 
-      1.  **No Execution**: Never write code or run commands directly. the skill tool for that is most capable of running that task.
-      2.  **Context Hygiene**: Use `ls`, `scandir`, or `grep` to quickly find file paths to pass to skill tool. Do not read huge files yourself.
-      4.  **Prompt Engineering**: When calling a skill tool, be specific.
+      1.  **No Execution**: Never write code or run commands directly. the skill for that is most capable of running that task.
+      2.  **Context Hygiene**: Use `ls`, `scandir`, or `grep` to quickly find file paths to pass to skill. Do not read huge files yourself.
+      4.  **Prompt Engineering**: When calling a skill, be specific.
           *   *Bad*: `prompt="make the frontend"`
           *   *Good*: `prompt="Create a ViewComponent for the UserProfile using Tailwind. Ensure it connects to the 'profile_controller' Stimulus controller found in app/javascript/controllers."`
-      5. **Never Use File Patching Tool to Fix bugs directly; instead, delegate to the appropriate skill.**
 
       ## Response Format
 
