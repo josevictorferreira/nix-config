@@ -130,7 +130,7 @@ in
                 model = "openrouter/openai/gpt-oss-120b:exacto";
               };
               multimodal-looker = {
-                model = "openrouter/openai/gpt-oss-120b:exacto";
+                model = "openrouter/google/gemini-3-flash-preview";
               };
             };
           };
