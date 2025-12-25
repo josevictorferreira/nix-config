@@ -16,7 +16,7 @@ in
     ../programs/opencode
     ../programs/claudecode.nix
     ../programs/droid.nix
-    ../programs/mistral-vibe.nix
+    # ../programs/mistral-vibe.nix
   ];
 
   options.jvf.roles.aiDevelopment = {
@@ -38,7 +38,7 @@ in
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
     jvf.programs.droid.enable = true;
-    jvf.programs.mistral-vibe.enable = true;
+    # jvf.programs.mistral-vibe.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor

@@ -68,11 +68,9 @@ let
     ];
 
     dependencies = with python.pkgs; [
-      agent-client-protocol
       aiofiles
       httpx
       mcp
-      mistralai
       packaging
       pexpect
       pydantic
@@ -88,8 +86,6 @@ let
     ];
 
     pythonRelaxDeps = [
-      "agent-client-protocol"
-      "mistralai"
       "pydantic"
       "pydantic-settings"
       "watchfiles"
