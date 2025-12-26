@@ -7,7 +7,7 @@
 let
   agentName = "rails-developer";
   cfg = config.jvf.aiTools.agents."${agentName}";
-  agentDef = inputs.lib.aiTools.mkSubagentModule {
+  agentDef = inputs.lib.aiTools.mkAgentModule {
     name = agentName;
     description = "Senior Rails Architect that routes tasks to specialized Subagentls (Frontend, Events, Jobs, Testing, Scraping)";
     tools = [
