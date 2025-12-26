@@ -7,5 +7,11 @@
     ./general/code-reviewer.nix
     ./general/documentation-writer.nix
     ./ruby/rails-developer.nix
+    ./ruby/developing-rails-frontend.nix
+    ./ruby/managing-rails-events.nix
+    ./ruby/rails-background-jobs.nix
+    ./ruby/rails-developer.nix
+    ./ruby/rspec-testing.nix
+    ./ruby/ruby-stealth-scraping.nix
   ];
 }
