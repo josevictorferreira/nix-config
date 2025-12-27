@@ -6,9 +6,10 @@
 }:
 
 let
-  agentName = "developing-rails-frontend";
+  agentName = "rails-hotwire";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
+  allReferencesText = lib.concatStringsSep "\n\n" (lib.attrValues agentOptions.references);
   agentOptions = {
     name = agentName;
     description = "Rails frontend development guidelines using Hotwire (Turbo + Stimulus), Tailwind CSS, and ViewComponent. Modern patterns for server-rendered HTML with progressive enhancement, zero-build frontend architecture, and Rails conventions. Use when creating views, components, Stimulus controllers, partials, or working with frontend code.";
@@ -1558,7 +1559,7 @@ let
 
       Comprehensive guide for modern Rails frontend development using Hotwire (Turbo + Stimulus), Tailwind CSS, and server-side rendering. Emphasizes progressive enhancement, minimal JavaScript, and Rails conventions.
 
-      ## When to Use This agent
+      ## When to Use This Skill
 
       - Creating new views or partials
       - Building Stimulus controllers
@@ -1698,17 +1699,20 @@ let
       ## Related agents
 
       - **rails-backend-guidelines**: Backend patterns for controllers and models
-      - **agent-developer**: For creating new agents
+      - **skill-developer**: For creating new agents
 
       ---
 
-      **agent Status**: Adapted for Rails 7+, Hotwire (Turbo + Stimulus), and Tailwind CSS
-    '';
+      **Skill Status**: Adapted for Rails 7+, Hotwire (Turbo + Stimulus), and Tailwind CSS
+
+      ---
+    ''
+    + allReferencesText;
   };
 in
 {
   options.jvf.aiTools.agents."${agentName}" = {
-    enable = (lib.mkEnableOption "Enable the ${agentFullName} agent") // {
+    enable = (lib.mkEnableOption "Enable the ${agentFullName} skill") // {
       default = true;
     };
   };

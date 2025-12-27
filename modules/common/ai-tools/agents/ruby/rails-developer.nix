@@ -47,8 +47,8 @@ let
 
       | Subagent | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
-      | **@developing-rails-frontend** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
-      | **@managing-rails-events** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
+      | **@rails-hotwire** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
+      | **@rails-event-store** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
       | **@rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
       | **@ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
@@ -62,9 +62,9 @@ let
       3.  **Specialized Domains**:
           *   **Scraping/Automation** → **@ruby-stealth-scraping**
               *   *(Note: If the scraped data needs to be processed in a job, chain: Scraping -> Jobs)*
-          *   **Event Sourcing/Business Logic** → **@managing-rails-events**
+          *   **Event Sourcing/Business Logic** → **@rails-event-store**
           *   **Asynchronous Tasks** → **@rails-background-jobs**
-          *   **UI/Interaction** → **@developing-rails-frontend**
+          *   **UI/Interaction** → **@rails-hotwire**
       4.  **Verification**:
           *   "Run tests", "Write tests for X", "Fix specs", "Fix tests" → **@rspec-testing**
       5.  **Fallback**:
@@ -80,8 +80,8 @@ let
 
       ### 2. The "Full Stack Feature" (Sequential)
       Usage: Building a complete feature from backend to frontend.
-      1.  **@managing-rails-events**: Define the Domain Event and Aggregate logic.
-      2.  **@developing-rails-frontend**: Build the ViewComponent or Controller to trigger/display it.
+      1.  **@rails-event-store**: Define the Domain Event and Aggregate logic.
+      2.  **@rails-hotwire**: Build the ViewComponent or Controller to trigger/display it.
 
       ### 3. The "Scraper Pipeline" (Chain)
       Usage: Building reliable data ingestion.

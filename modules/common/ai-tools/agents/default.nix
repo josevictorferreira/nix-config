@@ -7,8 +7,8 @@
     ./general/code-reviewer.nix
     ./general/documentation-writer.nix
     ./ruby/rails-developer.nix
-    ./ruby/developing-rails-frontend.nix
-    ./ruby/managing-rails-events.nix
+    ./ruby/rails-hotwire.nix
+    ./ruby/rails-event-store.nix
     ./ruby/rails-background-jobs.nix
     ./ruby/rails-developer.nix
     ./ruby/rspec-testing.nix

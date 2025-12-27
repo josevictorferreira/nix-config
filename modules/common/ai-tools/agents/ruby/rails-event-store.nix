@@ -6,7 +6,7 @@
 }:
 
 let
-  agentName = "managing-rails-events";
+  agentName = "rails-event-store";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
   agentOptions = {
@@ -437,13 +437,6 @@ let
       - [Rails Event Store GitHub](https://github.com/RailsEventStore/rails_event_store)
       - [Ecommerce Example App](https://github.com/RailsEventStore/ecommerce)
       - [Arkency Blog Posts](https://blog.arkency.com/tags/event-sourcing/)
-
-      ## Related Files
-
-      - Sequence diagrams: `publish-sequence-diagram.mmd`, `read-sequence-diagram.mmd`, `subscribe-sequence-diagram.mmd`
-      - Core concepts in `core-concepts/` directory
-      - Advanced topics in `advanced-topics/` directory
-      - Common patterns in `common-usage-patterns/` directory
     '';
   };
 in

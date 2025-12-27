@@ -15,6 +15,6 @@
     ./ruby/ruby-stealth-scraping.nix
     ./ruby/managing-rails-events.nix
     ./ruby/rspec-testing.nix
-    ./ruby/developing-rails-frontend.nix
+
   ];
 }
