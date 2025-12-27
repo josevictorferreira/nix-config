@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, system
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 
 let
@@ -71,6 +72,7 @@ in
               rocmPackages.clr
               rocmPackages.rocminfo
               rocmPackages.rocm-runtime
+              rocmPackages.rocm-smi
             ]
             ++ cfg.extraPackages;
         };
