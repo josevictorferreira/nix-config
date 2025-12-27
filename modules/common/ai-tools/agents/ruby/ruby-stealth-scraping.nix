@@ -9,7 +9,7 @@ let
   agentName = "ruby-stealth-scraping";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
-  agentOptions = {
+  agentOptions = rec {
     name = agentName;
     description = "Specialist in stealthy web scraping with Ruby using Ferrum headless browser. Use when building scrapers that need to evade bot detection, bypass anti-scraping measures, or when working with Cloudflare-protected sites. Triggers include requests for web scraping, data extraction, headless browsing, bot evasion, proxy rotation, user-agent rotation, or Ferrum configuration in Ruby/Rails projects.";
     tools = [
@@ -379,6 +379,12 @@ let
       - Block rate exceeds 10%
       - Cloudflare challenges persist
       - IP bans occur within hours
+
+      ---
+
+      ## References
+
+      ${lib.concatStringsSep "\n\n" (lib.attrValues references)}
     '';
   };
 in

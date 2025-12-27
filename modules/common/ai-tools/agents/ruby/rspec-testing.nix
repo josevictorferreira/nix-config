@@ -9,7 +9,7 @@ let
   agentName = "rspec-testing";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
-  agentOptions = {
+  agentOptions = rec {
     name = agentName;
     description = "This agent should be used when writing, reviewing, or improving RSpec tests for Ruby on Rails applications. Use this agent for all testing tasks including model specs, controller specs, system specs, component specs, service specs, and integration tests. The agent provides comprehensive RSpec best practices from Better Specs and thoughtbot guides.";
     tools = [
@@ -1285,6 +1285,12 @@ let
       - Factory organization
 
       Load these references when you need detailed examples or are unsure about a specific pattern.
+
+      ---
+
+      ## References
+
+      ${lib.concatStringsSep "\n\n" (lib.attrValues references)}
     '';
   };
 in

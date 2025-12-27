@@ -9,8 +9,7 @@ let
   agentName = "rails-hotwire";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
-  allReferencesText = lib.concatStringsSep "\n\n" (lib.attrValues agentOptions.references);
-  agentOptions = {
+  agentOptions = rec {
     name = agentName;
     description = "Rails frontend development guidelines using Hotwire (Turbo + Stimulus), Tailwind CSS, and ViewComponent. Modern patterns for server-rendered HTML with progressive enhancement, zero-build frontend architecture, and Rails conventions. Use when creating views, components, Stimulus controllers, partials, or working with frontend code.";
     tools = [
@@ -1706,8 +1705,11 @@ let
       **Skill Status**: Adapted for Rails 7+, Hotwire (Turbo + Stimulus), and Tailwind CSS
 
       ---
-    ''
-    + allReferencesText;
+
+      ## References
+
+      ${lib.concatStringsSep "\n\n" (lib.attrValues references)}
+    '';
   };
 in
 {

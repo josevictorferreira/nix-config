@@ -9,7 +9,7 @@ let
   agentName = "rails-background-jobs";
   cfg = config.jvf.aiTools.agents."${agentName}";
   agentFullName = inputs.lib.strings.kebabToHuman agentName;
-  agentOptions = {
+  agentOptions = rec {
     name = agentName;
     description = "Specialized agent for Rails background jobs with Solid Queue. Use when creating jobs, scheduling tasks, implementing recurring jobs, testing jobs, or monitoring job queues. Includes best practices for reliable background processing.";
     tools = [
@@ -1086,10 +1086,11 @@ let
       end
       ```
 
-      ## Reference Documentation
+      ---
 
-      For comprehensive job patterns:
-      - Background jobs guide: `references/background_jobs.md` (detailed examples and advanced patterns)
+      ## References
+
+      ${lib.concatStringsSep "\n\n" (lib.attrValues references)}
     '';
   };
 in
