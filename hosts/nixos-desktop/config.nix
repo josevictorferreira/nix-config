@@ -1,7 +1,8 @@
-{ host
-, inputs
-, username
-, ...
+{
+  host,
+  inputs,
+  username,
+  ...
 }:
 let
   inherit (inputs) self;

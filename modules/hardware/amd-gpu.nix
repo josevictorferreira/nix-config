@@ -51,6 +51,16 @@ in
   config = lib.mkIf cfg.enable (
     if (!isDarwin) then
       {
+        environment.systemPackages = [
+        ]
+        ++ lib.optionals cfg.enableRocm [
+          pkgs.rocmPackages.clr.icd
+          pkgs.rocmPackages.clr
+          pkgs.rocmPackages.rocminfo
+          pkgs.rocmPackages.rocm-runtime
+          pkgs.rocmPackages.rocm-smi
+        ];
+
         boot.initrd.kernelModules = [ "amdgpu" ];
 
         services.xserver = {
