@@ -1,11 +1,10 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  system,
-  inputs,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, system
+, inputs
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -160,10 +159,12 @@ in
                 "minimax-cn"
               ];
               tools =
-                (lib.mapAttrs' (name: _: {
-                  name = "${name}*";
-                  value = false;
-                }) cfg.mcps)
+                (lib.mapAttrs'
+                  (name: _: {
+                    name = "${name}*";
+                    value = false;
+                  })
+                  cfg.mcps)
                 // {
                   "skills*" = false;
                 };

@@ -1,6 +1,5 @@
-{
-  lib,
-  ...
+{ lib
+, ...
 }:
 
 let
@@ -14,15 +13,15 @@ let
   ];
 
   mkSkillModule =
-    {
-      name,
-      description ? "",
-      prompt ? "",
-      model ? "",
-      tags ? [ ],
-      allowed-tools ? [ ],
-      references ? { },
-      scripts ? { },
+    { name
+    , description ? ""
+    , prompt ? ""
+    , model ? ""
+    , tags ? [ ]
+    , allowed-tools ? [ ]
+    , references ? { }
+    , scripts ? { }
+    ,
     }:
     let
       skillDefinition = {
@@ -68,17 +67,17 @@ let
     lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue perms);
 
   mkAgentModule =
-    {
-      name,
-      model ? "",
-      mode ? "primary",
-      temperature ? null,
-      permission ? { },
-      description ? "",
-      prompt ? "",
-      tags ? [ ],
-      tools ? [ ],
-      disabledTools ? [ ],
+    { name
+    , model ? ""
+    , mode ? "primary"
+    , temperature ? null
+    , permission ? { }
+    , description ? ""
+    , prompt ? ""
+    , tags ? [ ]
+    , tools ? [ ]
+    , disabledTools ? [ ]
+    ,
     }:
     {
       options = {
@@ -128,10 +127,10 @@ let
     };
 
   mkMcpModule =
-    {
-      name ? "MCP Server",
-      tags ? [ ],
-      config ? { },
+    { name ? "MCP Server"
+    , tags ? [ ]
+    , config ? { }
+    ,
     }:
     {
       options = {
@@ -149,11 +148,11 @@ let
     };
 
   mkCommandModule =
-    {
-      name,
-      description ? "",
-      agent ? "",
-      prompt ? "",
+    { name
+    , description ? ""
+    , agent ? ""
+    , prompt ? ""
+    ,
     }:
     {
       options = {
@@ -184,9 +183,11 @@ let
   findToolsByTags =
     mcpConfigs: tags:
     let
-      matchingMcps = lib.filterAttrs (
-        _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
-      ) mcpConfigs;
+      matchingMcps = lib.filterAttrs
+        (
+          _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
+        )
+        mcpConfigs;
     in
     builtins.attrNames matchingMcps;
 
@@ -205,9 +206,10 @@ let
         ++ lib.optional (allTools != [ ]) "allowed-tools: \"${toolsString}\""
         ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
         ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
-        ++ lib.optional (
-          (builtins.hasAttr "temperature" value) && value.temperature != null
-        ) "temperature: ${toString value.temperature}";
+        ++ lib.optional
+          (
+            (builtins.hasAttr "temperature" value) && value.temperature != null
+          ) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -229,25 +231,28 @@ let
         ]
         ++ lib.optional (builtins.hasAttr "permission" value && value.permission != { }) "permission:"
         ++ lib.optionals (builtins.hasAttr "permission" value && value.permission != { }) (
-          lib.mapAttrsToList (key: perm: 
-            if builtins.isString perm then
-              "  \"${key}\": \"${perm}\""
-            else if builtins.isAttrs perm then
-              "  \"${key}\":\n${formatPermissions perm "    "}"
-            else
-              ""
-          ) value.permission
+          lib.mapAttrsToList
+            (key: perm:
+              if builtins.isString perm then
+                "  \"${key}\": \"${perm}\""
+              else if builtins.isAttrs perm then
+                "  \"${key}\":\n${formatPermissions perm "    "}"
+              else
+                ""
+            )
+            value.permission
         )
         ++ lib.optional (allTools != [ ]) "tools:"
         ++ lib.optionals (allTools != [ ]) (
           (map (tool: "  ${lib.toLower tool}*: true") allTools)
-          ++ (map (tool: "  ${lib.toLower tool}*: false") disabledTools)
+            ++ (map (tool: "  ${lib.toLower tool}*: false") disabledTools)
         )
         ++ lib.optional ((builtins.hasAttr "agent" value) && value.agent != "") "agent: ${value.agent}"
         ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
-        ++ lib.optional (
-          (builtins.hasAttr "temperature" value) && value.temperature != null
-        ) "temperature: ${toString value.temperature}";
+        ++ lib.optional
+          (
+            (builtins.hasAttr "temperature" value) && value.temperature != null
+          ) "temperature: ${toString value.temperature}";
         yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -268,8 +273,8 @@ let
           "description: \"${value.description or (value.name or "")}\""
         ]
         ++
-          lib.optional (value ? alwaysApply)
-            "alwaysApply: ${if value.alwaysApply then "true" else "false"}"
+        lib.optional (value ? alwaysApply)
+          "alwaysApply: ${if value.alwaysApply then "true" else "false"}"
         ++ lib.optionals (value ? globs && value.globs != [ ]) (
           [ "globs:" ] ++ map (g: "  - \"${g}\"") value.globs
         );
@@ -288,10 +293,12 @@ let
 
   mkCursorMdcConfigs =
     mcpConfigs: prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.mdc";
-      value = toCursorMarkdownPrompt mcpConfigs value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.mdc";
+        value = toCursorMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
 
   toSkillMarkdown =
     skillName: skill:
@@ -322,20 +329,24 @@ let
       # Reference files
       references =
         if skill ? references && skill.references != { } then
-          lib.mapAttrs' (refName: refContent: {
-            name = "skill/${skillName}/references/${refName}.md";
-            value = refContent;
-          }) skill.references
+          lib.mapAttrs'
+            (refName: refContent: {
+              name = "skill/${skillName}/references/${refName}.md";
+              value = refContent;
+            })
+            skill.references
         else
           { };
 
       # Script files
       scripts =
         if skill ? scripts && skill.scripts != { } then
-          lib.mapAttrs' (scriptName: scriptContent: {
-            name = "skill/${skillName}/scripts/${scriptName}";
-            value = scriptContent;
-          }) skill.scripts
+          lib.mapAttrs'
+            (scriptName: scriptContent: {
+              name = "skill/${skillName}/scripts/${scriptName}";
+              value = scriptContent;
+            })
+            skill.scripts
         else
           { };
     in
@@ -349,17 +360,21 @@ let
 
   mkOpencodeMdConfigs =
     mcpConfigs: prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toOpencodeMarkdownPrompt mcpConfigs value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toOpencodeMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
 
   mkClaudecodeMdConfigs =
     mcpConfigs: prefix: attrset:
-    lib.mapAttrs' (name: value: {
-      name = "${prefix}/${name}.md";
-      value = toClaudeMarkdownPrompt mcpConfigs value;
-    }) attrset;
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toClaudeMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
 in
 {
   inherit

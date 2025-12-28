@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  inputs,
-  ...
+{ config
+, lib
+, inputs
+, ...
 }:
 let
   skillName = "patching-files";

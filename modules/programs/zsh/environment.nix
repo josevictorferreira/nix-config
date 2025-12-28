@@ -11,8 +11,8 @@
     export PODMAN_COLOR=true
     export COLORTERM=truecolor
 
-    # Add homebrew to path (Darwin compatibility)
-    export PATH=/opt/homebrew/bin:$PATH
+    # Add local bin and homebrew to path
+    export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH
   '';
 
   loginInit = ''

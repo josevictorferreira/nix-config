@@ -55,6 +55,12 @@ let
           in
           results;
 
+        # Check if a value is a derivation (has outPath attribute)
+        isDerivation = x: builtins.isAttrs x && x ? outPath;
+
+        # Check if a string looks like a nix store path
+        isStorePath = x: builtins.isString x && lib.hasPrefix "/nix/store/" x;
+
         createStructuredConfig =
           fileName: fileValue:
           if builtins.isPath fileValue then
@@ -81,6 +87,18 @@ let
                 name = fileName;
                 path = fileValue;
               }
+          # Handle derivations (e.g., pkgs.runCommand results)
+          else if isDerivation fileValue then
+            {
+              name = fileName;
+              path = fileValue;
+            }
+          # Handle store path strings
+          else if isStorePath fileValue then
+            {
+              name = fileName;
+              path = fileValue;
+            }
           else if builtins.isString fileValue then
             {
               name = fileName;

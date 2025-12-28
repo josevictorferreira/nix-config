@@ -1,9 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  system,
-  ...
+{ config
+, lib
+, pkgs
+, system
+, username
+, ...
 }:
 
 let
@@ -51,7 +51,10 @@ in
   config = lib.mkIf cfg.enable (
     if (!isDarwin) then
       {
+        users.users.${username}.extraGroups = [ "corectrl" ];
+        programs.corectrl.enable = true;
         environment.systemPackages = [
+          pkgs.corectrl
         ]
         ++ lib.optionals cfg.enableRocm [
           pkgs.rocmPackages.clr.icd
@@ -62,6 +65,11 @@ in
         ];
 
         boot.initrd.kernelModules = [ "amdgpu" ];
+        boot.kernelParams = [
+          "amdgpu.ppfeaturemask=0xffffffff"
+          "amdgpu.lockup_timeout=10000"
+          "amdgpu.gpu_recovery=1"
+        ];
 
         services.xserver = {
           enable = true;

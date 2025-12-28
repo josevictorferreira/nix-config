@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 
 let
@@ -46,8 +45,7 @@ let
 
   python = pkgs.python3.override {
     self = python;
-    packageOverrides = _final: _prev: {
-    };
+    packageOverrides = _final: _prev: { };
   };
 
   mistralVibePkg = python.pkgs.buildPythonApplication rec {
