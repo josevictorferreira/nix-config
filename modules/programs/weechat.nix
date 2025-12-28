@@ -6,12 +6,14 @@
 }:
 let
   cfg = config.jvf.programs.weechat;
+  homeDir = if pkgs.stdenv.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
   defaultPlugins = [
     pkgs.weechatScripts.colorize_nicks
     pkgs.weechatScripts.wee-slack
     pkgs.weechatScripts.url_hint
     pkgs.weechatScripts.multiline
     pkgs.weechatScripts.weechat-notify-send
+    vimodePlugin
   ];
 
   weechatConfig = {
@@ -240,6 +242,47 @@ let
       show_typing = "off";
     };
   };
+
+  vimodePlugin = pkgs.stdenv.mkDerivation {
+    pname = "vimode";
+    version = "0.8";
+
+    src = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/GermainZ/weechat-vimode/0ca9a67017302b32c38a6c9e3ffcd5b81f2aea36/vimode.py";
+      sha256 = "sha256-YRFIcvTJcGjmcPWOPkTz3DB40fudVcZ1MiT36qi/hyI=";
+    };
+
+    dontUnpack = true;
+    prePatch = ''
+      cp $src vimode.py
+    '';
+
+    passthru.scripts = [ "vimode.py" ];
+
+    installPhase = ''
+      runHook preInstall
+
+      install -D vimode.py $out/share/vimode.py
+
+      runHook postInstall
+    '';
+
+    meta = {
+      homepage = "https://github.com/GermainZ/weechat-vimode";
+      description = "vi/vim-like modes and keybindings";
+      license = lib.licenses.gpl3Plus;
+    };
+  };
+
+  weechatPkg = pkgs.weechat.override {
+    configure = { ... }: {
+      scripts = cfg.plugins;
+      init = ''
+        /set plugins.var.python.vimode.search_vim on
+        /vimode bind_keys
+      '';
+    };
+  };
 in
 {
   options.jvf.programs.weechat = {
@@ -249,7 +292,11 @@ in
       default = username;
       description = "Username for which to install configuration";
     };
-    package = lib.mkPackageOption pkgs "weechat-unwrapped" { };
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = weechatPkg;
+      description = "The weechat package to be used";
+    };
     additionalScripts = lib.mkOption {
       type = lib.types.listOf lib.types.package;
       default = [ ];
@@ -293,6 +340,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.variables.WEECHAT_HOME = "${homeDir}/.config/weechat";
+
     jvf.wrappers.users.${cfg.username}.programs.weechat = {
       packages = [
         cfg.package
@@ -313,16 +362,6 @@ in
       } // lib.optionalAttrs cfg.slack.enable {
         "slack.conf" = slackConfig;
       };
-      postInstall = lib.mkIf cfg.slack.enable ''
-        # Add wee-slack script loading to startup
-        if [ -f "$HOME/.weechat/python/autoload/wee_slack.py" ]; then
-          echo "wee-slack.py properly linked to autoload"
-        elif [ -f "$HOME/.local/share/weechat/python/wee_slack.py" ]; then
-          mkdir -p "$HOME/.weechat/python/autoload"
-          ln -sf "$HOME/.local/share/weechat/python/wee_slack.py" "$HOME/.weechat/python/autoload/wee_slack.py"
-          echo "wee-slack.py linked to autoload directory"
-        fi
-      '';
     };
   };
 }
