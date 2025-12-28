@@ -1,6 +1,7 @@
-{ lib
-, pkgs
-, ...
+{
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -51,7 +52,7 @@ let
 
     # This is a fixed-output derivation - it's allowed to download from the internet
     outputHashMode = "recursive";
-    outputHash = "sha256-hMNXGThWSty+eC5fpgTTmPW8c/8DNq8JVVDhSA5vc64=";
+    outputHash = "sha256-VdG6Oi9gdyYGxwdjn4yWQZoF3L7ksr61/TkDdsQipcU=";
 
     buildPhase = ''
       runHook preBuild
