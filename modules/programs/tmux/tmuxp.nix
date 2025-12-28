@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -62,38 +63,46 @@ let
     ];
   };
 
-  projects = {
-    session_name = "projects";
-    start_directory = "$HOME/Workspace/";
+  projectsHomelab = {
+    session_name = "homelab";
+    start_directory = "$HOME/Workspace/homelab";
     windows = [
       {
         window_name = "Homelab";
         layout = "tiled";
-        start_directory = "homelab";
         panes = [
-          "clear"
           "clear"
           "clear"
           "clear"
         ];
       }
+    ];
+  };
+
+  projectsValoris = {
+    session_name = "valoris";
+    start_directory = "$HOME/Workspace/valoris";
+    windows = [
       {
-        window_name = "Valoris";
+        window_name = "Valoris Main";
         layout = "tiled";
-        start_directory = "valoris";
         panes = [
-          "clear"
           "clear"
           "clear"
           "clear"
         ];
       }
+    ];
+  };
+
+  projectsAiWorkspace = {
+    session_name = "ai-workspace";
+    start_directory = "$HOME/Workspace/ai-workspace";
+    windows = [
       {
-        window_name = "AiWorkspace";
+        window_name = "AI Workspace";
         layout = "tiled";
-        start_directory = "ai-workspace";
         panes = [
-          "clear"
           "clear"
           "clear"
           "clear"
@@ -170,7 +179,9 @@ in
         "chat.yaml" = chat;
         "main.yaml" = main;
         "monitoring.yaml" = monitoring;
-        "projects.yaml" = projects;
+        "homelab.yaml" = projectsHomelab;
+        "valoris.yaml" = projectsValoris;
+        "ai-workspace.yaml" = projectsAiWorkspace;
         "work.yaml" = work;
       };
     };

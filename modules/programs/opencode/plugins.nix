@@ -39,20 +39,20 @@ let
   # Fixed-output derivation to fetch bun dependencies
   bunDeps = pkgs.stdenv.mkDerivation rec {
     pname = "oh-my-opencode-deps";
-    version = "v2.6.2";
+    version = "v2.7.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
       repo = "oh-my-opencode";
       rev = "${version}";
-      hash = "sha256-dsUL4nkRi2aa9nmLnSmQlAJ6il7d5teUT4Ap6H+r3mI=";
+      hash = "sha256-X0QNWQ1fIwFmTFP8cbENc7+6xfIts1LSW4Prg8C3OlI=";
     };
 
     nativeBuildInputs = [ pkgs.bun ];
 
     # This is a fixed-output derivation - it's allowed to download from the internet
     outputHashMode = "recursive";
-    outputHash = "sha256-VdG6Oi9gdyYGxwdjn4yWQZoF3L7ksr61/TkDdsQipcU=";
+    outputHash = "sha256-kQ+WWczoGRP7oGk0OaSBGIRxnRKIK8Q8vG8q2Jj5WzE=";
 
     buildPhase = ''
       runHook preBuild

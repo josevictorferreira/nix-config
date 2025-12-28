@@ -1,9 +1,10 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  ...
 }:
 let
   cfg = config.jvf.programs.ghostty;
@@ -12,15 +13,13 @@ let
   toConfigFormat =
     settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} = ${builtins.toJSON value}"
-          else
-            "${key} = ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} = ${builtins.toJSON value}"
+        else
+          "${key} = ${builtins.toString value}"
+      ) settings
     );
 
   tmuxpDarwinPath = ''
@@ -33,7 +32,7 @@ let
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
     ${lib.optionalString isDarwin tmuxpDarwinPath}
 
-    exec tmuxp load -y monitoring chat work projects main
+    exec tmuxp load -y monitoring chat work homelab valoris ai-workspace main
   '';
 
   defaultConfig = {
