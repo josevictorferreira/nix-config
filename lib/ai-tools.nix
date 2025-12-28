@@ -54,9 +54,11 @@ let
       };
     };
 
-  formatPermissions = perms: indent:
+  formatPermissions =
+    perms: indent:
     let
-      formatValue = key: value:
+      formatValue =
+        key: value:
         if builtins.isString value then
           "${indent}\"${key}\": \"${value}\""
         else if builtins.isAttrs value then
@@ -232,13 +234,14 @@ let
         ++ lib.optional (builtins.hasAttr "permission" value && value.permission != { }) "permission:"
         ++ lib.optionals (builtins.hasAttr "permission" value && value.permission != { }) (
           lib.mapAttrsToList
-            (key: perm:
-              if builtins.isString perm then
-                "  \"${key}\": \"${perm}\""
-              else if builtins.isAttrs perm then
-                "  \"${key}\":\n${formatPermissions perm "    "}"
-              else
-                ""
+            (
+              key: perm:
+                if builtins.isString perm then
+                  "  \"${key}\": \"${perm}\""
+                else if builtins.isAttrs perm then
+                  "  \"${key}\":\n${formatPermissions perm "    "}"
+                else
+                  ""
             )
             value.permission
         )

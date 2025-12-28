@@ -123,10 +123,35 @@ in
       default = false;
       description = "Install Wayland WLR portal (for Wayland-native apps).";
     };
+
+    userDirs = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      example = lib.literalExpression ''
+        {
+          DOWNLOAD = "$HOME/Downloads";
+          DOCUMENTS = "$HOME/Documents";
+          PICTURES = "$HOME/Pictures";
+        }
+      '';
+      description = ''
+        XDG user directories mapping. Keys are directory names (DOWNLOAD, DOCUMENTS, etc.),
+        values are paths. Use $HOME for the home directory.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable (
     if (!isDarwin) then
+      let
+        home = "/home/${cfg.username}";
+        # Generate user-dirs.dirs content
+        userDirsContent = lib.concatStringsSep "\n" (
+          lib.mapAttrsToList
+            (name: path: ''XDG_${name}_DIR="${path}"'')
+            cfg.userDirs
+        );
+      in
       {
         users.users."${cfg.username}".packages = [
           pkgs.xdg-user-dirs
@@ -161,6 +186,30 @@ in
         systemd.user.tmpfiles.rules = [
           "L+ %h/.config/mimeapps.list - - - - /etc/xdg/mimeapps.list"
         ];
+
+        # Create user-dirs.dirs and user-dirs.locale if userDirs is configured
+        system.activationScripts."xdg-user-dirs-${cfg.username}" = lib.mkIf (cfg.userDirs != { }) {
+          text =
+            let
+              userDirsFile = pkgs.writeText "user-dirs.dirs" ''
+                # This file is written by xdg-user-dirs-update
+                # If you want to change or add directories, just edit the line you're
+                # interested in. All local changes will be retained on the next run.
+                # Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
+                # homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
+                # absolute path. No other format is supported.
+                ${userDirsContent}
+              '';
+            in
+            ''
+              echo "Setting up XDG user directories for ${cfg.username}..."
+              mkdir -p ${home}/.config
+              cp ${userDirsFile} ${home}/.config/user-dirs.dirs
+              echo "en_US" > ${home}/.config/user-dirs.locale
+              chown ${cfg.username}:users ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
+              chmod 644 ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
+            '';
+        };
       }
     else
       { }

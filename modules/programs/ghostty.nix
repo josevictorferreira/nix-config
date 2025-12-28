@@ -33,7 +33,7 @@ let
   tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
     ${lib.optionalString isDarwin tmuxpDarwinPath}
 
-    exec tmuxp load -y monitoring chat work homelab valoris ai-workspace main
+    exec tmuxp load -y  ai-workspace chat monitoring work homelab valoris main
   '';
 
   defaultConfig = {

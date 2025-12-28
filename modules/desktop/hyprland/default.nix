@@ -60,7 +60,19 @@ in
       kvantum.enable = true;
       thunar.enable = true;
       xfce4.enable = true;
-      gtk3.enable = true;
+      gtk3 = {
+        enable = true;
+        folderIcons = {
+          "/home/${cfg.username}/Workspace" = "folder-development";
+          "/home/${cfg.username}/Homelab" = "folder-cloud";
+          "/home/${cfg.username}/.config/nix" = "folder-script";
+          "/home/${cfg.username}/.config/nvim" = "folder-script";
+          "/home/${cfg.username}/Workspace/homelab" = "folder-cloud";
+          "/home/${cfg.username}/Workspace/ai-workspace" = "folder-templates";
+          "/home/${cfg.username}/Workspace/valoris" = "folder-publicshare";
+          "/home/${cfg.username}/Workspace/agrosmart" = "folder-publicshare";
+        };
+      };
       fastfetch.enable = true;
     };
 

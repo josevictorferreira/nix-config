@@ -6,7 +6,7 @@
       extensions = [ ".nix" ];
       initialization = {
         formatting = {
-          command = [ (lib.getExe pkgs.nixfmt) ];
+          command = [ (lib.getExe pkgs.nixpkgs-fmt) ];
         };
       };
     };

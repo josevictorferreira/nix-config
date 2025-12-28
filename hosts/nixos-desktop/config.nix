@@ -50,6 +50,18 @@ in
       "xdg"
       "virtualization"
     ];
+
+    # XDG user directories (fixes Brave "Open folder" for Downloads)
+    xdg.userDirs = {
+      DESKTOP = "$HOME/Desktop";
+      DOWNLOAD = "$HOME/Downloads";
+      DOCUMENTS = "$HOME/Documents";
+      MUSIC = "$HOME/Music";
+      PICTURES = "$HOME/Pictures";
+      VIDEOS = "$HOME/Videos";
+      TEMPLATES = "$HOME/Templates";
+      PUBLICSHARE = "$HOME/Public";
+    };
   };
 
   jvf.hardware.active = [
