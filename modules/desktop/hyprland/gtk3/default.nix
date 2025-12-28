@@ -8,6 +8,55 @@
 let
   cfg = config.jvf.desktop.hyprland.gtk3;
 
+  # Bookmark entry type
+  bookmarkType = lib.types.submodule {
+    options = {
+      path = lib.mkOption {
+        type = lib.types.str;
+        description = "Absolute path to the bookmarked folder";
+        example = "/home/user/Documents";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "Display name for the bookmark in Thunar sidebar";
+        example = "Documents";
+      };
+      icon = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          Icon name for the folder. Set to null for default folder icon.
+
+          Common Flat-Remix icons:
+          - Types: folder-development, folder-git, folder-github, folder-cloud,
+                   folder-documents, folder-download, folder-pictures, folder-videos,
+                   folder-music, folder-games, folder-steam, folder-script
+          - Colors: folder-blue, folder-cyan, folder-green, folder-magenta,
+                    folder-orange, folder-red, folder-teal, folder-violet,
+                    folder-yellow, folder-brown, folder-grey, folder-black
+          - Colored types: folder-blue-development, folder-green-git, etc.
+        '';
+        example = "folder-blue-development";
+      };
+    };
+  };
+
+  # Generate bookmarks file content from declarative config
+  bookmarksContent = lib.concatStringsSep "\n" (
+    map (b: "file://${b.path} ${b.name}") cfg.bookmarks
+  );
+
+  # Merge folder icons from both sources:
+  # 1. Explicit folderIcons option (for backwards compatibility)
+  # 2. Icons defined in bookmarks
+  allFolderIcons = cfg.folderIcons // (
+    lib.listToAttrs (
+      lib.filter (x: x.value != null) (
+        map (b: { name = b.path; value = b.icon; }) cfg.bookmarks
+      )
+    )
+  );
+
   # Generate gio set commands for folder icons
   # Note: This may fail during system activation if gvfs isn't running.
   # Icons will be set on next user login when gvfs is available.
@@ -20,8 +69,19 @@ let
           fi
         fi
       '')
-      cfg.folderIcons
+      allFolderIcons
   );
+
+  # Build the config directory with settings.ini and optional bookmarks
+  configDir = pkgs.runCommand "gtk-3.0-config" { } ''
+    mkdir -p $out
+    cp ${./settings.ini} $out/settings.ini
+    ${lib.optionalString (cfg.bookmarks != [ ]) ''
+      cat > $out/bookmarks << 'EOF'
+    ${bookmarksContent}
+    EOF
+    ''}
+  '';
 in
 {
   options.jvf.desktop.hyprland.gtk3 = {
@@ -31,17 +91,36 @@ in
       default = username;
       description = "Username for which to configure gtk3 wrapper";
     };
+
+    bookmarks = lib.mkOption {
+      type = lib.types.listOf bookmarkType;
+      default = [ ];
+      example = lib.literalExpression ''
+        [
+          { path = "/home/user/Documents"; name = "Documents"; icon = "folder-documents"; }
+          { path = "/home/user/Workspace"; name = "Workspace"; icon = "folder-cyan-development"; }
+          { path = "/home/user/.config/nix"; name = "NixConfig"; icon = "folder-orange-git"; }
+        ]
+      '';
+      description = ''
+        Declarative GTK bookmarks with optional custom icons.
+        Each bookmark specifies path, display name, and optional icon.
+        Icons are applied via gio metadata and displayed in Thunar/Nautilus.
+      '';
+    };
+
     folderIcons = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
       example = lib.literalExpression ''
         {
           "/home/user/Workspace" = "folder-development";
-          "/home/user/.config/nix" = "folder-nix";
+          "/home/user/.config/nix" = "folder-git";
         }
       '';
       description = ''
-        Folder paths mapped to icon names. Uses gio metadata to set custom icons.
+        Additional folder paths mapped to icon names (for folders not in bookmarks).
+        Uses gio metadata to set custom icons.
         Common icon names: folder-development, folder-git, folder-cloud,
         folder-documents, folder-download, folder-pictures, folder-videos.
       '';
@@ -52,9 +131,9 @@ in
     jvf.wrappers.users.${cfg.username}.programs."gtk-3.0" = {
       packages = [ ];
       configs = {
-        "gtk-3.0" = ./.;
+        "gtk-3.0" = configDir;
       };
-      postInstall = lib.mkIf (cfg.folderIcons != { }) folderIconCommands;
+      postInstall = lib.mkIf (allFolderIcons != { }) folderIconCommands;
     };
   };
 }
