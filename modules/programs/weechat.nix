@@ -7,14 +7,7 @@
 let
   cfg = config.jvf.programs.weechat;
   homeDir = if pkgs.stdenv.isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
-  defaultPlugins = [
-    pkgs.weechatScripts.colorize_nicks
-    pkgs.weechatScripts.wee-slack
-    pkgs.weechatScripts.url_hint
-    pkgs.weechatScripts.multiline
-    pkgs.weechatScripts.weechat-notify-send
-    vimodePlugin
-  ];
+  weechatHomeDir = "${homeDir}/.config/weechat";
 
   weechatConfig = {
     debug = { };
@@ -243,7 +236,7 @@ let
     };
   };
 
-  vimodePlugin = pkgs.stdenv.mkDerivation {
+  viModeScript = pkgs.stdenv.mkDerivation {
     pname = "vimode";
     version = "0.8";
 
@@ -275,9 +268,16 @@ let
   };
 
   weechatPkg = pkgs.weechat.override {
-    configure = { ... }: {
-      scripts = cfg.plugins;
+    configure = { availablePlugins, ... }: {
+      scripts = cfg.additionalScripts;
+      plugins = [
+        availablePlugins.python
+        availablePlugins.perl
+        availablePlugins.lua
+        availablePlugins.ruby
+      ];
       init = ''
+        /set plugins.var.python.vimode.no_warn on
         /set plugins.var.python.vimode.search_vim on
         /vimode bind_keys
       '';
@@ -299,13 +299,16 @@ in
     };
     additionalScripts = lib.mkOption {
       type = lib.types.listOf lib.types.package;
-      default = [ ];
+      default = [
+        pkgs.weechatScripts.highmon
+        pkgs.weechatScripts.colorize_nicks
+        pkgs.weechatScripts.wee-slack
+        pkgs.weechatScripts.url_hint
+        pkgs.weechatScripts.multiline
+        pkgs.weechatScripts.weechat-notify-send
+        viModeScript
+      ];
       description = "List of weechat scripts to install in addition to the default set.";
-    };
-    plugins = lib.mkOption {
-      type = lib.types.listOf lib.types.package;
-      default = defaultPlugins;
-      description = "List of weechat scripts to install.";
     };
     slack = {
       enable = lib.mkEnableOption "Slack integration via wee-slack plugin";
@@ -340,17 +343,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.variables.WEECHAT_HOME = "${homeDir}/.config/weechat";
+    environment.variables.WEECHAT_HOME = weechatHomeDir;
 
     jvf.wrappers.users.${cfg.username}.programs.weechat = {
+      command = "${lib.getExe weechatPkg} --dir ${weechatHomeDir} @";
       packages = [
         cfg.package
         pkgs.aspell
         pkgs.aspellDicts.en
         pkgs.aspellDicts.pt_BR
         pkgs.python3
-      ]
-      ++ cfg.plugins;
+      ] ++ cfg.additionalScripts;
       configs = {
         "weechat.conf" = weechatConfig;
         "plugins.conf" = pluginsConfig;
