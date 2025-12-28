@@ -7,16 +7,16 @@
 let
   openCodeDynamicContextPkg = pkgs.buildNpmPackage rec {
     pname = "opencode-dynamic-context-pruning";
-    version = "v1.0.3";
+    version = "v1.1.2";
 
     src = pkgs.fetchFromGitHub {
       owner = "Tarquinen";
       repo = "opencode-dynamic-context-pruning";
       rev = "${version}";
-      hash = "sha256-rpPeOhUBz+3PXf3w+1h3b98n8/ipi/LOhIH+gSEbiVs=";
+      hash = "sha256-dxIAmUX0gSvZW3P4hxQwzbwSm3jBj8fftUO/FYLZTOg=";
     };
 
-    npmDepsHash = "sha256-ipmy0zQySPvW3Ztw7SR1wmcRj7KAqSaXtZg1gjDyugE=";
+    npmDepsHash = "sha256-1pPBmiIY/EwMxa12MvbWk7WfusmxS9eWjlz5VTQ4ICQ=";
 
     postPatch = ''
       ${lib.getExe pkgs.jq} '
@@ -39,20 +39,20 @@ let
   # Fixed-output derivation to fetch bun dependencies
   bunDeps = pkgs.stdenv.mkDerivation rec {
     pname = "oh-my-opencode-deps";
-    version = "v2.5.1";
+    version = "v2.6.2";
 
     src = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
       repo = "oh-my-opencode";
       rev = "${version}";
-      hash = "sha256-OCD02WIvRNVfk2Pd/uCBSNuddS8nN2KzxHlAmfFOG64=";
+      hash = "sha256-dsUL4nkRi2aa9nmLnSmQlAJ6il7d5teUT4Ap6H+r3mI=";
     };
 
     nativeBuildInputs = [ pkgs.bun ];
 
     # This is a fixed-output derivation - it's allowed to download from the internet
     outputHashMode = "recursive";
-    outputHash = "sha256-5a2krsk6COjPRXUiP+r0k6o6Ki6uPogAjwUE5RQzXYQ=";
+    outputHash = "sha256-hMNXGThWSty+eC5fpgTTmPW8c/8DNq8JVVDhSA5vc64=";
 
     buildPhase = ''
       runHook preBuild
