@@ -72,6 +72,8 @@
           "minimax_api_key"
           "context7_api_key"
           "github_token"
+          "hugging_face_api_key"
+          "civitai_api_key"
         ];
         description = "List of sops secret keys to expose";
       };

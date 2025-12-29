@@ -112,6 +112,7 @@ in
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "oh-my-opencode.json" = {
+            disabled_commands = [];
             agents = {
               Sisyphus = {
                 model = "openrouter/z-ai/glm-4.6:exacto";
@@ -136,17 +137,6 @@ in
           "opencode.json" = (
             cfg.settings
             // {
-              agent = {
-                build = {
-                  disable = false;
-                };
-                explore = {
-                  disable = false;
-                };
-                general = {
-                  disable = true;
-                };
-              };
               theme = "one-dark";
               mcp = cfg.mcps;
               disabled_providers = [
