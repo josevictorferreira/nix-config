@@ -26,6 +26,7 @@ let
 
     # Nix shell
     nix-shell = "nix-shell --run zsh";
+    nd = "nix develop --command zsh";
   };
 
   # Navigation aliases
@@ -124,6 +125,14 @@ in
 
   # Config string (if needed for advanced aliases)
   shellInit = ''
-    # Advanced aliases that need shell functions can go here
+    # Wrap nix command to automatically use zsh for develop
+    nix() {
+      if [[ "$1" == "develop" ]]; then
+        shift
+        command nix develop --command zsh "$@"
+      else
+        command nix "$@"
+      fi
+    }
   '';
 }
