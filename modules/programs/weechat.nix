@@ -19,33 +19,42 @@ let
       sys_rlimit = "";
     };
     look = {
-      align_end_of_lines = "prefix";
+      align_end_of_lines = "message";
       align_multiline_words = "on";
       bar_more_down = "";
       bar_more_left = "…";
       bar_more_right = "…";
       bar_more_up = "";
       buffer_notify_default = "message";
-      buffer_time_format = "\${color:239}%H\${color:239}:\${color:239}%M";
+      # Minimal time format for vertical monitor
+      buffer_time_format = "%H:%M";
       color_inactive_message = "off";
       color_inactive_prefix = "off";
       color_inactive_prefix_buffer = "off";
       color_inactive_window = "off";
-      color_nick_offline = "yes";
+      color_nick_offline = "off";
       hotlist_add_conditions = "\${away} || \${buffer.num_displayed} == 0";
       item_buffer_filter = "•";
       mouse = "on";
       nick_prefix = "";
       nick_suffix = "";
+      # Minimal prefix settings for vertical monitor
+      prefix_align = "none";
       prefix_align_max = 0;
       prefix_align_min = 0;
+      prefix_align_more = "+";
+      prefix_align_more_after = "on";
+      prefix_buffer_align = "none";
       prefix_buffer_align_max = 0;
       prefix_join = "→";
       prefix_quit = "←";
-      prefix_same_nick = "⤷";
-      prefix_suffix = " ";
+      prefix_same_nick = "";
+      prefix_suffix = "";
       read_marker_string = "─";
       separator_horizontal = "";
+      # Disable config saving - Nix manages this config
+      save_config_on_exit = "off";
+      save_layout_on_exit = "none";
     };
     palette = { };
     color = {
@@ -86,6 +95,7 @@ let
     plugin = { };
     signal = { };
     bar = {
+      # Input bar configuration
       "input.color_bg" = "default";
       "input.color_delim" = "cyan";
       "input.color_fg" = "default";
@@ -101,11 +111,46 @@ let
       "input.size" = 1;
       "input.size_max" = 0;
       "input.type" = "window";
+      # Nicklist (users pane) - completely hidden for vertical monitor
+      "nicklist.color_bg" = "default";
+      "nicklist.color_fg" = "default";
       "nicklist.conditions" = "";
+      "nicklist.filling_left_right" = "vertical";
+      "nicklist.filling_top_bottom" = "columns_vertical";
       "nicklist.hidden" = "on";
+      "nicklist.items" = "buffer_nicklist";
+      "nicklist.position" = "right";
+      "nicklist.priority" = 200;
+      "nicklist.separator" = "on";
+      "nicklist.size" = 0;
+      "nicklist.size_max" = 0;
+      "nicklist.type" = "window";
+      # Title bar
       "title.color_bg" = 56;
       "title.color_fg" = "white";
+      "title.hidden" = "off";
+      "title.position" = "top";
+      "title.priority" = 500;
+      "title.separator" = "off";
+      "title.size" = 1;
+      "title.size_max" = 1;
+      "title.type" = "window";
+      # Vi mode line numbers
       "vi_line_numbers.hidden" = "off";
+      # Buflist bar - minimal width for vertical monitor
+      "buflist.color_bg" = "default";
+      "buflist.color_fg" = "default";
+      "buflist.conditions" = "";
+      "buflist.filling_left_right" = "vertical";
+      "buflist.filling_top_bottom" = "columns_vertical";
+      "buflist.hidden" = "off";
+      "buflist.items" = "buflist";
+      "buflist.position" = "left";
+      "buflist.priority" = 0;
+      "buflist.separator" = "on";
+      "buflist.size" = 12;
+      "buflist.size_max" = 12;
+      "buflist.type" = "root";
     };
     layout = { };
     notify = {
@@ -172,11 +217,19 @@ let
       scroll_horiz = "off";
       mouse_wheel = "on";
       show_cursor = "on";
+      # Compact display for vertical monitor
+      nick_prefix = "off";
+      nick_prefix_empty = "off";
+      display_conditions = "";
     };
     format = {
-      buffer = "\${color:42}●\${color:reset} \${color:237}\${name}\${color:reset}";
-      hotlist = "\${color:69}(\${color:reset}\${hotlist}\${color:69})\${color:reset}";
-      number = "\${if:\${number}<10||\${number}>20?\${number}:\${if:\${number}==10? 0:\${if:\${number}==11? Q:\${if:\${number}==12? W:\${if:\${number}==13? E:\${if:\${number}==14? R:\${if:\${number}==15? T:\${if:\${number}==16? Y:\${if:\${number}==17? U:\${if:\${number}==18? I:\${if:\${number}==19? O:\${if:\${number}==20? P}}}}}}}}}}}";
+      # Minimal buffer format for vertical monitor - just short name, no indicator
+      buffer = "\${color_hotlist}\${cut:10,…,\${short_name}}\${color:reset}";
+      buffer_current = "\${color:white}\${cut:10,…,\${short_name}}\${color:reset}";
+      hotlist = " \${color:69}\${hotlist}\${color:reset}";
+      # No number to save space
+      number = "";
+      indent = "";
     };
   };
 
@@ -221,18 +274,33 @@ let
     completion = { };
   };
 
+  # Slack config - workspace section added dynamically via init command
+  # to read token from sops secret at runtime
   slackConfig = {
     look = {
       channel_name_typing_prefix = ">";
       part_closes_buffer = "on";
       show_buflist_duplicates = "on";
       workspace_name_display = "short";
+      # Compact display settings for vertical monitor
+      display_reaction_nicks = "off";
+      render_emoji_as = "emoji";
+      thread_broadcast_prefix = "↳";
     };
     notifications = {
       rich_text = "on";
       show_reaction_adds = "on";
       show_reaction_adds_changed = "on";
       show_typing = "off";
+    };
+    color = {
+      # Minimal color scheme for cleaner look
+      channel_prefix = "default";
+      dm_prefix = "default";
+      message_join = 141;
+      message_quit = 135;
+      reaction_prefix = 239;
+      reaction_suffix = 239;
     };
   };
 
@@ -283,6 +351,30 @@ let
       '';
     };
   };
+
+  # Wrapper script that sets slack token before launching weechat
+  weechatWrapper = pkgs.writeShellScriptBin "weechat" ''
+    WEECHAT_DIR="${weechatHomeDir}"
+    PLUGINS_CONF="$WEECHAT_DIR/plugins.conf"
+
+    # Set slack token from sops secret before weechat starts
+    if [ -f /run/secrets/slack_api_token ]; then
+      SLACK_TOKEN=$(cat /run/secrets/slack_api_token)
+      if [ -f "$PLUGINS_CONF" ]; then
+        # Remove existing slack token line if present
+        ${pkgs.gnused}/bin/sed -i '/^python\.slack\.slack_api_token/d' "$PLUGINS_CONF"
+        # Ensure [var] section exists
+        if ! grep -q '^\[var\]' "$PLUGINS_CONF"; then
+          echo "" >> "$PLUGINS_CONF"
+          echo "[var]" >> "$PLUGINS_CONF"
+        fi
+        # Add token after [var] section
+        ${pkgs.gnused}/bin/sed -i "/^\[var\]/a python.slack.slack_api_token = \"$SLACK_TOKEN\"" "$PLUGINS_CONF"
+      fi
+    fi
+
+    exec ${lib.getExe weechatPkg} --dir "$WEECHAT_DIR" "$@"
+  '';
 in
 {
   options.jvf.programs.weechat = {
@@ -345,8 +437,17 @@ in
   config = lib.mkIf cfg.enable {
     environment.variables.WEECHAT_HOME = weechatHomeDir;
 
+    sops.secrets.slack_api_token = {
+      path = "/run/secrets/slack_api_token";
+      owner = cfg.username;
+      mode = "0400";
+    };
+
     jvf.wrappers.users.${cfg.username}.programs.weechat = {
-      command = "${lib.getExe weechatPkg} --dir ${weechatHomeDir} @";
+      command =
+        if cfg.slack.enable
+        then "${lib.getExe weechatWrapper} @"
+        else "${lib.getExe weechatPkg} --dir ${weechatHomeDir} @";
       packages = [
         cfg.package
         pkgs.aspell

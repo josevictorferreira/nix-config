@@ -112,7 +112,7 @@ in
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "oh-my-opencode.json" = {
-            disabled_commands = [];
+            disabled_commands = [ ];
             agents = {
               Sisyphus = {
                 model = "openrouter/z-ai/glm-4.6:exacto";
