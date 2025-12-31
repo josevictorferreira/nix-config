@@ -116,7 +116,7 @@ in
             lsp = cfg.settings.lsp;
             agents = {
               Sisyphus = {
-                model = "minimax/Minimax-M2.1";
+                model = "minimax/MiniMax-M2.1";
               };
               librarian = {
                 model = "openrouter/x-ai/grok-code-fast-1";
@@ -129,7 +129,7 @@ in
                 model = "openrouter/moonshotai/kimi-k2-thinking";
               };
               frontend-ui-ux-engineer = {
-                model = "minimax/Minimax-M2.1";
+                model = "minimax/MiniMax-M2.1";
               };
               document-writer = {
                 model = "openrouter/openai/gpt-oss-120b:exacto";

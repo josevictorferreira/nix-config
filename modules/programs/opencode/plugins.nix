@@ -4,52 +4,23 @@
 }:
 
 let
-  openCodeDynamicContextPkg = pkgs.buildNpmPackage rec {
-    pname = "opencode-dynamic-context-pruning";
-    version = "v1.1.2";
+  ohMyOpenCodeVersion = "v2.9.0";
 
-    src = pkgs.fetchFromGitHub {
-      owner = "Tarquinen";
-      repo = "opencode-dynamic-context-pruning";
-      rev = "${version}";
-      hash = "sha256-dxIAmUX0gSvZW3P4hxQwzbwSm3jBj8fftUO/FYLZTOg=";
-    };
-
-    npmDepsHash = "sha256-1pPBmiIY/EwMxa12MvbWk7WfusmxS9eWjlz5VTQ4ICQ=";
-
-    postPatch = ''
-      ${lib.getExe pkgs.jq} '
-        .dependencies += (.peerDependencies // {}) |
-        . as $all | .devDependencies |= with_entries(
-          select(.key as $k | ($all.dependencies | has($k) | not))
-        ) |
-        del(.peerDependencies)
-      ' package.json > package-tmp.json && mv package-tmp.json package.json
-    '';
-
-    meta = with lib; {
-      description = "Opencode Dynamic Context Pruning";
-      homepage = "https://github.com/Tarquinen/opencode-dynamic-context-pruning";
-      license = licenses.mit;
-      mainProgram = "opencode-dynamic-context-pruning";
-    };
-  };
-
-  # Fixed-output derivation to fetch bun dependencies
-  bunDeps = pkgs.stdenv.mkDerivation rec {
-    pname = "oh-my-opencode-deps";
-    version = "v2.9.0";
-
-    src = pkgs.fetchFromGitHub {
+  ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
       repo = "oh-my-opencode";
-      rev = "${version}";
-      hash = "sha256-RqKOQcA+Hm+B8l+zUK1ZV9na6I55dSDwX3lkY09Bn4E=";
+      rev = "${ohMyOpenCodeVersion}";
+      hash = "sha256-ibpYk1n+UbO279Dwli68pz4YckPhQRoP6EeMZQBz9+w=";
     };
+
+  bunDeps = pkgs.stdenv.mkDerivation {
+    pname = "oh-my-opencode-deps";
+    version = ohMyOpenCodeVersion;
+
+    src = ohMyOpenCodeSrc;
 
     nativeBuildInputs = [ pkgs.bun ];
 
-    # This is a fixed-output derivation - it's allowed to download from the internet
     outputHashMode = "recursive";
     outputHash = "sha256-QPuGuYNbjxPOib5Im6IhQ8jAdh5SaStcH8yF8x6JCL4=";
 
@@ -61,7 +32,6 @@ let
 
     installPhase = ''
       runHook preInstall
-      # Remove .cache directory which contains broken symlinks pointing to /build
       rm -rf node_modules/.cache 2>/dev/null || true
       mkdir -p $out
       cp -r node_modules $out/
@@ -72,14 +42,9 @@ let
 
   ohMyOpencodePkg = pkgs.stdenv.mkDerivation rec {
     pname = "oh-my-opencode";
-    version = "v2.9.0";
+    version = ohMyOpenCodeVersion;
 
-    src = pkgs.fetchFromGitHub {
-      owner = "code-yeongyu";
-      repo = "oh-my-opencode";
-      rev = "${version}";
-      hash = "sha256-RqKOQcA+Hm+B8l+zUK1ZV9na6I55dSDwX3lkY09Bn4E=";
-    };
+    src = ohMyOpenCodeSrc;
 
     nativeBuildInputs = [
       pkgs.bun
@@ -120,7 +85,6 @@ let
 in
 {
   config.jvf.programs.opencode.settings.plugin = [
-    "${openCodeDynamicContextPkg}/lib/node_modules/@tarquinen/opencode-dcp/dist/index.js"
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
   ];
 }

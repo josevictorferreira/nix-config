@@ -25,8 +25,8 @@ let
     lt = "eza -a --tree --level=1 --icons";
 
     # Nix shell
-    nix-shell = "nix-shell --run zsh";
-    nd = "nix develop";
+    ns = "nix-shell --run zsh";
+    nd = "nix develop --command zsh";
     nr = "nix run .#@";
   };
 
