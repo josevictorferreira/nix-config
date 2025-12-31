@@ -113,12 +113,17 @@ in
         {
           "oh-my-opencode.json" = {
             disabled_commands = [ ];
+            lsp = cfg.settings.lsp;
             agents = {
               Sisyphus = {
-                model = "openrouter/z-ai/glm-4.6:exacto";
+                model = "minimax/Minimax-M2.1";
               };
               librarian = {
                 model = "openrouter/x-ai/grok-code-fast-1";
+              };
+              explore = {
+                model = "openrouter/openai/gpt-oss-120b:exacto";
+                temperature = 0.1;
               };
               oracle = {
                 model = "openrouter/moonshotai/kimi-k2-thinking";
@@ -132,6 +137,15 @@ in
               multimodal-looker = {
                 model = "openrouter/google/gemini-3-flash-preview";
               };
+            };
+            experimental = {
+              auto_resume = true;
+              dcp_for_compaction = true;
+              preemptive_compaction = true;
+            };
+            ralph_loop = {
+              enabled = true;
+              default_max_iterations = 100;
             };
           };
           "opencode.json" = (

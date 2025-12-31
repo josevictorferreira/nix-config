@@ -73,7 +73,6 @@ in
       pkgs.imagemagick
       pkgs.jq
       pkgs.yq
-      pkgs.direnv
       pkgs.bat
       pkgs.brave
       pkgs.p7zip # Moved from system packages

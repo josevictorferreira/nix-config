@@ -40,11 +40,6 @@ in
               source $ZSH/oh-my-zsh.sh
             ''
 
-            # Enable direnv
-            ''
-              eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-            ''
-
             # Load custom themes
             (lib.concatStringsSep "\n" (
               map
@@ -105,7 +100,6 @@ in
             pkgs.oh-my-zsh
             pkgs.fzf
             pkgs.ripgrep
-            pkgs.direnv
             pkgs.eza
             pkgs.jq
             pkgs.curl

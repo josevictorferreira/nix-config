@@ -181,7 +181,6 @@ let
       **Development environment setup:**
       ```
       Create development infrastructure:
-        - .envrc for direnv integration
         - .editorconfig for consistent formatting
         - .gitignore with language-specific exclusions
         - Pre-commit configuration and hooks
