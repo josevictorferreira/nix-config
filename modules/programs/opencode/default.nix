@@ -168,10 +168,7 @@ in
                     name = "${name}*";
                     value = false;
                   })
-                  cfg.mcps)
-                // {
-                  "skills*" = false;
-                };
+                  cfg.mcps);
             }
           );
         }

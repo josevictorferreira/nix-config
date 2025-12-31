@@ -38,7 +38,7 @@ let
   # Fixed-output derivation to fetch bun dependencies
   bunDeps = pkgs.stdenv.mkDerivation rec {
     pname = "oh-my-opencode-deps";
-    version = "v2.8.3";
+    version = "v2.9.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
@@ -72,7 +72,7 @@ let
 
   ohMyOpencodePkg = pkgs.stdenv.mkDerivation rec {
     pname = "oh-my-opencode";
-    version = "v2.8.3";
+    version = "v2.9.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
