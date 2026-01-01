@@ -57,7 +57,7 @@ let
     docker = "podman";
     m = "make";
     be = "bundle exec ";
-    ber = "bundle exec rspec ";
+    ber = "bundle exec rspec --fail-fast ";
     uvr = "uv run ";
     uvrp = "uv run pytest ";
     uvrd = "uv run python manage.py ";

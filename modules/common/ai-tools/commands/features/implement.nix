@@ -55,7 +55,8 @@ let
 
       <success_criteria>
       - Code for Phase $2 is implemented.
-      - All tests (new and existing) pass with 0 errors/warnings.
+      - All tests of the whole test suite (new and existing) pass(GREEN) with 0 errors/warnings.
+      - No linting offenses/warnings/errors across the WHOLE PROJECT, even if you didn't change the file in question.
       - `tasks.md` is updated with checked boxes for the completed items.
       </success_criteria>
     '';

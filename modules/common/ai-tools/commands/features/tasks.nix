@@ -21,16 +21,20 @@ let
       <process>
       1. **Ingest Context**:
           - Locate the folder for "$ARGUMENTS".
-          - Read `plan.md` (Technical Plan) and `spec.md` (Requirements).
+          - Read `plan.md` (Technical Plan) and `spec.md` (Product Requirements).
 
       2. **Construct Phases**:
           - Break the plan into "Phases" (e.g., Phase 1, Phase 2).
-          - **Ordering Rule**: Phases must be strictly sequential.
+          - Each phase must be independent and should not break the test suite. All tests must pass(GREEN) after each phase. Plan accordingly with that in mind.
+          - All linting should also pass(no offenses or warnings across the whole project).
+          - **Ordering Rule**: Phases must be strictly sequential ordered by Implementation order, ensuring each subsequent phase builds upon the previous without regression.
+          - Never make a phase with only a single type of task (for example a single phase of testing for all other phases).
           - **Async Rule**: Identify instances where tasks/phases can be developed asynchronously and explicitly mark them.
 
       3. **Define Gates**:
-          - Add a mandatory `[ ] Run and Pass Tests` task at the end of **every** phase.
           - Note that development cannot proceed to Phase $N+1$ until Phase $N$ tests pass.
+          - The whole project test suite should pass before proceeding to the next phase.
+          - The whole project files should be linted and should not have any offenses/warnings.
 
       4. **Output**:
           - Create `.docs/features/{folder}/tasks.md`.
