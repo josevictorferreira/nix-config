@@ -29,7 +29,7 @@ let
       complete_examples = ''
         # Complete Examples
 
-        Full working examples demonstrating Rails frontend patterns.
+        Full working examples demonstrating Rails frontend patterns. Always use the `chrome-devtools` tool to debug directly in the browser.
 
         ## Example 1: CRUD with Turbo Frames
 

@@ -26,5 +26,6 @@
     ./features/tasks.nix
     ./ruby/rspec-fix.nix
     ./ruby/rubocop-fix.nix
+    ./ruby/rails-frontend-fix.nix
   ];
 }
