@@ -18,7 +18,7 @@ let
       </objective>
 
       <context>
-      Read the project AGENTS.md to get context, also read the feature implementations in the .docs folder.
+      Read the project AGENTS.md to get context, also read the feature implementations in the .docs folder. Check if there's a subagent available to call named `rspec-testing`, if so, then call it using @rspec-testing. Otherwise do the task yourself.
       </context>
 
       <process>

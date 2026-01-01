@@ -25,5 +25,6 @@
     ./features/spec.nix
     ./features/tasks.nix
     ./ruby/rspec-fix.nix
+    ./ruby/rubocop-fix.nix
   ];
 }
