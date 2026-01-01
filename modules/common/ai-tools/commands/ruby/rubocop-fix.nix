@@ -10,6 +10,7 @@ let
   commandDef = inputs.lib.aiTools.mkCommandModule {
     name = commandName;
     description = "Fix rubocop offenses/warnings found in a the given file";
+    agent = "rails-developer";
     prompt = ''
       # ${commandFullName}
 

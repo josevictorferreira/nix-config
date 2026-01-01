@@ -20,6 +20,7 @@ let
       "List"
       "Read"
       "Task"
+      "Skill"
     ];
     mode = "primary";
     disabledTools = [
@@ -35,6 +36,15 @@ let
         "*" = "deny";
       };
       webfetch = "deny";
+      skill = {
+        fixing-rubocop = "allow";
+        managing-rails-events = "allow";
+        managing-background-jobs = "allow";
+        rails-background-jobs = "allow";
+        rspec-testing = "allow";
+        ruby-stealth-scraping = "allow";
+        "*" = "deny";
+      };
     };
     temperature = 0.2;
     prompt = ''
