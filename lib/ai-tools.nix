@@ -51,6 +51,7 @@ let
       config = {
         jvf.programs.opencode.skills.${name} = skillDefinition;
         jvf.programs.claudecode.skills.${name} = skillDefinition;
+        jvf.programs.droid.skills.${name} = skillDefinition;
       };
     };
 
@@ -98,6 +99,20 @@ let
       };
       config = {
         jvf.programs.opencode.agents.${name} = {
+          inherit
+            name
+            mode
+            model
+            temperature
+            permission
+            description
+            prompt
+            tags
+            tools
+            disabledTools
+            ;
+        };
+        jvf.programs.droid.agents.${name} = {
           inherit
             name
             mode
@@ -164,6 +179,14 @@ let
       };
       config = {
         jvf.programs.opencode.commands.${name} = {
+          inherit
+            name
+            description
+            agent
+            prompt
+            ;
+        };
+        jvf.programs.droid.commands.${name} = {
           inherit
             name
             description
@@ -355,9 +378,49 @@ let
     in
     skillMd // references // scripts;
 
+  mkSingleSkillsConfigs =
+    skillName: skill:
+    let
+      # Main SKILL.md file
+      skillMd = {
+        "skills/${skillName}/SKILL.md" = toSkillMarkdown skillName skill;
+      };
+
+      # Reference files
+      references =
+        if skill ? references && skill.references != { } then
+          lib.mapAttrs'
+            (refName: refContent: {
+              name = "skills/${skillName}/references/${refName}.md";
+              value = refContent;
+            })
+            skill.references
+        else
+          { };
+
+      # Script files
+      scripts =
+        if skill ? scripts && skill.scripts != { } then
+          lib.mapAttrs'
+            (scriptName: scriptContent: {
+              name = "skills/${skillName}/scripts/${scriptName}";
+              value = scriptContent;
+            })
+            skill.scripts
+        else
+          { };
+    in
+    skillMd // references // scripts;
+
   mkSkillConfigs =
     skills:
     lib.foldl' (acc: skillName: acc // (mkSingleSkillConfigs skillName skills.${skillName})) { } (
+      builtins.attrNames skills
+    );
+
+  mkSkillsConfigs =
+    skills:
+    lib.foldl' (acc: skillName: acc // (mkSingleSkillsConfigs skillName skills.${skillName})) { } (
       builtins.attrNames skills
     );
 
@@ -383,6 +446,7 @@ in
   inherit
     mkSingleSkillConfigs
     mkSkillConfigs
+    mkSkillsConfigs
     toSkillMarkdown
     toOpencodeMarkdownPrompt
     toClaudeMarkdownPrompt

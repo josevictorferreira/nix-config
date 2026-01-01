@@ -40,6 +40,18 @@ let
           "--executablePath=${defaultBrowser}"
         ];
       };
+
+      jvf.programs.droid.mcps."chrome-devtools" = {
+        type = "stdio";
+        command = "npx";
+        args = [
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--headless=true"
+          "--isolated=true"
+          "--executablePath=${defaultBrowser}"
+        ];
+      };
     };
   };
 in

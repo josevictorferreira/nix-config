@@ -18,7 +18,6 @@ let
       "WebFetch"
       "Blob"
     ];
-    model = "openrouter/z-ai/glm-4.7";
     tags = [
       "explorer"
       "documentation"

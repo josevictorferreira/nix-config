@@ -26,6 +26,14 @@ let
           "--serve"
         ];
       };
+
+      jvf.programs.droid.mcps."ck" = {
+        type = "stdio";
+        command = "${lib.getExe config.jvf.programs."ck-search".package}";
+        args = [
+          "--serve"
+        ];
+      };
     };
   };
 in

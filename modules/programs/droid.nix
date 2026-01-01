@@ -2,10 +2,12 @@
 , pkgs
 , config
 , username
+, inputs
 , ...
 }:
 let
   cfg = config.jvf.programs.droid;
+  json = pkgs.formats.json { };
   droidFHS = pkgs.buildFHSEnv {
     name = "droid-fhs";
     targetPkgs =
@@ -54,6 +56,31 @@ in
       default = username;
       description = "Username to install the program";
     };
+    settings = lib.mkOption {
+      type = json.type;
+      default = { };
+      description = "Settings written to ~/.factory/settings.json";
+    };
+    agents = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+      default = { };
+      description = "Agents to install into the configuration (string prompts or structured objects)";
+    };
+    commands = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+      default = { };
+      description = "Commands to install into the configuration (string prompts or structured objects)";
+    };
+    mcps = lib.mkOption {
+      type = lib.types.attrsOf json.type;
+      default = { };
+      description = "MCP tools to install into the configuration (structured objects)";
+    };
+    skills = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+      default = { };
+      description = "Skills to install into the configuration";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -63,8 +90,12 @@ in
       ];
       configPath = ".factory";
       configs = lib.mkMerge [
+        (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "droids" cfg.agents)
+        (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
+        (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
         {
           "settings.json" = {
+            mcpServers = cfg.mcps;
             customModels = [
               {
                 model = "minimax/minimax-m2.1";

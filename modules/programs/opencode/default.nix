@@ -123,7 +123,7 @@ in
               };
               explore = {
                 model = "openrouter/openai/gpt-oss-120b:exacto";
-                temperature = 0.1;
+                temperature = 0.2;
               };
               oracle = {
                 model = "openrouter/moonshotai/kimi-k2-thinking";

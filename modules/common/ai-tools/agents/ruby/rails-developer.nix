@@ -36,7 +36,7 @@ let
       };
       webfetch = "deny";
     };
-    temperature = 0.1;
+    temperature = 0.2;
     prompt = ''
       # The Rails Developer (Orchestrator)
 

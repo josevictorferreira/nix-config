@@ -31,6 +31,16 @@ let
           "{env:CONTEXT7_API_KEY}"
         ];
       };
+      jvf.programs.droid.mcps."context7" = {
+        type = "stdio";
+        command = "npx";
+        args = [
+          "-y"
+          "@upstash/context7-mcp"
+          "--api-key"
+          "{env:CONTEXT7_API_KEY}"
+        ];
+      };
     };
   };
 in

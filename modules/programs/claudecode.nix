@@ -118,7 +118,7 @@ in
           configs = lib.mkMerge [
             (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
             (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
-            (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
+            (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
           ];
         };
         claude-code-router = {
