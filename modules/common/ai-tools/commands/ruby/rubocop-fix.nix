@@ -23,7 +23,7 @@ let
 
       <process>
       - Run `bundle exec rubocop $ARGUMENTS`, capture the output, and parse the offenses found.
-      - Fix the rubocop offenses/warnings found, if in doubt check the `https://docs.rubocop.org/rubocop/cops.html` page to find every Cop error and the best way to fix them.
+      - Fix the rubocop offenses/warnings found, call the `fixing-rubocop` skill to fetch how to fix that offense, you can also check the `https://docs.rubocop.org/rubocop/cops.html` page to find every Cop error and the best way to fix them.
       - Run `bundle exec rubocop` to check if your fix does not add any other rubocop offenses, if so, then fix all of them. 
       - Finally run `./bin/parallel_tests` and check if your fix didn't cause any tests in the project to fail. If there's a failure, then fix it.
       </process>
