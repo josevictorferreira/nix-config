@@ -27,7 +27,7 @@ let
     # Nix shell
     ns = "nix-shell --run zsh";
     nd = "nix develop --command zsh";
-    nr = "nix run .#@";
+    nr = "nix run .#";
   };
 
   # Navigation aliases

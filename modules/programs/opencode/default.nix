@@ -153,6 +153,10 @@ in
             // {
               theme = "one-dark";
               mcp = cfg.mcps;
+              agents = {
+                general.disabled = true;
+                general.enabled = false;
+              };
               disabled_providers = [
                 "opencode"
                 "copilot"
