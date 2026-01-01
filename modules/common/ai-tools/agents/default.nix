@@ -13,5 +13,6 @@
     ./ruby/rails-developer.nix
     ./ruby/rspec-testing.nix
     ./ruby/ruby-stealth-scraping.nix
+    ./ruby/rubocop-fixer.nix
   ];
 }

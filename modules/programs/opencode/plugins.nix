@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.9.0";
+  ohMyOpenCodeVersion = "v2.10.0";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
       repo = "oh-my-opencode";
       rev = "${ohMyOpenCodeVersion}";
-      hash = "sha256-ibpYk1n+UbO279Dwli68pz4YckPhQRoP6EeMZQBz9+w=";
+      hash = "sha256-cOj/OZMQGYgd+N2eWgwjeJubrft52Bne+Yzz4ETVC2s=";
     };
 
   bunDeps = pkgs.stdenv.mkDerivation {
@@ -22,7 +22,7 @@ let
     nativeBuildInputs = [ pkgs.bun ];
 
     outputHashMode = "recursive";
-    outputHash = "sha256-QPuGuYNbjxPOib5Im6IhQ8jAdh5SaStcH8yF8x6JCL4=";
+    outputHash = "sha256-AkZCBjP1XWxCR+MjxfqyELaqdGwwUIroUP2pZxzyzbE=";
 
     buildPhase = ''
       runHook preBuild

@@ -61,6 +61,7 @@ let
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
       | **@rspec-testing** | **TDD & QA**<br>Writing and improving tests using RSpec (Better Specs/Thoughtbot standards). | "test", "spec", "rspec", "verify", "failing test", "integration test" |
       | **@ruby-stealth-scraping** | **Headless Browser Automation**<br>Ferrum/Headless Chrome, bot evasion, and scraping logic. | "scrape", "crawl", "ferrum", "headless", "extract data", "bypass detection" |
+      | **@rubocop-fixer** | **Rubocop auto‑fixer for style and lint issues.**<br>Rubocop auto‑fixer for style and lint issues. Handles automatic code formatting and lint corrections. | "rubocop", "lint", "code quality", "fixing offenses", "fix lint" |
 
       ## Routing Logic (Priority Order)
 
@@ -76,6 +77,7 @@ let
           *   **UI/Interaction** → **@rails-hotwire**
       4.  **Verification**:
           *   "Run tests", "Write tests for X", "Fix specs", "Fix tests" → **@rspec-testing**
+          *   "Run lint", "Fix rubocop offenses/warnings for X", "Fix lint", "Fix rubocop offenses" → **@rubocop-fixer**
       5.  **Fallback**:
           *   If ambiguous, ask up to 3 clarifying questions.
 
@@ -86,16 +88,21 @@ let
       1.  **@rspec-testing**: Write a failing spec for the requirement.
       2.  **[implementation(example)]**: Implement the feature to pass the spec.
       3.  **@rspec-testing**: Verify and refactor.
+      4.  **@rubocop-fixer**: Fix any RuboCop offenses in the code.
 
       ### 2. The "Full Stack Feature" (Sequential)
       Usage: Building a complete feature from backend to frontend.
       1.  **@rails-event-store**: Define the Domain Event and Aggregate logic.
       2.  **@rails-hotwire**: Build the ViewComponent or Controller to trigger/display it.
+      3.  **@rspec-testing**: Verify and refactor.
+      4.  **@rubocop-fixer**: Fix any RuboCop offenses in the code.
 
       ### 3. The "Scraper Pipeline" (Chain)
       Usage: Building reliable data ingestion.
       1.  **@ruby-stealth-scraping**: Build the Ferrum extractor script.
       2.  **@rails-background-jobs**: Wrap the script in a Solid Queue job with retry logic.
+      3.  **@rspec-testing**: Verify and refactor.
+      4.  **@rubocop-fixer**: Fix any RuboCop offenses in the code.
 
       ## Operational Constraints
 

@@ -153,7 +153,7 @@ in
             // {
               theme = "one-dark";
               mcp = cfg.mcps;
-              agents = {
+              agent = {
                 general.disabled = true;
                 general.enabled = false;
               };
