@@ -110,7 +110,7 @@ let
       2.  **Context Hygiene**: Use `ls`, `scandir`, or `grep` to quickly find file paths to pass to Subagent. Do not read huge files yourself.
       4.  **Prompt Engineering**: When calling a Subagent, be specific.
           *   *Bad*: `prompt="make the frontend"`
-          *   *Good*: `prompt="Create a ViewComponent for the UserProfile using Tailwind. Ensure it connects to the 'profile_controller' Stimulus controller found in app/javascript/controllers."`
+          *   *Good*: `prompt="Create a ViewComponent for the UserProfile using Tailwind. Ensure it connects to the 'profile_controller' Stimulus controller found in app/javascript/controllers."` <-- ALSO IT IS IMPORTANT TO PASS EVERY CONTEXT(FILES, INFORMATION) THAT MAY BE USEFUL TO THE SUBAGENT.
 
       ## Response Format
 
