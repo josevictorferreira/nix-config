@@ -111,6 +111,7 @@ in
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
+          "AGENTS.md" = cfg.baseRules;
           "oh-my-opencode.json" = {
             disabled_commands = [ ];
             lsp = cfg.settings.lsp;

@@ -75,6 +75,9 @@ let
     ebookit = "cd ${workspace}/ebookit/ebookit-extension";
     rinha = "cd ${workspace}/rinha-backend";
     hl = "cd ${workspace}/homelab";
+    val = "cd ${workspace}/valoris";
+    valb = "cd ${workspace}/valoris/backend";
+    valf = "cd ${workspace}/valoris/frontend";
     vista = "cd ${workspace}/vista-valor";
     real = "cd ${workspace}/realiza-monorepo";
   };

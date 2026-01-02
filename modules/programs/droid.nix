@@ -61,6 +61,11 @@ in
       default = { };
       description = "Settings written to ~/.factory/settings.json";
     };
+    baseRules = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "A set of base rules to apply to the OpenCode configuration.";
+    };
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
