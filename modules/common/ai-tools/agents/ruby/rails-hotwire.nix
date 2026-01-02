@@ -24,7 +24,6 @@ let
       "browser"
     ];
     mode = "subagent";
-    model = "openrouter/z-ai/glm-4.7";
     references = {
       complete_examples = ''
         # Complete Examples
@@ -1702,12 +1701,6 @@ let
       ---
 
       **Skill Status**: Adapted for Rails 7+, Hotwire (Turbo + Stimulus), and Tailwind CSS
-
-      ---
-
-      ## References
-
-      ${lib.concatStringsSep "\n\n" (lib.attrValues references)}
     '';
   };
 in

@@ -36,13 +36,14 @@ let
         "*" = "deny";
       };
       webfetch = "deny";
-      skill = {
-        fixing-rubocop = "allow";
-        managing-rails-events = "allow";
-        managing-background-jobs = "allow";
-        rails-background-jobs = "allow";
-        rspec-testing = "allow";
-        ruby-stealth-scraping = "allow";
+      task = {
+        "explore*" = "allow";
+        "rails-hotwire*" = "allow";
+        "rails-event-store*" = "allow";
+        "rails-background-jobs*" = "allow";
+        "rspec-testing*" = "allow";
+        "ruby-stealth-scraping*" = "allow";
+        "rubocop-fixer*" = "allow";
         "*" = "deny";
       };
     };
@@ -56,6 +57,7 @@ let
 
       | Subagent | Primary Capability | Triggers / Keywords |
       | :--- | :--- | :--- |
+      | **@explore | ** ****Code Exploration**<br>Search, read, and navigate the codebase to locate files, definitions, and dependencies. | "search", "find", "grep", "read", "explore", "codebase" |
       | **@rails-hotwire** | **Hotwire & ViewComponents**<br>Guidelines for Turbo, Stimulus, Tailwind, ViewComponent, and server-rendered HTML. | "view", "component", "stimulus", "frontend", "tailwind", "turbo", "erb", "partial" |
       | **@rails-event-store** | **Event Driven Architecture**<br>Rails Event Store patterns, aggregates, projections, and subscriptions. | "event", "publish", "subscribe", "job queue", "event store", "aggregate", "projection" |
       | **@rails-background-jobs** | **Background Processing**<br>Solid Queue implementation, recurring jobs, and job reliability. | "background job", "worker", "queue", "schedule", "solid queue", "perform_later" |
@@ -68,7 +70,7 @@ let
       Follow this deterministic decision tree. Stop at the first match.
 
       1.  **Explicit Request**: If user asks for a specific Subagent (e.g., "Use the rspec Subagent"), obey immediately.
-      2.  **Context Discovery**: If the request requires finding files but the path is unknown → **@exploring-codebase**.
+      2.  **Context Discovery**: If the request requires finding files but the path is unknown → **@explore**.
       3.  **Specialized Domains**:
           *   **Scraping/Automation** → **@ruby-stealth-scraping**
               *   *(Note: If the scraped data needs to be processed in a job, chain: Scraping -> Jobs)*

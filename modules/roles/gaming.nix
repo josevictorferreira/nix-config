@@ -35,6 +35,8 @@ in
         pkgs.wine64
         pkgs.winetricks
         pkgs.wine-wayland
+
+        pkgs.vinegar
       ];
     }
     // (

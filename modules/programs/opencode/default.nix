@@ -141,7 +141,9 @@ in
             experimental = {
               auto_resume = true;
               dcp_for_compaction = true;
-              preemptive_compaction = true;
+              dynamic_context_pruning = {
+                enabled = true;
+              };
             };
             ralph_loop = {
               enabled = true;
@@ -151,6 +153,12 @@ in
           "opencode.json" = (
             cfg.settings
             // {
+              agent = {
+                "general" = {
+                  enabled = false;
+                  disabled = true;
+                };
+              };
               theme = "one-dark";
               mcp = cfg.mcps;
               disabled_providers = [
