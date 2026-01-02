@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.12.0";
+  ohMyOpenCodeVersion = "v2.12.1";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
       owner = "code-yeongyu";
       repo = "oh-my-opencode";
       rev = "${ohMyOpenCodeVersion}";
-      hash = "sha256-CGcuoL2xf37LEkpG42xWoF7LCMU9cQ/D5j2RQ3iYNEs=";
+      hash = "sha256-JZNim46N2334gQccfV9RDTJ3n12v2MThsmpFykf6DDM=";
     };
 
   bunDeps = pkgs.stdenv.mkDerivation {
@@ -22,7 +22,7 @@ let
     nativeBuildInputs = [ pkgs.bun ];
 
     outputHashMode = "recursive";
-    outputHash = "sha256-fjq7H9lUdtrYM42nx6ZsQqZpkyj0dLCRPinONUqcyPU=";
+    outputHash = "sha256-daA3QyhFfdZDDnWhr/vB2KJnhiyo7EuZdBFaEpzf5Ts=";
 
     buildPhase = ''
       runHook preBuild
@@ -86,5 +86,6 @@ in
 {
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
+    "opencode-google-antigravity-auth@0.2.12"
   ];
 }
