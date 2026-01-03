@@ -89,4 +89,43 @@ in
     "opencode-google-antigravity-auth@0.2.12"
     "@tarquinen/opencode-dcp@latest"
   ];
+
+  config.jvf.programs.opencode.ohMyOpenCodeSettings = {
+    disabled_commands = [ ];
+    agents = {
+      Sisyphus = {
+        model = "minimax/MiniMax-M2.1";
+      };
+      librarian = {
+        model = "openrouter/x-ai/grok-code-fast-1";
+      };
+      explore = {
+        model = "openrouter/openai/gpt-oss-120b:exacto";
+        temperature = 0.2;
+      };
+      oracle = {
+        model = "zai/GLM-4.7";
+      };
+      frontend-ui-ux-engineer = {
+        model = "minimax/MiniMax-M2.1";
+      };
+      document-writer = {
+        model = "openrouter/openai/gpt-oss-120b:exacto";
+      };
+      multimodal-looker = {
+        model = "zai/GLM-4.6V";
+      };
+    };
+    experimental = {
+      auto_resume = true;
+      dcp_for_compaction = true;
+      dynamic_context_pruning = {
+        enabled = true;
+      };
+    };
+    ralph_loop = {
+      enabled = true;
+      default_max_iterations = 100;
+    };
+  };
 }

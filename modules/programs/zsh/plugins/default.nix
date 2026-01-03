@@ -105,5 +105,15 @@ in
         sha256 = "sha256-xbchXJTFWeABTwq6h4KWLh+EvydDrDzcY9AQVK65RS8=";
       };
     })
+
+    (mkPlugin {
+      name = "zsh-nix-shell";
+      src = pkgs.fetchFromGitHub {
+        owner = "chisui";
+        repo = "zsh-nix-shell";
+        rev = "v0.8.0";
+        sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
+      };
+    })
   ];
 }

@@ -74,6 +74,11 @@
           "github_token"
           "hugging_face_api_key"
           "civitai_api_key"
+          "gemini_api_key"
+          "z_ai_api_key"
+          "homelab_postgres_host"
+          "homelab_postgres_user"
+          "homelab_postgres_password"
         ];
         description = "List of sops secret keys to expose";
       };

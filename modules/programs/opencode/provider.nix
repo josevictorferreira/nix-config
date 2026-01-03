@@ -31,48 +31,25 @@
       };
     };
 
-    openrouter = {
+    "zai" = {
+      npm = "@ai-sdk/openai-compatible";
+      name = "Z-Ai";
+      options = {
+        baseURL = "https://api.z.ai/api/coding/paas/v4";
+        apiKey = "{env:Z_AI_API_KEY}";
+      };
       models = {
-        "z-ai/glm-4.6:exacto" = {
-          name = "GLM 4.6 Exacto";
+        "GLM-4.7" = {
+          name = "GLM 4.7";
         };
-        "x-ai/grok-4.1-fast" = {
-          name = "Grok 4.1 Fast";
+        "GLM-4.6" = {
+          name = "GLM 4.6";
         };
-        "minimax/minimax-m2" = {
-          name = "Minimax M2";
-          options = {
-            provider = {
-              only = [
-                "minimax/fp8"
-              ];
-            };
-          };
-        };
-        "moonshotai/kimi-k2-0905:exacto" = {
-          name = "Kimi K2 Instruct 0905 Exacto";
-        };
-        "openai/gpt-oss-120b:exacto" = {
-          name = "GPT OSS 120b Exacto";
-        };
-        "moonshotai/kimi-k2-thinking" = {
-          name = "Kimi K2 Thinking";
-          options = {
-            provider = {
-              only = [
-                "moonshotai/int4"
-                "moonshotai/turbo"
-              ];
-            };
-          };
-        };
-        "google/gemini-3-pro-preview" = {
-          name = "Gemini 3 Pro Preview - Openrouter";
-        };
-        "openai/gpt-5.1-codex-max" = {
-          name = "GPT 5.1 Codex Max - Openrouter";
+        "GLM-4.6V" = {
+          name = "GLM 4.6V";
         };
       };
+
     };
   };
 }

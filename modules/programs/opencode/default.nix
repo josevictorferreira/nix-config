@@ -92,6 +92,12 @@ in
       description = "MCP tools to install into the configuration (structured objects)";
     };
 
+    ohMyOpenCodeSettings = lib.mkOption {
+      type = json.type;
+      default = {};
+      description = "Settings written to ~/.config/opencode/oh-my-opencode.json";
+    };
+
     settings = lib.mkOption {
       type = json.type;
       default = { };
@@ -100,6 +106,20 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    jvf.programs.opencode.settings = {
+      theme = lib.mkDefault "one-dark";
+      mcp = lib.mkDefault cfg.mcps;
+      disabled_providers = lib.mkDefault [
+        "opencode"
+        "copilot"
+        "github-copilot"
+        "github-copilot-enterprise"
+        "copilot-enterprise"
+        "github-models"
+        "minimax-cn"
+      ];
+    };
+
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       packages = [
         pkgs.bun
@@ -112,74 +132,8 @@ in
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "AGENTS.md" = cfg.baseRules;
-          "oh-my-opencode.json" = {
-            disabled_commands = [ ];
-            lsp = cfg.settings.lsp;
-            agents = {
-              Sisyphus = {
-                model = "minimax/MiniMax-M2.1";
-              };
-              librarian = {
-                model = "openrouter/x-ai/grok-code-fast-1";
-              };
-              explore = {
-                model = "openrouter/openai/gpt-oss-120b:exacto";
-                temperature = 0.2;
-              };
-              oracle = {
-                model = "openrouter/moonshotai/kimi-k2-thinking";
-              };
-              frontend-ui-ux-engineer = {
-                model = "minimax/MiniMax-M2.1";
-              };
-              document-writer = {
-                model = "openrouter/openai/gpt-oss-120b:exacto";
-              };
-              multimodal-looker = {
-                model = "openrouter/google/gemini-3-flash-preview";
-              };
-            };
-            experimental = {
-              auto_resume = true;
-              dcp_for_compaction = true;
-              dynamic_context_pruning = {
-                enabled = true;
-              };
-            };
-            ralph_loop = {
-              enabled = true;
-              default_max_iterations = 100;
-            };
-          };
-          "opencode.json" = (
-            cfg.settings
-            // {
-              agent = {
-                "general" = {
-                  enabled = false;
-                  disabled = true;
-                };
-              };
-              theme = "one-dark";
-              mcp = cfg.mcps;
-              disabled_providers = [
-                "opencode"
-                "copilot"
-                "github-copilot"
-                "github-copilot-enterprise"
-                "copilot-enterprise"
-                "github-models"
-                "minimax-cn"
-              ];
-              tools =
-                (lib.mapAttrs'
-                  (name: _: {
-                    name = "${name}*";
-                    value = false;
-                  })
-                  cfg.mcps);
-            }
-          );
+          "opencode.json" = cfg.settings;
+          "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
         }
       ];
     };
