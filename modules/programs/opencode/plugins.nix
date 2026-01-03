@@ -87,5 +87,6 @@ in
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
     "opencode-google-antigravity-auth@0.2.12"
+    "@tarquinen/opencode-dcp@latest"
   ];
 }

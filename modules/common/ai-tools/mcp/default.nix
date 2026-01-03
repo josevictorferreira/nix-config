@@ -5,12 +5,11 @@ let
 in
 {
   imports = [
-    ./playwright.nix
+    ./playwriter.nix
     ./context7.nix
     ./chrome-devtools.nix
     ./shadcn.nix
     ./ck.nix
-    ./podman-mcp.nix
   ]
   ++ lib.optional (!isDarwin) ./mcp-nixos.nix;
 }
