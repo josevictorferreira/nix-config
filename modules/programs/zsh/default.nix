@@ -36,6 +36,7 @@ in
             # Enable Oh My Zsh (manual configuration to support both NixOS and Darwin)
             ''
               export ZSH=${pkgs.oh-my-zsh}/share/oh-my-zsh
+              export ZSH_THEME=""
               plugins=(${lib.concatStringsSep " " zshPlugins.plugins})
               source $ZSH/oh-my-zsh.sh
             ''

@@ -17,6 +17,7 @@ in
     ../programs/neovim.nix
     ../programs/tmux
     ../programs/zsh
+    ../programs/starship.nix
   ];
 
   options.jvf.roles.development = {
@@ -40,6 +41,7 @@ in
       kitty.enable = true;
       neovim.enable = true;
       zsh.enable = true;
+      starship.enable = true;
       tmux.enable = true;
       git = {
         enable = true;

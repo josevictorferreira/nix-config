@@ -27,17 +27,7 @@ in
   # Aggregate all packages
   plugins = cfg.plugins;
 
-  customThemes = [
-    (mkPlugin {
-      name = "powerlevel10k";
-      src = pkgs.fetchFromGitHub {
-        owner = "romkatv";
-        repo = "powerlevel10k";
-        rev = "v1.20.0";
-        sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
-      };
-    })
-  ];
+  customThemes = [];
 
   customPkgs = internalPlugins ++ [
     # Syntax highlighting
@@ -103,16 +93,6 @@ in
         repo = "zsh-vi-mode";
         rev = "v0.11.0";
         sha256 = "sha256-xbchXJTFWeABTwq6h4KWLh+EvydDrDzcY9AQVK65RS8=";
-      };
-    })
-
-    (mkPlugin {
-      name = "zsh-nix-shell";
-      src = pkgs.fetchFromGitHub {
-        owner = "chisui";
-        repo = "zsh-nix-shell";
-        rev = "v0.8.0";
-        sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
       };
     })
   ];
