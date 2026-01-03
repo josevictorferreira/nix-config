@@ -27,7 +27,7 @@ in
   # Aggregate all packages
   plugins = cfg.plugins;
 
-  customThemes = [];
+  customThemes = [ ];
 
   customPkgs = internalPlugins ++ [
     # Syntax highlighting

@@ -94,7 +94,7 @@ in
 
     ohMyOpenCodeSettings = lib.mkOption {
       type = json.type;
-      default = {};
+      default = { };
       description = "Settings written to ~/.config/opencode/oh-my-opencode.json";
     };
 

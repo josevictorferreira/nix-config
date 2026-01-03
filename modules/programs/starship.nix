@@ -13,7 +13,7 @@ in
       enable = true;
       settings = {
         add_newline = true;
-        
+
         # Nix shell integration - Shows when inside nix develop/nix-shell
         nix_shell = {
           disabled = false;
@@ -21,11 +21,19 @@ in
           pure_msg = "[pure](bold green)";
           format = "via [$symbol$state( \($name\))]($style) ";
         };
-        
+
         # Additional customization to make it look nice
         character = {
           success_symbol = "[➜](bold green)";
           error_symbol = "[➜](bold red)";
+        };
+
+        aws = {
+          disabled = true;
+        };
+
+        kubernetes = {
+          disabled = false;
         };
       };
     };

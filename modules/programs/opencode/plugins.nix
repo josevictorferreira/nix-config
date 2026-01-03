@@ -7,11 +7,11 @@ let
   ohMyOpenCodeVersion = "v2.12.1";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
-      owner = "code-yeongyu";
-      repo = "oh-my-opencode";
-      rev = "${ohMyOpenCodeVersion}";
-      hash = "sha256-JZNim46N2334gQccfV9RDTJ3n12v2MThsmpFykf6DDM=";
-    };
+    owner = "code-yeongyu";
+    repo = "oh-my-opencode";
+    rev = "${ohMyOpenCodeVersion}";
+    hash = "sha256-JZNim46N2334gQccfV9RDTJ3n12v2MThsmpFykf6DDM=";
+  };
 
   bunDeps = pkgs.stdenv.mkDerivation {
     pname = "oh-my-opencode-deps";
