@@ -24,7 +24,7 @@
     # FZF history search
     bindkey '^ ' fzf_history_search_prefix_widget
 
-    # Enable cursor blinking
-    echo -e '\e[5 q'
+    # Enable cursor blinking (only for interactive terminals)
+    [[ -t 1 ]] && print -n '\e[5 q'
   '';
 }

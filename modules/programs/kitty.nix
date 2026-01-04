@@ -25,7 +25,7 @@ let
     input_delay = 0;
     sync_to_monitor = false;
     wayland_enable_ime = false;
-    term = "tmux-256color";
+    term = "xterm-256color";
     background_opacity = "0.95";
   };
 

@@ -246,7 +246,7 @@ let
                     if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
                       echo "Backing up existing ${programName} config..."
                       rm -rf "$TARGET_PATH".backup.*
-                      mv "$TARGET_PATH" "$TARGET_PATH".backup.$(date +%s)
+                      mv "$TARGET_PATH" "$TARGET_PATH".backup."$(date +%s)"
                     fi
 
                     rm -rf "$TARGET_PATH"
@@ -377,29 +377,18 @@ in
       }
     ]
     ++ lib.optional isDarwin {
-      launchd.daemons = lib.mkMerge (
-        lib.mapAttrsToList
-          (
-            userName: uCfg:
-              if (uCfg.programs or { }) == { } then
-                { }
-              else
-                {
-                  "jvf-wrappers-${userName}" = {
-                    serviceConfig = {
-                      ProgramArguments = [
-                        "${pkgs.bash}/bin/bash"
-                        "-c"
-                        (mkUserActivation userName uCfg)
-                      ];
-                      RunAtLoad = true;
-                      StandardOutPath = "/tmp/jvf-wrappers-${userName}.log";
-                      StandardErrorPath = "/tmp/jvf-wrappers-${userName}.err";
-                    };
-                  };
-                }
-          )
-          cfg.users
+      system.activationScripts.postActivation.text = lib.concatStringsSep "\n" (
+        lib.flatten (
+          lib.mapAttrsToList
+            (
+              userName: uCfg:
+                if (uCfg.programs or { }) == { } then
+                  [ ]
+                else
+                  [ (mkUserActivation userName uCfg) ]
+            )
+            cfg.users
+        )
       );
     }
     ++ lib.optional (!isDarwin) {

@@ -5,7 +5,7 @@
   shellInit = ''
     # History configuration
     HISTSIZE=10000
-    HISTFILE=~/.zsh_history
+    HISTFILE="$HOME/.cache/zsh/history"
     SAVEHIST=$HISTSIZE
     HISTDUP=erase
 

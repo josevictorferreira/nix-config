@@ -65,6 +65,8 @@ let
 
   # Check if the upstream option exists
   hasStarshipOption = options ? programs && options.programs ? starship;
+
+  isDarwin = pkgs.stdenv.isDarwin;
 in
 {
   options.jvf.programs.starship = {
@@ -73,7 +75,8 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     # NixOS Configuration (using upstream module if available)
-    (lib.optionalAttrs hasStarshipOption {
+    # On Darwin, we prefer manual configuration to ensure reliability
+    (lib.optionalAttrs (hasStarshipOption && !isDarwin) {
       programs.starship = {
         enable = true;
         settings = starshipSettings;
@@ -81,19 +84,28 @@ in
     })
 
     # Darwin / Fallback Configuration (Manual implementation)
-    # Applied if the upstream option is missing OR if we are explicitly on Darwin and want to force manual (though logic suggests specific handling)
-    # Here we trust hasStarshipOption to correctly identify if we can use the native module.
-    # If the user is on Darwin and the option is missing, this block runs.
-    (lib.mkIf (!hasStarshipOption) {
+    # Applied if the upstream option is missing OR if we are explicitly on Darwin and want to force manual loading
+    (lib.mkIf (!hasStarshipOption || isDarwin) {
       environment.systemPackages = [ pkgs.starship ];
 
-      environment.variables.STARSHIP_CONFIG = "${configFile}";
+      # environment.variables.STARSHIP_CONFIG = "${configFile}";
 
-      programs.zsh.interactiveShellInit = ''
-        eval "$(${pkgs.starship}/bin/starship init zsh)"
+      programs.zsh.interactiveShellInit = lib.mkAfter ''
+        # --- DEBUG: STARSHIP START ---
+        export STARSHIP_CONFIG="${configFile}"
+        # echo "DEBUG: Setting STARSHIP_CONFIG to $STARSHIP_CONFIG"
+        
+        if [[ -x "${pkgs.starship}/bin/starship" ]]; then
+          eval "$(${pkgs.starship}/bin/starship init zsh)"
+          # echo "DEBUG: Starship initialized"
+        else
+          echo "CRITICAL: Starship binary not found at ${pkgs.starship}/bin/starship"
+        fi
+        # --- DEBUG: STARSHIP END ---
       '';
 
-      programs.bash.interactiveShellInit = ''
+      programs.bash.interactiveShellInit = lib.mkAfter ''
+        export STARSHIP_CONFIG="${configFile}"
         eval "$(${pkgs.starship}/bin/starship init bash)"
       '';
     })

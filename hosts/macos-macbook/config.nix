@@ -65,7 +65,10 @@ in
     pam-reattach
   ];
 
-  programs.zsh.enable = true;
+  jvf.programs = {
+    zsh.enable = true;
+    starship.enable = true;
+  };
 
   fonts.packages = with pkgs; [
     noto-fonts

@@ -89,8 +89,8 @@ in
           loginShellInit = environment.loginInit;
 
           enableCompletion = true;
-          enableBashCompletion = true;
-          enableGlobalCompInit = true;
+          # Disable nix-darwin's default prompt (prompt suse) - we use starship
+          promptInit = "";
         };
 
         environment.shellAliases = aliases.structured;
