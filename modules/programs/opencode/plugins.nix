@@ -22,7 +22,10 @@ let
     nativeBuildInputs = [ pkgs.bun ];
 
     outputHashMode = "recursive";
-    outputHash = "sha256-daA3QyhFfdZDDnWhr/vB2KJnhiyo7EuZdBFaEpzf5Ts=";
+    outputHash =
+      if pkgs.stdenv.isDarwin
+      then "sha256-Sh4ABJqzIdwBBQg40CXc6sEUsXVvSbSO/RUuMw7Ia/E="
+      else "sha256-daA3QyhFfdZDDnWhr/vB2KJnhiyo7EuZdBFaEpzf5Ts=";
 
     buildPhase = ''
       runHook preBuild

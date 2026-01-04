@@ -8,25 +8,31 @@
 let
   cfg = config.jvf.programs.droid;
   json = pkgs.formats.json { };
-  droidFHS = pkgs.buildFHSEnv {
-    name = "droid-fhs";
-    targetPkgs =
-      pkgs: with pkgs; [
-        stdenv.cc.cc.lib
-        zlib
-        openssl
-        curl
-        ripgrep
-        coreutils
-      ];
-    profile = ''
-      export TMPDIR="''${TMPDIR:-$HOME/.cache/factory-tmp}"
-      mkdir -p "$TMPDIR"
-    '';
-    runScript = "${pkgs.writeShellScript "droid-runner" ''
+  isLinux = pkgs.stdenv.isLinux;
+
+  droidFHS =
+    if isLinux then
+      pkgs.buildFHSEnv
+        {
+          name = "droid-fhs";
+          targetPkgs =
+            pkgs: with pkgs; [
+              stdenv.cc.cc.lib
+              zlib
+              openssl
+              curl
+              ripgrep
+              coreutils
+            ];
+          profile = ''
+            export TMPDIR="''${TMPDIR:-$HOME/.cache/factory-tmp}"
+            mkdir -p "$TMPDIR"
+          '';
+          runScript = "${pkgs.writeShellScript "droid-runner" ''
       exec "$HOME/.local/bin/droid" "$@"
     ''}";
-  };
+        } else null;
+
   shellScriptBin = pkgs.writeShellScriptBin "droid" ''
     set -euo pipefail
 
@@ -45,7 +51,11 @@ let
       PATH="$FACTORY_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
     fi
 
-    exec "${droidFHS}/bin/droid-fhs" "$@"
+    ${if isLinux then ''
+      exec "${droidFHS}/bin/droid-fhs" "$@"
+    '' else ''
+      exec "$LOCAL_DROID" "$@"
+    ''}
   '';
 in
 {
