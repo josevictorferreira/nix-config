@@ -158,6 +158,13 @@ in
       packages = [
         shellScriptBin
       ];
+      preserveFiles = [
+        "history"
+        "tmp"
+        "google_accounts.json"
+        "oauth_creds.json"
+        "installation_id"
+      ];
       configPath = ".gemini";
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkGeminiTomlConfigs (cfg.commands // cfg.agents))

@@ -243,14 +243,32 @@ let
                     rm -rf "$TARGET_DIR"
                   else
                     # Atomic swap
+                    BACKUP_DIR=""
                     if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
                       echo "Backing up existing ${programName} config..."
                       rm -rf "$TARGET_PATH".backup.*
-                      mv "$TARGET_PATH" "$TARGET_PATH".backup."$(date +%s)"
+
+                      BACKUP_TIMESTAMP=$(date +%s)
+                      BACKUP_DIR="$TARGET_PATH.backup.$BACKUP_TIMESTAMP"
+                      mv "$TARGET_PATH" "$BACKUP_DIR"
                     fi
 
                     rm -rf "$TARGET_PATH"
                     mv "$TARGET_DIR" "$TARGET_PATH"
+
+                    ${lib.optionalString (programCfg.preserveFiles != []) ''
+                      if [ -n "$BACKUP_DIR" ]; then
+                        # Restore preserved files
+                        ${lib.concatMapStringsSep "\n" (file: ''
+                          if [ -e "$BACKUP_DIR/${file}" ]; then
+                            echo "Restoring preserved file: ${file}..."
+                            rm -rf "$TARGET_PATH/${file}"
+                            cp -r "$BACKUP_DIR/${file}" "$TARGET_PATH/${file}"
+                          fi
+                        '') programCfg.preserveFiles}
+                      fi
+                    ''}
+
                     ${programCfg.postInstall}
                   fi
                 '';
@@ -276,6 +294,12 @@ in
                   { ... }:
                   {
                     options = {
+                      preserveFiles = lib.mkOption {
+                        type = lib.types.listOf lib.types.str;
+                        default = [ ];
+                        description = "List of files or directories to preserve from the previous configuration (copied from backup).";
+                      };
+
                       packages = lib.mkOption {
                         type = lib.types.listOf lib.types.package;
                         default = [ ];
