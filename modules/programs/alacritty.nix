@@ -64,17 +64,17 @@ let
       history = 100000;
       multiplier = 3;
     };
-    terminal = {
-      shell = {
-        program = "tmux";
-        args = [
-          "new"
-          "-A"
-          "-s"
-          "personal"
-        ];
-      };
-    };
+    # terminal = {
+    #   shell = {
+    #     program = "tmux";
+    #     args = [
+    #       "new"
+    #       "-A"
+    #       "-s"
+    #       "personal"
+    #     ];
+    #   };
+    # };
     window = {
       dynamic_title = true;
       opacity = 1;

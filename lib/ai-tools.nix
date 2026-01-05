@@ -455,6 +455,15 @@ let
       })
       attrset;
 
+  mkGeminiMdConfigs =
+    mcpConfigs: prefix: attrset:
+    lib.mapAttrs'
+      (name: value: {
+        name = "${prefix}/${name}.md";
+        value = toOpencodeMarkdownPrompt mcpConfigs value;
+      })
+      attrset;
+
   mkClaudecodeMdConfigs =
     mcpConfigs: prefix: attrset:
     lib.mapAttrs'
@@ -480,5 +489,6 @@ in
     mkCommandModule
     mkSkillModule
     findToolsByTags
+    mkGeminiMdConfigs
     ;
 }
