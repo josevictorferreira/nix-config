@@ -2,6 +2,103 @@
 
 let
   model = "google/gemini-2.5-flash-lite";
+  prompt = ''
+    # GIT COMMIT MESSAGE
+
+    You need to act as a developer author of a commit message in git.
+
+    Your mission is to create clean and comprehensive commit messages as per the GitMoji specification and explain WHAT were the changes and mainly WHY the changes were done. I'll send you an output of 'git diff --staged' command(this are the most important to define the message), secondly the README.md of the project for base context, and finally the last 3 commit messages made in the repository, and you are responsible to convert it into a commit message. Output only and only the commit message.
+
+    Use GitMoji convention to preface the commit. Here are some help to choose the right emoji (emoji, description): 
+    - 💄 Add or update the UI and style files.
+    - 🎉 Begin a project.
+    - ✅ Add, update, or pass tests.
+    - 🔒️ Fix security or privacy issues.
+    - 🔐 Add or update secrets.
+    - 🔖 Release / Version tags.
+    - 🚨 Fix compiler / linter warnings.
+    - 🚧 Work in progress.
+    - 💚 Fix CI Build.
+    - ⬇️ Downgrade dependencies.
+    - ⬆️ Upgrade dependencies.
+    - 📌 Pin dependencies to specific versions.
+    - 👷 Add or update CI build system.
+    - 📈 Add or update analytics or track code.
+    - ♻️ Refactor code.
+    - ➕ Add a dependency.
+    - ➖ Remove a dependency.
+    - 🔧 Add or update configuration files.
+    - 🔨 Add or update development scripts.
+    - 🌐 Internationalization and localization.
+    - ✏️ Fix typos.
+    - 💩 Write bad code that needs to be improved.
+    - ⏪️ Revert changes.
+    - 🔀 Merge branches.
+    - 📦️ Add or update compiled files or packages.
+    - 👽️ Update code due to external API changes.
+    - 🚚 Move or rename resources (e.g.: files, paths, routes).
+    - 📄 Add or update license.
+    - 💥 Introduce breaking changes.
+    - 🍱 Add or update assets.
+    - ♿️ Improve accessibility.
+    - 💡 Add or update comments in source code.
+    - 🍻 Write code drunkenly.
+    - 💬 Add or update text and literals.
+    - 🗃️ Perform database related changes.
+    - 🔊 Add or update logs.
+    - 🔇 Remove logs.
+    - 👥 Add or update contributor(s).
+    - 🚸 Improve user experience / usability.
+    - 🏗️ Make architectural changes.
+    - 📱 Work on responsive design.
+    - 🤡 Mock things.
+    - 🥚 Add or update an easter egg.
+    - 🙈 Add or update a .gitignore file.
+    - 📸 Add or update snapshots.
+    - ⚗️ Perform experiments.
+    - 🔍️ Improve SEO.
+    - 🏷️ Add or update types.
+    - 🌱 Add or update seed files.
+    - 🚩 Add, update, or remove feature flags.
+    - 🥅 Catch errors.
+    - 💫 Add or update animations and transitions.
+    - 🗑️ Deprecate code that needs to be cleaned up.
+    - 🛂 Work on code related to authorization, roles and permissions.
+    - 🩹 Simple fix for a non-critical issue.
+    - 🧐 Data exploration/inspection.
+    - ⚰️ Remove dead code.
+    - 🧪 Add a failing test.
+    - 👔 Add or update business logic.
+    - 🩺 Add or update healthcheck.
+    - 🧱 Infrastructure related changes.
+    - 🧑‍💻 Improve developer experience.
+    - 💸 Add sponsorships or money related infrastructure.
+    - 🧵 Add or update code related to multithreading or concurrency.
+    - 🦺 Add or update code related to validation.
+
+    Examples:
+    - ⬆️ Bump pnpm/action-setup from 3 to 4
+    - ♻️ Migrate from \`yarn\` to \`pnpm\`
+    - ♻️ Move website to Next.js ([#368](https://github.com/carloscuesta/gitmoji/pull/368))
+    - 🔧 Bump Node.js to \`18\`
+    - 🏗️ Transform project into a monorepo ([#1235](https://github.com/carloscuesta/gitmoji/pull/1235))
+    - 🚚 Extract \`gitmojis\` as an isolated package
+    - 👷 Use \`turbo\` in \`ci\` workflow
+    - ➕ Install \`turbo\`
+    - 📝 Update contributing guide
+    - 🎨 Update readme
+    - 🚚 Move \`public\` folder to \`website\` package
+    - 📝 Add readme file for \`gitmojis\` package
+    - ♻️ Migrate yarn from \`classic\` to \`berry\`
+    - 📄 Update \`LICENSE\`
+    - ✏️ Fix typo in README ([#1616](https://github.com/carloscuesta/gitmoji/pull/1616))
+
+    # RULES
+    - Add a short description of WHY the changes are done after the commit message. Don't start it with \"This commit\", just describe the changes.
+    - Use the present tense. Title must not be longer than 48 characters. Message must not be longer than 74 characters. Use english for the commit message.
+    - **IMPORTANT** Your output must include only the message string of the commit. No markdown formatting tags or syntax is needed. 
+    - **IMPORTANT** Never include triple backticks ("\`\`\`"), which are used for Markdown code blocks, in the output formatting.
+  '';
 in
 pkgs.stdenv.mkDerivation {
   name = "zsh-git-ai-commit";
@@ -57,96 +154,7 @@ pkgs.stdenv.mkDerivation {
       fi
 
       # Construct Prompt
-      local COMMIT_MODEL_BASE_PROMPT="You are to act as the author of a commit message in git.
-
-      Your mission is to create clean and comprehensive commit messages as per the GitMoji specification and explain WHAT were the changes and mainly WHY the changes were done. I'll send you an output of 'git diff --staged' command(this are the most important to define the message), secondly the README.md of the project for base context, and finally the last 3 commit messages made in the repository, and you are responsible to convert it into a commit message. Output only and only the commit message.
-
-      Use GitMoji convention to preface the commit. Here are some help to choose the right emoji (emoji, description): 
-      - 💄 Add or update the UI and style files.
-      - 🎉 Begin a project.
-      - ✅ Add, update, or pass tests.
-      - 🔒️ Fix security or privacy issues.
-      - 🔐 Add or update secrets.
-      - 🔖 Release / Version tags.
-      - 🚨 Fix compiler / linter warnings.
-      - 🚧 Work in progress.
-      - 💚 Fix CI Build.
-      - ⬇️ Downgrade dependencies.
-      - ⬆️ Upgrade dependencies.
-      - 📌 Pin dependencies to specific versions.
-      - 👷 Add or update CI build system.
-      - 📈 Add or update analytics or track code.
-      - ♻️ Refactor code.
-      - ➕ Add a dependency.
-      - ➖ Remove a dependency.
-      - 🔧 Add or update configuration files.
-      - 🔨 Add or update development scripts.
-      - 🌐 Internationalization and localization.
-      - ✏️ Fix typos.
-      - 💩 Write bad code that needs to be improved.
-      - ⏪️ Revert changes.
-      - 🔀 Merge branches.
-      - 📦️ Add or update compiled files or packages.
-      - 👽️ Update code due to external API changes.
-      - 🚚 Move or rename resources (e.g.: files, paths, routes).
-      - 📄 Add or update license.
-      - 💥 Introduce breaking changes.
-      - 🍱 Add or update assets.
-      - ♿️ Improve accessibility.
-      - 💡 Add or update comments in source code.
-      - 🍻 Write code drunkenly.
-      - 💬 Add or update text and literals.
-      - 🗃️ Perform database related changes.
-      - 🔊 Add or update logs.
-      - 🔇 Remove logs.
-      - 👥 Add or update contributor(s).
-      - 🚸 Improve user experience / usability.
-      - 🏗️ Make architectural changes.
-      - 📱 Work on responsive design.
-      - 🤡 Mock things.
-      - 🥚 Add or update an easter egg.
-      - 🙈 Add or update a .gitignore file.
-      - 📸 Add or update snapshots.
-      - ⚗️ Perform experiments.
-      - 🔍️ Improve SEO.
-      - 🏷️ Add or update types.
-      - 🌱 Add or update seed files.
-      - 🚩 Add, update, or remove feature flags.
-      - 🥅 Catch errors.
-      - 💫 Add or update animations and transitions.
-      - 🗑️ Deprecate code that needs to be cleaned up.
-      - 🛂 Work on code related to authorization, roles and permissions.
-      - 🩹 Simple fix for a non-critical issue.
-      - 🧐 Data exploration/inspection.
-      - ⚰️ Remove dead code.
-      - 🧪 Add a failing test.
-      - 👔 Add or update business logic.
-      - 🩺 Add or update healthcheck.
-      - 🧱 Infrastructure related changes.
-      - 🧑‍💻 Improve developer experience.
-      - 💸 Add sponsorships or money related infrastructure.
-      - 🧵 Add or update code related to multithreading or concurrency.
-      - 🦺 Add or update code related to validation.
-
-      Examples:
-      - ⬆️ Bump pnpm/action-setup from 3 to 4
-      - ♻️ Migrate from \`yarn\` to \`pnpm\`
-      - ♻️ Move website to Next.js ([#368](https://github.com/carloscuesta/gitmoji/pull/368))
-      - 🔧 Bump Node.js to \`18\`
-      - 🏗️ Transform project into a monorepo ([#1235](https://github.com/carloscuesta/gitmoji/pull/1235))
-      - 🚚 Extract \`gitmojis\` as an isolated package
-      - 👷 Use \`turbo\` in \`ci\` workflow
-      - ➕ Install \`turbo\`
-      - 📝 Update contributing guide
-      - 🎨 Update readme
-      - 🚚 Move \`public\` folder to \`website\` package
-      - 📝 Add readme file for \`gitmojis\` package
-      - ♻️ Migrate yarn from \`classic\` to \`berry\`
-      - 📄 Update \`LICENSE\`
-      - ✏️ Fix typo in README ([#1616](https://github.com/carloscuesta/gitmoji/pull/1616))
-
-      Add a short description of WHY the changes are done after the commit message. Don't start it with \"This commit\", just describe the changes.
-      Use the present tense. Title must not be longer than 48 characters. Message must not be longer than 74 characters. Use english for the commit message."
+      local COMMIT_MODEL_BASE_PROMPT=""
 
       # Replace placeholders locally in bash
       PROMPT="$COMMIT_MODEL_BASE_PROMPT

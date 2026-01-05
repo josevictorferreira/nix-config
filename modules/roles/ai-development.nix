@@ -45,7 +45,6 @@ in
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.goose-cli
-      pkgs.gemini-cli
     ];
   };
 }
