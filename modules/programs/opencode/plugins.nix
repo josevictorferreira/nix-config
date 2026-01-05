@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.12.1";
+  ohMyOpenCodeVersion = "v2.12.4";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-JZNim46N2334gQccfV9RDTJ3n12v2MThsmpFykf6DDM=";
+    hash = "sha256-Gbxgk5+Z2OJ8QLqXXO7GJAe6Af+xoi+0n8uR90IVFSw=";
   };
 
   bunDeps = pkgs.stdenv.mkDerivation {
@@ -25,7 +25,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-Sh4ABJqzIdwBBQg40CXc6sEUsXVvSbSO/RUuMw7Ia/E="
-      else "sha256-daA3QyhFfdZDDnWhr/vB2KJnhiyo7EuZdBFaEpzf5Ts=";
+      else "sha256-PQN24HLJjCWw0mKBoOOkr2Z+Hk9nfEJKojZMX5/+s2Y=";
 
     buildPhase = ''
       runHook preBuild
@@ -97,7 +97,7 @@ in
     disabled_commands = [ ];
     agents = {
       Sisyphus = {
-        model = "minimax/MiniMax-M2.1";
+        model = "zai/GLM-4.7";
       };
       librarian = {
         model = "openrouter/x-ai/grok-code-fast-1";
