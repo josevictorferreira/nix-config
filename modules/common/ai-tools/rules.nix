@@ -28,5 +28,6 @@ in
     jvf.programs.opencode.baseRules = cfg.content;
     jvf.programs.claudecode.baseRules = cfg.content;
     jvf.programs.droid.baseRules = cfg.content;
+    jvf.programs.gemini.baseRules = cfg.content;
   };
 }

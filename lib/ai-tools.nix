@@ -472,12 +472,14 @@ let
   replaceBacktickToolSyntax = str:
     let
       parts = builtins.split "!\`([^\`]*)\`" str;
-      processedParts = builtins.map (part:
-        if builtins.isList part then
-          "!{${builtins.elemAt part 0}}"
-        else
-          part
-      ) parts;
+      processedParts = builtins.map
+        (part:
+          if builtins.isList part then
+            "!{${builtins.elemAt part 0}}"
+          else
+            part
+        )
+        parts;
     in
     builtins.concatStringsSep "" processedParts;
 
@@ -485,12 +487,14 @@ let
   replaceNumberedArgs = str:
     let
       parts = builtins.split "\\$[0-9]+" str;
-      processedParts = builtins.map (part:
-        if builtins.isList part then
-          "{{args}}"
-        else
-          part
-      ) parts;
+      processedParts = builtins.map
+        (part:
+          if builtins.isList part then
+            "{{args}}"
+          else
+            part
+        )
+        parts;
     in
     builtins.concatStringsSep "" processedParts;
 
