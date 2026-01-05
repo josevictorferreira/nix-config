@@ -66,7 +66,7 @@ in
       configPath = ".gemini";
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkGeminiMdConfigs config.jvf.aiTools.mcp "agent" cfg.agents)
-        (inputs.lib.aiTools.mkGeminiTOMLConfigs config.jvf.aiTools.mcp "command" cfg.commands)
+        (inputs.lib.aiTools.mkGeminiMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "settings.json" = {

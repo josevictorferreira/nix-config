@@ -1,7 +1,8 @@
-{ config, lib, pkgs, options, ... }:
+{ config, lib, pkgs, options, system, ... }:
 
 let
   cfg = config.jvf.programs.starship;
+  isDarwin = builtins.match ".*-darwin" system != null;
 
   # Starship settings shared between NixOS and Darwin
   starshipSettings = {
@@ -65,8 +66,6 @@ let
 
   # Check if the upstream option exists
   hasStarshipOption = options ? programs && options.programs ? starship;
-
-  isDarwin = pkgs.stdenv.isDarwin;
 in
 {
   options.jvf.programs.starship = {
