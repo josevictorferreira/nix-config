@@ -51,7 +51,7 @@ let
       config = {
         jvf.programs.opencode.skills.${name} = skillDefinition;
         jvf.programs.claudecode.skills.${name} = skillDefinition;
-        jvf.programs.droid.skills.${name} = skillDefinition;
+        jvf.programs.gemini.skills.${name} = skillDefinition;
       };
     };
 
@@ -140,6 +140,20 @@ let
             disabledTools
             ;
         };
+        jvf.programs.gemini.agents.${name} = {
+          inherit
+            name
+            mode
+            model
+            temperature
+            permission
+            description
+            prompt
+            tags
+            tools
+            disabledTools
+            ;
+        };
       };
     };
 
@@ -195,6 +209,14 @@ let
             ;
         };
         jvf.programs.claudecode.commands.${name} = {
+          inherit
+            name
+            description
+            agent
+            prompt
+            ;
+        };
+        jvf.programs.gemini.commands.${name} = {
           inherit
             name
             description
