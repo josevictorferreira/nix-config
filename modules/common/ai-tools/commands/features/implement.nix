@@ -11,7 +11,7 @@ let
     description = "Implement a specific phase of a feature, create and run validation tests";
     prompt = ''
       <objective>
-      Implement "Phase $2" of feature "$1".
+      Implement "$ARGUMENTS".
       Read all documentation first, implement code, ensure tests pass, and update the task tracker.
       </objective>
 

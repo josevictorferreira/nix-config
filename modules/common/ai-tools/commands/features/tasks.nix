@@ -37,13 +37,13 @@ let
           - The whole project files should be linted and should not have any offenses/warnings.
 
       4. **Output**:
-          - Create `.docs/features/{folder}/tasks.md`.
+          - Create `./.docs/features/{number}-{name}/tasks.md`
           - Format as a Markdown checklist.
       </process>
 
       <output>
       Files created:
-      - `.docs/features/{folder}/tasks.md`
+      - `./.docs/features/{number}-{name}/tasks.md`
       </output>
 
       <success_criteria>
