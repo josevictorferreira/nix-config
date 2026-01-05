@@ -1,5 +1,8 @@
 { pkgs, ... }:
 
+let
+  model = "google/gemini-2.5-flash-lite";
+in
 pkgs.stdenv.mkDerivation {
   name = "zsh-git-ai-commit";
   src = pkgs.writeTextDir "zsh-git-ai-commit.plugin.zsh" ''
@@ -15,7 +18,7 @@ pkgs.stdenv.mkDerivation {
     }
 
     function _generate_commit_message() {
-      local MODEL_NAME="google/gemini-2.5-flash-lite"
+      local MODEL_NAME="${model}"
       local MAX_CHARS=7200000
       local OPENROUTER_API_KEY_COMMIT
       local STAGED_CHANGES

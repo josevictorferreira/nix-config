@@ -464,6 +464,79 @@ let
       })
       attrset;
 
+  # Escape TOML string values (handles quotes and backslashes)
+  escapeTomlString = str:
+    builtins.replaceStrings [ "\\" "\"" "\n" "\t" ] [ "\\\\" "\\\"" "\\n" "\\t" ] str;
+
+  # Replace !`...` with !{...} for Gemini CLI tool invocation syntax
+  replaceBacktickToolSyntax = str:
+    let
+      parts = builtins.split "!\`([^\`]*)\`" str;
+      processedParts = builtins.map (part:
+        if builtins.isList part then
+          "!{${builtins.elemAt part 0}}"
+        else
+          part
+      ) parts;
+    in
+    builtins.concatStringsSep "" processedParts;
+
+  # Replace $1, $2, etc. with {{args}} for Gemini CLI
+  replaceNumberedArgs = str:
+    let
+      parts = builtins.split "\\$[0-9]+" str;
+      processedParts = builtins.map (part:
+        if builtins.isList part then
+          "{{args}}"
+        else
+          part
+      ) parts;
+    in
+    builtins.concatStringsSep "" processedParts;
+
+  # Apply all Gemini-specific prompt transformations
+  transformGeminiPrompt = str:
+    let
+      withArgs = builtins.replaceStrings [ "$ARGUMENTS" ] [ "{{args}}" ] str;
+      withNumberedArgs = replaceNumberedArgs withArgs;
+    in
+    replaceBacktickToolSyntax withNumberedArgs;
+
+  # Convert command/agent definition to Gemini CLI TOML format
+  toGeminiToml = value:
+    if builtins.isAttrs value && value ? prompt then
+      let
+        description = value.description or "";
+        rawPrompt = value.prompt or "";
+        prompt = transformGeminiPrompt rawPrompt;
+        # Build TOML content
+        descriptionLine =
+          if description != "" then
+            "description = \"${escapeTomlString description}\"\n\n"
+          else
+            "";
+        # Use multi-line literal string for prompt (triple quotes)
+        promptLine = "prompt = \"\"\"\n${prompt}\n\"\"\"";
+      in
+      descriptionLine + promptLine
+    else
+      builtins.trace "WARNING: Using deprecated plain string format for Gemini. Please migrate to structured format with mkCommand." ''
+        prompt = """
+        ${transformGeminiPrompt value}
+        """
+      '';
+
+  # Generate TOML config files for Gemini CLI commands
+  # Places files in commands/<name>.toml format
+  mkGeminiTomlConfigs =
+    attrset:
+    lib.mapAttrs'
+      (name: value: {
+        name = "commands/${name}.toml";
+        value = toGeminiToml value;
+      })
+      attrset;
+
   mkClaudecodeMdConfigs =
     mcpConfigs: prefix: attrset:
     lib.mapAttrs'
@@ -490,5 +563,8 @@ in
     mkSkillModule
     findToolsByTags
     mkGeminiMdConfigs
+    toGeminiToml
+    mkGeminiTomlConfigs
+    escapeTomlString
     ;
 }

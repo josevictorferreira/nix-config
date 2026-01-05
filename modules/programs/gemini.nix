@@ -29,7 +29,7 @@ in
     agents = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
       default = { };
-      description = "Agents to install into the configuration (string prompts or structured objects)";
+      description = "Agents to install as commands (Gemini CLI doesn't have native agents, so they become commands)";
     };
 
     skills = lib.mkOption {
@@ -65,14 +65,15 @@ in
       packages = [ ];
       configPath = ".gemini";
       configs = lib.mkMerge [
-        (inputs.lib.aiTools.mkGeminiMdConfigs config.jvf.aiTools.mcp "agent" cfg.agents)
-        (inputs.lib.aiTools.mkGeminiMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
+        # Commands in TOML format for Gemini CLI (placed in commands/<name>.toml)
+        # Merge agents into commands since Gemini CLI only supports commands
+        (inputs.lib.aiTools.mkGeminiTomlConfigs (cfg.agents // cfg.commands))
         (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
         {
           "settings.json" = {
             mcpServers = cfg.mcps;
           } // cfg.settings;
-          "AGENTS.md" = cfg.baseRules;
+          "GEMINI.md" = cfg.baseRules;
         }
       ];
     };
