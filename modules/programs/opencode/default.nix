@@ -127,6 +127,10 @@ in
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
       preserveFiles = [
         "antigravity-accounts.json"
+        "node_modules"
+        "dcp.jsonc"
+        "package.json"
+        "bun.lock"
       ];
       packages = [
         pkgs.bun

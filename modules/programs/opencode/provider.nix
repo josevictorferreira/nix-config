@@ -32,6 +32,7 @@
     };
 
     google = {
+      npm = "@ai-sdk/google";
       models = {
         "antigravity-gemini-3-pro-low" = {
           name = "Gemini 3 Pro Low (Antigravity)";
