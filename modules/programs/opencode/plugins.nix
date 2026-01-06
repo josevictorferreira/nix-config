@@ -197,7 +197,7 @@ in
     };
     ralph_loop = {
       enabled = true;
-      default_max_iterations = 100;
+      default_max_iterations = 1000;
     };
   };
 

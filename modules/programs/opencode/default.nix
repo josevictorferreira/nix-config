@@ -119,6 +119,17 @@ in
         "minimax-cn"
       ];
 
+      tools = lib.mkDefault {
+        "context7*" = false;
+        "ck*" = false;
+        "chrome-devtools*" = false;
+        "playwriter*" = false;
+        "grep_app*" = false;
+        "mcp-nixos*" = false;
+        "shadcn*" = false;
+        "websearch*" = false;
+      };
+
       watcher = {
         ignore = ["node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**"];
       };
