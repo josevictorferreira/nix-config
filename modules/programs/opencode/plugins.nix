@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.13.1";
+  ohMyOpenCodeVersion = "v2.14.0";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-oZb78jzIWhku+TrKuiq/K42lGwRzBnTusn4wVQNQ2Wg=";
+    hash = "sha256-t+wOG6ICRxR3W5N99Ap1Tv+xuvbYtCmi2Fv6Chs1KDc=";
   };
 
   bunDeps = pkgs.stdenv.mkDerivation {
@@ -25,7 +25,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-rWC7wl8sci/UvZ4VDWgAUQReZzqlSS3Mo8zPEQWNooQ="
-      else "sha256-7EHfXIifgUSHOpM7i9fk2J7BzRbGGCFXOeoiSLhVLJQ=";
+      else "sha256-HDQSny1022sDp7GgUWTiLF0M+A1j/XiyJ3K2JXZ/wqQ=";
 
     buildPhase = ''
       runHook preBuild
