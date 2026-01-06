@@ -93,25 +93,99 @@ in
     agents = {
       Sisyphus = {
         model = "google/antigravity-claude-opus-4-5-thinking-low";
+        tools = {
+          "context7*" = true;
+          "ck*" = false;
+          "playwright*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = false;
+        };
       };
       librarian = {
         model = "zai/GLM-4.5-air";
+        tools = {
+          "context7*" = true;
+          "ck*" = false;
+          "playwright*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = true;
+          "mcp-nixos*" = true;
+          "shadcn*" = true;
+          "websearch*" = true;
+        };
       };
       explore = {
         model = "zai/GLM-4.5-air";
-        temperature = 0.2;
+        temperature = 0.3;
+        tools = {
+          "context7*" = false;
+          "ck*" = true;
+          "playwright*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = false;
+        };
       };
       oracle = {
         model = "google/antigravity-claude-opus-4-5-thinking-high";
+        tools = {
+          "context7*" = true;
+          "ck*" = true;
+          "playwright*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = true;
+          "mcp-nixos*" = true;
+          "shadcn*" = true;
+          "websearch*" = true;
+        };
       };
       frontend-ui-ux-engineer = {
         model = "google/antigravity-gemini-3-pro-high";
+        tools = {
+          "context7*" = true;
+          "ck*" = false;
+          "chrome-devtools*" = true;
+          "playwriter*" = true;
+          "grep_app*" = true;
+          "mcp-nixos*" = false;
+          "shadcn*" = true;
+          "websearch*" = true;
+        };
       };
       document-writer = {
         model = "minimax/MiniMax-M2.1";
+        tools = {
+          "context7*" = false;
+          "ck*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = false;
+        };
       };
       multimodal-looker = {
         model = "google/antigravity-gemini-3-flash";
+        tools = {
+          "context7*" = false;
+          "ck*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = true;
+        };
       };
     };
     experimental = {
