@@ -51,6 +51,7 @@ let
       config = {
         jvf.programs.opencode.skills.${name} = skillDefinition;
         jvf.programs.claudecode.skills.${name} = skillDefinition;
+        jvf.programs.droid.skills.${name} = skillDefinition;
         jvf.programs.gemini.skills.${name} = skillDefinition;
       };
     };
