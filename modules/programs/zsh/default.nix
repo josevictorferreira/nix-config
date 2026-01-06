@@ -71,6 +71,9 @@ in
 
             # Force ls aliases after OMZ loading
             aliases.lsAliases
+
+            # Load all structured aliases (nix-darwin's environment.shellAliases only works for bash)
+            aliases.structuredAliasesScript
           ];
 
           shellInit = lib.concatStringsSep "\n" [

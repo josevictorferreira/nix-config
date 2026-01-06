@@ -1,4 +1,5 @@
-{ config
+{ lib
+, config
 , ...
 }:
 
@@ -112,11 +113,7 @@ let
     alias lt="eza -a --tree --level=1 --icons"
   '';
 
-in
-{
-  inherit lsAliases;
-
-  # Structured aliases for programs.zsh.shellAliases
+  # Combined structured aliases
   structured =
     baseAliases
     // navigationAliases
@@ -126,5 +123,18 @@ in
     // k8sAliases
     // workAliases;
 
-  shellInit = '''';
+  # Generate alias commands from structured aliases
+  # nix-darwin's environment.shellAliases only applies to bash, not zsh
+  # So we generate explicit alias commands for zsh's interactiveShellInit
+  structuredAliasesScript = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (name: value: "alias ${name}=${lib.escapeShellArg value}") structured
+  );
+
+in
+{
+  inherit lsAliases structured structuredAliasesScript;
+
+  shellInit = "";
 }
+
+
