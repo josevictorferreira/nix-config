@@ -16,7 +16,6 @@ in
     ../programs/claudecode.nix
     ../programs/droid.nix
     ../programs/gemini.nix
-    # ../programs/mistral-vibe.nix
   ];
 
   options.jvf.roles.aiDevelopment = {
@@ -40,13 +39,11 @@ in
     jvf.programs.droid.enable = true;
     jvf.programs.gemini.enable = true;
     jvf.programs.gemini.antigravity.enable = true;
-    # jvf.programs.mistral-vibe.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.goose-cli
-      pkgs.antigravity
     ];
   };
 }

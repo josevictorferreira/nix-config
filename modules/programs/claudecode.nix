@@ -111,6 +111,9 @@ in
     {
       jvf.wrappers.users.${cfg.username}.programs = {
         claude = {
+          preserveFiles = [
+            "transcripts"
+          ];
           packages = [
             pkgs.claude-code
           ];
@@ -124,7 +127,6 @@ in
         claude-code-router = {
           packages = [
             pkgs.claude-code-router
-            pkgs.cursor-cli
           ];
           configPath = ".cursor";
           configs = {
