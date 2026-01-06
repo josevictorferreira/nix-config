@@ -5,7 +5,7 @@
 
 let
   cfg = config.jvf.programs.zsh;
-  fallbackTodo = "${cfg.workspace.shared}/notetaking/checklists/todo.md";
+  fallbackTodo = "${cfg.workspace.shared}/notetaking/checklists/Todo.md";
 in
 pkgs.stdenv.mkDerivation {
   name = "zsh-todo";
