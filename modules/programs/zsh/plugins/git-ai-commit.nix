@@ -154,7 +154,7 @@ pkgs.stdenv.mkDerivation {
       fi
 
       # Construct Prompt
-      local COMMIT_MODEL_BASE_PROMPT=""
+      local COMMIT_MODEL_BASE_PROMPT="${prompt}"
 
       # Replace placeholders locally in bash
       PROMPT="$COMMIT_MODEL_BASE_PROMPT
