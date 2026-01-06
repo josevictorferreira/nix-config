@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.12.4";
+  ohMyOpenCodeVersion = "v2.13.1";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-Gbxgk5+Z2OJ8QLqXXO7GJAe6Af+xoi+0n8uR90IVFSw=";
+    hash = "sha256-oZb78jzIWhku+TrKuiq/K42lGwRzBnTusn4wVQNQ2Wg=";
   };
 
   bunDeps = pkgs.stdenv.mkDerivation {
@@ -25,7 +25,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-tvj3DQRNkrwxMgeTP5J/wPg0OYF7r0KSsPU6p5vcnaM="
-      else "sha256-PQN24HLJjCWw0mKBoOOkr2Z+Hk9nfEJKojZMX5/+s2Y=";
+      else "sha256-7EHfXIifgUSHOpM7i9fk2J7BzRbGGCFXOeoiSLhVLJQ=";
 
     buildPhase = ''
       runHook preBuild
@@ -87,36 +87,31 @@ let
   };
 in
 {
-  config.jvf.programs.opencode.settings.plugin = [
-    "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
-    "opencode-google-antigravity-auth@0.2.12"
-    "@tarquinen/opencode-dcp@latest"
-  ];
-
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
     disabled_commands = [ ];
+    google_auth = false;
     agents = {
       Sisyphus = {
-        model = "zai/GLM-4.7";
+        model = "google/antigravity-claude-opus-4-5-thinking-low";
       };
       librarian = {
-        model = "openrouter/x-ai/grok-code-fast-1";
+        model = "zai/GLM-4.5-air";
       };
       explore = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "zai/GLM-4.5-air";
         temperature = 0.2;
       };
       oracle = {
-        model = "zai/GLM-4.7";
+        model = "google/antigravity-claude-opus-4-5-thinking-high";
       };
       frontend-ui-ux-engineer = {
-        model = "minimax/MiniMax-M2.1";
+        model = "google/antigravity-gemini-3-pro-high";
       };
       document-writer = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "minimax/MiniMax-M2.1";
       };
       multimodal-looker = {
-        model = "zai/GLM-4.6V";
+        model = "google/antigravity-gemini-3-flash";
       };
     };
     experimental = {
@@ -131,4 +126,10 @@ in
       default_max_iterations = 100;
     };
   };
+
+  config.jvf.programs.opencode.settings.plugin = [
+    "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
+    "opencode-antigravity-auth@1.2.7"
+    "@tarquinen/opencode-dcp@1.1.3"
+  ];
 }

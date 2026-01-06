@@ -9,6 +9,7 @@ let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.gemini;
   isLinux = pkgs.stdenv.isLinux;
+
   geminiFHS =
     if isLinux then
       pkgs.buildFHSEnv
@@ -81,6 +82,8 @@ in
 {
   options.jvf.programs.gemini = {
     enable = lib.mkEnableOption "Install gemini-cli and write per-user ~/.gemini/config.json";
+
+    antigravity.enable = lib.mkEnableOption "Install Antigravity Tools (Gemini CLI companion)";
 
     username = lib.mkOption {
       type = lib.types.str;
@@ -157,8 +160,10 @@ in
     jvf.wrappers.users.${cfg.username}.programs.gemini = {
       packages = [
         shellScriptBin
+        pkgs.antigravity
       ];
       preserveFiles = [
+        "antigravity"
         "history"
         "tmp"
         "google_accounts.json"

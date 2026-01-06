@@ -118,9 +118,16 @@ in
         "github-models"
         "minimax-cn"
       ];
+
+      watcher = {
+        ignore = ["node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**"];
+      };
     };
 
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
+      preserveFiles = [
+        "antigravity-accounts.json"
+      ];
       packages = [
         pkgs.bun
       ]

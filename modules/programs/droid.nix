@@ -99,52 +99,62 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    jvf.programs.droid.settings = {
+      mcpServers = lib.mkDefault cfg.mcps;
+      customModels = [
+        {
+          model = "minimax/minimax-m2.1";
+          displayName = "Minimax M2.1 [OpenRouter]";
+          baseUrl = "https://openrouter.ai/api/v1";
+          apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
+        }
+        {
+          model = "z-ai/glm-4.7";
+          displayName = "GLM 4.7 [OpenRouter]";
+          baseUrl = "https://openrouter.ai/api/v1";
+          apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
+        }
+        {
+          model = "moonshotai/kimi-k2-thinking";
+          displayName = "Kimi K2 Thinking [OpenRouter]";
+          baseUrl = "https://openrouter.ai/api/v1";
+          apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
+        }
+        {
+          model = "moonshotai/kimi-k2-0905:exacto";
+          displayName = "Minimax K2 0905 [OpenRouter]";
+          baseUrl = "https://openrouter.ai/api/v1";
+          apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
+        }
+        {
+          model = "z-ai/glm-4.6:exacto";
+          displayName = "GLM 4.6 [OpenRouter]";
+          baseUrl = "https://openrouter.ai/api/v1";
+          apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
+        }
+      ];
+    };
+
     jvf.wrappers.users.${cfg.username}.programs.droid = {
       packages = [
         shellScriptBin
       ];
       configPath = ".factory";
+      preserveFiles = [
+        "sounds"
+        "temp"
+        "sessions"
+        "logs"
+        "mcp.json"
+        "certs"
+        "background-processes.json"
+        "auth.json"
+      ];
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "droids" cfg.agents)
         (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
         (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
-        {
-          "settings.json" = {
-            mcpServers = cfg.mcps;
-            customModels = [
-              {
-                model = "minimax/minimax-m2.1";
-                displayName = "Minimax M2.1 [OpenRouter]";
-                baseUrl = "https://openrouter.ai/api/v1";
-                apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-              }
-              {
-                model = "z-ai/glm-4.7";
-                displayName = "GLM 4.7 [OpenRouter]";
-                baseUrl = "https://openrouter.ai/api/v1";
-                apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-              }
-              {
-                model = "moonshotai/kimi-k2-thinking";
-                displayName = "Kimi K2 Thinking [OpenRouter]";
-                baseUrl = "https://openrouter.ai/api/v1";
-                apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-              }
-              {
-                model = "moonshotai/kimi-k2-0905:exacto";
-                displayName = "Minimax K2 0905 [OpenRouter]";
-                baseUrl = "https://openrouter.ai/api/v1";
-                apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-              }
-              {
-                model = "z-ai/glm-4.6:exacto";
-                displayName = "GLM 4.6 [OpenRouter]";
-                baseUrl = "https://openrouter.ai/api/v1";
-                apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-              }
-            ];
-          };
-        }
+        { "settings.json" = cfg.settings; }
       ];
     };
   };

@@ -264,6 +264,8 @@ let
                             echo "Restoring preserved file: ${file}..."
                             rm -rf "$TARGET_PATH/${file}"
                             cp -r "$BACKUP_DIR/${file}" "$TARGET_PATH/${file}"
+                            # Fix ownership since activation scripts run as root
+                            chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_PATH/${file}"
                           fi
                         '') programCfg.preserveFiles}
                       fi

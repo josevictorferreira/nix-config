@@ -39,12 +39,14 @@ in
     jvf.programs.claudecode.enable = true;
     jvf.programs.droid.enable = true;
     jvf.programs.gemini.enable = true;
+    jvf.programs.gemini.antigravity.enable = true;
     # jvf.programs.mistral-vibe.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor
       pkgs.cursor-cli
       pkgs.goose-cli
+      pkgs.antigravity
     ];
   };
 }
