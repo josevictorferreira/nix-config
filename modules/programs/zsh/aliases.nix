@@ -40,7 +40,7 @@ let
   # Note-taking aliases
   noteAliases = {
     ideas = "nvim ${notetaking}/ideas/Ideas.md";
-    todo = "nvim ${notetaking}/checklists/Todo.md";
+    # todo = "nvim ${notetaking}/checklists/Todo.md";
     prompts = "nvim ${notetaking}/notes/Prompts.md";
     sht = "nvim ${notetaking}/notes/CheatSheets.md";
     sheet = "nvim ${notetaking}/notes/CheatSheets.md";
