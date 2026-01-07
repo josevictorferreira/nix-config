@@ -22,11 +22,11 @@ in
     programs = {
       thunar.enable = true;
       thunar.plugins = [
-        pkgs.xfce.exo
-        pkgs.xfce.mousepad
-        pkgs.xfce.thunar-archive-plugin
-        pkgs.xfce.thunar-volman
-        pkgs.xfce.tumbler
+        pkgs.xfce4-exo
+        pkgs.mousepad
+        pkgs.thunar-archive-plugin
+        pkgs.thunar-volman
+        pkgs.tumbler
       ];
     };
 

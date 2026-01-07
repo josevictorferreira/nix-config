@@ -131,7 +131,7 @@ in
       };
 
       watcher = {
-        ignore = ["node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**"];
+        ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
       };
     };
 

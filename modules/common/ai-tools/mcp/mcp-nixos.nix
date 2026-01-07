@@ -25,7 +25,9 @@ let
   };
 in
 {
-  options.jvf.aiTools.mcp."mcp-nixos" = mcpDef.options;
+  options.jvf.aiTools.mcp."mcp-nixos" = mcpDef.options // {
+    enable = mcpDef.options.enable // { default = false; };
+  };
 
   config = lib.mkIf cfg.enable mcpDef.config;
 }
