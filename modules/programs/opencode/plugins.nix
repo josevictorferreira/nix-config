@@ -96,7 +96,6 @@ in
         tools = {
           "context7*" = true;
           "ck*" = false;
-          "playwright*" = false;
           "chrome-devtools*" = false;
           "playwriter*" = false;
           "grep_app*" = false;
@@ -110,7 +109,6 @@ in
         tools = {
           "context7*" = true;
           "ck*" = false;
-          "playwright*" = false;
           "chrome-devtools*" = false;
           "playwriter*" = false;
           "grep_app*" = true;
@@ -125,7 +123,6 @@ in
         tools = {
           "context7*" = false;
           "ck*" = true;
-          "playwright*" = false;
           "chrome-devtools*" = false;
           "playwriter*" = false;
           "grep_app*" = false;
@@ -139,7 +136,6 @@ in
         tools = {
           "context7*" = true;
           "ck*" = true;
-          "playwright*" = false;
           "chrome-devtools*" = false;
           "playwriter*" = false;
           "grep_app*" = true;
