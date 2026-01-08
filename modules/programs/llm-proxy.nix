@@ -16,6 +16,10 @@ let
     aiofiles
     apscheduler
     jinja2
+    colorlog
+    litellm
+    filelock
+    aiohttp
   ]);
 
   # Define source
@@ -23,14 +27,28 @@ let
     owner = "Mirrowel";
     repo = "LLM-API-Key-Proxy";
     rev = "main";
-    hash = "sha256-1r6d6nkycs3dli21dvbvi2gfad39gnspsjx952myw8skkav2jw2j";
+    hash =
+      if isDarwin
+      then "sha256-1r6d6nkycs3dli21dvbvi2gfad39gnspsjx952myw8skkav2jw2j"
+      else "sha256-LUy/Et3Ew87eVCNygyMh+zsUU12k3cNDWo3jMgN+YEY=";
   };
 
-  # Define the package using writeShellScriptBin to avoid mkDerivation issues with darwin-rebuild
+  # Define the package using writeShellScriptBin
+  stateDir = "/var/lib/llm-proxy";
   llmProxyPkg = pkgs.writeShellScriptBin "llm-proxy" ''
-    echo "Using python: ${pythonEnv}"
-    ${pythonEnv}/bin/python --version
-    while true; do sleep 10; done
+    # Create state directory structure
+    mkdir -p ${stateDir}/{logs,oauth_creds}
+    
+    # Link source files to state directory
+    for item in ${src}/*; do
+      name=$(basename "$item")
+      if [ ! -e "${stateDir}/$name" ]; then
+        ln -sf "$item" "${stateDir}/$name"
+      fi
+    done
+    
+    cd ${stateDir}
+    exec ${pythonEnv}/bin/uvicorn src.proxy_app.main:app --host 0.0.0.0 "$@"
   '';
 
 in
@@ -62,6 +80,8 @@ in
           ExecStart = "${lib.getExe cfg.package} --port ${toString cfg.port}";
           Restart = "always";
           Type = "simple";
+          StateDirectory = "llm-proxy";
+          WorkingDirectory = "/var/lib/llm-proxy";
         };
       };
     })
