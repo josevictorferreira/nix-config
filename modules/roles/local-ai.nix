@@ -10,6 +10,7 @@ let
 in
 {
   imports = [
+    ../programs/llm-proxy.nix
   ];
 
   options.jvf.roles.localAi = {

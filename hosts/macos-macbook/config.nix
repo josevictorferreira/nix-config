@@ -68,6 +68,7 @@ in
   jvf.programs = {
     zsh.enable = true;
     starship.enable = true;
+    llm-proxy.enable = true;
   };
 
   fonts.packages = with pkgs; [
