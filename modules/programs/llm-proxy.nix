@@ -30,6 +30,8 @@ let
       jinja2
     ];
 
+    doCheck = false; # Skip tests as they might require network or fail in sandbox
+
     installPhase = ''
       runHook preInstall
 
@@ -56,6 +58,7 @@ let
       description = "LLM API Key Proxy";
       homepage = "https://github.com/Mirrowel/LLM-API-Key-Proxy";
       platforms = lib.platforms.all;
+      mainProgram = "llm-proxy";
     };
   };
 
@@ -91,7 +94,7 @@ in
     };
 
     # Darwin Service
-    launchd.agents.llm-proxy = lib.mkIf isDarwin {
+    launchd.user.agents.llm-proxy = lib.mkIf isDarwin {
       serviceConfig = {
         ProgramArguments = [
           "${lib.getExe cfg.package}"
