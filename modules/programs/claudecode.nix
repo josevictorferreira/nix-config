@@ -9,7 +9,111 @@
 let
   json = pkgs.formats.json { };
   isDarwin = builtins.match ".*-darwin" system != null;
+  isLinux = pkgs.stdenv.isLinux;
   cfg = config.jvf.programs.claudecode;
+
+  # FHS environment for Linux (claude-code needs glibc, etc.)
+  claudeCodeFHS =
+    if isLinux then
+      pkgs.buildFHSEnv
+        {
+          name = "claude-fhs";
+          targetPkgs = pkgs: with pkgs; [
+            stdenv.cc.cc.lib
+            zlib
+            openssl
+            curl
+            nodejs_22
+            coreutils
+          ];
+          profile = ''
+            export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+            mkdir -p "$TMPDIR"
+          '';
+          runScript = "${pkgs.writeShellScript "claude-runner" ''
+          exec "$HOME/.npm-global/bin/claude" "$@"
+        ''}";
+        }
+    else null;
+
+  claudeRouterFHS =
+    if isLinux then
+      pkgs.buildFHSEnv
+        {
+          name = "claude-router-fhs";
+          targetPkgs = pkgs: with pkgs; [
+            stdenv.cc.cc.lib
+            zlib
+            openssl
+            curl
+            nodejs_22
+            coreutils
+          ];
+          profile = ''
+            export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+            mkdir -p "$TMPDIR"
+          '';
+          runScript = "${pkgs.writeShellScript "claude-router-runner" ''
+          exec "$HOME/.npm-global/bin/ccr" "$@"
+        ''}";
+        }
+    else null;
+
+  # Wrapper script for claude-code
+  claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
+    set -euo pipefail
+
+    # Suppress Node.js deprecation warnings
+    export NODE_NO_WARNINGS=1
+
+    NPM_GLOBAL_DIR="$HOME/.npm-global"
+    NPM_GLOBAL_BIN="$NPM_GLOBAL_DIR/bin"
+    CLAUDE_BIN="$NPM_GLOBAL_BIN/claude"
+
+    # Ensure npm global directory exists and is configured
+    mkdir -p "$NPM_GLOBAL_DIR"
+    ${pkgs.nodejs_22}/bin/npm config set prefix "$NPM_GLOBAL_DIR" 2>/dev/null || true
+
+    # Install claude-code if not present
+    if [ ! -x "$CLAUDE_BIN" ]; then
+      echo "Installing claude-code..."
+      PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g @anthropic-ai/claude-code
+    fi
+
+    ${if isLinux then ''
+      exec "${claudeCodeFHS}/bin/claude-fhs" "$@"
+    '' else ''
+      exec "$CLAUDE_BIN" "$@"
+    ''}
+  '';
+
+  # Wrapper script for claude-code-router (binary is named 'ccr')
+  claudeRouterBin = pkgs.writeShellScriptBin "ccr" ''
+    set -euo pipefail
+
+    # Suppress Node.js deprecation warnings
+    export NODE_NO_WARNINGS=1
+
+    NPM_GLOBAL_DIR="$HOME/.npm-global"
+    NPM_GLOBAL_BIN="$NPM_GLOBAL_DIR/bin"
+    ROUTER_BIN="$NPM_GLOBAL_BIN/ccr"
+
+    # Ensure npm global directory exists and is configured
+    mkdir -p "$NPM_GLOBAL_DIR"
+    ${pkgs.nodejs_22}/bin/npm config set prefix "$NPM_GLOBAL_DIR" 2>/dev/null || true
+
+    # Install claude-code-router if not present
+    if [ ! -x "$ROUTER_BIN" ]; then
+      echo "Installing claude-code-router..."
+      PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g @musistudio/claude-code-router
+    fi
+
+    ${if isLinux then ''
+      exec "${claudeRouterFHS}/bin/claude-router-fhs" "$@"
+    '' else ''
+      exec "$ROUTER_BIN" "$@"
+    ''}
+  '';
 in
 {
   options.jvf.programs.claudecode = {
@@ -102,6 +206,54 @@ in
           image = "openrouter,google/gemini-2.5-flash-image";
           longContextThreshold = 250000;
         };
+        StatusLine = {
+          enabled = true;
+          currentStyle = "powerline";
+          default = {
+            modules = [ ];
+          };
+          powerline = {
+            modules = [
+              {
+                type = "model";
+                icon = "🤖";
+                text = "{{model}}";
+                color = "bright_yellow";
+              }
+              {
+                type = "usage";
+                icon = "📊";
+                text = "{{inputTokens}} → {{outputTokens}}";
+                color = "bright_magenta";
+              }
+              {
+                type = "workDir";
+                icon = "󰉋";
+                text = "{{workDirName}}";
+                color = "bright_blue";
+              }
+              {
+                type = "gitBranch";
+                icon = "🌿";
+                text = "{{gitBranch}}";
+                color = "bright_green";
+              }
+              {
+                type = "speed";
+                icon = "⚡";
+                text = "{{tokenSpeed}}";
+                color = "bright_green";
+              }
+              {
+                type = "script";
+                icon = "📜";
+                text = "Script Module";
+                color = "bright_cyan";
+                scriptPath = "";
+              }
+            ];
+          };
+        };
       };
       description = "Settings written to ~/.claude-code-router/config.json";
     };
@@ -113,9 +265,15 @@ in
         claude = {
           preserveFiles = [
             "transcripts"
+            "cache"
+            "debug"
+            "projects"
+            "shell-snapshots"
+            "todos"
+            "history.jsonl"
           ];
           packages = [
-            pkgs.claude-code
+            claudeCodeBin
           ];
           configPath = ".claude";
           configs = lib.mkMerge [
@@ -125,10 +283,15 @@ in
           ];
         };
         claude-code-router = {
-          packages = [
-            pkgs.claude-code-router
+          preserveFiles = [
+            "logs"
+            "plugins"
+            ".claude-code-router.pid"
           ];
-          configPath = ".cursor";
+          packages = [
+            claudeRouterBin
+          ];
+          configPath = ".claude-code-router";
           configs = {
             "config.json" = cfg.routerSettings;
           };
