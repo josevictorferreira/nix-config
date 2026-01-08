@@ -16,7 +16,7 @@ in
     ../programs/claudecode.nix
     ../programs/droid.nix
     ../programs/gemini.nix
-    ../programs/llm-proxy.nix
+    ../services/llm-proxy.nix
   ];
 
   options.jvf.roles.aiDevelopment = {
@@ -40,7 +40,7 @@ in
     jvf.programs.droid.enable = true;
     jvf.programs.gemini.enable = true;
     jvf.programs.gemini.antigravity.enable = true;
-    jvf.programs.llm-proxy.enable = true;
+    jvf.services.llm-proxy.enable = true;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor

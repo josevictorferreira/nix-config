@@ -1,7 +1,7 @@
 { config, lib, pkgs, system, ... }:
 
 let
-  cfg = config.jvf.programs.llm-proxy;
+  cfg = config.jvf.services.llm-proxy;
   isDarwin = builtins.match ".*-darwin" system != null;
 
   # Define the python environment
@@ -53,7 +53,7 @@ let
 
 in
 {
-  options.jvf.programs.llm-proxy = {
+  options.jvf.services.llm-proxy = {
     enable = lib.mkEnableOption "LLM API Key Proxy";
 
     port = lib.mkOption {
