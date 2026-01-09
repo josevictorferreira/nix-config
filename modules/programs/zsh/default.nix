@@ -74,6 +74,9 @@ in
 
             # Load all structured aliases (nix-darwin's environment.shellAliases only works for bash)
             aliases.structuredAliasesScript
+
+            # Sandbox helper functions
+            aliases.sandboxFunctions
           ];
 
           shellInit = lib.concatStringsSep "\n" [
