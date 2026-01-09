@@ -40,7 +40,7 @@ in
     jvf.programs.droid.enable = true;
     jvf.programs.gemini.enable = true;
     jvf.programs.gemini.antigravity.enable = true;
-    jvf.services.llm-proxy.enable = true;
+    jvf.services.llm-proxy.enable = false;
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor

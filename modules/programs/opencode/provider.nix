@@ -1,6 +1,71 @@
 { ... }:
 {
   config.jvf.programs.opencode.settings.provider = {
+    # "llm-proxy" = {
+    #   npm = "@ai-sdk/openai-compatible";
+    #   name = "LLM Proxy";
+    #   options = {
+    #     baseURL = "http://127.0.0.1:18000/v1";
+    #     apiKey = "{env:LLM_PROXY_API_KEY}";
+    #   };
+    #   models = {
+    #     "antigravity/claude-opus-4-5" = {
+    #       name = "Antigravity - Claude Opus 4.5";
+    #     };
+    #     "antigravity/gemini-3-pro-preview" = {
+    #       name = "Antigravity - Gemini 3 Pro Preview";
+    #     };
+    #     "gemini/gemini-3-pro-preview" = {
+    #       name = "Gemini - Gemini 3 Pro Preview";
+    #     };
+    #     "antigravity/claude-sonnet-4-5" = {
+    #       name = "Antigravity - Claude Sonnet 4.5";
+    #     };
+    #     "gemini/gemini-2.5-pro" = {
+    #       name = "Gemini - Gemini 2.5 Pro";
+    #     };
+    #     "gemini/gemini-3-flash-preview" = {
+    #       name = "Gemini - Gemini 3 Flash Preview";
+    #     };
+    #     "minimax/MiniMax-M2.1" = {
+    #       name = "Minimax - Minimax M2.1";
+    #     };
+    #     "openrouter/minimax/minimax-m2.1" = {
+    #       name = "Openrouter - Minimax M2.1";
+    #     };
+    #     "minimax/MiniMax-M2" = {
+    #       name = "Minimax - Minimax M2";
+    #     };
+    #     "openrouter/minimax/minimax-m2" = {
+    #       name = "Openrouter - Minimax M2";
+    #     };
+    #     "openrouter/moonshotai/kimi-k2-thinking" = {
+    #       name = "Openrouter - Kimi K2 Thinking";
+    #     };
+    #     "openrouter/moonshotai/kimi-k2-0905:exacto" = {
+    #       name = "Openrouter - Kimi K2 0905";
+    #     };
+    #     "zai/glm-4.7" = {
+    #       name = "Z-AI - GLM 4.7";
+    #     };
+    #     "openrouter/z-ai/glm-4.7" = {
+    #       name = "Openrouter - GLM 4.7";
+    #     };
+    #     "zai/glm-4.6" = {
+    #       name = "Z-AI - GLM 4.6";
+    #     };
+    #     "openrouter/z-ai/glm-4.6:exacto" = {
+    #       name = "Openrouter - GLM 4.6";
+    #     };
+    #     "openrouter/openai/gpt-oss-120b:exacto" = {
+    #       name = "Openrouter - GPT OSS 120b";
+    #     };
+    #     "zai/glm-4.5-air" = {
+    #       name = "Z-AI - GLM 4.5 Air";
+    #     };
+    #   };
+    # };
+
     local = {
       npm = "@ai-sdk/openai-compatible";
       name = "Local";
