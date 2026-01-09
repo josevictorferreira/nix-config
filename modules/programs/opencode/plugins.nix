@@ -4,42 +4,44 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v2.14.0";
+  ohMyOpenCodeVersion = "v3.0.0-beta.2";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-t+wOG6ICRxR3W5N99Ap1Tv+xuvbYtCmi2Fv6Chs1KDc=";
+    hash = "sha256-00weqPMFyRrpXexQgMngGSha8jAmnDp/CvDczalQwL8=";
   };
 
-  bunDeps = pkgs.stdenv.mkDerivation {
+  # FOD for bun deps using stdenvNoCC with structured attrs to avoid store path references
+  bunDeps = pkgs.stdenvNoCC.mkDerivation {
     pname = "oh-my-opencode-deps";
     version = ohMyOpenCodeVersion;
 
     src = ohMyOpenCodeSrc;
 
-    nativeBuildInputs = [ pkgs.bun ];
+    nativeBuildInputs = [ pkgs.bun pkgs.cacert ];
+
+    # Required for FOD to work without referencing store paths
+    __structuredAttrs = true;
+    unsafeDiscardReferences.out = true;
 
     outputHashMode = "recursive";
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-uk20lOAF3U1iK7qMtoURfaSE9KfBoiHz9bLLGAf/OGQ="
-      else "sha256-HDQSny1022sDp7GgUWTiLF0M+A1j/XiyJ3K2JXZ/wqQ=";
+      else "sha256-g+oMAyqm0neiz8kheBibOV3ooCCi02HeFc4JAXr/bNQ=";
 
     buildPhase = ''
-      runHook preBuild
-      ${lib.getExe pkgs.bun} install --frozen-lockfile
-      runHook postBuild
+      export HOME=$(mktemp -d)
+      bun install --frozen-lockfile
     '';
 
     installPhase = ''
-      runHook preInstall
       rm -rf node_modules/.cache 2>/dev/null || true
       mkdir -p $out
       cp -r node_modules $out/
       cp package.json bun.lock* $out/ 2>/dev/null || true
-      runHook postInstall
     '';
   };
 
@@ -54,14 +56,16 @@ let
       pkgs.gnused
     ];
 
-    preBuild = ''
+    configurePhase = ''
+      runHook preConfigure
       cp -r ${bunDeps}/node_modules ./node_modules
-      cp ${bunDeps}/package.json ./package.json 2>/dev/null || true
+      chmod -R u+w node_modules
+      # Fix shebangs in node_modules
       find node_modules -type f -executable -print0 | xargs -0 grep -l "^#!/usr/bin/env" 2>/dev/null | while IFS= read -r script; do
         substituteInPlace "$script" --replace "#!/usr/bin/env" "#!${pkgs.coreutils}/bin/env"
       done || true
-      # Use patchShebangs to handle all shebang patterns including symlinks
       patchShebangs node_modules
+      runHook postConfigure
     '';
 
     buildPhase = ''
@@ -199,7 +203,7 @@ in
 
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
-    "opencode-antigravity-auth@1.2.7"
-    "@tarquinen/opencode-dcp@1.1.3"
+    "opencode-antigravity-auth@1.2.8"
+    "@tarquinen/opencode-dcp@1.1.4"
   ];
 }
