@@ -20,6 +20,7 @@
     ./nix/nix-option-migrate.nix
     ./nix/nix-refactor.nix
     ./nix/nix-template-new.nix
+    ./features/blueprint.nix
     ./features/implement.nix
     ./features/plan.nix
     ./features/research.nix
