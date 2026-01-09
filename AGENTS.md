@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Pre-Implementation
+
+Before starting any implementation, read `.docs/rules/*` for project-specific lessons and gotchas.
+
 ## Build/Lint/Test Commands
 
 ```bash

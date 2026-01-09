@@ -179,3 +179,44 @@ lib.optionalString (pkgs.system == "x86_64-linux") ''
   # x86_64 Linux specific code
 ''
 ```
+
+### Sandbox Development Environments
+
+Create isolated development environments with PostgreSQL using templates:
+
+```bash
+# Initialize a new Ruby project with PostgreSQL
+cd /path/to/new-project
+nix flake init -t path:/home/josevictor/.config/nix#sandbox-postgres-ruby
+
+# Enter the sandbox (--impure required for runtime path resolution)
+nix develop --impure
+
+# Start services
+sandbox-up -D -t=false  # -D for detached, -t=false to skip TUI
+
+# Check status
+sandbox-status
+
+# Work with the database
+psql "$DATABASE_URL"
+
+# Stop services when done
+sandbox-down
+```
+
+**Available Templates**:
+- `sandbox-postgres-ruby` - PostgreSQL 16 + Ruby 3.3
+
+**Sandbox Commands**:
+| Command | Description |
+|---------|-------------|
+| `sandbox-up` | Initialize PostgreSQL and start services |
+| `sandbox-down` | Stop all services |
+| `sandbox-status` | Show service status and PostgreSQL port |
+
+**Environment Variables**:
+- `PGPORT` - PostgreSQL port (deterministic per project)
+- `PGHOST` - PostgreSQL socket directory
+- `DATABASE_URL` - Full connection string for applications
+- `SANDBOX_STATE` - State directory (`.sandbox-state/`)

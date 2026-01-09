@@ -75,6 +75,7 @@
             lib = import ./lib {
               lib = pkgs.lib;
               inherit pkgs;
+              system = systemArc;
             };
           };
         };
@@ -120,15 +121,19 @@
 
     in
     {
-      lib =
-        systemArc:
+      # Per-system lib output with mkSandboxShell (Phase 2 integration)
+      lib = forAllSystems (system:
         let
-          pkgs = mkPkgs systemArc;
+          pkgs = mkPkgs system;
+          baseLib = import ./lib {
+            lib = pkgs.lib;
+            inherit pkgs system;
+          };
         in
-        import ./lib {
-          lib = pkgs.lib;
+        baseLib // {
           inherit pkgs;
-        };
+        }
+      );
 
       nixosConfigurations = {
         ${systems.nixos.host} = nixosModule systems.nixos;
@@ -136,6 +141,13 @@
 
       darwinConfigurations = {
         ${systems.macos.host} = darwinModule systems.macos;
+      };
+
+      templates = {
+        sandbox-postgres-ruby = {
+          path = ./templates/sandbox-postgres-ruby;
+          description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
+        };
       };
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);

@@ -1,0 +1,9 @@
+# Sandbox state (generated, contains database data)
+.sandbox-state/
+
+# Nix build artifacts
+result
+result-*
+
+# Flake lock (optional - remove this line if you want to lock versions)
+# flake.lock
