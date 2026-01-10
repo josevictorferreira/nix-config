@@ -105,6 +105,12 @@ let
       echo "Error: SANDBOX_STATE not set. Run this inside nix develop shell."
       exit 1
     fi
+
+    # Exit silently if sandbox was never initialized
+    if [ ! -d "$SANDBOX_STATE" ]; then
+      exit 0
+    fi
+
     PC_SOCKET="$SANDBOX_STATE/process-compose.sock"
     if [ -S "$PC_SOCKET" ]; then
       ${pkgs.process-compose}/bin/process-compose down -U -u "$PC_SOCKET" || true
@@ -121,12 +127,19 @@ let
       echo "Error: SANDBOX_STATE not set. Run this inside nix develop shell."
       exit 1
     fi
-    PC_SOCKET="$SANDBOX_STATE/process-compose.sock"
+
     echo "=== Sandbox Status ==="
     echo "Instance ID: $SANDBOX_ID"
     echo "PostgreSQL port: $PGPORT"
     echo "State directory: $SANDBOX_STATE"
     echo ""
+
+    if [ ! -d "$SANDBOX_STATE" ]; then
+      echo "Status: not initialized (run db_start or sandbox-up)"
+      exit 0
+    fi
+
+    PC_SOCKET="$SANDBOX_STATE/process-compose.sock"
     if [ -S "$PC_SOCKET" ]; then
       ${pkgs.process-compose}/bin/process-compose ps -U -u "$PC_SOCKET" 2>/dev/null || echo "Services not running (process-compose)"
     elif ${postgresVersion}/bin/pg_isready -h "$PGHOST" -p "$PGPORT" > /dev/null 2>&1; then
@@ -236,6 +249,86 @@ let
     ${postgresVersion}/bin/pg_ctl -D "$PGDATA" stop -m fast 2>/dev/null || echo "PostgreSQL not running"
   '';
 
+  # Create a git worktree and start a fully initialized sandbox
+  sandboxWorktree = pkgs.writeShellScriptBin "sandbox-worktree" ''
+    set -e
+
+    usage() {
+      echo "Usage: sandbox-worktree <branch-name> [worktree-path]"
+      echo ""
+      echo "Create a git worktree with a fully initialized sandbox."
+      echo "This command creates the worktree, enters nix develop, and starts PostgreSQL."
+      echo ""
+      echo "Arguments:"
+      echo "  branch-name    Branch to checkout (created if doesn't exist)"
+      echo "  worktree-path  Optional path for worktree (default: ../<project>-<branch>)"
+      echo ""
+      echo "Examples:"
+      echo "  sandbox-worktree feature-auth"
+      echo "  sandbox-worktree bugfix-123 ~/projects/myapp-bugfix"
+      exit 1
+    }
+
+    if [ -z "$1" ]; then
+      usage
+    fi
+
+    BRANCH="$1"
+    PROJECT_NAME=$(basename "$PWD")
+    WORKTREE_PATH="''${2:-$PWD/../$PROJECT_NAME-$BRANCH}"
+
+    # Check if we're in a git repo
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+      echo "Error: Not in a git repository"
+      exit 1
+    fi
+
+    # Check if worktree path already exists
+    if [ -d "$WORKTREE_PATH" ]; then
+      echo "Error: Path already exists: $WORKTREE_PATH"
+      echo "Either remove it or specify a different path."
+      exit 1
+    fi
+
+    # Check if branch exists locally or remotely
+    if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+      echo "Using existing branch: $BRANCH"
+      git worktree add "$WORKTREE_PATH" "$BRANCH"
+    elif git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+      echo "Creating local branch from origin/$BRANCH"
+      git worktree add "$WORKTREE_PATH" -b "$BRANCH" "origin/$BRANCH"
+    else
+      echo "Creating new branch: $BRANCH"
+      git worktree add "$WORKTREE_PATH" -b "$BRANCH"
+    fi
+
+    # Resolve to absolute path
+    WORKTREE_ABS=$(cd "$WORKTREE_PATH" && pwd)
+
+    echo ""
+    echo "=== Worktree Created ==="
+    echo "Branch: $BRANCH"
+    echo "Path: $WORKTREE_ABS"
+    echo ""
+    echo "Entering sandbox with PostgreSQL..."
+    echo ""
+
+    # Enter the worktree and start nix develop with db_start
+    cd "$WORKTREE_ABS"
+    exec nix develop --impure --command bash -c "db_start && exec $SHELL"
+  '';
+
+  # List all worktrees with their sandbox status
+  sandboxWorktreeList = pkgs.writeShellScriptBin "sandbox-worktree-list" ''
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+      echo "Error: Not in a git repository"
+      exit 1
+    fi
+
+    echo "=== Git Worktrees ==="
+    git worktree list
+  '';
+
 in
 pkgs.mkShell {
   packages = [
@@ -248,6 +341,8 @@ pkgs.mkShell {
     sandboxStatus
     sandboxCleanup
     sandboxList
+    sandboxWorktree
+    sandboxWorktreeList
     dbStart
     dbStop
   ] ++ packages;
@@ -260,7 +355,7 @@ pkgs.mkShell {
     # This gives range of 500 ports per project, reducing collision chance
     export PGPORT=$((${toString basePort} + ($SANDBOX_ID % 500)))
 
-    # Instance-specific state directory
+    # Instance-specific state directory (lazy - created only when sandbox-up/db_start runs)
     export SANDBOX_ROOT="$PWD"
     export SANDBOX_STATE="$PWD/.sandboxes/$SANDBOX_ID"
     export PGDATA="$SANDBOX_STATE/postgres"
@@ -273,26 +368,24 @@ pkgs.mkShell {
 
     ${envExports}
 
-    # Create state directory
-    mkdir -p "$SANDBOX_STATE"
-
-    # Cleanup on shell exit
+    # Cleanup on shell exit (only if sandbox was initialized)
     trap 'sandbox-down 2>/dev/null' EXIT
 
     echo ""
-    echo "=== Sandbox Instance Ready ==="
+    echo "=== Sandbox Shell Ready ==="
     echo "Instance ID: $SANDBOX_ID"
-    echo "PostgreSQL port: $PGPORT"
-    echo "State: $SANDBOX_STATE"
+    echo "PostgreSQL port: $PGPORT (when started)"
     echo ""
     echo "Commands:"
-    echo "  sandbox-up      Start services (process-compose TUI)"
-    echo "  sandbox-down    Stop all services"
-    echo "  sandbox-status  Show instance status"
-    echo "  sandbox-list    List all instances"
-    echo "  sandbox-cleanup Remove stale instances"
-    echo "  db_start        Start PostgreSQL (standalone)"
-    echo "  db_stop         Stop PostgreSQL"
+    echo "  db_start              Start PostgreSQL and initialize sandbox"
+    echo "  db_stop               Stop PostgreSQL"
+    echo "  sandbox-up            Start services (process-compose TUI)"
+    echo "  sandbox-down          Stop all services"
+    echo "  sandbox-status        Show instance status"
+    echo "  sandbox-worktree      Create worktree + start sandbox"
+    echo "  sandbox-worktree-list List all worktrees"
+    echo "  sandbox-list          List all sandbox instances"
+    echo "  sandbox-cleanup       Remove stale instances"
     echo ""
 
     ${shellHook}
