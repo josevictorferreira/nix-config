@@ -9,6 +9,15 @@
 ## Refactories
 - [ ] Add a theme module where we can configure all different programs theming in a single place.
 
+# PLAN
+
+- [ ] Fix gemini-cli feat-implement command that's failing to be read.
+- [ ] Create a new ai-tool command that actually parses the @.docs/rules and see what are the rules that will be useful for the current implementation.
+- [ ] Create a new ai-tool command that actually improves the user prompt with the question `What would be your prompt if you wanted to get to the following result`.
+- [ ] Create a new ai-tool that parses rubocop offenses(copy pasted or command run), and then automatically consult the rubocop docs page explaining why the offense happened and how to solve it, add it to the start of the prompt.
+- [ ] Improve the current `session-retrospective` command
+- [ ] Fix `weechat` program, when entering its not connecting to slack on nixos.
+
 # DONE
 
 Created: 2026-01-06
