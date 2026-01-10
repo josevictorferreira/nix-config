@@ -133,6 +133,8 @@ in
       watcher = {
         ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
       };
+      
+      small_model = "openrouter/openai/gpt-oss-120b";
     };
 
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
