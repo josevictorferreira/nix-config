@@ -112,30 +112,6 @@ let
     alias lt="eza -a --tree --level=1 --icons"
   '';
 
-  # Sandbox development environment functions
-  sandboxFunctions = ''
-    # Initialize a sandbox template - usage: sandbox-init [template-name]
-    # Without arguments, opens fzf to select from available templates
-    sandbox-init() {
-      local nix_config="$HOME/.config/nix"
-      local template="$1"
-      
-      if [[ -z "$template" ]]; then
-        # fzf mode - list and select templates
-        template=$(nix flake show "path:$nix_config" 2>/dev/null \
-          | awk '/templates/,/^[├└]───[^─]/ {print}' \
-          | grep -E '^\s+└───' \
-          | sed 's/.*└───//' \
-          | cut -d: -f1 \
-          | fzf --prompt="Select sandbox template: " --height=40% --reverse)
-        [[ -z "$template" ]] && echo "No template selected" && return 1
-      fi
-      
-      nix flake init -t "path:$nix_config#$template" && \
-        echo "Initialized '$template' template. Run 'nix develop --impure' to enter."
-    }
-  '';
-
   # Combined structured aliases
   structured =
     baseAliases
@@ -155,7 +131,7 @@ let
 
 in
 {
-  inherit lsAliases sandboxFunctions structured structuredAliasesScript;
+  inherit lsAliases structured structuredAliasesScript;
 
   shellInit = "";
 }
