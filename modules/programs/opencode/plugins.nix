@@ -96,7 +96,7 @@ in
     google_auth = false;
     agents = {
       Sisyphus = {
-        model = "google/antigravity-claude-opus-4-5-thinking-low";
+        model = "minimax/MiniMax-M2";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -107,9 +107,14 @@ in
           "shadcn*" = false;
           "websearch*" = false;
         };
+        permission = {
+          skill = {
+            "fixing-rubocop" = "allow";
+          };
+        };
       };
       librarian = {
-        model = "zai/GLM-4.5-air";
+        model = "openrouter/openai/gpt-oss-120b";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -122,7 +127,7 @@ in
         };
       };
       explore = {
-        model = "zai/GLM-4.5-air";
+        model = "openrouter/openai/gpt-oss-120b:exacto";
         temperature = 0.3;
         tools = {
           "context7*" = false;
@@ -136,7 +141,7 @@ in
         };
       };
       oracle = {
-        model = "google/antigravity-claude-opus-4-5-thinking-high";
+        model = "zai/GLM-4.7";
         tools = {
           "context7*" = true;
           "ck*" = true;
@@ -149,7 +154,7 @@ in
         };
       };
       frontend-ui-ux-engineer = {
-        model = "google/antigravity-gemini-3-pro-high";
+        model = "minimax/MiniMax-M2.1";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -162,7 +167,7 @@ in
         };
       };
       document-writer = {
-        model = "minimax/MiniMax-M2.1";
+        model = "openrouter/openai/gpt-oss-120b:exacto";
         tools = {
           "context7*" = false;
           "ck*" = false;
@@ -175,7 +180,7 @@ in
         };
       };
       multimodal-looker = {
-        model = "google/antigravity-gemini-3-flash";
+        model = "zai/GLM-4.6V";
         tools = {
           "context7*" = false;
           "ck*" = false;
