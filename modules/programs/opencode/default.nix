@@ -120,11 +120,11 @@ in
       ];
 
       tools = lib.mkDefault {
-        "context7*" = false;
+        "context7*" = true;
         "ck*" = false;
         "chrome-devtools*" = false;
         "playwriter*" = false;
-        "grep_app*" = false;
+        "grep_app*" = true;
         "mcp-nixos*" = false;
         "shadcn*" = false;
         "websearch*" = false;
