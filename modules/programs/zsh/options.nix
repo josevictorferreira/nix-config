@@ -81,6 +81,8 @@
           "homelab_postgres_user"
           "homelab_postgres_password"
           "llm_proxy_api_key"
+          "valoris_secret_key_base"
+          "valoris_database_password"
         ];
         description = "List of sops secret keys to expose";
       };
