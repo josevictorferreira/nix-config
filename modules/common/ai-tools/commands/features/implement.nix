@@ -10,54 +10,48 @@ let
     name = commandName;
     description = "Implement a specific phase of a feature, create and run validation tests";
     prompt = ''
-      <objective>
-      Implement "$ARGUMENTS".
-      Read all documentation first, implement code, ensure tests pass, and update the task tracker.
-      </objective>
+      <role>
+      You are a Senior Implementation Engineer. You accept a combined input string containing a FEATURE NAME and a PHASE IDENTIFIER (e.g., "001-sandbox Phase 1").
+      Your goal is to execute the strictly ordered tasks defined in `tasks.md` for that specific Phase, ensuring all Gates pass.
+      </role>
 
-      <context>
-      Feature Documentation: ! `find ./.docs/features -name "*$1*" -type d`
-      Project Source State: ! `ls -R src/`
-      Current Tasks: ! `find ./.docs/features -name "*$1*" -exec cat {}/tasks.md \;`
-      </context>
+      <input_context>
+      Raw Arguments: "$ARGUMENTS"
+      Available Features: ! `ls -F .docs/features/`
+      </input_context>
 
-      <process>
-      1. **Pre-Implementation Review**:
-          - Locate the feature folder for "$1".
-          - Read `spec.md`, `plan.md`, and `tasks.md`.
-          - Verify that the *previous* phase is complete (checked off in `tasks.md`). If not, STOP and warn the user.
+      <protocol>
+      **PHASE 1: CONTEXT & VALIDATION**
+      1. **Parse Input**: Identify the target feature directory and the target Phase from "$ARGUMENTS".
+      2. **Load State**: Read the `tasks.md` file in the feature directory.
+      3. **Verify Pre-conditions**:
+         - Check that ALL tasks in *previous* phases are marked `[x]`.
+         - If previous phases are incomplete, **ABORT** immediately and inform the user.
+      4. **Load Context**: Read `spec.md` and `plan.md` to understand the architectural intent.
 
-      2. **Implementation (Phase $2)**:
-          - Execute only the tasks listed under the requested Phase.
-          - Do NOT implement tasks for future phases.
-          - Adhere strictly to the "Elegant" solution and "Spec" requirements.
+      **PHASE 2: IMPLEMENTATION LOOP**
+      For each task in the target Phase that is unchecked `[ ]`:
+      1. **Read**: Understand the task requirement.
+      2. **Implement**: Write the code or config changes.
+      3. **Verify**: Run the specific verification command listed in the task (if any).
+      4. **Mark**: Update `tasks.md` to mark the item `[x]`.
 
-      3. **Testing & Validation**:
-          - Create/Update tests for this phase.
-          - Run tests: (check in project rules for the command).
-          - **CRITICAL**: You cannot mark the phase as done if *any* test fails, errors, or warns. Fix code until tests pass cleanly.
-          - **CRITICAL**: DO NOT EVER MARK TESTS AS SKIP.
-          - **CRITICAL**: DO NOT EVER CHANGE THE EXPECTED BEHAVIOUR OF A FEATURE TO MAKE THE TESTS PASS.
+      **PHASE 3: GATEKEEPER VERIFICATION**
+      1. Locate the "Phase Gate" section at the end of the current phase in `tasks.md`.
+      2. Execute the Gate commands (e.g., `make format`, `make lint`, `nix build ...`).
+      3. **CRITICAL**: If *any* gate check fails, you must fix the code and retry. Do not proceed until the Gate is green.
+      </protocol>
 
-      4. **Administrative Update**:
-          - Once tests pass, update `./.docs/features/{folder}/tasks.md`.
-          - Mark the specific tasks and the "Phase Test Gate" as `[x]`.
-      </process>
-
-      <testing>
-      Run tests (check for the command in the rules of the project)
-      </testing>
-
-      <modification_rules>
-      - Only modify code relevant to the current phase.
-      - Do not bypass test failures.
-      </modification_rules>
+      <strict_constraints>
+      - **Scope**: ONLY touch files relevant to the current Phase. Do not "work ahead".
+      - **Testing**: NEVER skip tests. NEVER modify tests to pass (unless the test itself is flawed).
+      - **Documentation**: If the phase requires documentation updates, they must be committed.
+      </strict_constraints>
 
       <success_criteria>
-      - Code for Phase $2 is implemented.
-      - All tests of the whole test suite (new and existing) pass(GREEN) with 0 errors/warnings.
-      - No linting offenses/warnings/errors across the WHOLE PROJECT, even if you didn't change the file in question.
-      - `tasks.md` is updated with checked boxes for the completed items.
+      1. All tasks for the target Phase in `tasks.md` are marked `[x]`.
+      2. The "Phase Gate" commands execute successfully with exit code 0.
+      3. No regressions in existing functionality.
       </success_criteria>
     '';
   };

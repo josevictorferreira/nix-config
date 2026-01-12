@@ -133,7 +133,7 @@ in
       watcher = {
         ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
       };
-      
+
       model = "zai/GLM-4.7";
       small_model = "openrouter/openai/gpt-oss-120b";
     };
