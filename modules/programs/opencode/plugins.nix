@@ -30,7 +30,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-0M3bxfA7FgrDMRMFFclPE1JCakBFf70qUXyE+cgNJ9Q="
-      else "sha256-g+oMAyqm0neiz8kheBibOV3ooCCi02HeFc4JAXr/bNQ=";
+      else "sha256-fth+YQX3/b5Yu3LuoLSbe9wnCsNYqbn01ZTC3LJpZPQ=";
 
     buildPhase = ''
       export HOME=$(mktemp -d)
