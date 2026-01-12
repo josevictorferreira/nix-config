@@ -31,18 +31,33 @@ let
     ''}";
   };
 
-  shellScriptBin = pkgs.writeShellScriptBin "opencode" ''
+  shellScriptBinLinux = pkgs.writeShellScriptBin "opencode" ''
     set -euo pipefail
 
     INSTALL_URL="https://opencode.ai/install"
     OPENCODE_BIN_DIR="$HOME/.opencode/bin"
 
-    if [ ! -x "$OPENCODE_BIN_DIR" ]; then
+    if [ ! -x "$OPENCODE_BIN_DIR/opencode" ]; then
       mkdir -p "$OPENCODE_BIN_DIR"
       PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
     fi
 
     exec "${openCodeFHS}/bin/opencode-fhs" "$@"
+  '';
+
+  shellScriptBinDarwin = pkgs.writeShellScriptBin "opencode" ''
+    set -euo pipefail
+
+    INSTALL_URL="https://opencode.ai/install"
+    OPENCODE_BIN_DIR="$HOME/.opencode/bin"
+    OPENCODE_BIN="$OPENCODE_BIN_DIR/opencode"
+
+    if [ ! -x "$OPENCODE_BIN" ]; then
+      mkdir -p "$OPENCODE_BIN_DIR"
+      PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
+    fi
+
+    exec "$OPENCODE_BIN" "$@"
   '';
 in
 {
@@ -149,8 +164,8 @@ in
       packages = [
         pkgs.bun
       ]
-      ++ lib.optional isDarwin pkgs.opencode
-      ++ lib.optional (!isDarwin) shellScriptBin;
+      ++ lib.optional isDarwin shellScriptBinDarwin
+      ++ lib.optional (!isDarwin) shellScriptBinLinux;
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "agent" cfg.agents)
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
