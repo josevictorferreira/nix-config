@@ -141,7 +141,7 @@ in
         };
       };
       oracle = {
-        model = "zai/GLM-4.7";
+        model = "zai-coding-plan/GLM-4.7";
         tools = {
           "context7*" = true;
           "ck*" = true;
@@ -180,7 +180,7 @@ in
         };
       };
       multimodal-looker = {
-        model = "zai/GLM-4.6V";
+        model = "zai-coding-plan/GLM-4.6V";
         tools = {
           "context7*" = false;
           "ck*" = false;
