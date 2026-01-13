@@ -8,6 +8,38 @@
 let
   cfg = config.jvf.programs.tmuxp;
 
+  tmuxpPicker = pkgs.writeShellScriptBin "tmuxp-picker" ''
+    set -euo pipefail
+
+    TMUXP_DIR="''${TMUXP_CONFIGDIR:-$HOME/.config/tmuxp}"
+
+    if [ ! -d "$TMUXP_DIR" ]; then
+      echo "tmuxp config directory not found: $TMUXP_DIR" >&2
+      exit 1
+    fi
+
+    # List available sessions (strip .yaml extension)
+    sessions=$(find "$TMUXP_DIR" -maxdepth 1 -name "*.yaml" -type f 2>/dev/null | xargs -n1 basename | sed 's/\.yaml$//' | sort)
+
+    if [ -z "$sessions" ]; then
+      echo "No tmuxp sessions found in $TMUXP_DIR" >&2
+      exit 1
+    fi
+
+    # Use fzf to select a session
+    selected=$(echo "$sessions" | ${lib.getExe pkgs.fzf} \
+      --prompt="tmuxp session> " \
+      --height=40% \
+      --reverse \
+      --border \
+      --header="Select a tmuxp session to load")
+
+    if [ -n "$selected" ]; then
+      # Load session (tmuxp will attach or switch automatically when inside tmux)
+      exec ${lib.getExe cfg.package} load -y "$selected"
+    fi
+  '';
+
   chat = {
     session_name = "chat";
     start_directory = "$HOME/Workspace";
@@ -94,6 +126,38 @@ let
     ];
   };
 
+  valorisBackend = {
+    session_name = "Valoris - Backend Sandbox";
+    start_directory = "$HOME/Workspace/valoris";
+    windows = [
+      {
+        window_name = "Backend Sandbox";
+        layout = "tiled";
+        panes = [
+          "./bin/dev_sandbox backend 1"
+          "sleep 3 && ./bin/dev_sandbox backend 1"
+          "sleep 6 && ./bin/dev_sandbox backend 1"
+        ];
+      }
+    ];
+  };
+
+  valorisFrontend = {
+    session_name = "Valoris - Frontend";
+    start_directory = "$HOME/Workspace/valoris/frontend";
+    windows = [
+      {
+        window_name = "Valoris Frontend";
+        layout = "tiled";
+        panes = [
+          "nix develop"
+          "sleep 2 && nix develop"
+          "sleep 4 && nix develop"
+        ];
+      }
+    ];
+  };
+
   projectsAiWorkspace = {
     session_name = "ai-workspace";
     start_directory = "$HOME/Workspace/ai-workspace";
@@ -172,7 +236,9 @@ in
       packages = [
         pkgs.tmux
         pkgs.fastfetch
+        pkgs.fzf
         cfg.package
+        tmuxpPicker
       ];
       configs = {
         "chat.yaml" = chat;
@@ -180,6 +246,8 @@ in
         "monitoring.yaml" = monitoring;
         "homelab.yaml" = projectsHomelab;
         "valoris.yaml" = projectsValoris;
+        "valoris-backend.yaml" = valorisBackend;
+        "valoris-frontend.yaml" = valorisFrontend;
         "ai-workspace.yaml" = projectsAiWorkspace;
         "work.yaml" = work;
       };

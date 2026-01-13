@@ -82,6 +82,9 @@ let
     bind -n C-left swap-window -t -1
     bind -n C-right swap-window -t +1
 
+    # tmuxp session picker (prefix + t, replaces default time display)
+    bind t display-popup -E -w 60% -h 60% "tmuxp-picker"
+
     set -g status-position bottom
     set -g status-left \'\'
     set -g status-right-length 50
