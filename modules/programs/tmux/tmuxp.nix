@@ -8,10 +8,14 @@
 let
   cfg = config.jvf.programs.tmuxp;
 
+  # Sessions that support dynamic SESSION_ID
+  dynamicSessions = [ "valoris-backend" ];
+
   tmuxpPicker = pkgs.writeShellScriptBin "tmuxp-picker" ''
     set -euo pipefail
 
     TMUXP_DIR="''${TMUXP_CONFIGDIR:-$HOME/.config/tmuxp}"
+    DYNAMIC_SESSIONS="${lib.concatStringsSep " " dynamicSessions}"
 
     if [ ! -d "$TMUXP_DIR" ]; then
       echo "tmuxp config directory not found: $TMUXP_DIR" >&2
@@ -34,10 +38,40 @@ let
       --border \
       --header="Select a tmuxp session to load")
 
-    if [ -n "$selected" ]; then
-      # Load session (tmuxp will attach or switch automatically when inside tmux)
-      exec ${lib.getExe cfg.package} load -y "$selected"
+    if [ -z "$selected" ]; then
+      exit 0
     fi
+
+    # Check if this is a dynamic session
+    is_dynamic=false
+    for ds in $DYNAMIC_SESSIONS; do
+      if [ "$selected" = "$ds" ]; then
+        is_dynamic=true
+        break
+      fi
+    done
+
+    if [ "$is_dynamic" = "true" ]; then
+      # Find next available SESSION_ID by checking existing tmux sessions
+      # Extract session IDs from existing sessions matching the pattern
+      existing_ids=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' 2>/dev/null | \
+        grep -oP '(?<=Sandbox )\d+$' || echo "0")
+      
+      # Find the maximum ID and add 1
+      max_id=0
+      for id in $existing_ids; do
+        if [ "$id" -gt "$max_id" ]; then
+          max_id=$id
+        fi
+      done
+      export SESSION_ID=$((max_id + 1))
+      
+      echo "Starting $selected with SESSION_ID=$SESSION_ID"
+      sleep 1
+    fi
+
+    # Load session (tmuxp will attach or switch automatically when inside tmux)
+    exec ${lib.getExe cfg.package} load -y "$selected"
   '';
 
   chat = {
@@ -127,16 +161,16 @@ let
   };
 
   valorisBackend = {
-    session_name = "Valoris - Backend Sandbox";
+    session_name = "Valoris - Backend Sandbox $SESSION_ID";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
       {
-        window_name = "Backend Sandbox";
+        window_name = "Sandbox $SESSION_ID";
         layout = "tiled";
         panes = [
-          "./bin/dev_sandbox backend 1"
-          "sleep 3 && ./bin/dev_sandbox backend 1"
-          "sleep 6 && ./bin/dev_sandbox backend 1"
+          "./bin/dev_sandbox backend $SESSION_ID"
+          "sleep 3 && ./bin/dev_sandbox backend $SESSION_ID"
+          "sleep 6 && ./bin/dev_sandbox backend $SESSION_ID"
         ];
       }
     ];
