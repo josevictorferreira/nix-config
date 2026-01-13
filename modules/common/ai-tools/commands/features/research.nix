@@ -12,7 +12,7 @@ let
     prompt = ''
       <objective>
       Research the topic "$ARGUMENTS" to identify best practices and the most elegant implementation strategies.
-      Generate a comprehensive research document stored in a new, sequentially numbered feature folder.
+      The output must serve as a high-fidelity "Architectural Seed" for the subsequent spec and plan phases.
       </objective>
 
       <context>
@@ -25,30 +25,34 @@ let
           - Determine a short "slug" name for the feature based on "$ARGUMENTS" (e.g., `auth-system`).
           - Define the target path: `./.docs/features/XXX-{slug}/research.md`.
 
-      2. **Conduct Research**:
-          - content: Analyze current academic literature, technical documentation, and recent studies regarding "$ARGUMENTS".
-          - Focus: Look for the "most elegant" way to implement this in a product environment.
+      2. **Analysis & Brainstorming**:
+          - Analyze requirements for "$ARGUMENTS" using Chain-of-Thought reasoning.
+          - Identify "Implementation Primitives": specific libraries, patterns, or existing files in this repo to mimic.
+          - Focus on AI-friendliness: low coupling, clear naming, explicit state, and robust types.
 
       3. **Develop Solutions**:
-          - Primary Solution: The recommended "elegant" approach.
-          - Alternatives: You MUST provide at least 2 distinct alternative approaches (Total of 3+ options).
-          - For each suggestion, provide proper citations, source attribution, or references to standard libraries/patterns.
+          - **The Elegant Solution**: The recommended approach emphasizing simplicity and robustness.
+          - **Alternatives**: Provide at least 2 distinct alternative approaches (Total 3+ options).
+          - Include a **Trade-off Matrix** (Elegance vs. Performance vs. Implementation Cost).
 
       4. **Output Generation**:
           - Create the directory if it doesn't exist.
-          - Write the findings to the `research.md` file.
+          - Write findings to the `research.md` file.
       </process>
 
-      <output>
-      Files created:
-      - `./.docs/features/{number}-{name}/research.md`
-      </output>
+      <output_structure>
+      - **Context & Constraints**: Why this is being built and what limits us.
+      - **The Elegant Solution**: Detailed architecture, reasoning, and why it's the most elegant choice.
+      - **Implementation Primitives**: Suggested types, file structures, and specific internal patterns to follow.
+      - **Trade-off Matrix**: Comparison of the primary solution and alternatives.
+      - **Citations & References**: Sources, documentation, or standard library references.
+      </output_structure>
 
       <success_criteria>
       - A new feature directory is created with the correct sequential number.
       - `research.md` contains 1 primary recommendation and at least 2 alternatives.
-      - Sources and citations are included.
-      - Content specifically addresses "elegance" and "best practices".
+      - Implementation Primitives are identified to guide the plan phase.
+      - Content specifically addresses "elegance" and "vibe-coding" friendliness.
       </success_criteria>
     '';
   };
