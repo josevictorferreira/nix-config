@@ -62,6 +62,9 @@ in
           pkgs.rocmPackages.rocminfo
           pkgs.rocmPackages.rocm-runtime
           pkgs.rocmPackages.rocm-smi
+          # Required for llama.cpp ROCm backend (LM Studio, etc.)
+          pkgs.rocmPackages.hipblas
+          pkgs.rocmPackages.rocblas
         ];
 
         boot.initrd.kernelModules = [ "amdgpu" ];
@@ -91,12 +94,18 @@ in
               rocmPackages.rocminfo
               rocmPackages.rocm-runtime
               rocmPackages.rocm-smi
+              # Required for llama.cpp ROCm backend (LM Studio, etc.)
+              rocmPackages.hipblas
+              rocmPackages.rocblas
             ]
             ++ cfg.extraPackages;
         };
 
         systemd.tmpfiles.rules = lib.optionals cfg.enableRocm [
           "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+          "L+    /opt/rocm/lib   -    -    -     -    ${pkgs.rocmPackages.clr}/lib"
+          "L+    /opt/rocm/rocblas   -    -    -     -    ${pkgs.rocmPackages.rocblas}"
+          "L+    /opt/rocm/hipblas   -    -    -     -    ${pkgs.rocmPackages.hipblas}"
         ];
 
         hardware.cpu.amd.updateMicrocode = true;

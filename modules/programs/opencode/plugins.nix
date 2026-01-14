@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v3.0.0-beta.5";
+  ohMyOpenCodeVersion = "v3.0.0-beta.7";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-NWTybjbrxg+tvTkNEb4jEYVQE0rFymRk4OS2dMwgIoA=";
+    hash = "sha256-TjfER1UBor+UXrtjuoLqyngiCHetlQZtC5U3/nlOLF8=";
   };
 
   # FOD for bun deps using stdenvNoCC with structured attrs to avoid store path references
@@ -30,7 +30,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-0M3bxfA7FgrDMRMFFclPE1JCakBFf70qUXyE+cgNJ9Q="
-      else "sha256-fth+YQX3/b5Yu3LuoLSbe9wnCsNYqbn01ZTC3LJpZPQ=";
+      else "sha256-o5dSLQWjCGQ4lmZXAqqeXwqHN2/cWCXTFrgp3EwtWvw=";
 
     buildPhase = ''
       export HOME=$(mktemp -d)
@@ -111,6 +111,19 @@ in
           skill = {
             "fixing-rubocop" = "allow";
           };
+        };
+      };
+      Orchestrator-Sisyphus = {
+        model = "minimax/MiniMax-M2";
+        tools = {
+          "context7*" = true;
+          "ck*" = true;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = false;
         };
       };
       librarian = {

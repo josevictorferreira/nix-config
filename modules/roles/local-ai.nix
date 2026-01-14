@@ -7,6 +7,48 @@
 
 let
   cfg = config.jvf.roles.localAi;
+
+  # ROCm libraries needed for llama.cpp backend
+  rocmLibs = with pkgs.rocmPackages; [
+    clr
+    clr.icd
+    rocm-runtime
+    hipblas
+    rocblas
+    rocsolver
+  ];
+
+  # Additional system libraries needed by the ROCm stack
+  systemLibs = with pkgs; [
+    stdenv.cc.cc.lib # libstdc++
+    numactl # libnuma
+    elfutils.out # libelf (need .out for the library)
+    libdrm # libdrm
+  ];
+
+  # All extra libraries for the FHS environment
+  allExtraLibs = rocmLibs ++ systemLibs;
+
+  # Create a wrapped lmstudio that sets LD_LIBRARY_PATH for child processes
+  # This includes both the bundled ROCm vendor libs and system libs
+  lmstudio-rocm = pkgs.symlinkJoin {
+    name = "lmstudio-rocm";
+    paths = [ pkgs.lmstudio ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      # Wrap lm-studio with environment for ROCm
+      # Set LD_LIBRARY_PATH to include:
+      # 1. LM Studio's bundled vendor libs (expanded at runtime via $HOME)
+      # 2. System ROCm and support libraries from nix store
+      # 3. FHS paths for libraries inside the sandbox
+      wrapProgram $out/bin/lm-studio \
+        --run 'export LD_LIBRARY_PATH="$HOME/.lmstudio/extensions/backends/vendor/linux-llama-rocm-vendor-v3:${lib.makeLibraryPath allExtraLibs}:/usr/lib64:/usr/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"'
+
+      # Wrap lms CLI as well
+      wrapProgram $out/bin/lms \
+        --run 'export LD_LIBRARY_PATH="$HOME/.lmstudio/extensions/backends/vendor/linux-llama-rocm-vendor-v3:${lib.makeLibraryPath allExtraLibs}:/usr/lib64:/usr/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"'
+    '';
+  };
 in
 {
   imports = [
@@ -62,9 +104,8 @@ in
     users.users."${cfg.username}".packages = [
     ]
     ++ lib.optionals (!pkgs.stdenv.isDarwin) [
-      pkgs.lmstudio
+      lmstudio-rocm
       pkgs.llama-cpp-rocm
-      pkgs.upscayl
     ];
   };
 }
