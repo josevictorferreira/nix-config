@@ -1,0 +1,5 @@
+.sandboxes/
+.venv/
+result
+result-*
+# flake.lock

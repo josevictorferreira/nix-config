@@ -1,5 +1,5 @@
 {
-  description = "Ruby on Rails with PostgreSQL sandbox template";
+  description = "Django with PostgreSQL sandbox template";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -32,7 +32,10 @@
         basePortOffset = pkgs.lib.mod (pkgs.lib.foldl' (acc: c: acc * 16 + hexToInt c) 0 hexChars) 500;
         basePort = toString (5432 + basePortOffset);
 
-        postgresVersion = pkgs.postgresql_18.withPackages (ps: [ ps.postgis ]);
+        postgresVersion = pkgs.postgresql_18.withPackages (ps: [
+          ps.postgis
+          ps.timescaledb
+        ]);
 
         # PostgreSQL initialization script - uses runtime PGPORT
         pgSetup = pkgs.writeShellScriptBin "sandbox-pg-setup" ''
@@ -58,12 +61,17 @@
           port = $PGPORT
           unix_socket_directories = '$PG_SOCKET'
           listen_addresses = '127.0.0.1'
+          shared_preload_libraries = 'timescaledb'
           EOF
 
             ${postgresVersion}/bin/pg_ctl -D "$PG_DATA" -l "$SANDBOX_STATE/postgres.log" start -w
             ${postgresVersion}/bin/createdb -p "$PGPORT" -h "$PG_SOCKET" -U postgres postgres || true
             ${postgresVersion}/bin/createdb -p "$PGPORT" -h "$PG_SOCKET" -U postgres "$DB_DEV" || true
             ${postgresVersion}/bin/createdb -p "$PGPORT" -h "$PG_SOCKET" -U postgres "$DB_TEST" || true
+            for db in "$DB_DEV" "$DB_TEST"; do
+              ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PG_SOCKET" -U postgres -d "$db" -c "CREATE EXTENSION IF NOT EXISTS postgis;" || true
+              ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PG_SOCKET" -U postgres -d "$db" -c "CREATE EXTENSION IF NOT EXISTS timescaledb;" || true
+            done
             ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PG_SOCKET" -U postgres -d postgres -c "ALTER USER postgres WITH PASSWORD 'postgres';" || true
             ${postgresVersion}/bin/pg_ctl -D "$PG_DATA" stop -m fast
             echo "PostgreSQL initialized on port $PGPORT"
@@ -234,16 +242,26 @@
         '';
 
         db_reset = pkgs.writeShellScriptBin "db_reset" ''
-          bundle exec rails db:drop
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          DB_BASE="''${APP_DB_NAME_BASE:-${dbNameBase}}"
+          DB_DEV="''${DB_BASE}_development"
+          dropdb -h "$PGHOST" -p "$PGPORT" -U postgres "$DB_DEV" 2>/dev/null || true
+          createdb -h "$PGHOST" -p "$PGPORT" -U postgres "$DB_DEV"
+          ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PGHOST" -U postgres -d "$DB_DEV" -c "CREATE EXTENSION IF NOT EXISTS postgis;" || true
+          ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PGHOST" -U postgres -d "$DB_DEV" -c "CREATE EXTENSION IF NOT EXISTS timescaledb;" || true
+          if [ -f manage.py ]; then
+            echo "Running Django migrations..."
+            python manage.py migrate || true
+          fi
         '';
 
         db_parallel_create = pkgs.writeShellScriptBin "db_parallel_create" ''
           DB_BASE="''${APP_DB_NAME_BASE:-${dbNameBase}}"
           echo "Creating parallel test databases on port $PGPORT..."
           for i in $(seq 2 $(($(nproc) + 1))); do
-            createdb -h "$PGHOST" -p "$PGPORT" -U postgres "''${DB_BASE}_test$i" 2>/dev/null || true
+            DB_NAME="''${DB_BASE}_test$i"
+            createdb -h "$PGHOST" -p "$PGPORT" -U postgres "$DB_NAME" 2>/dev/null || true
+            ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PGHOST" -U postgres -d "$DB_NAME" -c "CREATE EXTENSION IF NOT EXISTS postgis;" || true
+            ${postgresVersion}/bin/psql -p "$PGPORT" -h "$PGHOST" -U postgres -d "$DB_NAME" -c "CREATE EXTENSION IF NOT EXISTS timescaledb;" || true
           done
           echo "Parallel test databases ready"
         '';
@@ -281,22 +299,22 @@
           fi
 
           if [ -n "$SECRET_KEY_FILE" ] && [ -f "$SECRET_KEY_FILE" ]; then
-            SECRET_KEY_BASE=$(cat "$SECRET_KEY_FILE")
-          elif [ -n "$SECRET_KEY_BASE" ]; then
-            SECRET_KEY_BASE="$SECRET_KEY_BASE"
+            DJANGO_SECRET_KEY=$(cat "$SECRET_KEY_FILE")
+          elif [ -n "$DJANGO_SECRET_KEY" ]; then
+            DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY"
           else
-            echo "Warning: SECRET_KEY_BASE not provided" >&2
+            echo "Warning: DJANGO_SECRET_KEY not provided" >&2
           fi
 
           echo "unset DATABASE_URL"
-          echo "export RAILS_ENV=production"
+          echo "export DJANGO_ENV=production"
           echo "export REMOTE_DATABASE_HOST=\"$DB_HOST\""
           echo "export REMOTE_DATABASE_PORT=\"$DB_PORT\""
           echo "export REMOTE_DATABASE_USERNAME=\"$DB_USERNAME\""
           echo "export REMOTE_DATABASE_PASSWORD=\"$DB_PASSWORD\""
           echo "export REMOTE_DATABASE_NAME=\"''${DB_BASE}_production\""
-          if [ -n "$SECRET_KEY_BASE" ]; then
-            echo "export SECRET_KEY_BASE=\"$SECRET_KEY_BASE\""
+          if [ -n "$DJANGO_SECRET_KEY" ]; then
+            echo "export DJANGO_SECRET_KEY=\"$DJANGO_SECRET_KEY\""
           fi
         '';
 
@@ -307,7 +325,7 @@
           echo "export APP_DATABASE_PORT=\"$PGPORT\""
           echo "export APP_DATABASE_USERNAME=\"postgres\""
           echo "export APP_DATABASE_PASSWORD=\"postgres\""
-          echo "export RAILS_ENV=development"
+          echo "export DJANGO_ENV=development"
         '';
 
         # Create a git worktree and start a fully initialized sandbox
@@ -492,7 +510,6 @@
           echo "Changed to main worktree: $MAIN_WORKTREE"
 
           if [ "$NO_MERGE" = false ]; then
-            # Get the default branch (main or master)
             DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
             
             echo "Checking out $DEFAULT_BRANCH..."
@@ -520,7 +537,6 @@
             echo "Removing worktree: $CURRENT_WORKTREE"
             git worktree remove "$CURRENT_WORKTREE" --force
             
-            # Optionally delete the branch too
             read -p "Delete branch '$CURRENT_BRANCH'? [y/N] " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -534,80 +550,41 @@
           echo "You are now in: $MAIN_WORKTREE"
           echo ""
 
-          # Start a new shell in the main worktree
           exec zsh
         '';
 
-        # Browser packages - only available on Linux
+        # Browser packages - only available on Linux (for Playwright-like needs)
         browserPackages =
           if pkgs.stdenv.isLinux then [
             pkgs.chromium
             pkgs.chromedriver
           ] else [ ];
 
-        # Browser environment variables
         browserEnvVars =
           if pkgs.stdenv.isLinux then ''
             export CHROME_BIN=${pkgs.chromium}/bin/chromium
             export CHROMEDRIVER_BIN=${pkgs.chromedriver}/bin/chromedriver
           '' else ''
-            # On macOS, use system Chrome or install via homebrew
             export CHROME_BIN="''${CHROME_BIN:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
             export CHROMEDRIVER_BIN="''${CHROMEDRIVER_BIN:-$(which chromedriver 2>/dev/null || echo chromedriver)}"
           '';
-
-        # Create a simple swagger-cli wrapper that can validate YAML files
-        fixedSwaggerCli = pkgs.stdenv.mkDerivation {
-          name = "swagger-cli-4.0.4";
-          src = pkgs.fetchurl {
-            url = "https://registry.npmjs.org/@apidevtools/swagger-cli/-/swagger-cli-4.0.4.tgz";
-            sha256 = "14zyy6vvha6psvakqw6na7z7y2dzzdjlz4yc2xq2svvkp5skx49z";
-          };
-          buildInputs = [ pkgs.nodejs ];
-          buildPhase = ''
-                        echo "Creating swagger-cli binary wrapper..."
-                        # Extract the package
-                        tar -xzf $src
-                        # Create the final directory structure
-                        mkdir -p $out/lib/node_modules/swagger-cli
-                        cp -r package.json README.md . $out/lib/node_modules/swagger-cli/
-                        # Copy the lib directory if it exists
-                        if [ -d "lib" ]; then
-                          cp -r lib $out/lib/node_modules/swagger-cli/
-                        fi
-                        # Create the CLI binary wrapper
-                        mkdir -p $out/bin
-                        cat > $out/bin/swagger-cli << 'EOF'
-            #!/bin/bash
-            # Swagger CLI wrapper for validating RSwag-generated YAML files
-            # This bypasses the problematic interactive postinstall script
-            exec node $out/lib/node_modules/swagger-cli/lib/cli.js "$@"
-            EOF
-                        chmod +x $out/bin/swagger-cli
-          '';
-          installPhase = ''
-            echo "Swagger CLI wrapper installed successfully"
-          '';
-        };
-
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            ruby
-            bundler
+            python312
+            uv
             postgresVersion
-            process-compose
-            libyaml
-            zlib
-            openssl
-            readline
+            gdal
+            geos
+            proj
+            ruff
             gnumake
             gcc
             pkg-config
-            libiconv
-            podman
-            crane
+            openssl
+            libffi
+            process-compose
             # Sandbox commands
             pgSetup
             processComposeTemplate
@@ -628,9 +605,9 @@
             sandboxWorktree
             sandboxWorktreeList
             sandboxFinish
-            # Swagger
-            fixedSwaggerCli
           ] ++ browserPackages;
+
+          shell = pkgs.zsh;
 
           shellHook = ''
             export APP_NAME="${appName}"
@@ -647,28 +624,28 @@
             export SANDBOX_STATE="$PWD/.sandboxes/$SANDBOX_ID"
             export PGDATA="$SANDBOX_STATE/postgres"
             export PGHOST="$SANDBOX_STATE/postgres-socket"
-            # Only set DATABASE_URL for sandbox if not using external DB
-            # DATABASE_URL is set dynamically by db_use_local/db_use_remote
 
             # XDG passthrough for code agents
             export XDG_CONFIG_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}"
             export XDG_DATA_HOME="''${XDG_DATA_HOME:-$HOME/.local/share}"
 
-            # Browser automation (platform-specific)
-            ${browserEnvVars}
-
-            # Ruby/Rails configuration
-            export BUNDLE_PATH=$PWD/.bundle
-            export GEM_HOME=$PWD/.bundle
-            export PATH=$PWD/.bundle/bin:$PATH
-            export RUBY_YJIT_ENABLE=1
+            # Python configuration
+            export PATH=$PWD/.venv/bin:$PATH
+            export UV_LINK_MODE=copy
+            export PYTHONWARNINGS="ignore"
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath (with pkgs; [ gdal geos proj postgresVersion openssl ])}
+            export GDAL_LIBRARY_PATH=${pkgs.gdal}/lib/libgdal.so
+            export GEOS_LIBRARY_PATH=${pkgs.geos}/lib/libgeos_c.so
             export TMPDIR=/tmp
 
-            # Default database configuration for Rails (only if not already set)
+            # Default database configuration (only if not already set)
             export APP_DATABASE_HOST="''${APP_DATABASE_HOST:-$PGHOST}"
             export APP_DATABASE_PORT="''${APP_DATABASE_PORT:-$PGPORT}"
             export APP_DATABASE_USERNAME="''${APP_DATABASE_USERNAME:-postgres}"
             export APP_DATABASE_PASSWORD="''${APP_DATABASE_PASSWORD:-postgres}"
+
+            # Browser automation (platform-specific)
+            ${browserEnvVars}
 
             # Cleanup on shell exit (only if sandbox was initialized)
             trap 'sandbox-down 2>/dev/null' EXIT
@@ -695,7 +672,7 @@
             echo "  db_reset / db_parallel_create / db_parallel_drop"
             echo "  db_use_remote / db_use_local"
             echo ""
-            echo "Ruby: $(ruby --version)"
+            echo "Python: $(python --version)"
             echo "PostgreSQL: $(psql --version | head -1)"
           '';
         };

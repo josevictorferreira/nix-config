@@ -48,5 +48,13 @@ $ sudo dscl . -change /Groups/nixbld PrimaryGroupID 350 30000
 $ rm -rf ~/.cache/spotify
 ```
 
+## Project Templates
+
+Common flake templates live in `templates/`:
+- `sandbox-postgres-ruby/`: Rails + Postgres sandbox with process-compose helpers.
+- `sandbox-postgres-django/`: Django + Postgres (PostGIS/TimescaleDB) sandbox with the same helpers.
+- `frontend-bun-vite/`: Bun + Vite frontend dev shell and build/deploy scripts.
+- `monorepo-subtrees/`: Subtree-oriented monorepo helpers (update/push/status apps).
+
 ## Aknowledgements
 Based on [KooL's NixOS-Hyprland](https://github.com/JaKooLit/NixOS-Hyprland)
