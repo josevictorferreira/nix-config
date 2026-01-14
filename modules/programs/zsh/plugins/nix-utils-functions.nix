@@ -7,23 +7,26 @@ pkgs.stdenv.mkDerivation {
       nix run .#"$@"
     }
 
-    # Initialize a sandbox template - usage: sandbox-init [template-name]
-    # Without arguments, opens fzf to select from available templates
-    sandbox-init() {
+    # Initialize from any flake template in ~/.config/nix
+    # Usage: flake-init [template-name]
+    # Without args, opens fzf to select from available templates
+    flake-init() {
       local nix_config="$HOME/.config/nix"
       local template="$1"
-      
+
+      if ! command -v jq >/dev/null 2>&1; then
+        echo "Error: jq is required for flake-init" >&2
+        return 1
+      fi
+
       if [[ -z "$template" ]]; then
-        # fzf mode - list and select templates (strip ANSI codes from nix flake show output)
-        template=$(nix flake show "path:$nix_config" 2>/dev/null \
-          | sed 's/\x1b\[[0-9;]*m//g' \
-          | grep -E 'sandbox-' \
-          | sed 's/.*───//' \
-          | cut -d: -f1 \
-          | fzf --prompt="Select sandbox template: " --height=40% --reverse)
+        # fzf mode - list and select templates from the flake
+        template=$(nix flake show "path:$nix_config" --json 2>/dev/null \
+          | jq -r '.templates // {} | keys[]' \
+          | fzf --prompt="Select flake template: " --height=40% --reverse)
         [[ -z "$template" ]] && echo "No template selected" && return 1
       fi
-      
+
       nix flake init -t "path:$nix_config#$template" && \
         echo "Initialized '$template' template. Run 'nix develop --impure' to enter."
     }

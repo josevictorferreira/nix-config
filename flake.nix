@@ -148,6 +148,18 @@
           path = ./templates/sandbox-postgres-ruby;
           description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
         };
+        sandbox-postgres-django = {
+          path = ./templates/sandbox-postgres-django;
+          description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
+        };
+        frontend-bun-vite = {
+          path = ./templates/frontend-bun-vite;
+          description = "Frontend template using Bun and Vite.js";
+        };
+        monorepo-subtrees = {
+          path = ./templates/monorepo-subtrees;
+          description = "Monorepo helpers for git subtrees (backend/frontend)";
+        };
       };
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
