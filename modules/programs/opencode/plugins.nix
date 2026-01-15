@@ -223,7 +223,7 @@ in
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
     "opencode-antigravity-auth@1.2.8"
-    "@tarquinen/opencode-dcp@1.1.4"
+    "@tarquinen/opencode-dcp@1.2.1"
     "opencode-toolbox@0.10.0"
   ];
 }
