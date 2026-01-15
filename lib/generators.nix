@@ -113,7 +113,7 @@ let
     type: content:
     if type == "yaml" || type == "yml" then
       toYAML content
-    else if type == "json" then
+    else if type == "json" || type == "jsonc" then
       builtins.toJSON content
     else if type == "ini" then
       lib.generators.toINIWithGlobalSection { } { globalSection = flattenConfig content; }

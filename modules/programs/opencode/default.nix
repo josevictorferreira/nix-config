@@ -174,9 +174,8 @@ in
           "AGENTS.md" = cfg.baseRules;
           "opencode.json" = cfg.settings;
           "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
-          "antigravity.json" = {
-            pid_offset_enabled = true;
-          };
+          "antigravity.json" = { pid_offset_enabled = true; };
+          "toolbox.jsonc" = cfg.mcps;
         }
       ];
     };

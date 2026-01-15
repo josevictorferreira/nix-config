@@ -202,6 +202,7 @@ in
           "grep_app*" = false;
           "mcp-nixos*" = false;
           "shadcn*" = false;
+          "zai-mcp-server*" = true;
           "websearch*" = true;
         };
       };
@@ -223,5 +224,6 @@ in
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
     "opencode-antigravity-auth@1.2.8"
     "@tarquinen/opencode-dcp@1.1.4"
+    "opencode-toolbox@0.10.0"
   ];
 }
