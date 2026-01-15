@@ -134,16 +134,7 @@ in
         "minimax-cn"
       ];
 
-      tools = lib.mkDefault {
-        "context7*" = true;
-        "ck*" = false;
-        "chrome-devtools*" = false;
-        "playwriter*" = false;
-        "grep_app*" = true;
-        "mcp-nixos*" = false;
-        "shadcn*" = false;
-        "websearch*" = false;
-      };
+      tools = lib.mkDefault (builtins.listToAttrs (map (name: { name = "${name}*"; value = false; }) (builtins.attrNames cfg.mcps)));
 
       watcher = {
         ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
