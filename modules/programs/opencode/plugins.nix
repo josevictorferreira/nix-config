@@ -96,7 +96,7 @@ in
     google_auth = false;
     agents = {
       Sisyphus = {
-        model = "minimax/MiniMax-M2";
+        model = "minimax/MiniMax-M2.1";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -114,7 +114,7 @@ in
         };
       };
       Orchestrator-Sisyphus = {
-        model = "minimax/MiniMax-M2";
+        model = "minimax/MiniMax-M2.1";
         tools = {
           "context7*" = true;
           "ck*" = true;
@@ -223,7 +223,7 @@ in
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
     "opencode-antigravity-auth@1.2.8"
-    "@tarquinen/opencode-dcp@1.2.1"
-    "opencode-toolbox@0.10.0"
+    "@tarquinen/opencode-dcp@1.2.3"
+    "opencode-toolbox@0.10.3"
   ];
 }

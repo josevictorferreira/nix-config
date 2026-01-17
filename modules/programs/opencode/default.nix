@@ -127,7 +127,6 @@ in
       disabled_providers = lib.mkDefault [
         "opencode"
         "copilot"
-        "github-copilot"
         "github-copilot-enterprise"
         "copilot-enterprise"
         "github-models"
