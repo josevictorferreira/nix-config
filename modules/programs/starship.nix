@@ -6,14 +6,32 @@ let
 
   # Starship settings shared between NixOS and Darwin
   starshipSettings = {
-    add_newline = true;
+    format = "$directory$git_branch$git_commit$git_state$git_status$nix_shell$character$kubernetes";
+    add_newline = false;
 
     # Nix shell integration - Shows when inside nix develop/nix-shell
     nix_shell = {
       disabled = false;
-      impure_msg = "[impure](bold red)";
+      impure_msg = "";
       pure_msg = "[pure](bold green)";
       format = "via [$symbol$state( \($name\))]($style) ";
+    };
+
+    # Show full directory path (not just from git root)
+    directory = {
+      truncate_to_repo = false;
+      fish_style_pwd_dir_length = 1;
+    };
+
+    # Kubernetes context at the end with icon
+    kubernetes = {
+      disabled = false;
+      symbol = "☸️ ";
+      format = "[$symbol$context( \\($namespace\\))]($style) ";
+      style = "cyan bold";
+      detect_files = [ ];
+      detect_folders = [ ];
+      detect_extensions = [ ];
     };
 
     # Additional customization to make it look nice
@@ -24,10 +42,6 @@ let
 
     aws = {
       disabled = true;
-    };
-
-    kubernetes = {
-      disabled = false;
     };
   };
 
