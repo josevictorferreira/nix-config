@@ -77,10 +77,6 @@
           "gemini_api_key"
           "google_generative_ai_api_key"
           "z_ai_api_key"
-          "homelab_postgres_host"
-          "homelab_postgres_user"
-          "homelab_postgres_password"
-          "llm_proxy_api_key"
         ];
         description = "List of sops secret keys to expose";
       };
