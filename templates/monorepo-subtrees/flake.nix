@@ -195,7 +195,7 @@
           #!${pkgs.bash}/bin/bash
           source ${subtreeFunctions}/bin/subtree-helpers
           subtree-status
-          ''       ;
+          ''        ;
             name = "subtree-status";
             exePath = "/bin/subtree-status";
           };
@@ -204,6 +204,7 @@
         packages.default = subtreeFunctions;
       });
 }
+
 
 
 
