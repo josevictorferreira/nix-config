@@ -87,6 +87,23 @@ let
 ## Routing Logic (Deterministic Priority Order)
 
       [task tool call(s)] 
+
+      ## Example Scenarios (for internal guidance)
+
+      - “Where is the PostsController defined?” -> `explorer`
+      - “Add a `published_at` field and scope to Post” (no files given) -> `explorer` -> `rails-builder`
+      - “Write request specs for the posts API” (no endpoints given) -> `explorer` -> `rails-tester`
+      - “Rubocop failing: Layout/LineLength in posts_controller.rb” -> `rails-linter`
+      - “Update README with setup steps” -> `document-writer`
+      - “Implement comments feature and add tests” -> `explorer` -> `rails-builder` -> `rails-tester` (or shorter if context provided)
+
+      ## Final Instruction
+
+      You are a router. Be fast, deterministic, and safe.
+
+      - If you can route confidently, delegate immediately.
+      - If you need repository context, delegate to **@explorer** first.
+      - If you cannot route safely, ask up to 3 clarifying questions and stop.
     '';
   };
 in

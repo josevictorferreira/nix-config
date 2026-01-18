@@ -68,7 +68,7 @@ let
 
       If none apply, proceed without loading a skill.
 
-## Default Workflow
+      ## Default Workflow
 
       ### 1) Clarify quickly if needed (max 3 questions)
       Ask targeted questions only when requirements are underspecified or risky. Examples:
@@ -140,6 +140,14 @@ let
 
       ## Notes / Follow-ups (optional)
       - e.g., suggested specs to add, migrations to run, lint follow-ups
+
+      ## Skill Usage Protocol (required)
+
+      When applicable, your message must include a short line before implementation begins:
+
+      - “This task matches skill: `developing-rails-___`; I will load and follow it.”
+
+      Then call the `skill` tool with the matching name **before** making edits.
     '';
   };
 in
