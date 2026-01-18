@@ -11,10 +11,5 @@
     ./nix/managing-flakes.nix
     ./nix/writing-nix-code.nix
     ./python/pythonic-scraping-websites.nix
-    ./ruby/rails-background-jobs.nix
-    ./ruby/ruby-stealth-scraping.nix
-    ./ruby/managing-rails-events.nix
-    ./ruby/rspec-testing.nix
-    ./ruby/fixing-rubocop.nix
   ];
 }
