@@ -14,7 +14,7 @@ let
       disabled = false;
       impure_msg = "";
       pure_msg = "[pure](bold green)";
-      format = "via [$symbol$state( \($name\))]($style) ";
+      format = "via [$symbol$state( $name )]($style) ";
     };
 
     # Show full directory path (not just from git root)
@@ -27,7 +27,7 @@ let
     kubernetes = {
       disabled = false;
       symbol = "☸️ ";
-      format = "[$symbol$context( \\($namespace\\))]($style) ";
+      format = "[$symbol$context( $namespace )]($style) ";
       style = "cyan bold";
       detect_files = [ ];
       detect_folders = [ ];
