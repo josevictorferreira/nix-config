@@ -221,6 +221,14 @@ in
     disabled_hooks = [
       "rules-injector"
     ];
+    claude_code = {
+      mcp = false;
+      commands = false;
+      skills = false;
+      agents = false;
+      hooks = true;
+      plugins = false;
+    };
     hooks = {
       UserPromptSubmit = [
         {
