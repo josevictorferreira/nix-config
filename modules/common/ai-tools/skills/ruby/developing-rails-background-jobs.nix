@@ -5,23 +5,12 @@
 }:
 
 let
-  skillName = "rails-background-jobs";
+  skillName = "developing-rails-background-jobs";
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
-    description = "Specialized skill for Rails background jobs with Solid Queue. Use when creating jobs, scheduling tasks, implementing recurring jobs, testing jobs, or monitoring job queues. Includes best practices for reliable background processing.";
-    allowed-tools = [
-      "Read"
-      "Write"
-      "Bash"
-      "Blob"
-    ];
-    tags = [
-      "explorer"
-      "documentation"
-    ];
-    model = "openrouter/z-ai/glm-4.7";
+    description = "Developing Rails background jobs with Solid Queue. Use when creating jobs, scheduling tasks, implementing recurring jobs, testing jobs, fixing job bugs or monitoring job queues. Includes best practices for reliable background processing.";
     references = {
       "background_jobs" = ''
         # Background Jobs Reference

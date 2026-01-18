@@ -60,7 +60,7 @@ let
       | Skill name | When to use | Typical triggers |
       |---|---|---|
       | `developing-rails-event-store` | Architecting/structuring with Rails Event Store | “event store”, “domain events”, “RES”, “aggregate”, “event handler” |
-      | `developing-rails-jobs` | Background jobs with `solid_queue` | “job”, “background”, “async”, “solid_queue”, “queue”, “worker” |
+      | `developing-rails-background-jobs` | Background jobs with `solid_queue` | “job”, “background”, “async”, “solid_queue”, “queue”, “worker” |
       | `developing-rails-scrapers` | Building scrapers | “scrape”, “crawler”, “parse HTML”, “fetch pages”, “Nokogiri” |
       | `developing-rails-models` | Creating/updating models | “model”, “validation”, “association”, “scope”, “AR query” |
       | `developing-rails-migrations` | DB migrations | “migration”, “add column”, “index”, “constraint”, “rename table” |

@@ -5,25 +5,12 @@
 }:
 
 let
-  skillName = "rspec-testing";
+  skillName = "developing-rspec-tests";
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
     name = skillName;
-    description = "This skill should be used when writing, reviewing, or improving RSpec tests for Ruby on Rails applications. Use this skill for all testing tasks including model specs, controller specs, system specs, component specs, service specs, and integration tests. The skill provides comprehensive RSpec best practices from Better Specs and thoughtbot guides.";
-    allowed-tools = [
-      "Read"
-      "Write"
-      "Bash"
-      "WebFetch"
-      "Blob"
-    ];
-    model = "openrouter/z-ai/glm-4.7";
-    tags = [
-      "explorer"
-      "documentation"
-      "browser"
-    ];
+    description = "Writing, fixing, reviewing, or improving RSpec tests for Ruby on Rails applications. Use this skill for all testing tasks including model specs, controller specs, system specs, component specs, service specs, and integration tests. The skill provides comprehensive RSpec best practices from Better Specs and thoughtbot guides.";
     references = {
       "better_spec_guide" = ''
         # Better Specs - RSpec Best Practices

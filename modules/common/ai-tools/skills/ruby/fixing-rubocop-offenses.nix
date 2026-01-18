@@ -5,26 +5,12 @@
 }:
 
 let
-  skillName = "fixing-rubocop";
+  skillName = "fixing-rubocop-offenses";
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
-    allowed-tools = [
-      "Read"
-      "Write"
-      "Edit"
-      "Bash"
-      "Tool"
-      "Grep"
-      "Glob"
-    ];
     name = skillName;
     description = "Expertise in fixing rubocop offenses across the Ruby and Ruby on Rails codebases.";
-    model = "openrouter/z-ai/glm-4.7";
-    tags = [
-      "explorer"
-      "documentation"
-    ];
     scripts = {
       "check_cops.py" = ''
         #!/usr/bin/env python3

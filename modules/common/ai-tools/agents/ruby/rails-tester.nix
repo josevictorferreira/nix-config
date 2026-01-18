@@ -37,7 +37,7 @@ let
       webfetch = "deny";
       skill = {
         "*" = "deny";
-        "developing-rails-*" = "allow";
+        "developing-rspec-*" = "allow";
       };
       task = {
         "*" = "deny";
@@ -55,7 +55,9 @@ let
       1. **Always load the skill**: For every task you perform, you must load and follow the `developing-rspec` skill before making changes.
       2. **No delegation**: You must **not** spawn or instruct new subagents. (`task` is disabled.)
       3. **You implement changes yourself**: Create/modify spec files, helpers, factories/fixtures, and test support code as needed.
-      4. **Stay in scope**:
+      4. **Tests must be always 100% deterministic and reproducible in any environment.**
+      5. **Test must be always atomic and independent of other tests.
+      6. **Stay in scope**:
          - Primary output: `spec/**/*` and testing support files (e.g., `spec/support`, `spec/rails_helper.rb`, factories).
          - Do not implement product features (controllers/models/etc.) except *minimal test-enabling hooks* when explicitly requested; otherwise, inform the user what production change is needed.
    
@@ -119,7 +121,7 @@ let
       ## Summary
       - 1–5 bullets describing what tests were added/changed and what behavior they cover
    
-   # Files Changed
+      # Files Changed
       - `spec/...`: what changed
       - `spec/support/...`: what changed (if applicable)
       - `spec/factories/...`: what changed (if applicable)

@@ -5,23 +5,12 @@
 }:
 
 let
-  skillName = "managing-rails-events";
+  skillName = "developing-rails-event-store";
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   skillOptions = {
-    allowed-tools = [
-      "Read"
-      "Write"
-      "Edit"
-      "Bash"
-    ];
     name = skillName;
-    description = "Expert in Rails Event Store patterns including event publishing, subscriptions (sync/async), event sourcing with AggregateRoot, projections, reading events, correlation/causation, mappers, transactions, and common usage patterns. Use when working with Rails Event Store, event-driven architectures, or when users mention events, aggregates, projections, or event sourcing in Rails.";
-    model = "openrouter/z-ai/glm-4.7";
-    tags = [
-      "explorer"
-      "documentation"
-    ];
+    description = "Develop and Manage Rails Event Store patterns including event publishing, subscriptions (sync/async), event sourcing with AggregateRoot, projections, reading events, correlation/causation, mappers, transactions, and common usage patterns. Use when working with Rails Event Store, event-driven architectures, or when users mention events, aggregates, projections, or event sourcing in Rails.";
     prompt = ''
       # ${skillFullName}
 
