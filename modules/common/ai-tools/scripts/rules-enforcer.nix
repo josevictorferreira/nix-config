@@ -40,7 +40,7 @@ let
 
       # Check for .docs/rules/ directory and read all .md files
       if [[ -d "$CURRENT_PATH/.docs/rules" ]]; then
-        while IFS= read -r -d '''' file; do
+        while IFS= read -r -d ''' file; do
           if [[ "$file" == *.md ]]; then
             PROJECT_RULES="''${PROJECT_RULES}"$'\n\n---\n\n'
             PROJECT_RULES="''${PROJECT_RULES}$(cat "$file")"
@@ -87,7 +87,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.users."${cfg.username} ".packages = [ cfg.package ];
+    users.users."${cfg.username}".packages = [ cfg.package ];
   };
 }
 
