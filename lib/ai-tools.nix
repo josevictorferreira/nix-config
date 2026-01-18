@@ -19,6 +19,7 @@ let
     , model ? ""
     , tags ? [ ]
     , allowed-tools ? [ ]
+    , mcp ? { }
     , references ? { }
     , scripts ? { }
     ,
@@ -31,6 +32,7 @@ let
           model
           prompt
           tags
+          mcp
           references
           scripts
           ;
@@ -357,12 +359,37 @@ let
           "allowed-tools:\n" + lib.concatMapStringsSep "\n" (tool: "  - ${tool}*") skill.allowed-tools
         else
           "";
+
+      formatMcp =
+        mcp: indent:
+        let
+          formatValue =
+            name: cfg:
+            let
+              argsStr =
+                if cfg ? args then
+                  "    args: [ " + (lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)) + " ]"
+                else
+                  "";
+              commandStr = if cfg ? command then "    command: \"${cfg.command}\"" else "";
+            in
+            "${indent}${name}:\n${indent}${commandStr}\n${indent}${argsStr}";
+        in
+        "mcp:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg: formatValue name cfg) mcp));
+
+      mcpYaml =
+        if skill ? mcp && skill.mcp != { } then
+          formatMcp skill.mcp "  "
+        else
+          "";
+
       headerLines = [
         "name: \"${skillName}\""
         "description: \"${skill.description or ""}\""
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
-      ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml;
+      ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml
+      ++ lib.optional (mcpYaml != "") mcpYaml;
       yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
     in
     yamlHeader + "\n" + (skill.prompt or "");

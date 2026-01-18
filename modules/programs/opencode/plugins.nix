@@ -218,6 +218,22 @@ in
       enabled = true;
       default_max_iterations = 1000;
     };
+    disabled_hooks = [
+      "rules-injector"
+    ];
+    hooks = {
+      UserPromptSubmit = [
+        {
+          matcher = "";
+          hooks = [
+            {
+              type = "command";
+              command = "rules-enforcer";
+            }
+          ];
+        }
+      ];
+    };
   };
 
   config.jvf.programs.opencode.settings.plugin = [

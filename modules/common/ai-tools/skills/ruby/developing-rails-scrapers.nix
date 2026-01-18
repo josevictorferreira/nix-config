@@ -11,6 +11,12 @@ let
   skillOptions = {
     name = skillName;
     description = "Specialist in stealthy web scraping with Ruby using Ferrum headless browser. Use when building scrapers that need to evade bot detection, bypass anti-scraping measures, or when working with Cloudflare-protected sites. Triggers include requests for web scraping, data extraction, headless browsing, bot evasion, proxy rotation, user-agent rotation, or Ferrum configuration in Ruby/Rails projects.";
+    mcp = {
+      playwright = {
+        command = "npx";
+        args = [ "-y" "@anthropic-ai/mcp-playwright" ];
+      };
+    };
     references = {
       "bandwidth-optimization" = ''
         # Bandwidth Optimization
@@ -337,6 +343,7 @@ let
       2. **Use Chrome's new headless mode** - `headless: "new"` runs real Chrome without display
       3. **Non-standard window size** - Avoid default 1024x768, use 1366x768 or similar
       4. **Install stealth plugin** - Run `npx extract-stealth-evasions` and include stealth.min.js
+      5. **Use the playwrigth tool** - For debugging directly in the browser.
 
       ## Quick Reference
 

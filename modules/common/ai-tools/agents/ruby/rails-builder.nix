@@ -23,6 +23,7 @@ let
       "Write"
       "Bash"
       "Skill"
+      "context7*"
     ];
     disabled_tools = [
       "Task"
@@ -56,6 +57,7 @@ let
       1) state: “This task matches skill: `<skill-name>`; I will load and follow it.”  
       2) call `skill({ name: "<skill-name>" })`  
       3) follow the loaded instructions while implementing
+      4) use context7 to assist if needed
 
       | Skill name | When to use | Typical triggers |
       |---|---|---|

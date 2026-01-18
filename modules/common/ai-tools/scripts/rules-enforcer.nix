@@ -21,16 +21,26 @@ let
       # Model to use for OpenRouter API requests (can be changed by user)
       MODEL="${model}"
 
-      # Get the user prompt from the first argument
-      USER_PROMPT="''${1:-}"
+      # Read the JSON input from stdin
+      INPUT_JSON=$(cat)
 
       if [[ "$DEBUG" == "true" ]]; then
-        echo "[DEBUG] USER_PROMPT received: ''${USER_PROMPT:0:100}..." >&2
+        echo "[DEBUG] INPUT_JSON received: $INPUT_JSON" >&2
+      fi
+
+      # Extract the prompt from the JSON input
+      USER_PROMPT=$(echo "$INPUT_JSON" | jq -r '.prompt // empty')
+
+      if [[ "$DEBUG" == "true" ]]; then
+        echo "[DEBUG] USER_PROMPT extracted: ''${USER_PROMPT:0:100}..." >&2
       fi
 
       if [[ -z "$USER_PROMPT" ]]; then
-        echo "Error: No prompt provided" >&2
-        exit 1
+        if [[ "$DEBUG" == "true" ]]; then
+          echo "[DEBUG] No prompt found in JSON, returning input." >&2
+        fi
+        echo "$INPUT_JSON"
+        exit 0
       fi
 
       # Get the current working directory
@@ -87,8 +97,9 @@ let
       # Exit quietly if no rules found
       if [[ -z "''${PROJECT_RULES//[[:space:]]/}" ]]; then
         if [[ "$DEBUG" == "true" ]]; then
-          echo "[DEBUG] No rules found, exiting quietly." >&2
+          echo "[DEBUG] No rules found, returning input." >&2
         fi
+        echo "$INPUT_JSON"
         exit 0
       fi
 
@@ -101,14 +112,33 @@ let
 
       # Make the OpenRouter API request using jq for proper JSON escaping
       JSON_BODY=$(echo '{}' | jq -n --arg model "$MODEL" --arg system_content "Given the following rules and the user prompt, return the text of all rules that may be useful for executing what the user asked. Be concise and only include relevant rules." --arg user_content "$USER_CONTENT" '{model:$model,messages:[{role:"system",content:$system_content},{role:"user",content:$user_content}]}')
+      
+      # Check for API key
+      if [[ -z "''${OPENROUTER_API_KEY_CODE_AGENT:-}" ]]; then
+        if [[ "$DEBUG" == "true" ]]; then
+          echo "[DEBUG] OPENROUTER_API_KEY_CODE_AGENT not set, returning input." >&2
+        fi
+        echo "$INPUT_JSON"
+        exit 0
+      fi
+
       API_RESPONSE=$(echo "$JSON_BODY" | curl -s -X POST "https://openrouter.ai/api/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY_CODE_AGENT" -H "HTTP-Referer: $CURRENT_PATH" --data-binary @-)
 
       if [[ "$DEBUG" == "true" ]]; then
         echo "[DEBUG] API_RESPONSE received: ''${API_RESPONSE:0:200}..." >&2
       fi
 
-      echo "$API_RESPONSE" |
-      jq -r '.choices[0].message.content'
+      # Extract rules output
+      RULES_OUTPUT=$(echo "$API_RESPONSE" | jq -r '.choices[0].message.content // empty')
+
+      if [[ -n "$RULES_OUTPUT" ]]; then
+        # Append rules to prompt and return full JSON
+        NEW_PROMPT="''${USER_PROMPT}"$'\n\n'"Rules to follow:"$'\n'"''${RULES_OUTPUT}"
+        echo "$INPUT_JSON" | jq --arg new_prompt "$NEW_PROMPT" '.prompt = $new_prompt'
+      else
+        # Return original input if no output from API
+        echo "$INPUT_JSON"
+      fi
     '';
   };
 in
