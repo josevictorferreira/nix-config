@@ -84,6 +84,14 @@ let
         echo "---END---" >&2
       fi
 
+      # Exit quietly if no rules found
+      if [[ -z "''${PROJECT_RULES//[[:space:]]/}" ]]; then
+        if [[ "$DEBUG" == "true" ]]; then
+          echo "[DEBUG] No rules found, exiting quietly." >&2
+        fi
+        exit 0
+      fi
+
       # Build the user message content with proper escaping
       USER_CONTENT="Rules:\n''${PROJECT_RULES}\n\nUser Prompt:\n''${USER_PROMPT}"
 
