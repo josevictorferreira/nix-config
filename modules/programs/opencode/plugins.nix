@@ -10,7 +10,7 @@ let
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-xjVwDl9TCdvZJl/pJpNe4sLXErIQxQqG/LcWpwYnLaM=";
   };
 
   # FOD for bun deps using stdenvNoCC with structured attrs to avoid store path references
@@ -30,11 +30,11 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-nSx6J1YTgUT3uNDHjz9vwL7PrtvuM3RjBZmIt8l6/+s="
-      else "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      else "sha256-hip6gK6HFEQkypKuDcYqBtD4R9/+cR1xHWDLUnnYM+c=";
 
     buildPhase = ''
       export HOME=$(mktemp -d)
-      bun install --frozen-lockfile
+      bun install
     '';
 
     installPhase = ''
