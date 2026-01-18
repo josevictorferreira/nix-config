@@ -43,7 +43,7 @@ let
         "*" = "deny";
       };
     };
-    tags = [];
+    tags = [ ];
     mode = "subagent";
     prompt = ''
       # rails-linter

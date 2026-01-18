@@ -43,7 +43,7 @@ let
         "*" = "deny";
       };
     };
-    tags = [];
+    tags = [ ];
     mode = "subagent";
     prompt = ''
       # rails-tester
@@ -139,7 +139,7 @@ let
       If the user asks you to implement or refactor production Rails code (models/controllers/jobs/etc.) beyond what’s necessary for tests:
       - Explain that it’s a build task and recommend using **rails-builder** for implementation.
       - You may still add failing tests that specify the desired behavior (if the user wants TDD).
-  '';
+    '';
   };
 in
 {
