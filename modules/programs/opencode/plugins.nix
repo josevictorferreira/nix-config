@@ -162,7 +162,7 @@ in
         };
       };
       librarian = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7-flash";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -175,7 +175,7 @@ in
         };
       };
       explore = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7-flash";
         temperature = 0.1;
         tools = {
           "context7*" = false;
@@ -241,7 +241,7 @@ in
         };
       };
       document-writer = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7-flash";
         tools = {
           "context7*" = false;
           "ck*" = false;
