@@ -29,7 +29,7 @@ let
     outputHashMode = "recursive";
     outputHash =
       if pkgs.stdenv.isDarwin
-      then "sha256-5vV4x+b6DsveEpatGKYkbQsKLRBUbXBqhmatMiiU0kE="
+      then "sha256-1xtzQg10stHPpU+VfRY1z4Jc1KIFZ0cdcGEDQcu4NY0="
       else "sha256-qzq1yGPBC+Tret5s6t7qvQhL/pd7iiwgdwuBmcUFtM8=";
 
     buildPhase = ''
