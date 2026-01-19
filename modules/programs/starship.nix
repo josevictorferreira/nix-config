@@ -4,46 +4,8 @@ let
   cfg = config.jvf.programs.starship;
   isDarwin = builtins.match ".*-darwin" system != null;
 
-  # Starship settings shared between NixOS and Darwin
-  starshipSettings = {
-    format = "$directory$git_branch$git_commit$git_state$git_status$nix_shell$character$kubernetes";
-    add_newline = false;
-
-    # Nix shell integration - Shows when inside nix develop/nix-shell
-    nix_shell = {
-      disabled = false;
-      impure_msg = "";
-      pure_msg = "[pure](bold green)";
-      format = "via [$symbol$state( $name )]($style) ";
-    };
-
-    # Show full directory path (not just from git root)
-    directory = {
-      truncate_to_repo = false;
-      fish_style_pwd_dir_length = 1;
-    };
-
-    # Kubernetes context at the end with icon
-    kubernetes = {
-      disabled = false;
-      symbol = "☸️ ";
-      format = "[$symbol$context( $namespace )]($style) ";
-      style = "cyan bold";
-      detect_files = [ ];
-      detect_folders = [ ];
-      detect_extensions = [ ];
-    };
-
-    # Additional customization to make it look nice
-    character = {
-      success_symbol = "[➜](bold green)";
-      error_symbol = "[➜](bold red)";
-    };
-
-    aws = {
-      disabled = true;
-    };
-  };
+  # Starship settings - use defaults to fix display issues
+  starshipSettings = { };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)
   # Use pkgs.formats.toml for proper TOML generation
