@@ -46,40 +46,9 @@ let
   };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)
-  # Uses builtins.toJSON as a poor man's TOML generator since it is mostly compatible for simple keys
-  # or uses the custom library if available via inputs (would need access to inputs)
-  # But simpler: just define a helper here or use pkgs.formats if available.
-  # Given the error 'attribute toTOML missing', standard lib doesn't have it here.
-  # We'll use a local helper to convert to TOML-compatible format.
-  toTOML = attrs:
-    let
-      toTOMLValue = v:
-        if builtins.isBool v then (if v then "true" else "false")
-        else if builtins.isInt v then builtins.toString v
-        else if builtins.isString v then "\"${v}\""
-        else if builtins.isList v then
-          let items = map toTOMLValue v;
-          in if items == [ ] then "[]" else "[" + concatStringsSep ", " items + "]"
-        else if builtins.isAttrs v then "" # Handled by section headers or key-value pairs
-        else "\"${builtins.toString v}\"";
-
-      # Simple flattener for 1-level tables (sections) and top-level keys
-      process = attrs: concatStringsSep "\n" (
-        mapAttrsToList
-          (k: v:
-            if builtins.isAttrs v then
-              "\n[${k}]\n" + (concatStringsSep "\n" (mapAttrsToList (sk: sv: "${sk} = ${toTOMLValue sv}") v))
-            else
-              "${k} = ${toTOMLValue v}"
-          )
-          attrs
-      );
-
-      inherit (lib) concatStringsSep mapAttrsToList;
-    in
-    process attrs;
-
-  configFile = pkgs.writeText "starship.toml" (toTOML starshipSettings);
+  # Use pkgs.formats.toml for proper TOML generation
+  format = pkgs.formats.toml { };
+  configFile = format.generate "starship.toml" starshipSettings;
 
   # Check if the upstream option exists
   hasStarshipOption = options ? programs && options.programs ? starship;
