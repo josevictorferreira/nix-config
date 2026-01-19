@@ -24,7 +24,7 @@ let
       "Bash"
       "Skill"
     ];
-    disabled_tools = [
+    disabledTools = [
       "Task"
       "Webfetch"
       "Gitingest_Tool"

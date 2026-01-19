@@ -15,7 +15,7 @@ let
       "Task"
     ];
     temperature = 0.1;
-    disabled_tools = [
+    disabledTools = [
       "Read"
       "List"
       "Glob"
@@ -37,7 +37,6 @@ let
         "document-writer*" = "allow";
       };
     };
-    tags = [ ];
     mode = "primary";
     prompt = ''
             # rails-orchestrator: Ruby on Rails Request Router (Context via Explorer)

@@ -23,9 +23,9 @@ let
       "Write"
       "Bash"
       "Skill"
-      "context7*"
+      "context7"
     ];
-    disabled_tools = [
+    disabledTools = [
       "Task"
       "Webfetch"
       "Gitingest_Tool"

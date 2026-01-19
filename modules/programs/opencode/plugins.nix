@@ -106,10 +106,14 @@ in
           "mcp-nixos*" = false;
           "shadcn*" = false;
           "websearch*" = false;
+          "skill" = true;
         };
         permission = {
           skill = {
-            "fixing-rubocop" = "allow";
+            "developing-rails*" = "allow";
+            "developing-rspec*" = "allow";
+            "fixing-rubocop*" = "allow";
+            "writing-nix*" = "allow";
           };
         };
       };
