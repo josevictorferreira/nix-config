@@ -96,6 +96,32 @@ in
     google_auth = false;
     agents = {
       Sisyphus = {
+        model = "zai-coding-plan/GLM-4.7";
+        tools = {
+          "context7*" = true;
+          "ck*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = false;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = false;
+          "skill*" = true;
+          "skills*" = true;
+        };
+        permission = {
+          skills = {
+            "*" = "allow";
+          };
+          skill = {
+            "developing-rails*" = "allow";
+            "developing-rspec*" = "allow";
+            "fixing-rubocop*" = "allow";
+            "writing-nix*" = "allow";
+          };
+        };
+      };
+      Sisyphus-Junior = {
         model = "minimax/MiniMax-M2.1";
         tools = {
           "context7*" = true;
@@ -106,9 +132,13 @@ in
           "mcp-nixos*" = false;
           "shadcn*" = false;
           "websearch*" = false;
-          "skill" = true;
+          "skill*" = true;
+          "skills*" = true;
         };
         permission = {
+          skills = {
+            "*" = "allow";
+          };
           skill = {
             "developing-rails*" = "allow";
             "developing-rspec*" = "allow";
@@ -131,7 +161,7 @@ in
         };
       };
       librarian = {
-        model = "openrouter/openai/gpt-oss-120b";
+        model = "openrouter/openai/gpt-oss-120b:exacto";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -145,7 +175,7 @@ in
       };
       explore = {
         model = "openrouter/openai/gpt-oss-120b:exacto";
-        temperature = 0.3;
+        temperature = 0.1;
         tools = {
           "context7*" = false;
           "ck*" = true;
@@ -157,8 +187,34 @@ in
           "websearch*" = false;
         };
       };
+      "Prometheus (Planner)" = {
+        model = "github-copilot/gpt-5.2";
+        tools = {
+          "context7*" = true;
+          "ck*" = false;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = true;
+          "mcp-nixos*" = false;
+          "shadcn*" = false;
+          "websearch*" = true;
+        };
+      };
+      "Metis (Plan Consultant)" = {
+        model = "github-copilot/gemini-3-flash-preview";
+        tools = {
+          "context7*" = true;
+          "ck*" = true;
+          "chrome-devtools*" = false;
+          "playwriter*" = false;
+          "grep_app*" = true;
+          "mcp-nixos*" = true;
+          "shadcn*" = false;
+          "websearch*" = true;
+        };
+      };
       oracle = {
-        model = "zai-coding-plan/GLM-4.7";
+        model = "github-copilot/gpt-5.2";
         tools = {
           "context7*" = true;
           "ck*" = true;
@@ -225,14 +281,6 @@ in
     disabled_hooks = [
       "rules-injector"
     ];
-    claude_code = {
-      mcp = false;
-      commands = false;
-      skills = false;
-      agents = false;
-      hooks = true;
-      plugins = false;
-    };
     hooks = {
       UserPromptSubmit = [
         {
