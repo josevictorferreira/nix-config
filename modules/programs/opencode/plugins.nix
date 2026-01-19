@@ -161,7 +161,7 @@ in
         };
       };
       librarian = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "github-copilot/grok-code-fast-1";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -174,7 +174,7 @@ in
         };
       };
       explore = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "github-copilot/grok-code-fast-1";
         temperature = 0.1;
         tools = {
           "context7*" = false;
@@ -240,7 +240,7 @@ in
         };
       };
       document-writer = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "github-copilot/grok-code-fast-1";
         tools = {
           "context7*" = false;
           "ck*" = false;
