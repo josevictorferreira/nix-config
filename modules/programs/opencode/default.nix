@@ -133,6 +133,10 @@ in
         "minimax-cn"
       ];
 
+      instructions = [
+        ".docs/rules.md"
+      ];
+
       tools = lib.mkDefault (builtins.listToAttrs (map (name: { name = "${name}*"; value = false; }) (builtins.attrNames cfg.mcps)));
 
       watcher = {
@@ -159,7 +163,7 @@ in
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "agent" cfg.agents)
         (inputs.lib.aiTools.mkOpencodeMdConfigs config.jvf.aiTools.mcp "command" cfg.commands)
-        (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
+        (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
         {
           "AGENTS.md" = cfg.baseRules;
           "opencode.json" = cfg.settings;

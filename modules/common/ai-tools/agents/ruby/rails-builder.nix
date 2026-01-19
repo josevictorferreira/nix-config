@@ -23,6 +23,8 @@ let
       "Write"
       "Bash"
       "Skill"
+      "TodoRead"
+      "TodoWrite"
       "context7"
     ];
     disabledTools = [

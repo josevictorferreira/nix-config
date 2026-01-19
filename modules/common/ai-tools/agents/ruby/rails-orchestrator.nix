@@ -28,6 +28,8 @@ let
       "Grep"
       "Webfetch"
       "Gitingest_Tool"
+      "TodoRead"
+      "TodoWrite"
     ];
     permission = {
       task = {
