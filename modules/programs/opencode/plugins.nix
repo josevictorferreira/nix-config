@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v3.0.0-beta.10";
+  ohMyOpenCodeVersion = "v3.0.0-beta.11";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-xjVwDl9TCdvZJl/pJpNe4sLXErIQxQqG/LcWpwYnLaM=";
+    hash = "sha256-0/5RkVWAqAkxL/HntbXYnvgRliI0RYCQH6zYmEAzcLM=";
   };
 
   # FOD for bun deps using stdenvNoCC with structured attrs to avoid store path references
@@ -30,7 +30,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-5vV4x+b6DsveEpatGKYkbQsKLRBUbXBqhmatMiiU0kE="
-      else "sha256-hip6gK6HFEQkypKuDcYqBtD4R9/+cR1xHWDLUnnYM+c=";
+      else "sha256-qzq1yGPBC+Tret5s6t7qvQhL/pd7iiwgdwuBmcUFtM8=";
 
     buildPhase = ''
       export HOME=$(mktemp -d)
@@ -96,7 +96,8 @@ in
     google_auth = false;
     agents = {
       Sisyphus = {
-        model = "zai-coding-plan/GLM-4.7";
+        model = "zai-coding-plan/glm-4.7";
+        temperature = 0.3;
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -253,7 +254,7 @@ in
         };
       };
       multimodal-looker = {
-        model = "zai-coding-plan/GLM-4.6V";
+        model = "zai-coding-plan/glm-4.6v";
         tools = {
           "context7*" = false;
           "ck*" = false;

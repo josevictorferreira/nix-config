@@ -143,7 +143,7 @@ in
         ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
       };
 
-      model = "zai/GLM-4.7";
+      model = "zai-coding-plan/glm-4.7";
       small_model = "openrouter/openai/gpt-oss-120b";
     };
 
@@ -168,7 +168,11 @@ in
           "AGENTS.md" = cfg.baseRules;
           "opencode.json" = cfg.settings;
           "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
-          "antigravity.json" = { pid_offset_enabled = true; };
+          "antigravity.json" = {
+            account_selection_strategy = "round-robin";
+            switch_on_first_rate_limit = true;
+            pid_offset_enabled = true;
+          };
           "toolbox.jsonc" = { mcp = cfg.mcps; };
           "toolbox.json" = { mcp = cfg.mcps; };
         }
