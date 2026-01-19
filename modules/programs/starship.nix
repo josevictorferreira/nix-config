@@ -57,6 +57,9 @@ let
         if builtins.isBool v then (if v then "true" else "false")
         else if builtins.isInt v then builtins.toString v
         else if builtins.isString v then "\"${v}\""
+        else if builtins.isList v then
+          let items = map toTOMLValue v;
+          in if items == [ ] then "[]" else "[" + concatStringsSep ", " items + "]"
         else if builtins.isAttrs v then "" # Handled by section headers or key-value pairs
         else "\"${builtins.toString v}\"";
 
