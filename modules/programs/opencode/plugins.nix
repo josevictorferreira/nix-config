@@ -93,10 +93,9 @@ in
 {
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
     disabled_commands = [ ];
-    google_auth = false;
     agents = {
       Sisyphus = {
-        model = "zai-coding-plan/glm-4.7";
+        model = "minimax/MiniMax-M2.1";
         temperature = 0.3;
         tools = {
           "context7*" = true;
@@ -162,7 +161,7 @@ in
         };
       };
       librarian = {
-        model = "zai-coding-plan/glm-4.7-flash";
+        model = "openai/gpt-oss-120b:exacto";
         tools = {
           "context7*" = true;
           "ck*" = false;
@@ -175,7 +174,7 @@ in
         };
       };
       explore = {
-        model = "zai-coding-plan/glm-4.7-flash";
+        model = "openai/gpt-oss-120b:exacto";
         temperature = 0.1;
         tools = {
           "context7*" = false;
@@ -214,6 +213,9 @@ in
           "websearch*" = true;
         };
       };
+      "Momus (Plan Reviewer)" = {
+        model = "openrouter/moonshotai/kimi-k2-thinking";
+      };
       oracle = {
         model = "github-copilot/gpt-5.2";
         tools = {
@@ -241,7 +243,7 @@ in
         };
       };
       document-writer = {
-        model = "zai-coding-plan/glm-4.7-flash";
+        model = "openai/gpt-oss-120b:exacto";
         tools = {
           "context7*" = false;
           "ck*" = false;
@@ -254,7 +256,7 @@ in
         };
       };
       multimodal-looker = {
-        model = "zai-coding-plan/glm-4.6v";
+        model = "copilot/gemini-3-flash-preview";
         tools = {
           "context7*" = false;
           "ck*" = false;
@@ -282,18 +284,47 @@ in
     disabled_hooks = [
       "rules-injector"
     ];
-    hooks = {
-      UserPromptSubmit = [
-        {
-          matcher = "";
-          hooks = [
-            {
-              type = "command";
-              command = "rules-enforcer";
-            }
-          ];
-        }
-      ];
+    claude_code = {
+      mcp = false;
+      commands = false;
+      skills = false;
+      agents = false;
+      hooks = false;
+    };
+    google_auth = false;
+    categories = {
+      visual-engineering = {
+        model = "copilot/gemini-3-pro-preview";
+        temperature = 0.7;
+      };
+      ultrabrain = {
+        model = "copilot/gpt-5.2";
+        temperature = 0.1;
+      };
+      artistry = {
+        model = "copilot/gemini-3-pro-preview";
+        temperature = 0.9;
+      };
+      quick = {
+        model = "openrouter/openai/gpt-oss-120b:exacto";
+        temperature = 0.3;
+      };
+      most-capable = {
+        model = "copilot/claude-opus-4.5";
+        temperature = 0.1;
+      };
+      writing = {
+        model = "copilot/gemini-3-flash-preview";
+        temperature = 0.5;
+      };
+      business-logic = {
+        model = "openrouter/moonshotai/kimi-k2-thinking";
+        temperature = 0.1;
+      };
+      general = {
+        model = "minimax/MiniMax-M2.1";
+        temperature = 0.3;
+      };
     };
   };
 

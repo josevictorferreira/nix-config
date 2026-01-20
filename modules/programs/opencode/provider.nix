@@ -96,6 +96,27 @@
       };
     };
 
+    zai-coding-plan = {
+      name = "GLM Coding Plan";
+      models = {
+        "glm-4.7" = {
+          name = "GLM 4.7";
+          variants = {
+            reasoning = {
+              reasoningEffort = "high";
+              textVerbosity = "low";
+              fast.disabled = true;
+            };
+            non-reasoning = {
+              reasoningEffort = "low";
+              textVerbosity = "low";
+              thinking.type = "disabled";
+            };
+          };
+        };
+      };
+    };
+
     google = {
       npm = "@ai-sdk/google";
       models = {

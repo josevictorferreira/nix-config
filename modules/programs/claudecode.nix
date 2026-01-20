@@ -280,23 +280,6 @@ in
             (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
             (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
             (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
-            {
-              "settings.json" = {
-                hooks = {
-                  UserPromptSubmit = [
-                    {
-                      matcher = "";
-                      hooks = [
-                        {
-                          type = "command";
-                          command = "rules-enforcer";
-                        }
-                      ];
-                    }
-                  ];
-                };
-              };
-            }
           ];
         };
         claude-code-router = {
