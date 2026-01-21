@@ -97,22 +97,29 @@
     };
 
     zai-coding-plan = {
-      name = "GLM Coding Plan";
+      npm = "@ai-sdk/anthropic";
+      options = {
+        baseURL = "https://api.z.ai/api/anthropic/v1";
+        apiKey = "{env:Z_AI_API_KEY}";
+      };
       models = {
         "glm-4.7" = {
-          name = "GLM 4.7";
+          name = "GLM-4.7";
           variants = {
             reasoning = {
               reasoningEffort = "high";
               textVerbosity = "low";
               fast.disabled = true;
             };
-            non-reasoning = {
+            fast = {
               reasoningEffort = "low";
               textVerbosity = "low";
               thinking.type = "disabled";
             };
           };
+        };
+        "glm-4.7-flashx" = {
+          name = "GLM-4.7 FlashX";
         };
       };
     };

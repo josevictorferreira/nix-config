@@ -306,7 +306,7 @@ in
         temperature = 0.9;
       };
       quick = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "copilot/grok-code-fast-1";
         temperature = 0.3;
       };
       most-capable = {
