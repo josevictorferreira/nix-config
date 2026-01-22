@@ -97,177 +97,42 @@ in
       Sisyphus = {
         model = "minimax/MiniMax-M2.1";
         temperature = 0.3;
-        tools = {
-          "context7*" = true;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = false;
-          "skill*" = true;
-          "skills*" = true;
-        };
-        permission = {
-          skills = {
-            "*" = "allow";
-          };
-          skill = {
-            "developing-rails*" = "allow";
-            "developing-rspec*" = "allow";
-            "fixing-rubocop*" = "allow";
-            "writing-nix*" = "allow";
-          };
-        };
       };
       Sisyphus-Junior = {
         model = "minimax/MiniMax-M2.1";
-        tools = {
-          "context7*" = true;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = false;
-          "skill*" = true;
-          "skills*" = true;
-        };
-        permission = {
-          skills = {
-            "*" = "allow";
-          };
-          skill = {
-            "developing-rails*" = "allow";
-            "developing-rspec*" = "allow";
-            "fixing-rubocop*" = "allow";
-            "writing-nix*" = "allow";
-          };
-        };
       };
       Orchestrator-Sisyphus = {
         model = "minimax/MiniMax-M2.1";
-        tools = {
-          "context7*" = true;
-          "ck*" = true;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = false;
-        };
+        temperature = 0.3;
       };
       librarian = {
         model = "openai/gpt-oss-120b:exacto";
-        tools = {
-          "context7*" = true;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = true;
-          "mcp-nixos*" = true;
-          "shadcn*" = true;
-          "websearch*" = true;
-        };
+        temperature = 0.3;
       };
       explore = {
         model = "openai/gpt-oss-120b:exacto";
-        temperature = 0.1;
-        tools = {
-          "context7*" = false;
-          "ck*" = true;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = false;
-        };
+        temperature = 0.2;
       };
       "Prometheus (Planner)" = {
         model = "github-copilot/gpt-5.2";
-        tools = {
-          "context7*" = true;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = true;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = true;
-        };
       };
       "Metis (Plan Consultant)" = {
         model = "github-copilot/gemini-3-flash-preview";
-        tools = {
-          "context7*" = true;
-          "ck*" = true;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = true;
-          "mcp-nixos*" = true;
-          "shadcn*" = false;
-          "websearch*" = true;
-        };
       };
       "Momus (Plan Reviewer)" = {
         model = "openrouter/moonshotai/kimi-k2-thinking";
       };
       oracle = {
         model = "github-copilot/gpt-5.2";
-        tools = {
-          "context7*" = true;
-          "ck*" = true;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = true;
-          "mcp-nixos*" = true;
-          "shadcn*" = true;
-          "websearch*" = true;
-        };
       };
       frontend-ui-ux-engineer = {
         model = "minimax/MiniMax-M2.1";
-        tools = {
-          "context7*" = true;
-          "ck*" = false;
-          "chrome-devtools*" = true;
-          "playwriter*" = true;
-          "grep_app*" = true;
-          "mcp-nixos*" = false;
-          "shadcn*" = true;
-          "websearch*" = true;
-        };
       };
       document-writer = {
         model = "openai/gpt-oss-120b:exacto";
-        tools = {
-          "context7*" = false;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "websearch*" = false;
-        };
       };
       multimodal-looker = {
         model = "copilot/gemini-3-flash-preview";
-        tools = {
-          "context7*" = false;
-          "ck*" = false;
-          "chrome-devtools*" = false;
-          "playwriter*" = false;
-          "grep_app*" = false;
-          "mcp-nixos*" = false;
-          "shadcn*" = false;
-          "zai-mcp-server*" = true;
-          "websearch*" = true;
-        };
       };
     };
     experimental = {
@@ -330,8 +195,8 @@ in
 
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
-    "opencode-antigravity-auth@1.2.8"
-    "@tarquinen/opencode-dcp@1.2.3"
-    "opencode-toolbox@0.10.3"
+    "opencode-antigravity-auth@1.3.0"
+    "@tarquinen/opencode-dcp@1.2.7"
+    "opencode-toolbox@0.10.4"
   ];
 }

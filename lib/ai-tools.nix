@@ -383,13 +383,36 @@ let
         else
           "";
 
+      formatMetadata =
+        metadata:
+        let
+          formatValue =
+            key: value:
+            if builtins.isString value then
+              "  ${key}: ${value}"
+            else if builtins.isList value then
+              "  ${key}: [${lib.concatStringsSep ", " (map (v: "\"${v}\"") value)}]"
+            else
+              "";
+        in
+        "metadata:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue metadata));
+
+      metadataYaml =
+        if skill ? metadata && skill.metadata != { } then
+          formatMetadata skill.metadata
+        else
+          "";
+
       headerLines = [
         "name: \"${skillName}\""
         "description: \"${skill.description or ""}\""
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
+      ++ lib.optional ((builtins.hasAttr "licence" skill) && skill.licence != "") "licence: ${skill.licence}"
+      ++ lib.optional (metadataYaml != "") metadataYaml
       ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml
-      ++ lib.optional (mcpYaml != "") mcpYaml;
+      ++ lib.optional (mcpYaml != "") mcpYaml
+      ++ lib.optional true "compatibility: opencode";
       yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
     in
     yamlHeader + "\n" + (skill.prompt or "");
