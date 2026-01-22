@@ -97,6 +97,14 @@ in
       Sisyphus = {
         model = "minimax/MiniMax-M2.1";
         temperature = 0.3;
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       Sisyphus-Junior = {
         model = "minimax/MiniMax-M2.1";
@@ -106,18 +114,42 @@ in
         temperature = 0.3;
       };
       librarian = {
-        model = "openai/gpt-oss-120b:exacto";
+        model = "github-copilot/grok-code-fast-1";
         temperature = 0.3;
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       explore = {
-        model = "openai/gpt-oss-120b:exacto";
+        model = "github-copilot/grok-code-fast-1";
         temperature = 0.2;
       };
       "Prometheus (Planner)" = {
         model = "github-copilot/gpt-5.2";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       "Metis (Plan Consultant)" = {
         model = "github-copilot/gemini-3-flash-preview";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       "Momus (Plan Reviewer)" = {
         model = "openrouter/moonshotai/kimi-k2-thinking";
@@ -129,10 +161,10 @@ in
         model = "minimax/MiniMax-M2.1";
       };
       document-writer = {
-        model = "openai/gpt-oss-120b:exacto";
+        model = "openrouter/openai/gpt-oss-120b:exacto";
       };
       multimodal-looker = {
-        model = "copilot/gemini-3-flash-preview";
+        model = "github-copilot/gemini-3-flash-preview";
       };
     };
     experimental = {
@@ -159,27 +191,27 @@ in
     google_auth = false;
     categories = {
       visual-engineering = {
-        model = "copilot/gemini-3-pro-preview";
+        model = "github-copilot/gemini-3-pro-preview";
         temperature = 0.7;
       };
       ultrabrain = {
-        model = "copilot/gpt-5.2";
+        model = "github-copilot/gpt-5.2";
         temperature = 0.1;
       };
       artistry = {
-        model = "copilot/gemini-3-pro-preview";
+        model = "github-copilot/gemini-3-pro-preview";
         temperature = 0.9;
       };
       quick = {
-        model = "copilot/grok-code-fast-1";
+        model = "github-copilot/grok-code-fast-1";
         temperature = 0.3;
       };
       most-capable = {
-        model = "copilot/claude-opus-4.5";
+        model = "github-copilot/claude-opus-4.5";
         temperature = 0.1;
       };
       writing = {
-        model = "copilot/gemini-3-flash-preview";
+        model = "github-copilot/gemini-3-flash-preview";
         temperature = 0.5;
       };
       business-logic = {

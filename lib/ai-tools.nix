@@ -22,6 +22,8 @@ let
     , mcp ? { }
     , references ? { }
     , scripts ? { }
+    , licence ? ""
+    , metadata ? { }
     ,
     }:
     let
@@ -35,6 +37,8 @@ let
           mcp
           references
           scripts
+          licence
+          metadata
           ;
         "allowed-tools" = allowed-tools;
       };
