@@ -4,13 +4,13 @@
 }:
 
 let
-  ohMyOpenCodeVersion = "v3.0.0-beta.11";
+  ohMyOpenCodeVersion = "v3.0.0-beta.12";
 
   ohMyOpenCodeSrc = pkgs.fetchFromGitHub {
     owner = "code-yeongyu";
     repo = "oh-my-opencode";
     rev = "${ohMyOpenCodeVersion}";
-    hash = "sha256-0/5RkVWAqAkxL/HntbXYnvgRliI0RYCQH6zYmEAzcLM=";
+    hash = "sha256-Wot8/lclusB+JMFoW83MXX0SNJEGSqFRcSYFARJQ9Zg=";
   };
 
   # FOD for bun deps using stdenvNoCC with structured attrs to avoid store path references
@@ -30,7 +30,7 @@ let
     outputHash =
       if pkgs.stdenv.isDarwin
       then "sha256-1xtzQg10stHPpU+VfRY1z4Jc1KIFZ0cdcGEDQcu4NY0="
-      else "sha256-qzq1yGPBC+Tret5s6t7qvQhL/pd7iiwgdwuBmcUFtM8=";
+      else "sha256-/1HGbvBa4Hz8WWsDxms5z6c11NkXjGNFjU20a3Ad1qM=";
 
     buildPhase = ''
       export HOME=$(mktemp -d)
