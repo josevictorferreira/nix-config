@@ -49,7 +49,7 @@
         model = "github-copilot/grok-code-fast-1";
         temperature = 0.2;
       };
-      atlas = {
+      Atlas = {
         model = "github-copilot/gpt-5.2";
         permission = {
           skill = {
