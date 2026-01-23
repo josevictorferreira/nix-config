@@ -158,6 +158,7 @@
 
   config.jvf.programs.opencode.commands.mystatus = lib.mkDefault {
     name = "mystatus";
+    agent = "general";
     description = "Query quota usage for all AI accounts";
     prompt = "Use the `mystatus` tool to query quota usage. Return the result as-is without modification.";
   };
