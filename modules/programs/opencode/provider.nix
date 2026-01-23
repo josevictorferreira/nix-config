@@ -108,13 +108,18 @@
           variants = {
             reasoning = {
               reasoningEffort = "high";
-              textVerbosity = "low";
+              thinking.type = "enabled";
               fast.disabled = true;
+              max_tokens = 4096;
+              temperature = 1.0;
+              clear_thinking = false;
             };
             fast = {
               reasoningEffort = "low";
               textVerbosity = "low";
               thinking.type = "disabled";
+              temperature = 0.4;
+              clear_thinking = false;
             };
           };
         };
