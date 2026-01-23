@@ -227,8 +227,15 @@ in
 
   config.jvf.programs.opencode.settings.plugin = [
     "${ohMyOpencodePkg}/lib/node_modules/oh-my-opencode/dist/index.js"
-    "opencode-antigravity-auth@1.3.0"
+    "opencode-antigravity-auth@1.3.1"
     "@tarquinen/opencode-dcp@1.2.7"
     "opencode-toolbox@0.10.4"
+    "opencode-mystatus@1.2.4"
   ];
+
+  config.jvf.programs.opencode.commands.mystatus = lib.mkDefault {
+    name = "mystatus";
+    description = "Query quota usage for all AI accounts";
+    prompt = "Use the mystatus tool to query quota usage. Return the result as-is without modification.";
+  };
 }
