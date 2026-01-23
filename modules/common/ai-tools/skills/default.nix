@@ -6,6 +6,7 @@
     ./general/creating-skills.nix
     ./general/research-tools.nix
     ./general/browser-debug-tools.nix
+    ./general/vision-tools.nix
     ./container/developing-containers.nix
     ./nix/creating-nix-modules.nix
     ./nix/managing-flakes.nix

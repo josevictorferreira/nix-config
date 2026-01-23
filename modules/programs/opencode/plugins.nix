@@ -21,7 +21,6 @@
           skill = {
             "*" = {
               "*" = "deny";
-              "research-tools" = "allow";
             };
           };
         };
@@ -48,6 +47,14 @@
       explore = {
         model = "github-copilot/grok-code-fast-1";
         temperature = 0.2;
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       Atlas = {
         model = "github-copilot/gpt-5.2";
@@ -84,18 +91,43 @@
       };
       "Momus (Plan Reviewer)" = {
         model = "openrouter/moonshotai/kimi-k2-thinking";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "research-tools" = "allow";
+            };
+          };
+        };
       };
       oracle = {
         model = "github-copilot/gpt-5.2";
       };
       frontend-ui-ux-engineer = {
         model = "minimax/MiniMax-M2.1";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "vision-tools" = "allow";
+              "browser-debug-tools" = "allow";
+            };
+          };
+        };
       };
       document-writer = {
         model = "openrouter/openai/gpt-oss-120b:exacto";
       };
       multimodal-looker = {
         model = "github-copilot/gemini-3-flash-preview";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "deny";
+              "vision-tools" = "allow";
+            };
+          };
+        };
       };
     };
     experimental = {

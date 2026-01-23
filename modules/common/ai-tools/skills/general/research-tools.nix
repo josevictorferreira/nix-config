@@ -8,7 +8,6 @@ let
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
     name = skillName;
-    model = "openrouter/openai/gpt-oss-120b:exacto";
     description = "External research via Context7 (docs), Grep.app (code examples), and Exa (web search). Loads MCPs on-demand via skill_mcp.";
     licence = "MIT";
     metadata = {
