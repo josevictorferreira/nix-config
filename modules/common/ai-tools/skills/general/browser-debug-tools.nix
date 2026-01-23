@@ -8,7 +8,7 @@ let
   cfg = config.jvf.aiTools.skills."${skillName}";
   skillDef = inputs.lib.aiTools.mkSkillModule {
     name = skillName;
-    model = "zai-coding-plan/glm-4.7";
+    model = "zai-coding-plan/glm-4.7:fast";
     description = "Browser automation and debugging via Chrome DevTools Protocol and Playwright. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
     licence = "MIT";
     metadata = {
