@@ -79,6 +79,20 @@
       };
     };
 
+    openrouter = {
+      npm = "@ai-sdk/anthropic";
+      name = "OpenRouter";
+      options = {
+        baseURL = "https://openrouter.ai/api";
+        apiKey = "{env:OPENROUTER_API_KEY_CODE_AGENT}";
+      };
+      models = {
+        "xiaomi/mimo-v2-flash" = {
+          name = "Xiaomi Mimo V2 Flash";
+        };
+      };
+    };
+
     minimax = {
       npm = "@ai-sdk/anthropic";
       name = "Minimax";
@@ -92,6 +106,23 @@
         };
         "MiniMax-M2.1" = {
           name = "Minimax M2.1";
+        };
+      };
+    };
+
+    moonshotai = {
+      npm = "@ai-sdk/anthropic";
+      name = "Moonshot AI";
+      options = {
+        baseURL = "https://api.kimi.com/coding/v1";
+        apiKey = "{env:KIMI_API_KEY}";
+      };
+      models = {
+        "kimi-k2-thinking" = {
+          name = "Kimi K2 Thinking";
+        };
+        "kimi-k2-0711-preview" = {
+          name = "Kimi K2 0711 Preview";
         };
       };
     };

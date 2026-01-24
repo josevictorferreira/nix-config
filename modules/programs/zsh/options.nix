@@ -77,6 +77,7 @@
           "gemini_api_key"
           "google_generative_ai_api_key"
           "z_ai_api_key"
+          "kimi_api_key"
         ];
         description = "List of sops secret keys to expose";
       };

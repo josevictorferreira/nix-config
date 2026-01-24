@@ -7,8 +7,6 @@
     "opencode-antigravity-auth@1.3.1"
     "@tarquinen/opencode-dcp@1.2.7"
     "oh-my-opencode@3.0.0"
-    "opencode-toolbox@0.10.4"
-    "opencode-mystatus@1.2.4"
   ];
 
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
