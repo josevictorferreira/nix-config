@@ -12,7 +12,7 @@ let
     theme_background = true;
     truecolor = true;
     force_tty = false;
-    presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille,proc:0:default";
+    presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille";
     vim_keys = true;
     rounded_corners = true;
     graph_symbol = "braille";
@@ -21,7 +21,7 @@ let
     graph_symbol_mem = "default";
     graph_symbol_net = "default";
     graph_symbol_proc = "default";
-    shown_boxes = "proc cpu mem net gpu0";
+    shown_boxes = "cpu mem gpu0";
     update_ms = 2000;
     proc_sorting = "memory";
     proc_reversed = false;
@@ -122,6 +122,12 @@ in
       ];
       configs = {
         "btop.conf" = cfg.settings;
+        "vertical-compact.conf" = cfg.settings // {
+          presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille";
+          shown_boxes = "cpu mem gpu0";
+          show_disks = false;
+          show_battery = false;
+        };
       };
     };
   };
