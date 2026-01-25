@@ -1,17 +1,40 @@
 { config
 , lib
 , inputs
+, system
+, pkgs
 , ...
 }:
 let
   skillName = "browser-debug-tools";
   cfg = config.jvf.aiTools.skills."${skillName}";
+  isDarwin = builtins.match ".*-darwin" system != null;
+  defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
+  npx = lib.getExe' pkgs.nodejs "npx";
   skillDef = inputs.lib.aiTools.mkSkillModule {
     name = skillName;
     description = "Browser automation and debugging via Chrome DevTools Protocol and Playwright. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
     licence = "MIT";
     metadata = {
       triggers = "browser, debug, inspect, element, console, devtools, screenshot, navigate, click, fill, form, hover, drag, network, request, response, performance, emulate, device, mobile, geolocation, CPU throttling, JavaScript, execute, snapshot, accessibility, a11y, DOM, CSS, HTML, troubleshoot, webpage, automation, testing, E2E, interaction, keyboard, press key, page, tab, reload, refresh";
+    };
+    mcp = {
+      chrome-devtools = {
+        command = npx;
+        args = [
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--headless=true"
+          "--isolated=true"
+          "--executablePath=${defaultBrowser}"
+        ];
+      };
+      playwriter = {
+        command = lib.getExe' pkgs.nodejs "npx";
+        args = [
+          "playwriter@latest"
+        ];
+      };
     };
     prompt = ''
       # Browser Debug Tools

@@ -16,6 +16,17 @@ let
     name = "chrome-devtools";
     tags = [ "browser" ];
     config = {
+      jvf.aiTools.skills."browser-debug-tools".mcp = {
+        command = npx;
+        args = [
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--headless=true"
+          "--isolated=true"
+          "--executablePath=${defaultBrowser}"
+        ];
+      };
+
       jvf.programs.opencode.mcps."chrome-devtools" = {
         type = "local";
         enabled = true;

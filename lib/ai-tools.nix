@@ -1,4 +1,5 @@
 { lib
+, pkgs
 , ...
 }:
 
@@ -33,8 +34,8 @@ let
           description
           model
           prompt
-          tags
           mcp
+          tags
           references
           scripts
           licence
