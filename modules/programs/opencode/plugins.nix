@@ -12,7 +12,7 @@
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
     disabled_commands = [ ];
     agents = {
-      Sisyphus = {
+      sisyphus = {
         model = "minimax/MiniMax-M2.1";
         temperature = 0.3;
         permission = {
@@ -22,13 +22,6 @@
             };
           };
         };
-      };
-      Sisyphus-Junior = {
-        model = "minimax/MiniMax-M2.1";
-      };
-      Orchestrator-Sisyphus = {
-        model = "minimax/MiniMax-M2.1";
-        temperature = 0.3;
       };
       librarian = {
         model = "github-copilot/grok-code-fast-1";
@@ -54,7 +47,7 @@
           };
         };
       };
-      Atlas = {
+      atlas = {
         model = "github-copilot/gpt-5.2";
         permission = {
           skill = {
@@ -65,7 +58,7 @@
           };
         };
       };
-      "Prometheus (Planner)" = {
+      prometheus = {
         model = "github-copilot/gpt-5.2";
         permission = {
           skill = {
@@ -76,7 +69,7 @@
           };
         };
       };
-      "Metis (Plan Consultant)" = {
+      metis = {
         model = "github-copilot/gemini-3-flash-preview";
         permission = {
           skill = {
@@ -87,8 +80,8 @@
           };
         };
       };
-      "Momus (Plan Reviewer)" = {
-        model = "openrouter/moonshotai/kimi-k2-thinking";
+      momus = {
+        model = "kimi-for-coding/kimi-k2-thinking";
         permission = {
           skill = {
             "*" = {
@@ -176,7 +169,7 @@
         temperature = 0.5;
       };
       business-logic = {
-        model = "openrouter/moonshotai/kimi-k2-thinking";
+        model = "kimi-for-coding/kimi-k2-thinking";
         temperature = 0.1;
       };
       general = {

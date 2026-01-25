@@ -25,7 +25,11 @@ in
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
-      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland.overrideAttrs (oldAttrs: {
+        cmakeFlags = (oldAttrs.cmakeFlags or [ ]) ++ [
+          "-DNO_HYPRPM=ON"
+        ];
+      });
     };
 
     jvf.wrappers.users.${cfg.username}.programs.hypr = {
