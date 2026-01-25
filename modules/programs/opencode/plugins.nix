@@ -18,7 +18,7 @@
         permission = {
           skill = {
             "*" = {
-              "*" = "deny";
+              "*" = "allow";
             };
           };
         };
@@ -107,7 +107,7 @@
         };
       };
       document-writer = {
-        model = "openrouter/openai/gpt-oss-120b:exacto";
+        model = "kimi-for-coding/kimi-k2-thinking";
       };
       multimodal-looker = {
         model = "github-copilot/gemini-3-flash-preview";
