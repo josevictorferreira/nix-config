@@ -35,6 +35,7 @@
         "bundle"
         "exec"
         "rubocop"
+        "-A"
       ];
       extensions = [
         ".rb"

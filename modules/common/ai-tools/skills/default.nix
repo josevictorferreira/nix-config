@@ -5,6 +5,7 @@
     ./general/auditing-security.nix
     ./general/creating-skills.nix
     ./general/research-tools.nix
+    ./general/grafana.nix
     ./general/browser-debug-tools.nix
     ./general/vision-tools.nix
     ./container/developing-containers.nix

@@ -78,6 +78,10 @@
           "google_generative_ai_api_key"
           "z_ai_api_key"
           "kimi_api_key"
+          "grafana_url"
+          "grafana_username"
+          "grafana_password"
+          "grafana_service_account_token"
         ];
         description = "List of sops secret keys to expose";
       };
