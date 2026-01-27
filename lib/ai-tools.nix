@@ -371,14 +371,15 @@ let
           formatValue =
             name: cfg:
             let
-              argsStr =
-                if cfg ? args then
-                  "    args: [ " + (lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)) + " ]"
+              commandStr = if cfg ? command then "command: \"${cfg.command}\"" else "";
+              argsStr = if cfg ? args && cfg.args != [ ] then "args: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)} ]" else "";
+              envStr =
+                if cfg ? env && cfg.env != { } then
+                  "\n${indent}  env:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "${indent}    ${k}: \"${v}\"") cfg.env))
                 else
                   "";
-              commandStr = if cfg ? command then "    command: \"${cfg.command}\"" else "";
             in
-            "${indent}${name}:\n${indent}${commandStr}\n${indent}${argsStr}";
+            "${indent}${name}:\n${indent}  ${commandStr}${if commandStr != "" && argsStr != "" then "\n${indent}  ${argsStr}" else if argsStr != "" then "${indent}  ${argsStr}" else ""}${envStr}";
         in
         "mcp:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg: formatValue name cfg) mcp));
 
@@ -392,13 +393,10 @@ let
         metadata:
         let
           formatValue =
-            key: value:
-            if builtins.isString value then
-              "  ${key}: ${value}"
-            else if builtins.isList value then
-              "  ${key}: [${lib.concatStringsSep ", " (map (v: "\"${v}\"") value)}]"
-            else
-              "";
+            key: v:
+            "  ${key}: \"${
+              if lib.isList v then lib.concatStringsSep ", " (map (x: toString x) v) else (toString v)
+            }\"";
         in
         "metadata:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue metadata));
 
@@ -413,7 +411,7 @@ let
         "description: \"${skill.description or ""}\""
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
-      ++ lib.optional ((builtins.hasAttr "licence" skill) && skill.licence != "") "licence: ${skill.licence}"
+      ++ lib.optional ((builtins.hasAttr "licence" skill) && skill.licence != "") "licence: \"${skill.licence}\""
       ++ lib.optional (metadataYaml != "") metadataYaml
       ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml
       ++ lib.optional (mcpYaml != "") mcpYaml

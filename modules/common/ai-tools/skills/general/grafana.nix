@@ -10,10 +10,6 @@ let
   skillDef = inputs.lib.aiTools.mkSkillModule {
     name = skillName;
     description = "Grafana MCP for searching dashboards, querying Prometheus/Loki, and managing incidents/alerts.";
-    licence = "MIT";
-    metadata = {
-      triggers = "grafana, dashboard, prometheus, loki, query, metrics, logs, alert, incident, oncall, annotation, pyroscope, sift, asserts";
-    };
     mcp = {
       grafana = {
         command = lib.getExe pkgs.mcp-grafana;
@@ -163,6 +159,10 @@ let
       | `tool_name="grafana_search_dashboards"` | `tool_name="search_dashboards"` |
       | `datasource_uid` | `datasourceUID` (Case sensitive!) |
     '';
+    licence = "MIT";
+    metadata = {
+      triggers = "grafana, dashboard, prometheus, loki, query, metrics, logs, alert, incident, oncall, annotation, pyroscope, sift, asserts";
+    };
   };
 in
 {
