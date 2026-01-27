@@ -130,7 +130,7 @@
     zai-coding-plan = {
       npm = "@ai-sdk/anthropic";
       options = {
-        baseURL = "https://api.z.ai/api/anthropic/v1";
+        baseURL = "https://api.z.ai/api/coding/paas/v4";
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {

@@ -33,7 +33,7 @@ in
         enable = true;
         name = "Homelab";
         username = cfg.username;
-        serverAddress = "10.10.10.124";
+        serverAddress = "10.10.10.129";
         exportedName = "homelab-smb";
       };
     }
