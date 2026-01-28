@@ -71,7 +71,7 @@ in
   }];
   networking.interfaces.enp4s0.useDHCP = false;
   networking.defaultGateway = "10.10.10.1";
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  networking.nameservers = [ "10.10.10.100" ];
 
   jvf.hardware.active = [
     "amd-gpu"
