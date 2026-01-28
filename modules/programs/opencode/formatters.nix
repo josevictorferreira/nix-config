@@ -30,6 +30,14 @@
       ];
     };
 
+    ruff = {
+      command = [ "uv" "run" "ruff" "check" "--fix" ];
+      extensions = [
+        ".py"
+        ".pyi"
+      ];
+    };
+
     rubocop = {
       command = [
         "bundle"

@@ -27,8 +27,16 @@
       };
     };
 
-    pyright = {
-      command = [ (lib.getExe pkgs.pyright) ];
+    pylsp = {
+      command = [ "uv" "run" "pylsp" ];
+      extensions = [
+        ".py"
+        ".pyi"
+      ];
+    };
+
+    ruff = {
+      command = [ "uv" "run" "ruff" "server" ];
       extensions = [
         ".py"
         ".pyi"

@@ -5,7 +5,7 @@
 {
   config.jvf.programs.opencode.settings.plugin = [
     "opencode-antigravity-auth@1.3.1"
-    "oh-my-opencode@3.1.2"
+    "oh-my-opencode@3.1.4"
     "@tarquinen/opencode-dcp@1.2.7"
   ];
 
@@ -13,8 +13,17 @@
     disabled_commands = [ ];
     agents = {
       sisyphus = {
+        model = "kimi-for-coding/k2p5";
+        permission = {
+          skill = {
+            "*" = {
+              "*" = "allow";
+            };
+          };
+        };
+      };
+      sisyphus-junior = {
         model = "minimax/MiniMax-M2.1";
-        temperature = 0.3;
         permission = {
           skill = {
             "*" = {
@@ -24,7 +33,7 @@
         };
       };
       librarian = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7:fast";
         temperature = 0.3;
         permission = {
           skill = {
@@ -70,7 +79,7 @@
         };
       };
       metis = {
-        model = "github-copilot/gemini-3-flash-preview";
+        model = "github-copilot/gemini-3-pro";
         permission = {
           skill = {
             "*" = {
