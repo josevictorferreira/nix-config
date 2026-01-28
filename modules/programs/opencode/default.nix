@@ -143,7 +143,7 @@ in
         ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
       };
 
-      model = "zai-coding-plan/glm-4.7";
+      model = "zai-coding-plan/glm-4.7:fast";
       small_model = "openrouter/openai/gpt-oss-120b";
     };
 

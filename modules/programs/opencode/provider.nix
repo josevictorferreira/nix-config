@@ -128,7 +128,7 @@
     };
 
     zai-coding-plan = {
-      npm = "@ai-sdk/anthropic";
+      npm = "@ai-sdk/openai-compatible";
       options = {
         baseURL = "https://api.z.ai/api/coding/paas/v4";
         apiKey = "{env:Z_AI_API_KEY}";
