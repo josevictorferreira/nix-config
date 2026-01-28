@@ -14,13 +14,13 @@ let
       grafana = {
         command = lib.getExe pkgs.mcp-grafana;
         args = [ ];
-        env = {
-          "GRAFANA_URL" = "https://grafana.josevictor.me";
-          "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_SERVICE_ACCOUNT_TOKEN}";
-          "GRAFANA_USERNAME" = "{env:GRAFANA_USERNAME}";
-          "GRAFANA_PASSWORD" = "{env:GRAFANA_PASSWORD}";
-          "GRAFANA_ORG_ID" = "1";
-        };
+        # env = {
+        #   "GRAFANA_URL" = "https://grafana.josevictor.me";
+        #   "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_SERVICE_ACCOUNT_TOKEN}";
+        #   "GRAFANA_USERNAME" = "{env:GRAFANA_USERNAME}";
+        #   "GRAFANA_PASSWORD" = "{env:GRAFANA_PASSWORD}";
+        #   "GRAFANA_ORG_ID" = "1";
+        # };
       };
     };
     prompt = ''

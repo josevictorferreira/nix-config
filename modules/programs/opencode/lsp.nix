@@ -11,6 +11,8 @@
       };
     };
 
+    lua-ls.disabled = true;
+
     emmylua-ls = {
       command = [ (lib.getExe pkgs.emmylua-ls) ];
       extensions = [ ".lua" ];
@@ -25,6 +27,10 @@
           };
         };
       };
+    };
+
+    pyright = {
+      disabled = true;
     };
 
     pylsp = {
@@ -43,7 +49,7 @@
       ];
     };
 
-    bashls = {
+    bash = {
       command = [
         (lib.getExe pkgs.bash-language-server)
         "start"
@@ -85,7 +91,7 @@
       extensions = [ ".rs" ];
     };
 
-    yamlls = {
+    yaml-ls = {
       command = [
         (lib.getExe pkgs.yaml-language-server)
         "--stdio"

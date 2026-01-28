@@ -5,7 +5,7 @@
 {
   config.jvf.programs.opencode.settings.plugin = [
     "opencode-antigravity-auth@1.3.1"
-    "oh-my-opencode@3.1.4"
+    "oh-my-opencode@3.1.5"
     "@tarquinen/opencode-dcp@1.2.7"
   ];
 
@@ -45,7 +45,7 @@
         };
       };
       explore = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7-flash";
         temperature = 0.2;
         permission = {
           skill = {
@@ -57,7 +57,8 @@
         };
       };
       atlas = {
-        model = "github-copilot/gpt-5.2";
+        model = "kimi-for-coding/k2p5";
+        temperature = 0.1;
         permission = {
           skill = {
             "*" = {
