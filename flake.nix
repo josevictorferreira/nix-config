@@ -19,12 +19,11 @@
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      darwin,
-      sops-nix,
-      ...
+    inputs@{ self
+    , nixpkgs
+    , darwin
+    , sops-nix
+    , ...
     }:
     let
       systems = {
@@ -55,11 +54,11 @@
           };
 
       specialArgsFor =
-        {
-          systemArc,
-          os,
-          host,
-          username,
+        { systemArc
+        , os
+        , host
+        , username
+        ,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -165,6 +164,6 @@
         };
       };
 
-      formatter = forAllSystems (system: nixpkgs.${system}.nixfmt);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
 }

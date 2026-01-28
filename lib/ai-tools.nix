@@ -372,22 +372,30 @@ let
             name: cfg:
             let
               commandStr = if cfg ? command then "command: \"${cfg.command}\"" else "";
-              argsStr = if cfg ? args && cfg.args != [ ] then "args: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)} ]" else "";
+              argsStr =
+                if cfg ? args && cfg.args != [ ] then
+                  "args: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)} ]"
+                else
+                  "";
               envStr =
                 if cfg ? env && cfg.env != { } then
-                  "\n${indent}  env:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "${indent}    ${k}: \"${v}\"") cfg.env))
+                  "\n${indent}  env:\n"
+                  + (lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "${indent}    ${k}: \"${v}\"") cfg.env))
                 else
                   "";
             in
-            "${indent}${name}:\n${indent}  ${commandStr}${if commandStr != "" && argsStr != "" then "\n${indent}  ${argsStr}" else if argsStr != "" then "${indent}  ${argsStr}" else ""}${envStr}";
+            "${indent}${name}:\n${indent}  ${commandStr}${
+              if commandStr != "" && argsStr != "" then
+                "\n${indent}  ${argsStr}"
+              else if argsStr != "" then
+                "${indent}  ${argsStr}"
+              else
+                ""
+            }${envStr}";
         in
         "mcp:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg: formatValue name cfg) mcp));
 
-      mcpYaml =
-        if skill ? mcp && skill.mcp != { } then
-          formatMcp skill.mcp "  "
-        else
-          "";
+      mcpYaml = if skill ? mcp && skill.mcp != { } then formatMcp skill.mcp "  " else "";
 
       formatMetadata =
         metadata:
@@ -395,23 +403,23 @@ let
           formatValue =
             key: v:
             "  ${key}: \"${
-              if lib.isList v then lib.concatStringsSep ", " (map (x: toString x) v) else (toString v)
-            }\"";
+                if lib.isList v then lib.concatStringsSep ", " (map (x: toString x) v) else (toString v)
+              }\"";
         in
         "metadata:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue metadata));
 
       metadataYaml =
-        if skill ? metadata && skill.metadata != { } then
-          formatMetadata skill.metadata
-        else
-          "";
+        if skill ? metadata && skill.metadata != { } then formatMetadata skill.metadata else "";
 
       headerLines = [
         "name: \"${skillName}\""
         "description: \"${skill.description or ""}\""
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
-      ++ lib.optional ((builtins.hasAttr "licence" skill) && skill.licence != "") "licence: \"${skill.licence}\""
+      ++ lib.optional
+        (
+          (builtins.hasAttr "licence" skill) && skill.licence != ""
+        ) "licence: \"${skill.licence}\""
       ++ lib.optional (metadataYaml != "") metadataYaml
       ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml
       ++ lib.optional (mcpYaml != "") mcpYaml
@@ -519,41 +527,34 @@ let
       attrset;
 
   # Escape TOML string values (handles quotes and backslashes)
-  escapeTomlString = str:
-    builtins.replaceStrings [ "\\" "\"" "\n" "\t" ] [ "\\\\" "\\\"" "\\n" "\\t" ] str;
+  escapeTomlString =
+    str: builtins.replaceStrings [ "\\" "\"" "\n" "\t" ] [ "\\\\" "\\\"" "\\n" "\\t" ] str;
 
   # Replace !`...` with !{...} for Gemini CLI tool invocation syntax
-  replaceBacktickToolSyntax = str:
+  replaceBacktickToolSyntax =
+    str:
     let
       parts = builtins.split "!\`([^\`]*)\`" str;
       processedParts = builtins.map
-        (part:
-          if builtins.isList part then
-            "!{${builtins.elemAt part 0}}"
-          else
-            part
+        (
+          part: if builtins.isList part then "!{${builtins.elemAt part 0}}" else part
         )
         parts;
     in
     builtins.concatStringsSep "" processedParts;
 
   # Replace $1, $2, etc. with {{args}} for Gemini CLI
-  replaceNumberedArgs = str:
+  replaceNumberedArgs =
+    str:
     let
       parts = builtins.split "\\$[0-9]+" str;
-      processedParts = builtins.map
-        (part:
-          if builtins.isList part then
-            "{{args}}"
-          else
-            part
-        )
-        parts;
+      processedParts = builtins.map (part: if builtins.isList part then "{{args}}" else part) parts;
     in
     builtins.concatStringsSep "" processedParts;
 
   # Apply all Gemini-specific prompt transformations
-  transformGeminiPrompt = str:
+  transformGeminiPrompt =
+    str:
     let
       withArgs = builtins.replaceStrings [ "$ARGUMENTS" ] [ "{{args}}" ] str;
       withNumberedArgs = replaceNumberedArgs withArgs;
@@ -561,7 +562,8 @@ let
     replaceBacktickToolSyntax withNumberedArgs;
 
   # Convert command/agent definition to Gemini CLI TOML format
-  toGeminiToml = value:
+  toGeminiToml =
+    value:
     if builtins.isAttrs value && value ? prompt then
       let
         description = value.description or "";
@@ -569,10 +571,7 @@ let
         prompt = transformGeminiPrompt rawPrompt;
         # Build TOML content
         descriptionLine =
-          if description != "" then
-            "description = \"${escapeTomlString description}\"\n\n"
-          else
-            "";
+          if description != "" then "description = \"${escapeTomlString description}\"\n\n" else "";
         # Use multi-line literal string for prompt (triple quotes)
         promptLine = "prompt = \"\"\"\n${prompt}\n\"\"\"";
       in
