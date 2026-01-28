@@ -19,11 +19,12 @@
   };
 
   outputs =
-    inputs@{ self
-    , nixpkgs
-    , darwin
-    , sops-nix
-    , ...
+    inputs@{
+      self,
+      nixpkgs,
+      darwin,
+      sops-nix,
+      ...
     }:
     let
       systems = {
@@ -54,11 +55,11 @@
           };
 
       specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        ,
+        {
+          systemArc,
+          os,
+          host,
+          username,
         }:
         let
           pkgs = mkPkgs systemArc;
@@ -122,7 +123,8 @@
     in
     {
       # Per-system lib output with mkSandboxShell (Phase 2 integration)
-      lib = forAllSystems (system:
+      lib = forAllSystems (
+        system:
         let
           pkgs = mkPkgs system;
           baseLib = import ./lib {
@@ -130,7 +132,8 @@
             inherit pkgs system;
           };
         in
-        baseLib // {
+        baseLib
+        // {
           inherit pkgs;
         }
       );
@@ -162,6 +165,6 @@
         };
       };
 
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      formatter = forAllSystems (system: nixpkgs.${system}.nixfmt);
     };
 }

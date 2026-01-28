@@ -1,7 +1,8 @@
-{ config
-, lib
-, inputs
-, ...
+{
+  config,
+  lib,
+  inputs,
+  ...
 }:
 let
   commandName = "homelab-service-update";
@@ -170,6 +171,34 @@ let
       3. **Digest source**: GitHub's container registry UI at `/pkgs/container/{name}/versions` is the most reliable way to get the exact digest for a specific platform.
 
       4. **Format strictness**: The format must be exactly `"tag@sha256:digest"` - the @ symbol and full 64-char hash are required.
+
+      5. **Submodule pattern differences**:
+         - Apps use either `submodule = "helm"` or `submodule = "release"`
+         - `release` submodule handles image digests correctly (like blocky)
+         - `helm` submodule may have chart-specific quirks and buggy templates
+         - **Always check the submodule type first** - if app uses `helm`, consider converting to `release` if encountering image issues
+
+      6. **Chart template bugs**:
+         - Some Helm charts have buggy image templates (e.g., searxng's boilerplate subchart)
+         - The `digest` field may not work due to template bugs - only `tag` may render correctly
+         - **Test before implementing**: Use `helm template <release> <chart> -f test-values.yaml` to verify which values actually work
+         - This is faster than repeatedly running `make manifests` to debug
+
+      7. **Testing Helm behavior**:
+         ```bash
+         # Quick test of Helm chart with specific values
+         cat > test-values.yaml << 'EOF'
+         image:
+           tag: "v1.2.3@sha256:..."
+         EOF
+         helm template test searxng -f test-values.yaml 2>&1 | grep image:
+         ```
+
+      8. **Cleanup after debugging**:
+         - Remove all test files created during debugging: `rm -f test*.yaml`
+         - Remove downloaded Helm charts: `rm -rf searxng boilerplate *.tgz`
+         - Clean Helm cache if needed: `rm -rf ~/.cache/helm/*`
+         - This prevents repository pollution and confusion in future tasks
     '';
   };
 in
