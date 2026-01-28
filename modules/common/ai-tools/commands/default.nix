@@ -7,6 +7,7 @@
     ./general/dependency-audit.nix
     ./general/style-audit.nix
     ./general/session-retrospective.nix
+    ./homelab/service-update.nix
     ./implementation/ask.nix
     ./implementation/do.nix
     ./implementation/implement-feature.nix
