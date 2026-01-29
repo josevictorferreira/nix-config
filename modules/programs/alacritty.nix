@@ -1,11 +1,14 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.alacritty;
+
+  fontFamily = "IBM Plex Mono";
 
   defaultConfig = {
     colors = {
@@ -42,21 +45,21 @@ let
       TERM = "tmux-256color";
     };
     font = {
-      size = 14.0;
+      size = 11.0;
       normal = {
-        family = "JetBrainsMonoNL Nerd Font";
+        family = fontFamily;
         style = "Regular";
       };
       bold = {
-        family = "JetBrainsMonoNL Nerd Font";
+        family = fontFamily;
         style = "SemiBold";
       };
       italic = {
-        family = "JetBrainsMonoNL Nerd Font";
+        family = fontFamily;
         style = "Italic";
       };
       bold_italic = {
-        family = "JetBrainsMonoNL Nerd Font";
+        family = fontFamily;
         style = "Bold Italic";
       };
     };
@@ -64,17 +67,6 @@ let
       history = 100000;
       multiplier = 3;
     };
-    # terminal = {
-    #   shell = {
-    #     program = "tmux";
-    #     args = [
-    #       "new"
-    #       "-A"
-    #       "-s"
-    #       "personal"
-    #     ];
-    #   };
-    # };
     window = {
       dynamic_title = true;
       opacity = 1;
@@ -126,6 +118,8 @@ in
     };
 
     fonts.packages = [
+      pkgs.ibm-plex
+      pkgs.nerd-fonts.zed-mono
       pkgs.nerd-fonts.jetbrains-mono
     ];
   };

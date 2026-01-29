@@ -1,143 +1,89 @@
-# WeeChat Slack Integration Documentation
+# WeeChat Slack Integration
 
 ## Overview
 
-The WeeChat module now includes full Slack integration support via the `wee-slack` Python plugin. This fixes the issue where the plugin was packaged but not properly configured for loading and use.
+WeeChat includes Slack and Matrix support via `wee-slack` and `weechat-matrix` plugins. The Slack token is loaded from sops secrets at startup.
 
-## Configuration
+## How It Works
 
-### Basic Setup
+1. **Token Storage**: Slack API token stored in sops at `slack_api_token`
+2. **Runtime Loading**: On startup, a trigger reads `/run/secrets/slack_api_token` and sets it in WeeChat's secure data
+3. **Plugin Config**: `plugins.var.python.slack.slack_api_token` references `${sec.data.slack_token}`
 
-To enable Slack integration, add the following to your configuration:
+## Setup
+
+### 1. Add Slack Token to sops
+
+```bash
+sops secrets/secrets.yaml
+# Add: slack_api_token: xoxc-your-token-here
+```
+
+### 2. Enable WeeChat
 
 ```nix
 {
-  jvf.programs.weechat.slack = {
-    enable = true;
-    token = "xoxb-your-slack-bot-token-here";
-    autoConnect = true;  # Optional, defaults to true
-  };
+  jvf.programs.weechat.enable = true;
 }
 ```
 
-### Multiple Workspaces
+### 3. Rebuild and Launch
 
-For multiple Slack workspaces:
-
-```nix
-{
-  jvf.programs.weechat.slack = {
-    enable = true;
-    workspaces = {
-      "company-main" = {
-        token = "xoxb-primary-workspace-token";
-        autoConnect = true;
-      };
-      "company-side" = {
-        token = "xoxb-secondary-workspace-token";
-        autoConnect = false;  # Connect manually
-      };
-    };
-  };
-}
+```bash
+make rebuild
+weechat
 ```
 
-### Getting Slack Tokens
+## Getting Slack Tokens
 
+### Session Token (Recommended)
+1. Login to Slack in browser
+2. Open DevTools → Network tab
+3. Filter for `api` requests
+4. Find `token` parameter (starts with `xoxc-`)
+5. Also grab `d` cookie value
+6. Token format: `xoxc-TOKEN:d-COOKIE`
+
+### Bot Token
 1. Go to [Slack API Apps](https://api.slack.com/apps)
-2. Create a new app or use an existing one
-3. Add the "bot" scope
-4. Install the app to your workspace
-5. Copy the Bot User OAuth Token (starts with `xoxb-`)
+2. Create app, add bot scopes, install to workspace
+3. Copy Bot User OAuth Token (`xoxb-...`)
 
-## Usage
+## Commands
 
-### Connecting to Slack
-
-After rebuilding your system and starting WeeChat:
-
-1. Verify the plugin is loaded: `/plugin list` (should show `slack`)
-2. Available workspaces: `/slack workspaces`
-3. Connect to a workspace: `/slack connect workspace-name`
-4. View channels: `/buffer list`
-
-### Basic Commands
-
-- `/slack workspaces` - List configured workspaces
-- `/slack connect [workspace]` - Connect to workspace
-- `/slack disconnect [workspace]` - Disconnect from workspace
-- `/slack away [status]` - Set away status
-- `/slack back` - Remove away status
-
-### Channel Operations
-
-- `/join #channel-name` - Join a channel
-- `/part #channel-name` - Leave a channel
-- `/msg #channel-name text` - Send message to channel
-
-## Files Modified
-
-- `modules/programs/weechat.nix` - Added Slack configuration options and plugin loading
-- `modules/roles/communication.nix` - Enabled Slack integration by default
-
-## Technical Details
-
-### What Was Fixed
-
-1. **Plugin Loading**: Added explicit Python plugin loading configuration in `plugins.conf`
-2. **Script Autoloading**: Ensures `wee-slack.py` is properly linked to autoload directory
-3. **Configuration Options**: Added dedicated Slack configuration section
-4. **Dependencies**: Included Python 3 runtime environment
-5. **User Integration**: Proper script propagation through user wrappers
-
-### Module Structure
-
-The module now includes:
-- JavaScript with TypeScript support
-- Comprehensive plugin management
-- Secure token handling
-- Multi-workspace support
-- Auto-connection capabilities
-
-### Configuration Files
-
-The setup creates these WeeChat configuration files:
-- `weechat.conf` - Main WeeChat configuration
-- `plugins.conf` - Plugin loading configuration (with Python enabled when Slack is enabled)
-- `slack.conf` - Slack-specific settings (only included when Slack is enabled)
-- Other existing config files (irc.conf, buflist.conf, etc.)
+- `/slack workspaces` - List workspaces
+- `/slack connect` - Connect to Slack
+- `/slack disconnect` - Disconnect
+- `/join #channel` - Join channel
+- `/msg @user text` - DM user
 
 ## Troubleshooting
 
-### Plugin Not Loading
+### Token Not Loading
+```
+/secure list
+```
+Should show `slack_token`. If missing, check `/run/secrets/slack_api_token` exists.
 
-1. Check WeeChat startup logs for errors
-2. Verify Python 3 is installed: `python3 --version`
-3. Manually check plugin: `/python load wee_slack.py`
+### Plugin Errors
+```
+/python list
+```
+Should show `slack`. Check startup logs for Python errors.
 
-### Connection Issues
+### Connection Failed
+- Verify token format
+- Check token hasn't expired (session tokens expire)
+- Try `/slack disconnect` then `/slack connect`
 
-1. Verify token format: Should start with `xoxb-`
-2. Check token permissions: Need appropriate workspace scopes
-3. Test with `/slack connect workspace-name`
+## Technical Details
 
-### Script Not Found
+The init script:
+1. Creates trigger `slack_token_loader` to capture `/exec` output
+2. Runs `/exec -hsignal slack_token cat /run/secrets/slack_api_token`
+3. Trigger sets `/secure set slack_token ${out}`
+4. wee-slack reads `${sec.data.slack_token}`
 
-1. Rebuild system: `make rebuild`
-2. Check file permissions in `~/.weechat/python/autoload/`
-3. Verify wee-slack package is installed correctly
+## Matrix Support
 
-## Migration
-
-If you were previously using the manual wee-slack setup:
-
-1. Your existing configuration will migrate automatically
-2. Token should be moved to the new module structure
-3. The plugin will now auto-load on WeeChat startup
-
-## Future Enhancements
-
-- Automatic workspace discovery
-- Enhanced notification controls
-- Better error handling for invalid tokens
-- Integration with system keyring for secure token storage
+`weechat-matrix` is currently disabled (Python 3.13 compatibility issue with `future` package in nixpkgs).
