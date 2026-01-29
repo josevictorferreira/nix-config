@@ -1,11 +1,33 @@
-{ config, lib, pkgs, options, system, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  options,
+  system,
+  ...
+}:
 
 let
   cfg = config.jvf.programs.starship;
   isDarwin = builtins.match ".*-darwin" system != null;
 
-  # Starship settings - use defaults to fix display issues
-  starshipSettings = { };
+  # Starship settings
+  starshipSettings = {
+    # Disable AWS region display
+    aws.disabled = true;
+
+    # Shorter timeout to prevent lag in large directories
+    command_timeout = 500; # milliseconds
+
+    # Show full directory path instead of truncated
+    directory = {
+      truncation_length = 0;
+      truncate_to_repo = false;
+    };
+
+    # Fix rendering artifacts - use single line prompt
+    line_break.disabled = true;
+  };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)
   # Use pkgs.formats.toml for proper TOML generation
@@ -20,41 +42,43 @@ in
     enable = lib.mkEnableOption "Starship prompt";
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    # NixOS Configuration (using upstream module if available)
-    # On Darwin, we prefer manual configuration to ensure reliability
-    (lib.optionalAttrs (hasStarshipOption && !isDarwin) {
-      programs.starship = {
-        enable = true;
-        settings = starshipSettings;
-      };
-    })
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      # NixOS Configuration (using upstream module if available)
+      # On Darwin, we prefer manual configuration to ensure reliability
+      (lib.optionalAttrs (hasStarshipOption && !isDarwin) {
+        programs.starship = {
+          enable = true;
+          settings = starshipSettings;
+        };
+      })
 
-    # Darwin / Fallback Configuration (Manual implementation)
-    # Applied if the upstream option is missing OR if we are explicitly on Darwin and want to force manual loading
-    (lib.mkIf (!hasStarshipOption || isDarwin) {
-      environment.systemPackages = [ pkgs.starship ];
+      # Darwin / Fallback Configuration (Manual implementation)
+      # Applied if the upstream option is missing OR if we are explicitly on Darwin and want to force manual loading
+      (lib.mkIf (!hasStarshipOption || isDarwin) {
+        environment.systemPackages = [ pkgs.starship ];
 
-      # environment.variables.STARSHIP_CONFIG = "${configFile}";
+        # environment.variables.STARSHIP_CONFIG = "${configFile}";
 
-      programs.zsh.interactiveShellInit = lib.mkAfter ''
-        # --- DEBUG: STARSHIP START ---
-        export STARSHIP_CONFIG="${configFile}"
-        # echo "DEBUG: Setting STARSHIP_CONFIG to $STARSHIP_CONFIG"
-        
-        if [[ -x "${pkgs.starship}/bin/starship" ]]; then
-          eval "$(${pkgs.starship}/bin/starship init zsh)"
-          # echo "DEBUG: Starship initialized"
-        else
-          echo "CRITICAL: Starship binary not found at ${pkgs.starship}/bin/starship"
-        fi
-        # --- DEBUG: STARSHIP END ---
-      '';
+        programs.zsh.interactiveShellInit = lib.mkAfter ''
+          # --- DEBUG: STARSHIP START ---
+          export STARSHIP_CONFIG="${configFile}"
+          # echo "DEBUG: Setting STARSHIP_CONFIG to $STARSHIP_CONFIG"
 
-      programs.bash.interactiveShellInit = lib.mkAfter ''
-        export STARSHIP_CONFIG="${configFile}"
-        eval "$(${pkgs.starship}/bin/starship init bash)"
-      '';
-    })
-  ]);
+          if [[ -x "${pkgs.starship}/bin/starship" ]]; then
+            eval "$(${pkgs.starship}/bin/starship init zsh)"
+            # echo "DEBUG: Starship initialized"
+          else
+            echo "CRITICAL: Starship binary not found at ${pkgs.starship}/bin/starship"
+          fi
+          # --- DEBUG: STARSHIP END ---
+        '';
+
+        programs.bash.interactiveShellInit = lib.mkAfter ''
+          export STARSHIP_CONFIG="${configFile}"
+          eval "$(${pkgs.starship}/bin/starship init bash)"
+        '';
+      })
+    ]
+  );
 }

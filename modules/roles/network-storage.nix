@@ -1,8 +1,9 @@
-{ lib
-, config
-, system
-, username
-, ...
+{
+  lib,
+  config,
+  system,
+  username,
+  ...
 }:
 
 let
@@ -39,7 +40,7 @@ in
     }
     // lib.optionalAttrs (!isDarwin) {
       jvf.services.cephFs = {
-        enable = true;
+        enable = false;
         name = "Homelab";
         mountPoint = "/mnt/homelabfs";
         clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";

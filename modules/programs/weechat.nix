@@ -10,20 +10,66 @@ let
   secretPath = "/run/secrets/slack_api_token";
 
   weechatSettings = {
-    "plugins.var.python.vimode.no_warn" = "on";
-    "plugins.var.python.vimode.search_vim" = "on";
-    "plugins.var.python.slack.autoconnect" = "off";
-    "weechat.bar.buflist.type" = "root";
-    "weechat.bar.buflist.position" = "left";
-    "weechat.bar.buflist.size_max" = "12";
-    "weechat.look.buffer_time_format" = "%H:%M";
-    "weechat.look.prefix_align" = "none";
-    "weechat.look.prefix_align_max" = "0";
-    "weechat.look.prefix_same_nick" = "off";
-    "weechat.color.chat_time" = "darkgray";
-    "weechat.look.save_config_on_exit" = "off";
-    "plugins.var.python.slack.slack_api_token" = "\${sec.data.slack_token}";
+    weechat = {
+      bar = {
+        input.items = "mode_indicator+[input_prompt]+(away),[input_search], [input_paste],input_text,[vi_buffer]";
+        status.items = "[time],[buffer_last_number],buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion";
+        buflist = {
+          position = "left";
+          size_max = "20";
+        };
+      };
+      look = {
+        display_conditions = "\${buffer.hidden}==0";
+        buffer_short_name = "on";
+        buffer_name_force = "on";
+        color_nick_offline = "yes";
+        buffer_time_format = "%H:%M";
+        prefix_align = "none";
+        prefix_align_max = "0";
+        save_config_on_exit = "off";
+        prefix_same_nick = "⤷";
+        prefix_suffix = "│";
+        prefix_action = " •";
+        read_marker_string = "─";
+        separator_horizontal = "";
+        prefix_network = "▬▬";
+      };
+      color = {
+        chat_time = "darkgray";
+        chat_host = "cyan";
+        chat_nick_colors = "1,2,3,4,6,7,9,10,11,12,13,14,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,182,183,184,244,225,226,227";
+        chat_highlight = "*16";
+        chat_highlight_bg = "9";
+      };
+    };
+    plugins.var.python = {
+      slack = {
+        autoconnect = "off";
+        slack_api_token = "\${sec.data.slack_token}";
+      };
+      vimode = {
+        no_warn = "on";
+        search_vim = "on";
+      };
+    };
+    vimode = "bind_keys";
   };
+
+  # Flatten nested attrset to dot-notation keys
+  flattenSettings =
+    prefix: attrs:
+    lib.concatLists (
+      lib.mapAttrsToList (
+        name: value:
+        let
+          key = if prefix == "" then name else "${prefix}.${name}";
+        in
+        if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
+      ) attrs
+    );
+
+  flattenedSettings = flattenSettings "" weechatSettings;
 
   weechatInit = ''
     /exec -oc -sh echo "/secure set slack_token $(cat ${secretPath}); /slack connect"
@@ -31,13 +77,11 @@ let
 
     /vimode bind_keys
 
-    ${lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (key: val: "/set ${key} \"${val}\"") weechatSettings
-    )}
+    ${lib.concatStringsSep "\n" (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings)}
   '';
 
   weechatCommands = lib.concatStringsSep ";" (
-    lib.mapAttrsToList (key: val: "/set ${key} \"${val}\"") weechatSettings
+    map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings
   );
 
   viModeScript = pkgs.stdenv.mkDerivation {
