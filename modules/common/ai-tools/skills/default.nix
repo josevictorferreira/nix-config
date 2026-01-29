@@ -8,6 +8,7 @@
     ./general/grafana.nix
     ./general/browser-debug-tools.nix
     ./general/vision-tools.nix
+    ./general/kubernetes-tools.nix
     ./container/developing-containers.nix
     ./nix/creating-nix-modules.nix
     ./nix/managing-flakes.nix
