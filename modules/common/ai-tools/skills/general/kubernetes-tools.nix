@@ -1,10 +1,9 @@
-{
-  config,
-  lib,
-  inputs,
-  system,
-  pkgs,
-  ...
+{ config
+, lib
+, inputs
+, system
+, pkgs
+, ...
 }:
 let
   skillName = "kubernetes-tools";
