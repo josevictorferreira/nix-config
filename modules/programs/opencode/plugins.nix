@@ -1,12 +1,13 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 {
   config.jvf.programs.opencode.settings.plugin = [
-    "opencode-antigravity-auth@1.4.0"
-    "oh-my-opencode@3.1.7"
-    "@tarquinen/opencode-dcp@1.2.7"
+    "opencode-antigravity-auth@1.4.3"
+    "oh-my-opencode@3.1.9"
+    "@tarquinen/opencode-dcp@1.2.8"
   ];
 
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
@@ -58,7 +59,7 @@
       };
       atlas = {
         model = "kimi-for-coding/k2p5";
-        temperature = 0.1;
+        temperature = 0.3;
         permission = {
           skill = {
             "*" = {
