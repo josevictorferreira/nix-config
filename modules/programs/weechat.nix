@@ -1,9 +1,8 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -60,13 +59,15 @@ let
   flattenSettings =
     prefix: attrs:
     lib.concatLists (
-      lib.mapAttrsToList (
-        name: value:
-        let
-          key = if prefix == "" then name else "${prefix}.${name}";
-        in
-        if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
-      ) attrs
+      lib.mapAttrsToList
+        (
+          name: value:
+          let
+            key = if prefix == "" then name else "${prefix}.${name}";
+          in
+          if lib.isAttrs value then flattenSettings key value else [{ inherit key value; }]
+        )
+        attrs
     );
 
   flattenedSettings = flattenSettings "" weechatSettings;

@@ -1,9 +1,8 @@
-{
-  lib,
-  config,
-  system,
-  username,
-  ...
+{ lib
+, config
+, system
+, username
+, ...
 }:
 
 let
@@ -40,7 +39,7 @@ in
     }
     // lib.optionalAttrs (!isDarwin) {
       jvf.services.cephFs = {
-        enable = false;
+        enable = true;
         name = "Homelab";
         mountPoint = "/mnt/homelabfs";
         clusterFsId = "e2f8f1ec-72a4-4b49-a175-058c23a7e84b";
@@ -52,7 +51,7 @@ in
           "10.10.10.203:6789"
         ];
         fsName = "ceph-filesystem";
-        subvolumePath = "/volumes/nfs-exports/homelab-nfs/dfd23da6-d80d-48c7-b568-025ec7badd17";
+        subvolumePath = "/volumes/nfs-exports/homelab-nfs/5a434804-52fc-4e58-b09f-592a37a16a97";
       };
     }
   );
