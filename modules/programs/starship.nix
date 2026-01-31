@@ -1,9 +1,10 @@
-{ config
-, lib
-, pkgs
-, options
-, system
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  options,
+  system,
+  ...
 }:
 
 let
@@ -17,6 +18,9 @@ let
 
     # Shorter timeout to prevent lag in large directories
     command_timeout = 500; # milliseconds
+
+    # Increase directory scan timeout to prevent warnings in large dirs (like ~)
+    scan_timeout = 1000; # milliseconds
 
     # Show full directory path instead of truncated
     directory = {
