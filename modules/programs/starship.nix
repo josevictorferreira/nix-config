@@ -30,6 +30,10 @@ let
 
     # Fix rendering artifacts - use single line prompt
     line_break.disabled = true;
+
+    # Fix ghost text artifacts by adding proper line ending
+    # This forces the terminal to properly clear the line
+    add_newline = true;
   };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)

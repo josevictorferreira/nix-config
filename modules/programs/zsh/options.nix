@@ -82,6 +82,9 @@
           "grafana_username"
           "grafana_password"
           "grafana_service_account_token"
+          "homelab_postgres_username"
+          "homelab_postgres_password"
+          "valoris_secret_key"
         ];
         description = "List of sops secret keys to expose";
       };
