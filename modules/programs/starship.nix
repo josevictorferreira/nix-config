@@ -34,10 +34,6 @@ let
     # Fix ghost text artifacts by adding proper line ending
     # This forces the terminal to properly clear the line
     add_newline = true;
-
-    # Disable async rendering to fix ghost text issues
-    # This is the main fix for terminal artifacts
-    async = false;
   };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)
