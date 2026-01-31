@@ -117,20 +117,12 @@
         baseURL = "https://api.kimi.com/coding/v1";
         apiKey = "{env:KIMI_API_KEY}";
       };
-      models = {
-        "kimi-k2-thinking" = {
-          name = "Kimi K2 Thinking";
-        };
-        "kimi-k2-0711-preview" = {
-          name = "Kimi K2 0711 Preview";
-        };
-      };
     };
 
     zai-coding-plan = {
-      npm = "@ai-sdk/openai-compatible";
+      npm = "@ai-sdk/anthropic";
       options = {
-        baseURL = "https://api.z.ai/api/coding/paas/v4";
+        baseURL = "https://api.z.ai/api/anthropic";
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {
@@ -165,68 +157,198 @@
       models = {
         "antigravity-gemini-3-pro-low" = {
           name = "Gemini 3 Pro Low (Antigravity)";
-          limit = { context = 1048576; output = 65535; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65535;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-gemini-3-pro-high" = {
           name = "Gemini 3 Pro High (Antigravity)";
-          limit = { context = 1048576; output = 65535; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65535;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-gemini-3-flash" = {
           name = "Gemini 3 Flash (Antigravity)";
-          limit = { context = 1048576; output = 65536; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65536;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "gemini-3-pro-low" = {
           name = "Gemini 3 Pro Low (Gemini)";
-          limit = { context = 1048576; output = 65535; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65535;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "gemini-3-pro-high" = {
           name = "Gemini 3 Pro High (Gemini)";
-          limit = { context = 1048576; output = 65535; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65535;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "gemini-3-flash" = {
           name = "Gemini 3 Flash (Gemini)";
-          limit = { context = 1048576; output = 65536; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 1048576;
+            output = 65536;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-sonnet-4-5" = {
           name = "Claude Sonnet 4.5 (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-sonnet-4-5-thinking-low" = {
           name = "Claude Sonnet 4.5 Low (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-sonnet-4-5-thinking-medium" = {
           name = "Claude Sonnet 4.5 Medium (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-sonnet-4-5-thinking-high" = {
           name = "Claude Sonnet 4.5 High (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-opus-4-5-thinking-low" = {
           name = "Claude Opus 4.5 Low (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-opus-4-5-thinking-medium" = {
           name = "Claude Opus 4.5 Medium (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
         "antigravity-claude-opus-4-5-thinking-high" = {
           name = "Claude Opus 4.5 High (Antigravity)";
-          limit = { context = 200000; output = 64000; };
-          modalities = { input = [ "text" "image" "pdf" ]; output = [ "text" ]; };
+          limit = {
+            context = 200000;
+            output = 64000;
+          };
+          modalities = {
+            input = [
+              "text"
+              "image"
+              "pdf"
+            ];
+            output = [ "text" ];
+          };
         };
       };
     };
