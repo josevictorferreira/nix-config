@@ -15,6 +15,7 @@
     agents = {
       sisyphus = {
         model = "kimi-for-coding/k2p5";
+        temperature = 1.0;
         permission = {
           skill = {
             "*" = {
@@ -59,7 +60,7 @@
       };
       atlas = {
         model = "kimi-for-coding/k2p5";
-        temperature = 0.3;
+        temperature = 1.0;
         permission = {
           skill = {
             "*" = {
@@ -93,6 +94,7 @@
       };
       momus = {
         model = "kimi-for-coding/kimi-k2-thinking";
+        temperature = 1.0;
         permission = {
           skill = {
             "*" = {
@@ -119,6 +121,7 @@
       };
       document-writer = {
         model = "kimi-for-coding/kimi-k2-thinking";
+        temperature = 1.0;
       };
       multimodal-looker = {
         model = "github-copilot/gemini-3-flash-preview";
