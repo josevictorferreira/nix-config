@@ -34,7 +34,7 @@
         };
       };
       librarian = {
-        model = "zai-coding-plan/glm-4.7:fast";
+        model = "zai-coding-plan/glm-4.7";
         temperature = 0.3;
         permission = {
           skill = {
