@@ -57,14 +57,15 @@
     zai-coding-plan = {
       npm = "@ai-sdk/anthropic";
       options = {
-        baseURL = "https://api.z.ai/api/anthropic";
+        baseURL = "https://api.z.ai/api/anthropic/v1";
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {
         "glm-4.7" = {
           name = "GLM-4.7";
           variants = {
-            reasoning = {
+            "glm-4.7-deep-thinker" = {
+              name = "GLM-4.7 Deep Thinker";
               reasoningEffort = "high";
               thinking.type = "enabled";
               fast.disabled = true;
@@ -72,7 +73,8 @@
               temperature = 1.0;
               clear_thinking = false;
             };
-            fast = {
+            "glm-4.7-fast" = {
+              name = "GLM-4.7 Fast";
               reasoningEffort = "low";
               textVerbosity = "low";
               thinking.type = "disabled";
@@ -81,8 +83,8 @@
             };
           };
         };
-        "glm-4.7-flashx" = {
-          name = "GLM-4.7 FlashX";
+        "glm-4.7-flash" = {
+          name = "GLM-4.7 Flash";
         };
       };
     };

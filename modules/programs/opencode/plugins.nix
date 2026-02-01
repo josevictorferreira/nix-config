@@ -48,7 +48,6 @@
       };
       explore = {
         model = "zai-coding-plan/glm-4.7-flash";
-        temperature = 0.2;
         permission = {
           skill = {
             "*" = {
