@@ -34,7 +34,11 @@
     };
 
     pylsp = {
-      command = [ "uv" "run" "pylsp" ];
+      command = [
+        "uv"
+        "run"
+        "pylsp"
+      ];
       extensions = [
         ".py"
         ".pyi"
@@ -42,7 +46,12 @@
     };
 
     ruff = {
-      command = [ "uv" "run" "ruff" "server" ];
+      command = [
+        "uv"
+        "run"
+        "ruff"
+        "server"
+      ];
       extensions = [
         ".py"
         ".pyi"
@@ -130,6 +139,24 @@
         "Containerfile"
         "*Dockerfile*"
         "*Containerfile*"
+      ];
+    };
+
+    sorbet = {
+      command = [
+        "bundle"
+        "exec"
+        "srb"
+        "tc"
+        "--lsp"
+      ];
+      extensions = [
+        ".rb"
+        "Gemfile"
+        ".gemspec"
+        ".ru"
+        ".rake"
+        ".rbs"
       ];
     };
 
