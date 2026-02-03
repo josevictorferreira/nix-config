@@ -1,8 +1,10 @@
-{ lib
-, config
-, system
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  username,
+  ...
 }:
 
 let
@@ -27,7 +29,11 @@ in
   };
 
   config = lib.mkIf cfg.enable (
-    { }
+    {
+      users.users."${cfg.username}".packages = [
+        pkgs.rclone
+      ];
+    }
     // lib.optionalAttrs isDarwin {
       jvf.services.smb = {
         enable = true;

@@ -24,8 +24,12 @@
           };
         };
       };
+      hephaestus = {
+        model = "github-copilot/gpt-5.2-codex";
+        variant = "medium";
+      };
       sisyphus-junior = {
-        model = "minimax/MiniMax-M2.1";
+        model = "zai-coding-plan/glm-4.7";
         permission = {
           skill = {
             "*" = {
@@ -47,7 +51,8 @@
         };
       };
       explore = {
-        model = "zai-coding-plan/glm-4.7-flash";
+        model = "zai-coding-plan/glm-4.7";
+        variant = "fast";
         permission = {
           skill = {
             "*" = {
@@ -178,15 +183,15 @@
         temperature = 0.1;
       };
       writing = {
-        model = "github-copilot/gemini-3-flash-preview";
+        model = "kimi-for-coding/kimi-k2-thinking";
         temperature = 0.5;
       };
       business-logic = {
-        model = "kimi-for-coding/kimi-k2-thinking";
+        model = "github-copilot/gemini-3-flash-preview";
         temperature = 0.1;
       };
       general = {
-        model = "minimax/MiniMax-M2.1";
+        model = "kimi-for-coding/k2p5";
         temperature = 0.3;
       };
     };

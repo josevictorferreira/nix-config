@@ -64,7 +64,7 @@
         "glm-4.7" = {
           name = "GLM-4.7";
           variants = {
-            "glm-4.7-deep-thinker" = {
+            thinker = {
               name = "GLM-4.7 Deep Thinker";
               reasoningEffort = "high";
               thinking.type = "enabled";
@@ -73,7 +73,7 @@
               temperature = 1.0;
               clear_thinking = false;
             };
-            "glm-4.7-fast" = {
+            fast = {
               name = "GLM-4.7 Fast";
               reasoningEffort = "low";
               textVerbosity = "low";
