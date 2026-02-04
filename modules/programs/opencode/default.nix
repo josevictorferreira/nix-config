@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, inputs
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  system,
+  inputs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -137,14 +138,29 @@ in
         ".docs/rules.md"
       ];
 
-      tools = lib.mkDefault (builtins.listToAttrs (map (name: { name = "${name}*"; value = false; }) (builtins.attrNames cfg.mcps)));
+      tools = lib.mkDefault (
+        builtins.listToAttrs (
+          map (name: {
+            name = "${name}*";
+            value = false;
+          }) (builtins.attrNames cfg.mcps)
+        )
+      );
 
       watcher = {
-        ignore = [ "node_modules/**" "dist/**" ".git/**" "build/**" ".bundle/**" "__pycache__/**" ".ck/**" ];
+        ignore = [
+          "node_modules/**"
+          "dist/**"
+          ".git/**"
+          "build/**"
+          ".bundle/**"
+          "__pycache__/**"
+          ".ck/**"
+        ];
       };
 
       model = "zai-coding-plan/glm-4.7:fast";
-      small_model = "openrouter/openai/gpt-oss-120b";
+      small_model = "copilot/grok-code-fast-1";
     };
 
     jvf.wrappers.users.${cfg.username}.programs.opencode = {
@@ -173,8 +189,12 @@ in
             switch_on_first_rate_limit = true;
             pid_offset_enabled = true;
           };
-          "toolbox.jsonc" = { mcp = cfg.mcps; };
-          "toolbox.json" = { mcp = cfg.mcps; };
+          "toolbox.jsonc" = {
+            mcp = cfg.mcps;
+          };
+          "toolbox.json" = {
+            mcp = cfg.mcps;
+          };
         }
       ];
     };

@@ -6,7 +6,7 @@
 {
   config.jvf.programs.opencode.settings.plugin = [
     "opencode-antigravity-auth@1.4.3"
-    "oh-my-opencode@3.2.1"
+    "oh-my-opencode@3.2.3"
     "@tarquinen/opencode-dcp@1.2.8"
   ];
 
@@ -86,7 +86,7 @@
         };
       };
       metis = {
-        model = "github-copilot/gemini-3-pro";
+        model = "github-copilot/gemini-3-pro-preview";
         permission = {
           skill = {
             "*" = {
