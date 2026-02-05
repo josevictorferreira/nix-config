@@ -28,16 +28,6 @@
         model = "github-copilot/gpt-5.2-codex";
         variant = "medium";
       };
-      sisyphus-junior = {
-        model = "zai-coding-plan/glm-4.7";
-        permission = {
-          skill = {
-            "*" = {
-              "*" = "allow";
-            };
-          };
-        };
-      };
       librarian = {
         model = "zai-coding-plan/glm-4.7";
         temperature = 0.3;
@@ -63,7 +53,7 @@
         };
       };
       atlas = {
-        model = "kimi-for-coding/k2p5";
+        model = "minimax/MiniMax-M2.1";
         temperature = 1.0;
         permission = {
           skill = {
@@ -175,7 +165,8 @@
         temperature = 0.9;
       };
       quick = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "zai-coding-plan/glm-4.7";
+        variant = "fast";
         temperature = 0.3;
       };
       most-capable = {
