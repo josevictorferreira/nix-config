@@ -27,23 +27,20 @@ let
       truncate_to_repo = false;
     };
 
-    # Enable line break to put cursor on next line after status
-    # This separates the status line (dir, git) from the input line
-    line_break.disabled = false;
+    # Disable line_break module since we use explicit \n in format string
+    # Having both causes an extra empty line
+    line_break.disabled = true;
 
-    # Add newline between prompts for cleaner separation
-    add_newline = true;
-
-    # Transient prompt - clears old prompts when typing new commands
-    # This helps prevent ghost characters by redrawing clean
-    continuation_prompt = "▶ ";
+    # Disable add_newline since we use explicit \n in format
+    # Having both causes an extra empty line before prompt
+    add_newline = false;
 
     # Disable right-aligned modules that can cause width calculation issues
     # These can interfere with proper line clearing
     battery.disabled = true;
 
-    # Custom format: directory/git on left, time on right (via fill), cursor on next line
-    format = "$directory$git_branch$git_status$fill$time\n$character";
+    # Custom format: directory/git/nix-shell on left, time on right (via fill), cursor on next line
+    format = "$directory$git_branch$git_status$nix_shell$fill$time\n$character";
 
     # CRITICAL: Add fill module to prevent ghost characters
     # This ensures proper spacing calculation when modules appear/disappear
@@ -60,9 +57,10 @@ let
     };
 
     # Configure time module with proper formatting (right-aligned via fill)
+    # Trailing space prevents truncation at right edge
     time = {
       disabled = false;
-      format = "[$time]($style)";
+      format = "[$time]($style) ";
       style = "bold bright-black";
     };
 
@@ -79,6 +77,17 @@ let
       disabled = false;
       format = "[$symbol$status]($style) ";
       symbol = "✖";
+    };
+
+    # Nix shell/flake detection - shows when in nix develop or nix-shell
+    nix_shell = {
+      disabled = false;
+      format = "[$symbol $state]($style) ";
+      symbol = "❄️";
+      heuristic = true; # Detect nix shell even without IN_NIX_SHELL set
+      impure_msg = "impure";
+      pure_msg = "pure";
+      style = "bold blue";
     };
   };
 
@@ -116,14 +125,10 @@ in
         programs.zsh.interactiveShellInit = lib.mkAfter ''
           # --- DEBUG: STARSHIP START ---
           export STARSHIP_CONFIG="${configFile}"
-          export STARSHIP_TRANSIENT_PROMPT=true
           # echo "DEBUG: Setting STARSHIP_CONFIG to $STARSHIP_CONFIG"
 
           if [[ -x "${pkgs.starship}/bin/starship" ]]; then
             eval "$(${pkgs.starship}/bin/starship init zsh)"
-            # Enable transient prompt to prevent ghost characters
-            # This clears the previous prompt when a new command is entered
-            enable_transient_prompt
             # echo "DEBUG: Starship initialized"
           else
             echo "CRITICAL: Starship binary not found at ${pkgs.starship}/bin/starship"
