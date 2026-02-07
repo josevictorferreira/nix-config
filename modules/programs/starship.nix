@@ -27,9 +27,9 @@ let
       truncate_to_repo = false;
     };
 
-    # Disable line_break module since we use explicit \n in format string
-    # Having both causes an extra empty line
-    line_break.disabled = true;
+    # Use line_break module instead of \n in format string
+    # This is more reliable across different terminal emulators
+    line_break.disabled = false;
 
     # Disable add_newline since we use explicit \n in format
     # Having both causes an extra empty line before prompt
@@ -40,7 +40,8 @@ let
     battery.disabled = true;
 
     # Custom format: directory/git/nix-shell on left, time on right (via fill), cursor on next line
-    format = "$directory$git_branch$git_status$nix_shell$fill$time\n$character";
+    # Using $line_break instead of \n for better compatibility
+    format = "$directory$git_branch$git_status$nix_shell$fill$time$line_break$character";
 
     # CRITICAL: Add fill module to prevent ghost characters
     # This ensures proper spacing calculation when modules appear/disappear
