@@ -27,12 +27,23 @@ let
       truncate_to_repo = false;
     };
 
-    # Fix rendering artifacts - use single line prompt
-    line_break.disabled = true;
+    # Enable line break to put cursor on next line after status
+    # This separates the status line (dir, git) from the input line
+    line_break.disabled = false;
 
-    # Fix ghost text artifacts by adding proper line ending
-    # This forces the terminal to properly clear the line
+    # Add newline between prompts for cleaner separation
     add_newline = true;
+
+    # Transient prompt - clears old prompts when typing new commands
+    # This helps prevent ghost characters by redrawing clean
+    continuation_prompt = "▶ ";
+
+    # Disable right-aligned modules that can cause width calculation issues
+    # These can interfere with proper line clearing
+    battery.disabled = true;
+
+    # Custom format: directory/git on left, time on right (via fill), cursor on next line
+    format = "$directory$git_branch$git_status$fill$time\n$character";
 
     # CRITICAL: Add fill module to prevent ghost characters
     # This ensures proper spacing calculation when modules appear/disappear
@@ -105,10 +116,14 @@ in
         programs.zsh.interactiveShellInit = lib.mkAfter ''
           # --- DEBUG: STARSHIP START ---
           export STARSHIP_CONFIG="${configFile}"
+          export STARSHIP_TRANSIENT_PROMPT=true
           # echo "DEBUG: Setting STARSHIP_CONFIG to $STARSHIP_CONFIG"
 
           if [[ -x "${pkgs.starship}/bin/starship" ]]; then
             eval "$(${pkgs.starship}/bin/starship init zsh)"
+            # Enable transient prompt to prevent ghost characters
+            # This clears the previous prompt when a new command is entered
+            enable_transient_prompt
             # echo "DEBUG: Starship initialized"
           else
             echo "CRITICAL: Starship binary not found at ${pkgs.starship}/bin/starship"
