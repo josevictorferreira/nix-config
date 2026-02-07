@@ -12,7 +12,7 @@ let
     pkgs.tmuxPlugins.onedark-theme
   ];
 
-  applyPlugin = p: ''run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}'';
+  applyPlugin = p: "run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}";
 
   tmuxConf = ''
     unbind C-b
@@ -28,6 +28,9 @@ let
 
     set -g default-terminal "tmux-256color"
     set -ag terminal-overrides ",tmux-256color:RGB"
+    # Fix for ghost characters with Nerd Fonts and powerline symbols
+    # Ensures proper width calculation across different terminals (ghostty, kitty, alacritty)
+    set -ag terminal-overrides ",xterm-256color:RGB"
     set -g default-command "zsh"
 
     set -g history-limit 10000

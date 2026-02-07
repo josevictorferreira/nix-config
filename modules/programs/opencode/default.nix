@@ -1,11 +1,10 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  system,
-  inputs,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, system
+, inputs
+, ...
 }:
 let
   json = pkgs.formats.json { };
@@ -140,10 +139,12 @@ in
 
       tools = lib.mkDefault (
         builtins.listToAttrs (
-          map (name: {
-            name = "${name}*";
-            value = false;
-          }) (builtins.attrNames cfg.mcps)
+          map
+            (name: {
+              name = "${name}*";
+              value = false;
+            })
+            (builtins.attrNames cfg.mcps)
         )
       );
 

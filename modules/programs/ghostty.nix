@@ -50,6 +50,10 @@ let
     shell-integration = "zsh";
     theme = "Atom One Dark";
     command = tmuxpInitScript;
+
+    # Fix Unicode width calculation to prevent ghost characters
+    # "spanned" is recommended for Nerd Font / powerline symbols
+    unicode-width = "spanned";
   };
 in
 {

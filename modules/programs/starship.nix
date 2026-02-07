@@ -1,10 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  options,
-  system,
-  ...
+{ config
+, lib
+, pkgs
+, options
+, system
+, ...
 }:
 
 let
@@ -34,6 +33,42 @@ let
     # Fix ghost text artifacts by adding proper line ending
     # This forces the terminal to properly clear the line
     add_newline = true;
+
+    # CRITICAL: Add fill module to prevent ghost characters
+    # This ensures proper spacing calculation when modules appear/disappear
+    fill = {
+      disabled = false;
+      symbol = " ";
+      style = "bold black";
+    };
+
+    # Character config with explicit symbols for proper width calculation
+    character = {
+      success_symbol = "[➜](bold green)";
+      error_symbol = "[✗](bold red)";
+    };
+
+    # Configure time module with proper formatting (right-aligned via fill)
+    time = {
+      disabled = false;
+      format = "[$time]($style)";
+      style = "bold bright-black";
+    };
+
+    # Disable cmd_duration to reduce dynamic content changes
+    cmd_duration.disabled = true;
+
+    # Ensure proper git branch display without extra spaces
+    git_branch = {
+      format = "[$branch]($style)";
+    };
+
+    # Status module config to avoid width issues
+    status = {
+      disabled = false;
+      format = "[$symbol$status]($style) ";
+      symbol = "✖";
+    };
   };
 
   # Generate config file for Darwin (since programs.starship is missing in older nix-darwin)
