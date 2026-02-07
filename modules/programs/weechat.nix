@@ -1,12 +1,67 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.weechat;
   secretPath = "/run/secrets/slack_api_token";
+
+  # weechat-matrix-rs - Rust Matrix plugin for Weechat
+  # https://github.com/poljar/weechat-matrix-rs
+  weechatMatrixRs =
+    let
+      pkg = pkgs.rustPlatform.buildRustPackage rec {
+        pname = "weechat-matrix-rs";
+        version = "0.1.0-unstable-2025-01-15";
+
+        src = pkgs.fetchFromGitHub {
+          owner = "poljar";
+          repo = "weechat-matrix-rs";
+          rev = "4cc5777b630ba4d6a9c964248531f283178a4717";
+          hash = "sha256-CF4xDoRYey9F8/XSW/euNb8IjZXyP6k0Nj61shsmyEo=";
+        };
+
+        cargoHash = "sha256-jAlBCmLJfWWAUHd3ySB930iqAVXMh6ueba7xS///Rt0=";
+
+        nativeBuildInputs = with pkgs; [
+          pkg-config
+          cmake
+          rustPlatform.bindgenHook
+        ];
+
+        buildInputs =
+          with pkgs;
+          [
+            openssl
+            weechat
+            sqlite
+          ]
+          ++ lib.optionals pkgs.stdenv.isDarwin [
+            darwin.apple_sdk.frameworks.Security
+            darwin.apple_sdk.frameworks.SystemConfiguration
+          ];
+
+        # Plugin outputs libmatrix.so
+        postInstall = ''
+          mkdir -p $out/lib/weechat/plugins
+          cp $out/lib/libmatrix.so $out/lib/weechat/plugins/matrix.so || true
+        '';
+
+        meta = with lib; {
+          description = "Rust Matrix plugin for Weechat";
+          homepage = "https://github.com/poljar/weechat-matrix-rs";
+          license = licenses.isc;
+          platforms = platforms.unix;
+        };
+      };
+    in
+    pkg
+    // {
+      pluginFile = "${pkg}/lib/weechat/plugins/matrix.so";
+    };
 
   weechatSettings = {
     weechat = {
@@ -59,15 +114,13 @@ let
   flattenSettings =
     prefix: attrs:
     lib.concatLists (
-      lib.mapAttrsToList
-        (
-          name: value:
-          let
-            key = if prefix == "" then name else "${prefix}.${name}";
-          in
-          if lib.isAttrs value then flattenSettings key value else [{ inherit key value; }]
-        )
-        attrs
+      lib.mapAttrsToList (
+        name: value:
+        let
+          key = if prefix == "" then name else "${prefix}.${name}";
+        in
+        if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
+      ) attrs
     );
 
   flattenedSettings = flattenSettings "" weechatSettings;
@@ -126,6 +179,9 @@ let
           availablePlugins.perl
           availablePlugins.lua
           availablePlugins.ruby
+        ]
+        ++ lib.optionals cfg.matrix.enable [
+          weechatMatrixRs
         ];
         init = weechatInit;
       };
@@ -157,6 +213,9 @@ in
         viModeScript
       ];
       description = "List of weechat scripts to install in addition to the default set.";
+    };
+    matrix = {
+      enable = lib.mkEnableOption "Matrix protocol support via weechat-matrix-rs";
     };
   };
 

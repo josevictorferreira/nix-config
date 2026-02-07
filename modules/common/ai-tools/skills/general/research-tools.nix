@@ -1,7 +1,8 @@
-{ config
-, lib
-, inputs
-, ...
+{
+  config,
+  lib,
+  inputs,
+  ...
 }:
 let
   skillName = "research-tools";
@@ -13,6 +14,11 @@ let
     metadata = {
       category = "research";
       triggers = "docs, documentation, code examples, web search, how do others, library, API, current info";
+    };
+    mcp = {
+      deepwiki = {
+        url = "https://mcp.deepwiki.com/";
+      };
     };
     prompt = ''
       # Research Tools

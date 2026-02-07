@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -28,7 +29,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.weechat.enable = true;
+    jvf.programs.weechat = {
+      enable = true;
+      matrix.enable = true;
+    };
 
     users.users."${cfg.username}".packages = [
       pkgs.discord

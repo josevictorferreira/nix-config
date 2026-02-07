@@ -29,7 +29,7 @@
         variant = "medium";
       };
       librarian = {
-        model = "zai-coding-plan/glm-4.7";
+        model = "minimax/MiniMax-M2.1";
         temperature = 0.3;
         permission = {
           skill = {
@@ -41,8 +41,7 @@
         };
       };
       explore = {
-        model = "zai-coding-plan/glm-4.7";
-        variant = "fast";
+        model = "zai-coding-plan/glm-4.7-flash";
         permission = {
           skill = {
             "*" = {
@@ -53,7 +52,7 @@
         };
       };
       atlas = {
-        model = "minimax/MiniMax-M2.1";
+        model = "zai-coding-plan/glm-4.7";
         temperature = 1.0;
         permission = {
           skill = {
