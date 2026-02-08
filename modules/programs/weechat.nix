@@ -76,9 +76,6 @@ let
         };
       };
       look = {
-        display_conditions = "\${buffer.hidden}==0";
-        buffer_short_name = "on";
-        buffer_name_force = "on";
         color_nick_offline = "yes";
         buffer_time_format = "%H:%M";
         prefix_align = "none";
