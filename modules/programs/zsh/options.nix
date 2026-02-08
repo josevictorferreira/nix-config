@@ -85,6 +85,9 @@
           "homelab_postgres_username"
           "homelab_postgres_password"
           "valoris_secret_key"
+          "matrix_server_url"
+          "matrix_server_username"
+          "matrix_server_password"
         ];
         description = "List of sops secret keys to expose";
       };

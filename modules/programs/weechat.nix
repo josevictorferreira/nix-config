@@ -6,7 +6,10 @@
 }:
 let
   cfg = config.jvf.programs.weechat;
-  secretPath = "/run/secrets/slack_api_token";
+  slackSecretPath = "/run/secrets/slack_api_token";
+  matrixUrlPath = "/run/secrets/matrix_server_url";
+  matrixUserPath = "/run/secrets/matrix_server_username";
+  matrixPassPath = "/run/secrets/matrix_server_password";
 
   # weechat-matrix-rs - Rust Matrix plugin for Weechat
   # https://github.com/poljar/weechat-matrix-rs
@@ -126,14 +129,19 @@ let
 
   flattenedSettings = flattenSettings "" weechatSettings;
 
-  weechatInit = ''
-    /exec -oc -sh echo "/secure set slack_token $(cat ${secretPath}); /slack connect"
-    /bar hide nicklist
-
-    /vimode bind_keys
-
-    ${lib.concatStringsSep "\n" (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings)}
-  '';
+  weechatInit = lib.concatStringsSep "\n" (
+    [
+      ''/exec -oc -sh echo "/secure set slack_token $(cat ${slackSecretPath}); /slack connect"''
+      "/bar hide nicklist"
+    ]
+    ++ lib.optionals cfg.matrix.enable [
+      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath}); /matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) ''${sec.data.matrix_password}; /matrix connect myserver"''
+    ]
+    ++ [
+      "/vimode bind_keys"
+      (lib.concatStringsSep "\n" (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings))
+    ]
+  );
 
   weechatCommands = lib.concatStringsSep ";" (
     map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings
@@ -223,6 +231,24 @@ in
   config = lib.mkIf cfg.enable {
     sops.secrets.slack_api_token = {
       path = "/run/secrets/slack_api_token";
+      owner = cfg.username;
+      mode = "0400";
+    };
+
+    sops.secrets.matrix_server_url = lib.mkIf cfg.matrix.enable {
+      path = "/run/secrets/matrix_server_url";
+      owner = cfg.username;
+      mode = "0400";
+    };
+
+    sops.secrets.matrix_server_username = lib.mkIf cfg.matrix.enable {
+      path = "/run/secrets/matrix_server_username";
+      owner = cfg.username;
+      mode = "0400";
+    };
+
+    sops.secrets.matrix_server_password = lib.mkIf cfg.matrix.enable {
+      path = "/run/secrets/matrix_server_password";
       owner = cfg.username;
       mode = "0400";
     };

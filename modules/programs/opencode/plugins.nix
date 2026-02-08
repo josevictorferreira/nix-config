@@ -1,5 +1,6 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 {
@@ -40,7 +41,7 @@
         };
       };
       explore = {
-        model = "zai-coding-plan/glm-4.7-flash";
+        model = "github-copilot/grok-code-fast-1";
         permission = {
           skill = {
             "*" = {
@@ -51,7 +52,7 @@
         };
       };
       atlas = {
-        model = "zai-coding-plan/glm-4.7";
+        model = "kimi-for-coding/k2p5";
         temperature = 1.0;
         permission = {
           skill = {
