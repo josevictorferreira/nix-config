@@ -28,6 +28,7 @@ let
     # Nix shell
     ns = "nix-shell --run zsh";
     nd = "nix develop --command zsh";
+    nr = "nix run .#";
   };
 
   # Navigation aliases
@@ -44,6 +45,7 @@ let
     sht = "nvim ${notetaking}/notes/CheatSheets.md";
     sheet = "nvim ${notetaking}/notes/CheatSheets.md";
     plan = "sops --config=${shared}/.sops.yaml ${notetaking}/notes/plan.enc.md";
+    gtodo = "nvim ${notetaking}/checklists/Todo.md";
   };
 
   # Development aliases
@@ -135,5 +137,3 @@ in
 
   shellInit = "";
 }
-
-

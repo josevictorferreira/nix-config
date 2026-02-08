@@ -135,7 +135,7 @@ let
       "/bar hide nicklist"
     ]
     ++ lib.optionals cfg.matrix.enable [
-      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath}); /matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) ''${sec.data.matrix_password}; /matrix connect myserver"''
+      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath}); /matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) \''${sec.data.matrix_password}; /matrix connect myserver"''
     ]
     ++ [
       "/vimode bind_keys"
@@ -143,8 +143,21 @@ let
     ]
   );
 
-  weechatCommands = lib.concatStringsSep ";" (
-    map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings
+  # Commands to run on startup (init commands separated by semicolons for -r flag)
+  weechatInitCommands = lib.concatStringsSep ";" (
+    [
+      ''/exec -oc -sh echo "/secure set slack_token $(cat ${slackSecretPath}); /slack connect"''
+      "/bar hide nicklist"
+    ]
+    ++ lib.optionals cfg.matrix.enable [
+      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath})"''
+      ''/exec -oc -sh echo "/matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) ''${sec.data.matrix_password}"''
+      "/matrix connect myserver"
+    ]
+    ++ [
+      "/vimode bind_keys"
+    ]
+    ++ (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings)
   );
 
   viModeScript = pkgs.stdenv.mkDerivation {
@@ -262,7 +275,7 @@ in
         pkgs.python3
       ]
       ++ cfg.additionalScripts;
-      command = "${lib.getExe cfg.package} -r '${weechatCommands}'";
+      command = "${lib.getExe cfg.package} -r '${weechatInitCommands}'";
     };
   };
 }

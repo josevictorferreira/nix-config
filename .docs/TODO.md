@@ -1,5 +1,6 @@
 # TODO
 
+- [ ] Change the machine name and hostname to a more proper name
 - [ ] Add a matrix integration to weechat
 - [ ] Add a proxy for llms, maybe cliproxy.
 - [ ] Add a new template for the python/django/postgres flake.nix application.
