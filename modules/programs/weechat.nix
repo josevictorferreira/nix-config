@@ -150,8 +150,9 @@ let
       "/bar hide nicklist"
     ]
     ++ lib.optionals cfg.matrix.enable [
-      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath})"''
-      ''/exec -oc -sh echo "/matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) ''${sec.data.matrix_password}"''
+      ''/exec -oc -sh echo "/matrix server add myserver $(cat ${matrixUrlPath})"''
+      ''/exec -oc -sh echo "/set matrix-rust.server.myserver.username $(cat ${matrixUserPath})"''
+      ''/exec -oc -sh echo "/set matrix-rust.server.myserver.password ''${sec.data.matrix_password}"''
       "/matrix connect myserver"
     ]
     ++ [
