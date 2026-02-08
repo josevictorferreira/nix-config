@@ -101,7 +101,6 @@ let
         search_vim = "on";
       };
     };
-    vimode = "bind_keys";
   };
 
   # Flatten nested attrset to dot-notation keys
@@ -119,16 +118,31 @@ let
 
   flattenedSettings = flattenSettings "" weechatSettings;
 
+  # Matrix setup script - outputs all commands in sequence
+  matrixSetupScript = pkgs.writeShellScript "weechat-matrix-setup" ''
+    echo "/secure set matrix_password $(cat ${matrixPassPath})"
+    echo "/matrix server add homelab-matrix $(cat ${matrixUrlPath})"
+    echo "/set matrix-rust.server.homelab-matrix.username $(cat ${matrixUserPath})"
+    echo "/set matrix-rust.server.homelab-matrix.password $(cat ${matrixPassPath})"
+    echo "/matrix connect homelab-matrix"
+  '';
+
+  # Slack setup script - only sets token, connect happens via autoconnect setting
+  slackSetupScript = pkgs.writeShellScript "weechat-slack-setup" ''
+    echo "/secure set slack_token $(cat ${slackSecretPath})"
+  '';
+
   weechatInit = lib.concatStringsSep "\n" (
     [
-      ''/exec -oc -sh echo "/secure set slack_token $(cat ${slackSecretPath}); /slack connect"''
+      # Set slack token from secret file and connect (single exec for all slack commands)
+      "/exec -oc ${slackSetupScript}"
       "/bar hide nicklist"
     ]
     ++ lib.optionals cfg.matrix.enable [
-      ''/exec -oc -sh echo "/secure set matrix_password $(cat ${matrixPassPath}); /matrix server add myserver $(cat ${matrixUrlPath}) $(cat ${matrixUserPath}) \''${sec.data.matrix_password}; /matrix connect myserver"''
+      # Matrix commands via single exec to ensure sequencing
+      "/exec -oc ${matrixSetupScript}"
     ]
     ++ [
-      "/vimode bind_keys"
       (lib.concatStringsSep "\n" (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings))
     ]
   );
@@ -136,14 +150,13 @@ let
   # Commands to run on startup (init commands separated by semicolons for -r flag)
   weechatInitCommands = lib.concatStringsSep ";" (
     [
-      ''/exec -oc -sh echo "/secure set slack_token $(cat ${slackSecretPath}); /slack connect"''
+      # Set slack token from secret file
+      "/exec -oc ${slackSetupScript}"
       "/bar hide nicklist"
     ]
     ++ lib.optionals cfg.matrix.enable [
-      ''/exec -oc -sh 'read -r url < "${matrixUrlPath}"; read -r user < "${matrixUserPath}"; printf "/matrix server add myserver %s\n/set matrix-rust.server.myserver.username %s\n/set matrix-rust.server.myserver.password %s\n/matrix connect myserver\n" "$url" "$user" "''${sec.data.matrix_password}"' ''
-    ]
-    ++ [
-      "/vimode bind_keys"
+      # Matrix commands via single exec to ensure sequencing
+      "/exec -oc ${matrixSetupScript}"
     ]
     ++ (map (s: "/set ${s.key} \"${s.value}\"") flattenedSettings)
   );
@@ -263,7 +276,8 @@ in
         pkgs.python3
       ]
       ++ cfg.additionalScripts;
-      command = "${lib.getExe cfg.package} -r '${weechatInitCommands}'";
+      # Don't use -r flag - init commands are already in the package via weechatInit
+      command = "${lib.getExe cfg.package}";
     };
   };
 }

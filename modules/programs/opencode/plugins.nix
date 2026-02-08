@@ -1,12 +1,13 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 {
   config.jvf.programs.opencode.settings.plugin = [
-    "opencode-antigravity-auth@1.4.3"
-    "oh-my-opencode@3.3.1:"
-    "@tarquinen/opencode-dcp@1.2.8"
+    "opencode-antigravity-auth@1.4.6"
+    "oh-my-opencode@3.4.0:"
+    "@tarquinen/opencode-dcp@2.0.2"
   ];
 
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
@@ -146,7 +147,7 @@
       commands = false;
       skills = false;
       agents = false;
-      hooks = false;
+      hooks = true;
     };
     google_auth = false;
     categories = {
