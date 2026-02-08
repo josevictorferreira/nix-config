@@ -64,15 +64,13 @@ in
 
   imports = builtins.attrValues availableHardware;
 
-  config = {
-    jvf.hardware = mkHardwareEnables;
+  config = lib.mkMerge [
+    {
+      jvf.hardware = mkHardwareEnables;
 
-    environment.systemPackages = lib.optionals (!isDarwin) [
-      pkgs.openrgb-with-all-plugins
-    ];
-
-    services.udev.packages = lib.optionals (!isDarwin) [
-      pkgs.openrgb-with-all-plugins
-    ];
-  };
+      environment.systemPackages = lib.optionals (!isDarwin) [
+        pkgs.openrgb-with-all-plugins
+      ];
+    }
+  ];
 }

@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -34,17 +35,11 @@ let
           rustPlatform.bindgenHook
         ];
 
-        buildInputs =
-          with pkgs;
-          [
-            openssl
-            weechat
-            sqlite
-          ]
-          ++ lib.optionals pkgs.stdenv.isDarwin [
-            darwin.apple_sdk.frameworks.Security
-            darwin.apple_sdk.frameworks.SystemConfiguration
-          ];
+        buildInputs = with pkgs; [
+          openssl
+          weechat
+          sqlite
+        ];
 
         # Plugin outputs libmatrix.so
         postInstall = ''
@@ -113,15 +108,13 @@ let
   flattenSettings =
     prefix: attrs:
     lib.concatLists (
-      lib.mapAttrsToList
-        (
-          name: value:
-          let
-            key = if prefix == "" then name else "${prefix}.${name}";
-          in
-          if lib.isAttrs value then flattenSettings key value else [{ inherit key value; }]
-        )
-        attrs
+      lib.mapAttrsToList (
+        name: value:
+        let
+          key = if prefix == "" then name else "${prefix}.${name}";
+        in
+        if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
+      ) attrs
     );
 
   flattenedSettings = flattenSettings "" weechatSettings;
