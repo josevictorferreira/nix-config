@@ -46,8 +46,6 @@ let
 
     git_branch = {
       symbol = "🌱 ";
-      truncation_length = 4;
-      truncation_symbol = "";
     };
 
     status = {
