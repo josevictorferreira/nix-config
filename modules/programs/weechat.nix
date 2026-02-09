@@ -67,7 +67,7 @@ let
         status.items = "[time],[buffer_last_number],buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion";
         buflist = {
           position = "left";
-          size_max = "20";
+          size_max = "24";
         };
       };
       look = {
@@ -90,6 +90,10 @@ let
         chat_highlight = "*16";
         chat_highlight_bg = "9";
       };
+    };
+    buflist.look = {
+      sort = "plugin,number";
+      add_newline = "on";
     };
     plugins.var.python = {
       slack = {
