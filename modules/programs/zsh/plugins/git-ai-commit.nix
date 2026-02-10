@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  model = "google/gemini-2.5-flash-lite";
+  model = "x-ai/grok-4.1-fast";
   prompt = ''
     # GIT COMMIT MESSAGE
 
