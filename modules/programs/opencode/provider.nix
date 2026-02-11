@@ -42,6 +42,9 @@
         "MiniMax-M2.1" = {
           name = "Minimax M2.1";
         };
+        "MiniMax-M2.5" = {
+          name = "Minimax M2.5";
+        };
       };
     };
 
@@ -55,12 +58,15 @@
     };
 
     zai-coding-plan = {
-      npm = "@ai-sdk/anthropic";
+      npm = "@ai-sdk/openai-compatible";
       options = {
-        baseURL = "https://api.z.ai/api/anthropic/v1";
+        baseURL = "https://api.z.ai/api/coding/paas/v4";
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {
+        "glm-5" = {
+          name = "GLM-5";
+        };
         "glm-4.7" = {
           name = "GLM-4.7";
           variants = {
