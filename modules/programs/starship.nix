@@ -1,10 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  options,
-  system,
-  ...
+{ config
+, lib
+, pkgs
+, options
+, system
+, ...
 }:
 
 let

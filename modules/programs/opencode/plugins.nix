@@ -1,11 +1,12 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 {
   config.jvf.programs.opencode.settings.plugin = [
     "opencode-antigravity-auth@1.4.6"
-    "oh-my-opencode@3.4.0:"
+    "oh-my-opencode@3.5.2:"
     "@tarquinen/opencode-dcp@2.0.2"
   ];
 
