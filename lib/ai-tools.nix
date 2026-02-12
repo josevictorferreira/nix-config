@@ -103,162 +103,252 @@ let
     lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue perms);
 
   mkAgentModule =
-    { name
-    , model ? ""
-    , mode ? "primary"
-    , temperature ? null
-    , permission ? { }
-    , description ? ""
-    , prompt ? ""
-    , tags ? [ ]
-    , tools ? [ ]
-    , disabledTools ? [ ]
-    ,
-    }:
-    {
-      options = {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
+    args:
+    let
+      newApi = args ? agentOptions;
+    in
+    if newApi then
+      let
+        programs = args.programs or [
+          "opencode"
+          "claudecode"
+          "droid"
+          "gemini"
+        ];
+        agentOptions = args.agentOptions;
+        agentName =
+          if agentOptions ? name then agentOptions.name else throw "mkAgentModule: agentOptions.name is required";
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption agentName) // {
+            default = true;
+          };
         };
-        tags = lib.mkOption {
-          type = lib.types.listOf (lib.types.enum toolTags);
-          default = tags;
-          description = "Capability tags for ${name}";
-          example = [
-            "explorer"
-            "documentation"
-          ];
+        config = lib.mkMerge (
+          map (program: { jvf.programs.${program}.agents.${agentName} = agentOptions; }) programs
+        );
+      }
+    else
+      let
+        name = args.name;
+        model = args.model or "";
+        mode = args.mode or "primary";
+        temperature = args.temperature or null;
+        permission = args.permission or { };
+        description = args.description or "";
+        prompt = args.prompt or "";
+        tags = args.tags or [ ];
+        tools = args.tools or [ ];
+        disabledTools = args.disabledTools or [ ];
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+          tags = lib.mkOption {
+            type = lib.types.listOf (lib.types.enum toolTags);
+            default = tags;
+            description = "Capability tags for ${name}";
+            example = [
+              "explorer"
+              "documentation"
+            ];
+          };
+        };
+        config = {
+          jvf.programs.opencode.agents.${name} = {
+            inherit
+              name
+              mode
+              model
+              temperature
+              permission
+              description
+              prompt
+              tags
+              tools
+              disabledTools
+              ;
+          };
+          jvf.programs.droid.agents.${name} = {
+            inherit
+              name
+              mode
+              model
+              temperature
+              permission
+              description
+              prompt
+              tags
+              tools
+              disabledTools
+              ;
+          };
+          jvf.programs.claudecode.agents.${name} = {
+            inherit
+              name
+              mode
+              model
+              temperature
+              permission
+              description
+              prompt
+              tags
+              tools
+              disabledTools
+              ;
+          };
+          jvf.programs.gemini.agents.${name} = {
+            inherit
+              name
+              mode
+              model
+              temperature
+              permission
+              description
+              prompt
+              tags
+              tools
+              disabledTools
+              ;
+          };
         };
       };
-      config = {
-        jvf.programs.opencode.agents.${name} = {
-          inherit
-            name
-            mode
-            model
-            temperature
-            permission
-            description
-            prompt
-            tags
-            tools
-            disabledTools
-            ;
-        };
-        jvf.programs.droid.agents.${name} = {
-          inherit
-            name
-            mode
-            model
-            temperature
-            permission
-            description
-            prompt
-            tags
-            tools
-            disabledTools
-            ;
-        };
-        jvf.programs.claudecode.agents.${name} = {
-          inherit
-            name
-            mode
-            model
-            temperature
-            permission
-            description
-            prompt
-            tags
-            tools
-            disabledTools
-            ;
-        };
-        jvf.programs.gemini.agents.${name} = {
-          inherit
-            name
-            mode
-            model
-            temperature
-            permission
-            description
-            prompt
-            tags
-            tools
-            disabledTools
-            ;
-        };
-      };
-    };
 
   mkMcpModule =
-    { name ? "MCP Server"
-    , tags ? [ ]
-    , config ? { }
-    ,
-    }:
-    {
-      options = {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
+    args:
+    let
+      newApi = args ? mcpOptions;
+    in
+    if newApi then
+      let
+        optionName = args.name or "MCP Server";
+        mcpOptions = args.mcpOptions;
+        programs = args.programs or (builtins.attrNames mcpOptions);
+        mcpNames = args.mcpNames or { };
+        mcpNameForProgram = program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
+        mcpOptionsForProgram = program: if builtins.hasAttr program mcpOptions then mcpOptions.${program} else mcpOptions;
+        tags = args.tags or [ ];
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption optionName) // {
+            default = true;
+          };
+          tags = lib.mkOption {
+            type = lib.types.listOf (lib.types.enum toolTags);
+            default = tags;
+            description = "Capability tags for ${optionName}";
+            example = [ "documentation-search" ];
+          };
         };
-        tags = lib.mkOption {
-          type = lib.types.listOf (lib.types.enum toolTags);
-          default = tags;
-          description = "Capability tags for ${name}";
-          example = [ "documentation-search" ];
+        config = lib.mkMerge (
+          map (program: { jvf.programs.${program}.mcps.${mcpNameForProgram program} = mcpOptionsForProgram program; }) programs
+        );
+      }
+    else
+      let
+        name = args.name or "MCP Server";
+        tags = args.tags or [ ];
+        config = args.config or { };
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+          tags = lib.mkOption {
+            type = lib.types.listOf (lib.types.enum toolTags);
+            default = tags;
+            description = "Capability tags for ${name}";
+            example = [ "documentation-search" ];
+          };
         };
+        inherit config;
       };
-      config = config;
-    };
 
   mkCommandModule =
-    { name
-    , description ? ""
-    , agent ? ""
-    , prompt ? ""
-    ,
-    }:
-    {
-      options = {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
+    args:
+    let
+      newApi = args ? commandOptions;
+    in
+    if newApi then
+      let
+        programs = args.programs or [
+          "opencode"
+          "claudecode"
+          "droid"
+          "gemini"
+        ];
+        commandOptions = args.commandOptions;
+        commandName =
+          if args ? name then
+            args.name
+          else if commandOptions ? name then
+            commandOptions.name
+          else
+            throw "mkCommandModule: either name or commandOptions.name is required";
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption commandName) // {
+            default = true;
+          };
+        };
+        config = lib.mkMerge (
+          map (program: { jvf.programs.${program}.commands.${commandName} = commandOptions; }) programs
+        );
+      }
+    else
+      let
+        name = args.name;
+        description = args.description or "";
+        agent = args.agent or "";
+        prompt = args.prompt or "";
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+        };
+        config = {
+          jvf.programs.opencode.commands.${name} = {
+            inherit
+              name
+              description
+              agent
+              prompt
+              ;
+          };
+          jvf.programs.droid.commands.${name} = {
+            inherit
+              name
+              description
+              agent
+              prompt
+              ;
+          };
+          jvf.programs.claudecode.commands.${name} = {
+            inherit
+              name
+              description
+              agent
+              prompt
+              ;
+          };
+          jvf.programs.gemini.commands.${name} = {
+            inherit
+              name
+              description
+              agent
+              prompt
+              ;
+          };
         };
       };
-      config = {
-        jvf.programs.opencode.commands.${name} = {
-          inherit
-            name
-            description
-            agent
-            prompt
-            ;
-        };
-        jvf.programs.droid.commands.${name} = {
-          inherit
-            name
-            description
-            agent
-            prompt
-            ;
-        };
-        jvf.programs.claudecode.commands.${name} = {
-          inherit
-            name
-            description
-            agent
-            prompt
-            ;
-        };
-        jvf.programs.gemini.commands.${name} = {
-          inherit
-            name
-            description
-            agent
-            prompt
-            ;
-        };
-      };
-    };
 
   findToolsByTags =
     mcpConfigs: tags:

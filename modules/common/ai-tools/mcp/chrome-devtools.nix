@@ -15,19 +15,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "chrome-devtools";
     tags = [ "browser" ];
-    config = {
-      jvf.aiTools.skills."browser-debug-tools".mcp = {
-        command = npx;
-        args = [
-          "-y"
-          "chrome-devtools-mcp@latest"
-          "--headless=true"
-          "--isolated=true"
-          "--executablePath=${defaultBrowser}"
-        ];
-      };
-
-      jvf.programs.opencode.mcps."chrome-devtools" = {
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [
@@ -40,7 +29,7 @@ let
         ];
       };
 
-      jvf.programs.claudecode.mcps."chrome-devtools" = {
+      claudecode = {
         type = "stdio";
         command = "npx";
         args = [
@@ -52,7 +41,7 @@ let
         ];
       };
 
-      jvf.programs.droid.mcps."chrome-devtools" = {
+      droid = {
         type = "stdio";
         command = "npx";
         args = [
@@ -69,5 +58,16 @@ in
 {
   options.jvf.aiTools.mcp."chrome-devtools" = mcpDef.options;
 
-  config = lib.mkIf cfg.enable mcpDef.config;
+  config = lib.mkIf cfg.enable (mcpDef.config // {
+    jvf.aiTools.skills."browser-debug-tools".mcp = {
+      command = npx;
+      args = [
+        "-y"
+        "chrome-devtools-mcp@latest"
+        "--headless=true"
+        "--isolated=true"
+        "--executablePath=${defaultBrowser}"
+      ];
+    };
+  });
 }

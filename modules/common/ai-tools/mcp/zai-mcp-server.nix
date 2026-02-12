@@ -10,8 +10,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "zai-mcp-server";
     tags = [ "explorer" ];
-    config = {
-      jvf.programs.opencode.mcps."zai-mcp-server" = {
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [
@@ -25,7 +25,7 @@ let
         };
       };
 
-      jvf.programs.claudecode.mcps."zai-mcp-server" = {
+      claudecode = {
         type = "stdio";
         command = "${lib.getExe' pkgs.nodejs "npx"}";
         args = [
@@ -38,7 +38,7 @@ let
         };
       };
 
-      jvf.programs.droid.mcps."zai-mcp-server" = {
+      droid = {
         type = "stdio";
         command = "${lib.getExe' pkgs.nodejs "npx"}";
         args = [

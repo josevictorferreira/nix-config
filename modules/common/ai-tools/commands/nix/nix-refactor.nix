@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
   cfg = config.jvf.aiTools.commands."nix-refactor";
@@ -199,16 +199,12 @@ let
         ```
     '';
   };
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = "nix-refactor";
+    inherit commandOptions;
+  };
 in
 {
-  options.jvf.aiTools.commands."nix-refactor" = {
-    enable = (lib.mkEnableOption "Enable the refactor command") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."nix-refactor" = commandOptions;
-    jvf.programs.claudecode.commands."nix-refactor" = commandOptions;
-  };
+  options.jvf.aiTools.commands."nix-refactor" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

@@ -9,8 +9,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "web-search-prime";
     tags = [ "explorer" ];
-    config = {
-      jvf.programs.opencode.mcps."web-search-prime" = {
+    mcpOptions = {
+      opencode = {
         type = "remote";
         enabled = true;
         url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
@@ -19,7 +19,7 @@ let
         };
       };
 
-      jvf.programs.claudecode.mcps."web-search-prime" = {
+      claudecode = {
         type = "http";
         url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
         headers = {
@@ -27,7 +27,7 @@ let
         };
       };
 
-      jvf.programs.droid.mcps."web-search-prime" = {
+      droid = {
         type = "http";
         url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
         headers = {

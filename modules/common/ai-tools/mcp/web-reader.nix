@@ -9,8 +9,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "web-reader";
     tags = [ "explorer" ];
-    config = {
-      jvf.programs.opencode.mcps."web-reader" = {
+    mcpOptions = {
+      opencode = {
         type = "remote";
         enabled = true;
         url = "https://api.z.ai/api/mcp/web_reader/mcp";
@@ -19,7 +19,7 @@ let
         };
       };
 
-      jvf.programs.claudecode.mcps."web-reader" = {
+      claudecode = {
         type = "http";
         url = "https://api.z.ai/api/mcp/web_reader/mcp";
         headers = {
@@ -27,7 +27,7 @@ let
         };
       };
 
-      jvf.programs.droid.mcps."web-reader" = {
+      droid = {
         type = "http";
         url = "https://api.z.ai/api/mcp/web_reader/mcp";
         headers = {

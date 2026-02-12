@@ -154,16 +154,9 @@ let
       Then call the `skill` tool with the matching name **before** making edits.
     '';
   };
+  agentDef = inputs.lib.aiTools.mkAgentModule { inherit agentOptions; };
 in
 {
-  options.jvf.aiTools.agents."${agentName}" = {
-    enable = (lib.mkEnableOption "Enable the ${agentFullName} agent") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.agents."${agentName}" = agentOptions;
-    jvf.programs.claudecode.agents."${agentName}" = agentOptions;
-  };
+  options.jvf.aiTools.agents."${agentName}" = agentDef.options;
+  config = lib.mkIf cfg.enable agentDef.config;
 }

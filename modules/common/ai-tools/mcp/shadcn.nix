@@ -11,8 +11,8 @@ let
     tags = [
       "frontend"
     ];
-    config = {
-      jvf.programs.opencode.mcps."shadcn" = {
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [
@@ -22,7 +22,7 @@ let
           "mcp"
         ];
       };
-      jvf.programs.claudecode.mcps."shadcn" = {
+      claudecode = {
         type = "stdio";
         command = "${pkgs.bun}/bin/bunx";
         args = [

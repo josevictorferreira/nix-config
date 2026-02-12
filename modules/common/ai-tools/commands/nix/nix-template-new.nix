@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
   cfg = config.jvf.aiTools.commands."nix-template-new";
@@ -259,16 +259,12 @@ let
       ```
     '';
   };
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = "nix-template-new";
+    inherit commandOptions;
+  };
 in
 {
-  options.jvf.aiTools.commands."nix-template-new" = {
-    enable = (lib.mkEnableOption "Enable the nix-template-new command") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."nix-template-new" = commandOptions;
-    jvf.programs.claudecode.commands."nix-template-new" = commandOptions;
-  };
+  options.jvf.aiTools.commands."nix-template-new" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

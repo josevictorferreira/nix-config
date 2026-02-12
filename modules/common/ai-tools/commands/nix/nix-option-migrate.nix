@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 
 let
   cfg = config.jvf.aiTools.commands."nix-option-migrate";
@@ -51,16 +51,12 @@ let
       Ensure zero-disruption migrations that preserve all existing functionality.
     '';
   };
+  commandDef = inputs.lib.aiTools.mkCommandModule {
+    name = "nix-option-migrate";
+    inherit commandOptions;
+  };
 in
 {
-  options.jvf.aiTools.commands."nix-option-migrate" = {
-    enable = (lib.mkEnableOption "Enable the nix-option-migrate command") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.commands."nix-option-migrate" = commandOptions;
-    jvf.programs.claudecode.commands."nix-option-migrate" = commandOptions;
-  };
+  options.jvf.aiTools.commands."nix-option-migrate" = commandDef.options;
+  config = lib.mkIf cfg.enable commandDef.config;
 }

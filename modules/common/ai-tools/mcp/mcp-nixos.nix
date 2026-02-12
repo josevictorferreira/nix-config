@@ -10,13 +10,17 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "mcp-nixos";
     tags = [ "nix" ];
-    config = {
-      jvf.programs.opencode.mcps."mcp-nixos" = {
+    mcpNames = {
+      opencode = "mcp-nixos";
+      claudecode = "nixos-mcp";
+    };
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [ (lib.getExe pkgs.mcp-nixos) ];
       };
-      jvf.programs.claudecode.mcps."nixos-mcp" = {
+      claudecode = {
         type = "stdio";
         enabled = true;
         command = lib.getExe pkgs.mcp-nixos;

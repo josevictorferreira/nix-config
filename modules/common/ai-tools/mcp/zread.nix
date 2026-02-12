@@ -9,8 +9,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "zread";
     tags = [ "explorer" ];
-    config = {
-      jvf.programs.opencode.mcps."zread" = {
+    mcpOptions = {
+      opencode = {
         type = "remote";
         enabled = true;
         url = "https://api.z.ai/api/mcp/zread/mcp";
@@ -19,7 +19,7 @@ let
         };
       };
 
-      jvf.programs.claudecode.mcps."zread" = {
+      claudecode = {
         type = "http";
         url = "https://api.z.ai/api/mcp/zread/mcp";
         headers = {
@@ -27,7 +27,7 @@ let
         };
       };
 
-      jvf.programs.droid.mcps."zread" = {
+      droid = {
         type = "http";
         url = "https://api.z.ai/api/mcp/zread/mcp";
         headers = {

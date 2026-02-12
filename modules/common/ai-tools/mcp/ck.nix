@@ -9,8 +9,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "ck";
     tags = [ "explorer" ];
-    config = {
-      jvf.programs.opencode.mcps."ck" = {
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [
@@ -19,7 +19,7 @@ let
         ];
       };
 
-      jvf.programs.claudecode.mcps."ck" = {
+      claudecode = {
         type = "stdio";
         command = "${lib.getExe config.jvf.programs."ck-search".package}";
         args = [
@@ -27,7 +27,7 @@ let
         ];
       };
 
-      jvf.programs.droid.mcps."ck" = {
+      droid = {
         type = "stdio";
         command = "${lib.getExe config.jvf.programs."ck-search".package}";
         args = [

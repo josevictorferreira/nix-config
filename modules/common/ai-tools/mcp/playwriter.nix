@@ -11,8 +11,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "playwriter";
     tags = [ ];
-    config = {
-      jvf.programs.opencode.mcps."playwriter" = {
+    mcpOptions = {
+      opencode = {
         type = "local";
         enabled = true;
         command = [
@@ -20,7 +20,7 @@ let
           "playwriter@latest"
         ];
       };
-      jvf.programs.claudecode.mcps."playwriter" = {
+      claudecode = {
         type = "stdio";
         command = (lib.getExe' pkgs.nodejs "npx");
         args = [

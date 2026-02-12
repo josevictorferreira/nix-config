@@ -9,8 +9,8 @@ let
   mcpDef = inputs.lib.aiTools.mkMcpModule {
     name = "context7";
     tags = [ "documentation" ];
-    config = {
-      jvf.programs.opencode.mcps."context7" = {
+    mcpOptions = {
+      opencode = {
         enabled = true;
         type = "local";
         command = [
@@ -21,7 +21,7 @@ let
           "{env:CONTEXT7_API_KEY}"
         ];
       };
-      jvf.programs.claudecode.mcps."context7" = {
+      claudecode = {
         type = "stdio";
         command = "npx";
         args = [
@@ -31,7 +31,7 @@ let
           "{env:CONTEXT7_API_KEY}"
         ];
       };
-      jvf.programs.droid.mcps."context7" = {
+      droid = {
         type = "stdio";
         command = "npx";
         args = [
