@@ -7,7 +7,7 @@ let
   skillName = "patching-files";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     allowed-tools = [
       "Read"
       "Bash"
@@ -188,6 +188,7 @@ let
       ```
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

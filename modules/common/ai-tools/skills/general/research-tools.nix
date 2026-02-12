@@ -6,7 +6,7 @@
 let
   skillName = "research-tools";
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     name = skillName;
     description = "External research via Context7 (docs), Grep.app (code examples), and Exa (web search). Loads MCPs on-demand via skill_mcp.";
     licence = "MIT";
@@ -68,6 +68,7 @@ let
       | `tool_name="context7_get-library-docs"` | `tool_name="query-docs"` |
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

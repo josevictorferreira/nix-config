@@ -7,7 +7,7 @@ let
   skillName = "developing-containers";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     allowed-tools = [
       "Read"
       "Grep"
@@ -246,6 +246,7 @@ let
 
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

@@ -7,7 +7,7 @@ let
   skillName = "auditing-security";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     allowed-tools = [
       "Read"
       "Grep"
@@ -308,6 +308,7 @@ let
       Conduct thorough, systematic security assessments that prioritize critical risks and provide clear, actionable remediation guidance to improve overall security posture.
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

@@ -1079,18 +1079,9 @@ let
       - Background jobs guide: `references/background_jobs.md` (detailed examples and advanced patterns)
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
-  options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillFullName} skill") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.skills."${skillName}" = skillOptions;
-    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
-    jvf.programs.droid.skills."${skillName}" = skillOptions;
-    jvf.programs.gemini.skills."${skillName}" = skillOptions;
-  };
+  options.jvf.aiTools.skills."${skillName}" = skillDef.options;
+  config = lib.mkIf cfg.enable skillDef.config;
 }

@@ -8,6 +8,16 @@
 let
   json = pkgs.formats.json { };
   cfg = config.jvf.programs.cursor;
+  filteredSkills = lib.filterAttrs
+    (
+      _: skill:
+        !(
+          builtins.isAttrs skill
+          && skill ? mcp
+          && skill.mcp != { }
+        )
+    )
+    cfg.skills;
 in
 {
   options.jvf.programs.cursor = {
@@ -58,7 +68,21 @@ in
       configs = lib.mkMerge [
         (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
         (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
-        (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
+        (inputs.lib.aiTools.mkSkillsConfigs filteredSkills)
+        {
+          "mcp.json" = {
+            mcpServers = cfg.mcps;
+          };
+          "settings.json" = cfg.settings;
+        }
+        (lib.optionalAttrs (cfg.baseRules != "") {
+          "rules/base.mdc" = ''
+            ---
+            alwaysApply: true
+            ---
+            ${cfg.baseRules}
+          '';
+        })
       ];
     };
   });

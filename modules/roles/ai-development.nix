@@ -14,6 +14,7 @@ in
     ../programs/ck-search.nix
     ../programs/opencode
     ../programs/claudecode.nix
+    ../programs/cursor.nix
     ../programs/droid.nix
     ../programs/gemini.nix
     ../services/llm-proxy.nix
@@ -37,10 +38,18 @@ in
     jvf.programs."ck-search".enable = true;
     jvf.programs.opencode.enable = true;
     jvf.programs.claudecode.enable = true;
+    jvf.programs.cursor.enable = true;
     jvf.programs.droid.enable = true;
     jvf.programs.gemini.enable = true;
     jvf.programs.gemini.antigravity.enable = true;
     jvf.services.llm-proxy.enable = false;
+    jvf.programs.cursor = {
+      baseRules = config.jvf.aiTools.baseRule.content;
+      agents = config.jvf.programs.opencode.agents;
+      commands = config.jvf.programs.opencode.commands;
+      skills = config.jvf.programs.opencode.skills;
+      mcps = config.jvf.programs.claudecode.mcps;
+    };
 
     users.users."${cfg.username}".packages = [
       pkgs.code-cursor

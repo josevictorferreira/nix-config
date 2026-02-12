@@ -3,7 +3,7 @@ let
   skillName = "creating-nix-modules";
   skillFullName = inputs.lib.strings.kebabToHuman skillName;
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     allowed-tools = [ "Read" "Grep" "Glob" "Write" ];
     name = skillName;
     description = "NixOS module creation, organization, and options design specialist";
@@ -266,6 +266,7 @@ let
       - Test module behavior across different systems and use cases
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

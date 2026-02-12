@@ -7,7 +7,7 @@
 let
   skillName = "grafana";
   cfg = config.jvf.aiTools.skills."\${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     name = skillName;
     description = "Grafana MCP for searching dashboards, querying Prometheus/Loki, and managing incidents/alerts.";
     mcp = {
@@ -164,6 +164,7 @@ let
       triggers = "grafana, dashboard, prometheus, loki, query, metrics, logs, alert, incident, oncall, annotation, pyroscope, sift, asserts";
     };
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."\${skillName}" = skillDef.options;

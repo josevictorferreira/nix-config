@@ -6,7 +6,7 @@
 let
   skillName = "vision-tools";
   cfg = config.jvf.aiTools.skills."${skillName}";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     name = skillName;
     description = "Visual analysis related skills. Image analysis, video understanding, OCR, UI screenshots to code, error diagnosis, technical diagrams, data visualization, and UI diff checking.";
     licence = "MIT";
@@ -157,6 +157,7 @@ let
       | Using wrong tool for task | Use most specific tool available |
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

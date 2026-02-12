@@ -1,7 +1,8 @@
 { pkgs, ... }:
 
 let
-  model = "x-ai/grok-4.1-fast";
+  model = "google/gemini-2.5-flash-lite";
+  maxCharacters = "2100000";
   prompt = ''
     # GIT COMMIT MESSAGE
 
@@ -116,13 +117,13 @@ pkgs.stdenv.mkDerivation {
 
     function _generate_commit_message() {
       local MODEL_NAME="${model}"
-      local MAX_CHARS=7200000
+      local MAX_CHARS=${maxCharacters}
       local OPENROUTER_API_KEY_COMMIT
       local STAGED_CHANGES
       local README_CONTENT=""
       local RECENT_COMMITS=""
       local PROMPT
-      local PROMPT_TRUNCATED
+      loca PROMPT_TRUNCATED
       local PAYLOAD
       local RESPONSE
       local RESPONSE_BODY

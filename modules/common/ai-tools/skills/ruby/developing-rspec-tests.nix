@@ -1272,18 +1272,9 @@ let
       Load these references when you need detailed examples or are unsure about a specific pattern.
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
-  options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillFullName} skill") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.skills."${skillName}" = skillOptions;
-    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
-    jvf.programs.droid.skills."${skillName}" = skillOptions;
-    jvf.programs.gemini.skills."${skillName}" = skillOptions;
-  };
+  options.jvf.aiTools.skills."${skillName}" = skillDef.options;
+  config = lib.mkIf cfg.enable skillDef.config;
 }

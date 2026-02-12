@@ -14,54 +14,79 @@ let
   ];
 
   mkSkillModule =
-    { name
-    , description ? ""
-    , prompt ? ""
-    , model ? ""
-    , tags ? [ ]
-    , allowed-tools ? [ ]
-    , mcp ? { }
-    , references ? { }
-    , scripts ? { }
-    , licence ? ""
-    , metadata ? { }
-    ,
-    }:
+    args:
     let
-      skillDefinition = {
-        inherit
-          name
-          description
-          model
-          prompt
-          mcp
-          tags
-          references
-          scripts
-          licence
-          metadata
-          ;
-        "allowed-tools" = allowed-tools;
-      };
+      newApi = args ? skillOptions;
     in
-    {
-      options = {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
+    if newApi then
+      let
+        programs = args.programs or [
+          "opencode"
+          "claudecode"
+          "droid"
+          "gemini"
+        ];
+        skillOptions = args.skillOptions;
+        skillName =
+          if skillOptions ? name then skillOptions.name else throw "mkSkillModule: skillOptions.name is required";
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption skillName) // {
+            default = true;
+          };
         };
-        tags = lib.mkOption {
-          type = lib.types.listOf (lib.types.enum toolTags);
-          default = tags;
-          description = "Capability tags for ${name}";
+        config = lib.mkMerge (
+          map (program: { jvf.programs.${program}.skills.${skillName} = skillOptions; }) programs
+        );
+      }
+    else
+      let
+        name = args.name;
+        description = args.description or "";
+        prompt = args.prompt or "";
+        model = args.model or "";
+        tags = args.tags or [ ];
+        allowed-tools = args.allowed-tools or [ ];
+        mcp = args.mcp or { };
+        references = args.references or { };
+        scripts = args.scripts or { };
+        licence = args.licence or "";
+        metadata = args.metadata or { };
+        skillDefinition = {
+          inherit
+            name
+            description
+            model
+            prompt
+            mcp
+            tags
+            references
+            scripts
+            licence
+            metadata
+            ;
+          "allowed-tools" = allowed-tools;
+        };
+      in
+      {
+        options = {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+          tags = lib.mkOption {
+            type = lib.types.listOf (lib.types.enum toolTags);
+            default = tags;
+            description = "Capability tags for ${name}";
+          };
+        };
+        config = {
+          jvf.programs.opencode.skills.${name} = skillDefinition;
+          jvf.programs.claudecode.skills.${name} = skillDefinition;
+          jvf.programs.droid.skills.${name} = skillDefinition;
+          jvf.programs.gemini.skills.${name} = skillDefinition;
         };
       };
-      config = {
-        jvf.programs.opencode.skills.${name} = skillDefinition;
-        jvf.programs.claudecode.skills.${name} = skillDefinition;
-        jvf.programs.droid.skills.${name} = skillDefinition;
-        jvf.programs.gemini.skills.${name} = skillDefinition;
-      };
-    };
 
   formatPermissions =
     perms: indent:
@@ -326,8 +351,10 @@ let
         fmtTool = tool: if lib.hasPrefix "@" tool then tool else "@${tool}";
 
         headerLines = [
+          "name: \"${value.name or "unknown"}\""
           "description: \"${value.description or (value.name or "")}\""
         ]
+        ++ lib.optional ((builtins.hasAttr "model" value) && value.model != "") "model: ${value.model}"
         ++
         lib.optional (value ? alwaysApply)
           "alwaysApply: ${if value.alwaysApply then "true" else "false"}"
@@ -351,7 +378,7 @@ let
     mcpConfigs: prefix: attrset:
     lib.mapAttrs'
       (name: value: {
-        name = "${prefix}/${name}.mdc";
+        name = "${prefix}/${name}.md";
         value = toCursorMarkdownPrompt mcpConfigs value;
       })
       attrset;

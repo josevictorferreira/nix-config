@@ -81,18 +81,9 @@ let
       If the user asks for the CLI command to run locally instead of having the agent perform it, refer to [references/cli_guide.md](references/cli_guide.md).
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
-  options.jvf.aiTools.skills."${skillName}" = {
-    enable = (lib.mkEnableOption "Enable the ${skillFullName} skill") // {
-      default = true;
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    jvf.programs.opencode.skills."${skillName}" = skillOptions;
-    jvf.programs.claudecode.skills."${skillName}" = skillOptions;
-    jvf.programs.droid.skills.${skillName} = skillOptions;
-    jvf.programs.gemini.skills.${skillName} = skillOptions;
-  };
+  options.jvf.aiTools.skills."${skillName}" = skillDef.options;
+  config = lib.mkIf cfg.enable skillDef.config;
 }

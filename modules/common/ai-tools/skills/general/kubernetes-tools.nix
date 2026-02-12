@@ -9,7 +9,7 @@ let
   skillName = "kubernetes-tools";
   cfg = config.jvf.aiTools.skills."${skillName}";
   npx = lib.getExe' pkgs.nodejs "npx";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     name = skillName;
     description = "Kubernetes MCP server for managing Kubernetes and OpenShift clusters. Interact with pods, deployments, services, namespaces, events, Helm charts, and any Kubernetes resource via direct API calls.";
     licence = "MIT";
@@ -257,6 +257,7 @@ let
       | `context` parameter for single cluster | Omit `context` when using default |
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;

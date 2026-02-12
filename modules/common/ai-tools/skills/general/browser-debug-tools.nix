@@ -11,7 +11,7 @@ let
   isDarwin = builtins.match ".*-darwin" system != null;
   defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
   npx = lib.getExe' pkgs.nodejs "npx";
-  skillDef = inputs.lib.aiTools.mkSkillModule {
+  skillOptions = {
     name = skillName;
     description = "Browser automation and debugging via Chrome DevTools Protocol and Playwright. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
     licence = "MIT";
@@ -251,6 +251,7 @@ let
       | `tool_name="playwriter_execute"` | `tool_name="execute"` |
     '';
   };
+  skillDef = inputs.lib.aiTools.mkSkillModule { inherit skillOptions; };
 in
 {
   options.jvf.aiTools.skills."${skillName}" = skillDef.options;
