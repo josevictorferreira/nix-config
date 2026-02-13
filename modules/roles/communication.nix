@@ -10,7 +10,7 @@ let
 in
 {
   imports = [
-    ../programs/weechat.nix
+    ../programs/weechat
   ];
 
   options.jvf.roles.communication = {
