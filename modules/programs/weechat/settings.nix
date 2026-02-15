@@ -5,10 +5,12 @@
       status.items = "[time],[buffer_last_number],buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion";
       buflist = {
         position = "left";
-        size_max = "24";
+        size = "0";
+        size_max = "40";
       };
     };
     look = {
+      mouse = "on";
       color_nick_offline = "yes";
       buffer_time_format = "%H:%M";
       prefix_align = "none";
@@ -30,8 +32,11 @@
     };
   };
   buflist.look = {
-    sort = "plugin,number";
+    sort = "plugin,name";
     add_newline = "on";
+    mouse_jump_visited_buffer = "on";
+    mouse_move_buffer = "on";
+    mouse_wheel = "on";
   };
   plugins.var.python = {
     slack = {

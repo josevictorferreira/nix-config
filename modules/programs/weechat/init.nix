@@ -1,23 +1,23 @@
-{ lib
-, pkgs
-, cfg
-, settings
-, secretPaths
-,
+{
+  lib,
+  pkgs,
+  cfg,
+  settings,
+  secretPaths,
+  filterCommands ? [ ],
+  buflistFilters ? [ ],
 }:
 let
   flattenSettings =
     prefix: attrs:
     lib.concatLists (
-      lib.mapAttrsToList
-        (
-          name: value:
-          let
-            key = if prefix == "" then name else "${prefix}.${name}";
-          in
-          if lib.isAttrs value then flattenSettings key value else [{ inherit key value; }]
-        )
-        attrs
+      lib.mapAttrsToList (
+        name: value:
+        let
+          key = if prefix == "" then name else "${prefix}.${name}";
+        in
+        if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
+      ) attrs
     );
 
   flattenedSettings = flattenSettings "" settings;
@@ -39,6 +39,7 @@ lib.concatStringsSep "\n" (
     "/exec -oc ${slackSetupScript}"
     "/bar hide nicklist"
   ]
+  ++ filterCommands
   ++ lib.optionals cfg.matrix.enable [
     "/exec -oc ${matrixSetupScript}"
   ]

@@ -1,12 +1,13 @@
-{ lib
-, ...
+{
+  lib,
+  ...
 }:
 
 {
   config.jvf.programs.opencode.settings.plugin = [
-    "opencode-antigravity-auth@1.4.6"
-    "oh-my-opencode@3.5.3:"
-    "@tarquinen/opencode-dcp@2.0.2"
+    "opencode-antigravity-auth@1.5.1"
+    "oh-my-opencode@3.5.5"
+    "@tarquinen/opencode-dcp@2.1.3"
   ];
 
   config.jvf.programs.opencode.ohMyOpenCodeSettings = {
@@ -28,7 +29,7 @@
         variant = "medium";
       };
       librarian = {
-        model = "minimax/MiniMax-M2.1";
+        model = "minimax/MiniMax-M2.5";
         temperature = 0.3;
         permission = {
           skill = {
@@ -40,7 +41,7 @@
         };
       };
       explore = {
-        model = "github-copilot/grok-code-fast-1";
+        model = "openrouter/qwen/qwen3-coder-next";
         permission = {
           skill = {
             "*" = {
@@ -100,7 +101,7 @@
         model = "github-copilot/gpt-5.2";
       };
       frontend-ui-ux-engineer = {
-        model = "minimax/MiniMax-M2.1";
+        model = "minimax/MiniMax-M2.5";
         permission = {
           skill = {
             "*" = {
@@ -151,7 +152,7 @@
     google_auth = false;
     categories = {
       visual-engineering = {
-        model = "github-copilot/gemini-3-pro-preview";
+        model = "github-copilot/gemini-3-flash-preview";
         temperature = 0.7;
       };
       ultrabrain = {
@@ -163,12 +164,12 @@
         temperature = 0.9;
       };
       quick = {
-        model = "zai-coding-plan/glm-4.7";
+        model = "zai-coding-plan/glm-5";
         variant = "fast";
         temperature = 0.3;
       };
       most-capable = {
-        model = "github-copilot/claude-opus-4.5";
+        model = "github-copilot/claude-opus-4.6";
         temperature = 0.1;
       };
       writing = {

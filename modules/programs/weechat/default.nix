@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -14,10 +15,27 @@ let
   weechatSecrets = import ./secrets.nix {
     inherit lib cfg;
   };
+
+  # Hierarchical buflist filters (default: show only parent buffers)
+  # Level 1: Parent buffers only (#Discord, #WhatsApp, slack.team)
+  # Level 2+: Hidden by default (categories, channels, contacts)
+  # Toggle in weechat: /filter toggle <filter_name>
+  buflistFilterCommands = [
+    # Discord: hide nested (categories and channels), keep only #Discord parent
+    ''/filter add buflist_hide_discord_nested * * ^#Discord\..*''
+    # WhatsApp: hide contacts, keep only bridge parent
+    ''/filter add buflist_hide_whatsapp_nested * * ^#WhatsApp.*\..*''
+    # Slack: hide channels, keep only team
+    ''/filter add buflist_hide_slack_channels * * ^slack\.[^.]+\..*''
+  ];
+
+  allFilterCommands = cfg.autohideFilterCommands ++ buflistFilterCommands;
+
   weechatInit = import ./init.nix {
     inherit lib pkgs cfg;
     settings = cfg.settings;
     secretPaths = weechatSecrets.paths;
+    filterCommands = allFilterCommands;
   };
 
   weechatPkg = pkgs.weechat.override {
@@ -66,6 +84,14 @@ in
       type = lib.types.attrs;
       default = defaultSettings;
       description = "Settings written via /set during Weechat init.";
+    };
+
+    autohideFilterCommands = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "/filter add weechat_matrix_discord_categories matrix * * (?i)(^|[[:space:][:punct:]])(category|categories|space|spaces)($|[[:space:][:punct:]])"
+      ];
+      description = "Filter commands executed at startup to auto-hide category/meta buffers.";
     };
 
     matrix = {
