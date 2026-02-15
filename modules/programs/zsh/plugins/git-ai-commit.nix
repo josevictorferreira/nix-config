@@ -123,7 +123,7 @@ pkgs.stdenv.mkDerivation {
       local README_CONTENT=""
       local RECENT_COMMITS=""
       local PROMPT
-      loca PROMPT_TRUNCATED
+      local PROMPT_TRUNCATED
       local PAYLOAD
       local RESPONSE
       local RESPONSE_BODY
