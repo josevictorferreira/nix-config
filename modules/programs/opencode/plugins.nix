@@ -6,7 +6,7 @@
 {
   config.jvf.programs.opencode.settings.plugin = [
     "opencode-antigravity-auth@1.5.1"
-    "oh-my-opencode@3.6.1"
+    "oh-my-opencode@3.7.2"
     "openslimedit@latest"
     "@tarquinen/opencode-dcp@2.1.3"
     "@howaboua/opencode-usage-plugin"
