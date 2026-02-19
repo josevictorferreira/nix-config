@@ -5,7 +5,7 @@
 
 {
   config.jvf.programs.opencode.settings.plugin = [
-    "opencode-antigravity-auth@1.5.1"
+    "opencode-antigravity-auth@1.5.3"
     "oh-my-opencode@3.7.3"
     "openslimedit@latest"
     "@tarquinen/opencode-dcp@2.1.5"
@@ -17,7 +17,6 @@
     agents = {
       sisyphus = {
         model = "kimi-for-coding/k2p5";
-        temperature = 1.0;
         permission = {
           skill = {
             "*" = {
@@ -32,7 +31,6 @@
       };
       librarian = {
         model = "minimax/MiniMax-M2.5";
-        temperature = 0.3;
         permission = {
           skill = {
             "*" = {
@@ -43,7 +41,7 @@
         };
       };
       explore = {
-        model = "openrouter/qwen/qwen3-coder-next";
+        model = "openrouter/stepfun/step-3.5-flash";
         permission = {
           skill = {
             "*" = {
@@ -88,7 +86,7 @@
         };
       };
       momus = {
-        model = "kimi-for-coding/kimi-k2-thinking";
+        model = "kimi-for-coding/k2p5";
         temperature = 1.0;
         permission = {
           skill = {
@@ -155,36 +153,28 @@
     categories = {
       visual-engineering = {
         model = "github-copilot/gemini-3-flash-preview";
-        temperature = 0.7;
       };
       ultrabrain = {
         model = "github-copilot/gpt-5.2";
-        temperature = 0.1;
       };
       artistry = {
         model = "github-copilot/gemini-3-pro-preview";
-        temperature = 0.9;
       };
       quick = {
         model = "zai-coding-plan/glm-5";
         variant = "fast";
-        temperature = 0.3;
       };
       most-capable = {
         model = "github-copilot/claude-opus-4.6";
-        temperature = 0.1;
       };
       writing = {
         model = "kimi-for-coding/kimi-k2-thinking";
-        temperature = 0.5;
       };
       business-logic = {
         model = "github-copilot/gemini-3-flash-preview";
-        temperature = 0.1;
       };
       general = {
         model = "kimi-for-coding/k2p5";
-        temperature = 0.3;
       };
     };
   };
