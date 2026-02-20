@@ -1,6 +1,6 @@
-{ lib
-, pkgs
-,
+{
+  lib,
+  pkgs,
 }:
 let
   weechatMatrixRs =
@@ -93,6 +93,8 @@ in
   scripts = [
     pkgs.weechatScripts.highmon
     pkgs.weechatScripts.colorize_nicks
+    pkgs.weechatScripts.autosort
+    pkgs.weechatScripts.weechat-go
     pkgs.weechatScripts.wee-slack
     pkgs.weechatScripts.url_hint
     pkgs.weechatScripts.multiline
