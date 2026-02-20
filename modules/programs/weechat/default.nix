@@ -1,14 +1,14 @@
-{
-  lib,
-  pkgs,
-  config,
-  username,
-  ...
+{ lib
+, pkgs
+, config
+, username
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;
 
   defaultSettings = import ./settings.nix;
+  defaultExtraCommands = import ./extraCommands.nix;
   defaultPlugins = import ./plugins.nix {
     inherit lib pkgs;
   };
@@ -36,6 +36,7 @@ let
     settings = cfg.settings;
     secretPaths = weechatSecrets.paths;
     filterCommands = allFilterCommands;
+    extraCommands = cfg.extraCommands;
   };
 
   weechatPkg = pkgs.weechat.override {
@@ -84,6 +85,12 @@ in
       type = lib.types.attrs;
       default = defaultSettings;
       description = "Settings written via /set during Weechat init.";
+    };
+
+    extraCommands = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = defaultExtraCommands;
+      description = "Extra Weechat commands executed at startup.";
     };
 
     autohideFilterCommands = lib.mkOption {
