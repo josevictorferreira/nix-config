@@ -158,10 +158,6 @@
           path = ./templates/frontend-bun-vite;
           description = "Frontend template using Bun and Vite.js";
         };
-        monorepo-subtrees = {
-          path = ./templates/monorepo-subtrees;
-          description = "Monorepo helpers for git subtrees (backend/frontend)";
-        };
       };
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
