@@ -32,7 +32,8 @@ let
 
         postInstall = ''
           mkdir -p $out/lib/weechat/plugins
-          cp $out/lib/libmatrix.so $out/lib/weechat/plugins/matrix.so || true
+          cp $out/lib/libmatrix.so $out/lib/weechat/plugins/matrix.so 2>/dev/null || true
+          cp $out/lib/libmatrix.dylib $out/lib/weechat/plugins/matrix.so 2>/dev/null || true
         '';
 
         meta = with lib; {
@@ -96,6 +97,9 @@ in
     pkgs.weechatScripts.url_hint
     pkgs.weechatScripts.multiline
     pkgs.weechatScripts.weechat-notify-send
+    pkgs.weechatScripts.buffer_autoset
+    pkgs.weechatScripts.autosort
+    pkgs.weechatScripts.weechat-grep
     viModeScript
   ];
 }
