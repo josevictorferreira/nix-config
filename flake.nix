@@ -35,25 +35,10 @@
       imports = [
         (inputs.import-tree ./modules/flake)
         (inputs.import-tree ./modules/hosts)
+        (inputs.import-tree ./modules/aspects)
       ];
 
-      perSystem =
-        { system, ... }:
-        let
-          pkgs =
-            import (if builtins.match ".*-darwin" system != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
-              {
-                inherit system;
-                overlays = [ inputs.bun2nix.overlays.default ];
-                config = {
-                  allowUnfree = true;
-                };
-              };
-        in
-        {
-          # Formatter
-          formatter = pkgs.nixpkgs-fmt;
-        };
+      # perSystem (pkgs, formatter, overlays) defined in modules/aspects/overlays.nix
 
       flake =
         let

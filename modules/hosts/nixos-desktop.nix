@@ -1,7 +1,7 @@
 # Dendritic host selector: nixos-desktop
 # Defines flake.nixosConfigurations.nixos-desktop using aspects list.
 # Host-specific settings remain in hosts/nixos-desktop/config.nix.
-{ inputs, ... }:
+{ inputs, self, ... }:
 let
   system = "x86_64-linux";
 
@@ -37,13 +37,11 @@ in
       # Core options
       ../../modules/core/options.nix
 
-      # Legacy aspects (until migrated to dendritic)
-      ../../modules/legacy/_/users/repositories.nix
-      ../../modules/legacy/_/users/wrappers.nix
-      ../../modules/legacy/_/users/default.nix
-      ../../modules/legacy/_/hardware/default.nix
-      ../../modules/legacy/_/system/default.nix
-      ../../modules/legacy/_/roles/default.nix
+      # Dendritic aspect: jvf core (users, hardware, system, roles)
+      self.modules.nixos.core-jvf
+
+      # Dendritic aspect: Hyprland desktop (nixos only)
+      self.modules.nixos.desktop-hyprland
 
       # Host-specific config (last, so it can override)
       ../../hosts/nixos-desktop/config.nix

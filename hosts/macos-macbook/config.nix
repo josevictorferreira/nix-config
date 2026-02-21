@@ -3,12 +3,8 @@
   username,
   host,
   os,
-  inputs,
   ...
 }:
-let
-  inherit (inputs) self;
-in
 
 {
   # Core identity (transitional: fed from specialArgs, consumed by modules via config)
@@ -35,36 +31,7 @@ in
 
   system.primaryUser = username;
 
-  system.defaults = {
-    finder = {
-      AppleShowAllExtensions = true;
-      ShowPathbar = true;
-      FXEnableExtensionChangeWarning = false;
-    };
-    dock = {
-      autohide = true;
-      orientation = "bottom";
-      show-recents = false;
-      tilesize = 48;
-    };
-    NSGlobalDomain = {
-      AppleShowAllExtensions = true;
-      "com.apple.swipescrolldirection" = false;
-      "com.apple.sound.beep.feedback" = 0;
-      NSNavPanelExpandedStateForSaveMode = true;
-      NSNavPanelExpandedStateForSaveMode2 = true;
-    };
-    loginwindow = {
-      GuestEnabled = false;
-    };
-    # Trackpad settings
-    trackpad = {
-      Clicking = true;
-      TrackpadRightClick = true;
-    };
-    # Enable key repeat
-    NSGlobalDomain.ApplePressAndHoldEnabled = false;
-  };
+  # system.defaults and system.keyboard provided by darwin-defaults aspect
 
   environment.systemPackages = with pkgs; [
     m-cli
@@ -84,11 +51,6 @@ in
     nerd-fonts.jetbrains-mono
     nerd-fonts.droid-sans-mono
   ];
-
-  system.keyboard = {
-    enableKeyMapping = true;
-    remapCapsLockToEscape = true;
-  };
 
   jvf.users.${username} = {
     enable = true;

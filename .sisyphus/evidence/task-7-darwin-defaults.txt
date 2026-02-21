@@ -1,0 +1,70 @@
+=== Task 7: darwin-defaults aspect verification ===
+Date: 2026-02-21T18:05:48-03:00
+
+--- nix eval NSGlobalDomain.KeyRepeat ---
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+null
+
+--- nix eval NSGlobalDomain.ApplePressAndHoldEnabled ---
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+false
+
+--- nix eval dock.autohide ---
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+true
+
+--- nix eval finder.AppleShowAllExtensions ---
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+true
+
+--- nix eval keyboard ---
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+{"enableKeyMapping":true,"nonUS":{"remapTilde":false},"remapCapsLockToControl":false,"remapCapsLockToEscape":true,"swapLeftCommandAndLeftAlt":false,"swapLeftCtrlAndFn":false,"userKeyMapping":[{"HIDKeyboardModifierMappingDst":30064771113,"HIDKeyboardModifierMappingSrc":30064771129}]}
+
+--- Aspect file ---
+# Aspect: darwin-defaults (Darwin only)
+# macOS system preferences: Finder, Dock, trackpad, keyboard, global domain.
+{ ... }:
+{
+  flake.modules.darwin.darwin-defaults = {
+    system.defaults = {
+      finder = {
+        AppleShowAllExtensions = true;
+        ShowPathbar = true;
+        FXEnableExtensionChangeWarning = false;
+      };
+      dock = {
+        autohide = true;
+        orientation = "bottom";
+        show-recents = false;
+        tilesize = 48;
+      };
+      NSGlobalDomain = {
+        AppleShowAllExtensions = true;
+        "com.apple.swipescrolldirection" = false;
+        "com.apple.sound.beep.feedback" = 0;
+        NSNavPanelExpandedStateForSaveMode = true;
+        NSNavPanelExpandedStateForSaveMode2 = true;
+        ApplePressAndHoldEnabled = false;
+      };
+      loginwindow = {
+        GuestEnabled = false;
+      };
+      trackpad = {
+        Clicking = true;
+        TrackpadRightClick = true;
+      };
+    };
+
+    system.keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToEscape = true;
+    };
+  };
+}
+
+--- Host module references self.modules.darwin.darwin-defaults ---
+46:      self.modules.darwin.darwin-defaults
+
+--- system.defaults removed from host config ---
+1

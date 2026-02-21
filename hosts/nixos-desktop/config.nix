@@ -1,20 +1,14 @@
 {
   host,
-  inputs,
   username,
   os,
   ...
 }:
 let
-  inherit (inputs) self;
-in
-let
   inherit (import ./variables.nix) gitUsername;
 in
 {
   imports = [
-    "${self}/modules/legacy/_/desktop/hyprland"
-
     ./hardware.nix
   ];
 
