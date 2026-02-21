@@ -249,7 +249,7 @@ Wave 4 (cleanup; parallel): remove remaining legacy wiring, ensure import-tree c
     Evidence: .sisyphus/evidence/task-4-nixos-host.txt
   ```
 
-- [ ] 5. Create dendritic host aspect: `macos-macbook` selector
+- [x] 5. Create dendritic host aspect: `macos-macbook` selector
 
   **What to do**:
   - Add `modules/hosts/macos-macbook.nix` defining `flake.darwinConfigurations.macos-macbook = ...`.

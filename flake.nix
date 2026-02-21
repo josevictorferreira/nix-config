@@ -112,24 +112,7 @@
             };
 
           # nixosModule moved to modules/hosts/nixos-desktop.nix (dendritic)
-
-          darwinModule =
-            { systemArc, host, ... }:
-            inputs.darwin.lib.darwinSystem {
-              specialArgs = specialArgsFor systems.macos;
-              system = systemArc;
-              modules = [
-                inputs.sops-nix.darwinModules.sops
-                ./hosts/${host}/config.nix
-                ./modules/core/options.nix
-                ./modules/legacy/_/users/repositories.nix
-                ./modules/legacy/_/users/wrappers.nix
-                ./modules/legacy/_/users/default.nix
-                ./modules/legacy/_/hardware/default.nix
-                ./modules/legacy/_/system/default.nix
-                ./modules/legacy/_/roles/default.nix
-              ];
-            };
+          # darwinModule moved to modules/hosts/macos-macbook.nix (dendritic)
 
         in
         {
@@ -150,10 +133,7 @@
           );
 
           # nixosConfigurations.nixos-desktop now defined in modules/hosts/nixos-desktop.nix
-
-          darwinConfigurations = {
-            ${systems.macos.host} = darwinModule systems.macos;
-          };
+          # darwinConfigurations.macos-macbook now defined in modules/hosts/macos-macbook.nix
 
           templates = {
             sandbox-postgres-ruby = {
