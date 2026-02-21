@@ -29,24 +29,22 @@ in
 {
   flake.darwinConfigurations.macos-macbook = inputs.darwin.lib.darwinSystem {
     inherit specialArgs;
-    modules = [
-      # Platform identity (required for pkgs resolution in legacy modules)
-      { nixpkgs.hostPlatform = system; }
-
-      # External modules
-      inputs.sops-nix.darwinModules.sops
-
-      # Core options
-      ../../modules/core/options.nix
-
-      # Dendritic aspect: jvf core (users, system, roles)
-      self.modules.darwin.core-jvf
-
-      # Dendritic aspect: macOS defaults (darwin only)
-      self.modules.darwin.darwin-defaults
-
+    modules =
+      # Dendritic aspects
+      (with self.modules.darwin; [
+        core-jvf
+        secrets-sops
+        darwin-defaults
+      ])
+      # External modules (not yet wrapped as aspects)
+      ++ [
+        # Platform identity (required for pkgs resolution in legacy modules)
+        { nixpkgs.hostPlatform = system; }
+        ../../modules/core/options.nix
+      ]
       # Host-specific config (last, so it can override)
-      ../../hosts/macos-macbook/config.nix
-    ];
+      ++ [
+        ../../hosts/macos-macbook/config.nix
+      ];
   };
 }

@@ -46,3 +46,12 @@ The `/_` path convention in import-tree is used to ignore directories. All legac
 - The modules were already moved in a previous commit (task 1)
 - No module content was modified
 - The path `/_` ensures import-tree won't auto-import these modules
+
+## Task 10: Host configs → aspects list pattern (2026-02-21)
+
+- Both host modules now use `with self.modules.{nixos,darwin}; [...]` pattern
+- `secrets-sops` aspect replaces direct `inputs.sops-nix.*` imports
+- Remaining direct imports: `distro-grub-themes` (nixos only), `modules/core/options.nix` (both)
+- These could become aspects in future tasks
+- Host-specific configs (hosts/*/config.nix) untouched
+- `nix flake check` + `nix eval` both pass

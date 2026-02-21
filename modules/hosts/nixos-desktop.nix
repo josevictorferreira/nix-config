@@ -29,22 +29,21 @@ in
 {
   flake.nixosConfigurations.nixos-desktop = inputs.nixpkgs.lib.nixosSystem {
     inherit specialArgs;
-    modules = [
-      # External modules
-      inputs.sops-nix.nixosModules.sops
-      inputs.distro-grub-themes.nixosModules.${system}.default
-
-      # Core options
-      ../../modules/core/options.nix
-
-      # Dendritic aspect: jvf core (users, hardware, system, roles)
-      self.modules.nixos.core-jvf
-
-      # Dendritic aspect: Hyprland desktop (nixos only)
-      self.modules.nixos.desktop-hyprland
-
+    modules =
+      # Dendritic aspects
+      (with self.modules.nixos; [
+        core-jvf
+        secrets-sops
+        desktop-hyprland
+      ])
+      # External modules (not yet wrapped as aspects)
+      ++ [
+        inputs.distro-grub-themes.nixosModules.${system}.default
+        ../../modules/core/options.nix
+      ]
       # Host-specific config (last, so it can override)
-      ../../hosts/nixos-desktop/config.nix
-    ];
+      ++ [
+        ../../hosts/nixos-desktop/config.nix
+      ];
   };
 }

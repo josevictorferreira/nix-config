@@ -1,0 +1,39 @@
+Task 10: Convert host configs to "aspects list" pattern
+=======================================================
+Date: 2026-02-21
+
+## Changes Made
+
+### modules/hosts/nixos-desktop.nix
+- Replaced flat modules list with `with self.modules.nixos; [...]` pattern
+- Moved `inputs.sops-nix.nixosModules.sops` → `secrets-sops` aspect
+- Aspects list: core-jvf, secrets-sops, desktop-hyprland
+- External (not yet aspects): distro-grub-themes, modules/core/options.nix
+- Host config (hosts/nixos-desktop/config.nix) remains as final import
+
+### modules/hosts/macos-macbook.nix
+- Replaced flat modules list with `with self.modules.darwin; [...]` pattern
+- Moved `inputs.sops-nix.darwinModules.sops` → `secrets-sops` aspect
+- Aspects list: core-jvf, secrets-sops, darwin-defaults
+- External (not yet aspects): nixpkgs.hostPlatform inline, modules/core/options.nix
+- Host config (hosts/macos-macbook/config.nix) remains as final import
+
+## Verification
+
+### nix flake check --no-build
+```
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.nixos-desktop'...
+checking flake output 'darwinConfigurations'...
+(all passed, no errors)
+```
+
+### nix eval .#nixosConfigurations.nixos-desktop.config.system.build.toplevel.outPath
+```
+"/nix/store/mayfk247xkidvi5rwhhamy1c5nnnkpc4-nixos-system-nixos-desktop-26.05.20260121.88d3861"
+```
+
+## Host configs preserved (NOT modified)
+- hosts/nixos-desktop/config.nix: static IP, hardware, roles, system modules
+- hosts/macos-macbook/config.nix: networking, security, fonts, roles
