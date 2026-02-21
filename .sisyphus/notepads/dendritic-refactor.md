@@ -55,3 +55,34 @@ The `/_` path convention in import-tree is used to ignore directories. All legac
 - These could become aspects in future tasks
 - Host-specific configs (hosts/*/config.nix) untouched
 - `nix flake check` + `nix eval` both pass
+
+## Task 11: boot-grub-theme aspect (2026-02-21)
+- Created `modules/aspects/boot-grub-theme.nix` wrapping distro-grub-themes
+- Hardcoded x86_64-linux since distro-grub-themes exposes per-system nixosModules
+- Moved from external import block to dendritic aspects list in nixos-desktop host
+- Remaining direct import: only `modules/core/options.nix`
+- `nix eval .#nixosConfigurations.nixos-desktop.config.boot.loader.grub.enable` → true
+
+## Task 12: Remove legacy compatibility wiring (2026-02-21)
+
+### Dead code removed from flake.nix
+- `systems` attrset, `mkPkgs`, `specialArgsFor`, `forAllSystems`, `flake.lib` output
+- All were unreferenced after dendritic migration (hosts define own pkgs/specialArgs)
+- flake.nix now ~60 lines: inputs + mkFlake with import-tree + templates only
+
+### core/options.nix folded into core-jvf aspect
+- `modules/core/options.nix` (jvf.core.{username,host,os}) now imported via core-jvf aspect
+- Removed explicit `../../modules/core/options.nix` from both host modules
+- Hosts now use ONLY aspects + host-specific config.nix
+
+### Remaining non-aspect imports (by design)
+- `hosts/*/config.nix`: Host-specific settings (last for override)
+- `{ nixpkgs.hostPlatform = system; }`: Inline platform identity (darwin)
+- `specialArgs`: Compatibility bridge for legacy modules (until full jvf.core.* migration)
+
+### Import-tree coverage
+- `modules/flake/` → flake.modules option declaration
+- `modules/hosts/` → nixos-desktop.nix, macos-macbook.nix
+- `modules/aspects/` → core-jvf, secrets-sops, desktop-hyprland, boot-grub-theme, darwin-defaults, overlays
+- `modules/core/` → NOT auto-imported (NixOS module, imported by core-jvf aspect)
+- `modules/legacy/_/` → Ignored by import-tree, imported only through aspects

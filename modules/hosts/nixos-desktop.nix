@@ -30,17 +30,13 @@ in
   flake.nixosConfigurations.nixos-desktop = inputs.nixpkgs.lib.nixosSystem {
     inherit specialArgs;
     modules =
-      # Dendritic aspects
+      # Dendritic aspects (all NixOS modules via import-tree)
       (with self.modules.nixos; [
         core-jvf
         secrets-sops
         desktop-hyprland
+        boot-grub-theme
       ])
-      # External modules (not yet wrapped as aspects)
-      ++ [
-        inputs.distro-grub-themes.nixosModules.${system}.default
-        ../../modules/core/options.nix
-      ]
       # Host-specific config (last, so it can override)
       ++ [
         ../../hosts/nixos-desktop/config.nix

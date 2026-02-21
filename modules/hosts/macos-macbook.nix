@@ -30,17 +30,15 @@ in
   flake.darwinConfigurations.macos-macbook = inputs.darwin.lib.darwinSystem {
     inherit specialArgs;
     modules =
-      # Dendritic aspects
+      # Dendritic aspects (all Darwin modules via import-tree)
       (with self.modules.darwin; [
         core-jvf
         secrets-sops
         darwin-defaults
       ])
-      # External modules (not yet wrapped as aspects)
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
         { nixpkgs.hostPlatform = system; }
-        ../../modules/core/options.nix
       ]
       # Host-specific config (last, so it can override)
       ++ [

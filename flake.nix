@@ -28,10 +28,9 @@
         "aarch64-darwin"
       ];
 
-      # Import modules via import-tree (ignores paths containing /_)
-      # Legacy NixOS/Darwin modules in modules/{users,hardware,system,roles,...}
-      # are NOT auto-imported since import-tree ignores paths containing /_
-      # They are imported explicitly in nixosModule/darwinModule below.
+      # Auto-discover flake-parts modules via import-tree (ignores paths containing /_)
+      # Legacy NixOS/Darwin modules live under modules/legacy/_/ and are imported
+      # only through aspects (e.g. core-jvf, desktop-hyprland).
       imports = [
         (inputs.import-tree ./modules/flake)
         (inputs.import-tree ./modules/hosts)
@@ -40,100 +39,21 @@
 
       # perSystem (pkgs, formatter, overlays) defined in modules/aspects/overlays.nix
 
-      flake =
-        let
-          forAllSystems = inputs.nixpkgs.lib.genAttrs [
-            "x86_64-linux"
-            "aarch64-darwin"
-          ];
-
-          systems = {
-            # nixos host config moved to modules/hosts/nixos-desktop.nix
-            macos = {
-              systemArc = "aarch64-darwin";
-              os = "macos";
-              host = "macos-macbook";
-              username = "josevictorferreira";
-            };
+      flake = {
+        templates = {
+          sandbox-postgres-ruby = {
+            path = ./templates/sandbox-postgres-ruby;
+            description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
           };
-
-          mkPkgs =
-            systemArc:
-            import
-              (if builtins.match ".*-darwin" systemArc != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
-              {
-                system = systemArc;
-                overlays = [ inputs.bun2nix.overlays.default ];
-                config = {
-                  allowUnfree = true;
-                };
-              };
-
-          specialArgsFor =
-            {
-              systemArc,
-              os,
-              host,
-              username,
-            }:
-            let
-              pkgs = mkPkgs systemArc;
-            in
-            {
-              inherit
-                os
-                username
-                host
-                ;
-              system = systemArc;
-              inputs = inputs // {
-                inherit self;
-                lib = import ./lib {
-                  lib = pkgs.lib;
-                  inherit pkgs;
-                  system = systemArc;
-                };
-              };
-            };
-
-          # nixosModule moved to modules/hosts/nixos-desktop.nix (dendritic)
-          # darwinModule moved to modules/hosts/macos-macbook.nix (dendritic)
-
-        in
-        {
-          # Per-system lib output with mkSandboxShell (Phase 2 integration)
-          lib = forAllSystems (
-            system:
-            let
-              pkgs = mkPkgs system;
-              baseLib = import ./lib {
-                lib = pkgs.lib;
-                inherit pkgs system;
-              };
-            in
-            baseLib
-            // {
-              inherit pkgs;
-            }
-          );
-
-          # nixosConfigurations.nixos-desktop now defined in modules/hosts/nixos-desktop.nix
-          # darwinConfigurations.macos-macbook now defined in modules/hosts/macos-macbook.nix
-
-          templates = {
-            sandbox-postgres-ruby = {
-              path = ./templates/sandbox-postgres-ruby;
-              description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
-            };
-            sandbox-postgres-django = {
-              path = ./templates/sandbox-postgres-django;
-              description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
-            };
-            frontend-bun-vite = {
-              path = ./templates/frontend-bun-vite;
-              description = "Frontend template using Bun and Vite.js";
-            };
+          sandbox-postgres-django = {
+            path = ./templates/sandbox-postgres-django;
+            description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
+          };
+          frontend-bun-vite = {
+            path = ./templates/frontend-bun-vite;
+            description = "Frontend template using Bun and Vite.js";
           };
         };
+      };
     };
 }
