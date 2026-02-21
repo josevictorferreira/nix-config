@@ -4,6 +4,8 @@
 **Commit:** N/A (Dynamic)
 **Branch:** main
 
+> **IMPORTANT:** Before starting any implementation, read `.docs/rules.md` for project-specific lessons and gotchas.
+
 ## OVERVIEW
 NixOS/Darwin unified workspace. Desktop-focused (Hyprland/macOS).
 Stack: Nix flakes, SOPS (secrets), explicit module options (`jvf.*`), NO Home Manager.
