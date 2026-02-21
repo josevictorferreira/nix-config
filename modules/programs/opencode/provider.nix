@@ -58,10 +58,12 @@
     };
 
     zai-coding-plan = {
-      npm = "@ai-sdk/anthropic";
+      # npm = "@ai-sdk/anthropic";
+      npm = "@ai-sdk/openai-compatible";
       options = {
-        # baseURL = "https://api.z.ai/api/coding/paas/v4";
-        baseURL = "https://api.z.ai/api/anthropic/v1";
+        baseURL = "https://api.z.ai/api/coding/paas/v4";
+        # baseURL = "https://api.z.ai/api/paas/v4/chat/completions";
+        # baseURL = "https://api.z.ai/api/anthropic/v1";
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {
@@ -70,10 +72,13 @@
           variants = {
             thinker = {
               name = "GLM-5 Deep Thinker";
+              reasoningEffort = "high";
               thinking = {
                 type = "enabled";
-                clear_thinking = false;
+                # clear_thinking = false;
+                # thinkingBudget = 32768;
               };
+              max_tokens = 4096;
               temperature = 1.0;
             };
             fast = {
