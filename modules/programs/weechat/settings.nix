@@ -119,25 +119,8 @@
       ban_mask_default = "*!*@\$host";
     };
   };
-  buflist = {
-    look = {
-      sort = "plugin,name";
-      add_newline = "on";
-      mouse_jump_visited_buffer = "on";
-      mouse_move_buffer = "on";
-      mouse_wheel = "on";
-    };
-    format = {
-      buffer = "\${format_number}\${indent}\${eval:\${format_name}}\${format_hotlist} \${color:31}\${buffer.local_variables.filter}\${buffer.local_variables.buflist}";
-      buffer_current = "\${if:\${type}==server?\${color:*white,31}:\${color:*white}}\${hide:>,\${buffer[last_gui_buffer].number}} \${indent}\${if:\${type}==server&&\${info:irc_server_isupport_value,\${name},NETWORK}?\${info:irc_server_isupport_value,\${name},NETWORK}:\${name}} \${color:31}\${buffer.local_variables.filter}\${buffer.local_variables.buflist}";
-      hotlist = " \${color:239}\${hotlist}\${color:239}";
-      hotlist_highlight = "\${color:163}";
-      hotlist_message = "\${color:229}";
-      hotlist_private = "\${color:121}";
-      name = "\${if:\${type}==server?\${color:white}:\${color_hotlist}}\${if:\${type}==server||\${type}==channel||\${type}==private?\${if:\${cutscr:15,+,\${name}}!=\${name}?\${cutscr:15,\${color:\${weechat.color.chat_prefix_more}}+,\${if:\${type}==server&&\${info:irc_server_isupport_value,\${name},NETWORK}?\${info:irc_server_isupport_value,\${name},NETWORK}:\${name}}}:\${cutscr:15, ,\${if:\${type}==server&&\${info:irc_server_isupport_value,\${name},NETWORK}?\${info:irc_server_isupport_value,\${name},NETWORK}                              :\${name}                              }}}:\${name}}";
-      number = "\${if:\${type}==server?\${color:black,31}:\${color:239}}\${number}\${if:\${number_displayed}?.: }";
-    };
-  };
+  buflist = { };
+
   plugins.var.python = {
     slack = {
       autoconnect = "off";

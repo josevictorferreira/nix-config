@@ -1,6 +1,7 @@
-{ lib
-, config
-, ...
+{
+  lib,
+  config,
+  ...
 }:
 
 let
@@ -44,8 +45,8 @@ let
     prompts = "nvim ${notetaking}/notes/Prompts.md";
     sht = "nvim ${notetaking}/notes/CheatSheets.md";
     sheet = "nvim ${notetaking}/notes/CheatSheets.md";
-    plan = "sops --config=${shared}/.sops.yaml ${notetaking}/notes/plan.enc.md";
-    gtodo = "nvim ${notetaking}/checklists/Todo.md";
+    plan = "sops --config=${shared}/.sops.yaml ${notetaking}/00-inbox/plan.enc.md";
+    gtodo = "nvim ${notetaking}/01-projects/active/Todo.md";
   };
 
   # Development aliases

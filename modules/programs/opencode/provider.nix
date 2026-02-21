@@ -70,11 +70,11 @@
           variants = {
             thinker = {
               name = "GLM-5 Deep Thinker";
-              reasoningEffort = "high";
-              thinking.type = "enabled";
-              fast.disabled = true;
+              thinking = {
+                type = "enabled";
+                clear_thinking = false;
+              };
               temperature = 1.0;
-              clear_thinking = false;
             };
             fast = {
               name = "GLM-5 Fast";
