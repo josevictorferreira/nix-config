@@ -138,7 +138,7 @@ Wave 4 (cleanup; parallel): remove remaining legacy wiring, ensure import-tree c
     Evidence: .sisyphus/evidence/task-1-flake-scaffold.txt
   ```
 
-- [ ] 2. Create “legacy ignored” area and move non-flake-parts modules there (guardrail)
+- [x] 2. Create "legacy ignored" area and move non-flake-parts modules there (guardrail)
 
   **What to do**:
   - Create `modules/legacy/_/` (or similar path containing `/_`) and move existing non-dendritic NixOS/Darwin modules there *without changing content*.
@@ -217,7 +217,7 @@ Wave 4 (cleanup; parallel): remove remaining legacy wiring, ensure import-tree c
 
 ### Wave 2 — hosts as aspects lists
 
-- [ ] 4. Create dendritic host aspect: `nixos-desktop` selector
+- [x] 4. Create dendritic host aspect: `nixos-desktop` selector
 
   **What to do**:
   - Add `modules/hosts/nixos-desktop.nix` (flake-parts module) that defines `flake.nixosConfigurations.nixos-desktop = ...`.

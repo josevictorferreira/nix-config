@@ -34,6 +34,7 @@
       # They are imported explicitly in nixosModule/darwinModule below.
       imports = [
         (inputs.import-tree ./modules/flake)
+        (inputs.import-tree ./modules/hosts)
       ];
 
       perSystem =
@@ -62,12 +63,7 @@
           ];
 
           systems = {
-            nixos = {
-              systemArc = "x86_64-linux";
-              os = "nixos";
-              host = "nixos-desktop";
-              username = "josevictor";
-            };
+            # nixos host config moved to modules/hosts/nixos-desktop.nix
             macos = {
               systemArc = "aarch64-darwin";
               os = "macos";
@@ -115,23 +111,7 @@
               };
             };
 
-          nixosModule =
-            { systemArc, host, ... }:
-            inputs.nixpkgs.lib.nixosSystem {
-              specialArgs = specialArgsFor systems.nixos;
-              modules = [
-                inputs.sops-nix.nixosModules.sops
-                ./hosts/${host}/config.nix
-                ./modules/core/options.nix
-                ./modules/legacy/_/users/repositories.nix
-                ./modules/legacy/_/users/wrappers.nix
-                inputs.distro-grub-themes.nixosModules.${systemArc}.default
-                ./modules/legacy/_/users/default.nix
-                ./modules/legacy/_/hardware/default.nix
-                ./modules/legacy/_/system/default.nix
-                ./modules/legacy/_/roles/default.nix
-              ];
-            };
+          # nixosModule moved to modules/hosts/nixos-desktop.nix (dendritic)
 
           darwinModule =
             { systemArc, host, ... }:
@@ -169,9 +149,7 @@
             }
           );
 
-          nixosConfigurations = {
-            ${systems.nixos.host} = nixosModule systems.nixos;
-          };
+          # nixosConfigurations.nixos-desktop now defined in modules/hosts/nixos-desktop.nix
 
           darwinConfigurations = {
             ${systems.macos.host} = darwinModule systems.macos;

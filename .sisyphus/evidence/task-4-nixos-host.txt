@@ -1,0 +1,28 @@
+# Task 4: nixos-desktop dendritic host aspect — Evidence
+
+## Date: 2026-02-21
+
+## Files changed:
+- CREATED: modules/hosts/nixos-desktop.nix (dendritic host selector)
+- MODIFIED: flake.nix (removed inline nixosConfigurations, added import-tree for modules/hosts)
+
+## Verification:
+
+### nix eval .#nixosConfigurations.nixos-desktop.config.system.build.toplevel.outPath
+Result: "/nix/store/5iqhai1ffdyip7hir7q5izfnq3fbq9v1-nixos-system-nixos-desktop-26.05.20260121.88d3861"
+Status: PASS ✓
+
+### jvf.core values:
+- jvf.core.username = "josevictor" ✓
+- jvf.core.host = "nixos-desktop" ✓
+- jvf.core.os = "nixos" ✓
+
+### Darwin config (macos-macbook) still defined:
+- darwinConfigurations.macos-macbook still inline in flake.nix (task 5 will move it)
+- Eval fails on x86_64-linux only due to cross-build (expected)
+
+## Architecture:
+- modules/hosts/nixos-desktop.nix is a flake-parts module auto-discovered by import-tree
+- Defines flake.nixosConfigurations.nixos-desktop via inputs.nixpkgs.lib.nixosSystem
+- Passes specialArgs for compatibility (host config.nix still uses them)
+- Imports: sops-nix, distro-grub-themes, core/options, legacy modules, host config
