@@ -1,7 +1,9 @@
-{ host
-, inputs
-, username
-, ...
+{
+  host,
+  inputs,
+  username,
+  os,
+  ...
 }:
 let
   inherit (inputs) self;
@@ -11,10 +13,15 @@ let
 in
 {
   imports = [
-    "${self}/modules/desktop/hyprland"
+    "${self}/modules/legacy/_/desktop/hyprland"
 
     ./hardware.nix
   ];
+
+  # Core identity (transitional: fed from specialArgs, consumed by modules via config)
+  jvf.core = {
+    inherit username host os;
+  };
 
   # User configuration
   jvf.users.${username} = {

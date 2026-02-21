@@ -24,10 +24,11 @@
 
 { config
 , lib
-, username
 , ...
 }:
 let
+  username = config.jvf.core.username;
+
   availableRoles = {
     aiDevelopment = ./ai-development.nix;
     communication = ./communication.nix;

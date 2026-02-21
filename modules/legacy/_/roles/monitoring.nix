@@ -1,14 +1,12 @@
 { config
 , lib
 , pkgs
-, username
-, system
 , ...
 }:
 
 let
   cfg = config.jvf.roles.monitoring;
-  isDarwin = builtins.match ".*-darwin" system != null;
+  isDarwin = pkgs.stdenv.isDarwin;
 in
 {
   imports = [
@@ -25,7 +23,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = username;
+      default = config.jvf.core.username;
       description = "Username for installing packages to.";
     };
   };

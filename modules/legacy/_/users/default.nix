@@ -1,11 +1,15 @@
-{ lib
-, config
-, system
-, ...
+{
+  lib,
+  config,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf;
+  # NOTE: uses `system` specialArg (not pkgs.stdenv.isDarwin) because
+  # isDarwin is used in top-level config branching with optionalAttrs,
+  # and pkgs requires config._module.args which creates infinite recursion.
   isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
@@ -72,27 +76,23 @@ in
   config =
     { }
     // (lib.optionalAttrs (!isDarwin) {
-      users.users = lib.mapAttrs
-        (name: userCfg: {
-          description = userCfg.description;
-          openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-          packages = userCfg.packages;
-          group = name;
-          homeMode = userCfg.homeMode;
-          extraGroups = userCfg.extraGroups;
-          isNormalUser = true;
-        })
-        cfg.users;
+      users.users = lib.mapAttrs (name: userCfg: {
+        description = userCfg.description;
+        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+        packages = userCfg.packages;
+        group = name;
+        homeMode = userCfg.homeMode;
+        extraGroups = userCfg.extraGroups;
+        isNormalUser = true;
+      }) cfg.users;
       users.mutableUsers = true;
       users.groups = lib.mapAttrs (name: userCfg: lib.mkIf userCfg.enable { }) cfg.users;
     })
     // (lib.optionalAttrs isDarwin {
-      users.users = lib.mapAttrs
-        (name: userCfg: {
-          description = userCfg.description;
-          openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-          packages = userCfg.packages;
-        })
-        cfg.users;
+      users.users = lib.mapAttrs (name: userCfg: {
+        description = userCfg.description;
+        openssh.authorizedKeys.keys = userCfg.authorizedKeys;
+        packages = userCfg.packages;
+      }) cfg.users;
     });
 }

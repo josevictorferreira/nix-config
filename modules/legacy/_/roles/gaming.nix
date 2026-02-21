@@ -1,13 +1,15 @@
-{ lib
-, pkgs
-, config
-, username
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  ...
 }:
 
 let
   cfg = config.jvf.roles.gaming;
+  # NOTE: uses `system` arg (not pkgs.stdenv.isDarwin) because isDarwin
+  # is referenced in `imports` which is evaluated before pkgs is available.
   isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
@@ -22,7 +24,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = username;
+      default = config.jvf.core.username;
       description = "Username for installing packages to.";
     };
   };

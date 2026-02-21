@@ -1,40 +1,30 @@
 { lib
 , pkgs
 , config
-, username
 , ...
 }:
 
 let
-  cfg = config.jvf.roles.opsDevelopment;
+  cfg = config.jvf.roles.designing;
 in
 {
-  imports = [
-    ../programs/k9s.nix
-  ];
-
-  options.jvf.roles.opsDevelopment = {
+  options.jvf.roles.designing = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Whether to enable devops developer tools.";
+      description = "Whether to enable designing tools.";
     };
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = username;
+      default = config.jvf.core.username;
       description = "Username for installing packages to.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    jvf.programs.k9s.enable = true;
-
     users.users."${cfg.username}".packages = [
-      pkgs.awscli
-      pkgs.kubectl
-      pkgs.kubernetes-helm
-      pkgs.helmfile
+      pkgs.inkscape-with-extensions
     ];
   };
 }

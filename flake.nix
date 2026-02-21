@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "nixpkgs/nixpkgs-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hyprland.inputs.nixpkgs.follows = "nixpkgs";
     distro-grub-themes.url = "github:AdisonCavani/distro-grub-themes";
@@ -19,147 +21,176 @@
   };
 
   outputs =
-    inputs@{ self
-    , nixpkgs
-    , darwin
-    , sops-nix
-    , ...
-    }:
-    let
-      systems = {
-        nixos = {
-          systemArc = "x86_64-linux";
-          os = "nixos";
-          host = "nixos-desktop";
-          username = "josevictor";
-        };
-        macos = {
-          systemArc = "aarch64-darwin";
-          os = "macos";
-          host = "macos-macbook";
-          username = "josevictorferreira";
-        };
-      };
-
-      mkPkgs =
-        systemArc:
-        import
-          (if builtins.match ".*-darwin" systemArc != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
-          {
-            system = systemArc;
-            overlays = [ inputs.bun2nix.overlays.default ];
-            config = {
-              allowUnfree = true;
-            };
-          };
-
-      specialArgsFor =
-        { systemArc
-        , os
-        , host
-        , username
-        ,
-        }:
-        let
-          pkgs = mkPkgs systemArc;
-        in
-        {
-          inherit
-            os
-            username
-            host
-            ;
-          system = systemArc;
-          inputs = inputs // {
-            inherit self;
-            lib = import ./lib {
-              lib = pkgs.lib;
-              inherit pkgs;
-              system = systemArc;
-            };
-          };
-        };
-
-      nixosModule =
-        { systemArc, host, ... }:
-        nixpkgs.lib.nixosSystem {
-          specialArgs = specialArgsFor (systems.nixos);
-          modules = [
-            sops-nix.nixosModules.sops
-            ./hosts/${host}/config.nix
-            ./modules/users/repositories.nix
-            ./modules/users/wrappers.nix
-            inputs.distro-grub-themes.nixosModules.${systemArc}.default
-            ./modules/users/default.nix
-            ./modules/hardware/default.nix
-            ./modules/system/default.nix
-            ./modules/roles/default.nix
-          ];
-        };
-
-      darwinModule =
-        { systemArc, host, ... }:
-        darwin.lib.darwinSystem {
-          specialArgs = specialArgsFor (systems.macos);
-          system = systemArc;
-          modules = [
-            sops-nix.darwinModules.sops
-            ./hosts/${host}/config.nix
-            ./modules/users/repositories.nix
-            ./modules/users/wrappers.nix
-            ./modules/users/default.nix
-            ./modules/hardware/default.nix
-            ./modules/system/default.nix
-            ./modules/roles/default.nix
-          ];
-        };
-
-      forAllSystems = nixpkgs.lib.genAttrs [
+    inputs@{ self, flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
         "x86_64-linux"
         "aarch64-darwin"
       ];
 
-    in
-    {
-      # Per-system lib output with mkSandboxShell (Phase 2 integration)
-      lib = forAllSystems (
-        system:
+      # Import modules via import-tree (ignores paths containing /_)
+      # Legacy NixOS/Darwin modules in modules/{users,hardware,system,roles,...}
+      # are NOT auto-imported since import-tree ignores paths containing /_
+      # They are imported explicitly in nixosModule/darwinModule below.
+      imports = [
+        (inputs.import-tree ./modules/flake)
+      ];
+
+      perSystem =
+        { system, ... }:
         let
-          pkgs = mkPkgs system;
-          baseLib = import ./lib {
-            lib = pkgs.lib;
-            inherit pkgs system;
-          };
+          pkgs =
+            import (if builtins.match ".*-darwin" system != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
+              {
+                inherit system;
+                overlays = [ inputs.bun2nix.overlays.default ];
+                config = {
+                  allowUnfree = true;
+                };
+              };
         in
-        baseLib
-        // {
-          inherit pkgs;
-        }
-      );
-
-      nixosConfigurations = {
-        ${systems.nixos.host} = nixosModule systems.nixos;
-      };
-
-      darwinConfigurations = {
-        ${systems.macos.host} = darwinModule systems.macos;
-      };
-
-      templates = {
-        sandbox-postgres-ruby = {
-          path = ./templates/sandbox-postgres-ruby;
-          description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
+        {
+          # Formatter
+          formatter = pkgs.nixpkgs-fmt;
         };
-        sandbox-postgres-django = {
-          path = ./templates/sandbox-postgres-django;
-          description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
-        };
-        frontend-bun-vite = {
-          path = ./templates/frontend-bun-vite;
-          description = "Frontend template using Bun and Vite.js";
-        };
-      };
 
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      flake =
+        let
+          forAllSystems = inputs.nixpkgs.lib.genAttrs [
+            "x86_64-linux"
+            "aarch64-darwin"
+          ];
+
+          systems = {
+            nixos = {
+              systemArc = "x86_64-linux";
+              os = "nixos";
+              host = "nixos-desktop";
+              username = "josevictor";
+            };
+            macos = {
+              systemArc = "aarch64-darwin";
+              os = "macos";
+              host = "macos-macbook";
+              username = "josevictorferreira";
+            };
+          };
+
+          mkPkgs =
+            systemArc:
+            import
+              (if builtins.match ".*-darwin" systemArc != null then inputs.nixpkgs-darwin else inputs.nixpkgs)
+              {
+                system = systemArc;
+                overlays = [ inputs.bun2nix.overlays.default ];
+                config = {
+                  allowUnfree = true;
+                };
+              };
+
+          specialArgsFor =
+            {
+              systemArc,
+              os,
+              host,
+              username,
+            }:
+            let
+              pkgs = mkPkgs systemArc;
+            in
+            {
+              inherit
+                os
+                username
+                host
+                ;
+              system = systemArc;
+              inputs = inputs // {
+                inherit self;
+                lib = import ./lib {
+                  lib = pkgs.lib;
+                  inherit pkgs;
+                  system = systemArc;
+                };
+              };
+            };
+
+          nixosModule =
+            { systemArc, host, ... }:
+            inputs.nixpkgs.lib.nixosSystem {
+              specialArgs = specialArgsFor systems.nixos;
+              modules = [
+                inputs.sops-nix.nixosModules.sops
+                ./hosts/${host}/config.nix
+                ./modules/core/options.nix
+                ./modules/legacy/_/users/repositories.nix
+                ./modules/legacy/_/users/wrappers.nix
+                inputs.distro-grub-themes.nixosModules.${systemArc}.default
+                ./modules/legacy/_/users/default.nix
+                ./modules/legacy/_/hardware/default.nix
+                ./modules/legacy/_/system/default.nix
+                ./modules/legacy/_/roles/default.nix
+              ];
+            };
+
+          darwinModule =
+            { systemArc, host, ... }:
+            inputs.darwin.lib.darwinSystem {
+              specialArgs = specialArgsFor systems.macos;
+              system = systemArc;
+              modules = [
+                inputs.sops-nix.darwinModules.sops
+                ./hosts/${host}/config.nix
+                ./modules/core/options.nix
+                ./modules/legacy/_/users/repositories.nix
+                ./modules/legacy/_/users/wrappers.nix
+                ./modules/legacy/_/users/default.nix
+                ./modules/legacy/_/hardware/default.nix
+                ./modules/legacy/_/system/default.nix
+                ./modules/legacy/_/roles/default.nix
+              ];
+            };
+
+        in
+        {
+          # Per-system lib output with mkSandboxShell (Phase 2 integration)
+          lib = forAllSystems (
+            system:
+            let
+              pkgs = mkPkgs system;
+              baseLib = import ./lib {
+                lib = pkgs.lib;
+                inherit pkgs system;
+              };
+            in
+            baseLib
+            // {
+              inherit pkgs;
+            }
+          );
+
+          nixosConfigurations = {
+            ${systems.nixos.host} = nixosModule systems.nixos;
+          };
+
+          darwinConfigurations = {
+            ${systems.macos.host} = darwinModule systems.macos;
+          };
+
+          templates = {
+            sandbox-postgres-ruby = {
+              path = ./templates/sandbox-postgres-ruby;
+              description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
+            };
+            sandbox-postgres-django = {
+              path = ./templates/sandbox-postgres-django;
+              description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
+            };
+            frontend-bun-vite = {
+              path = ./templates/frontend-bun-vite;
+              description = "Frontend template using Bun and Vite.js";
+            };
+          };
+        };
     };
 }

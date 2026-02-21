@@ -98,7 +98,7 @@ Wave 4 (cleanup; parallel): remove remaining legacy wiring, ensure import-tree c
 
 ### Wave 1 — scaffold + guardrails
 
-- [ ] 1. Add flake-parts + import-tree skeleton (no behavior change yet)
+- [x] 1. Add flake-parts + import-tree skeleton (no behavior change yet)
 
   **What to do**:
   - Introduce flake-parts in `flake.nix` (or split into `flake/` if preferred) but keep outputs identical.
@@ -179,7 +179,7 @@ Wave 4 (cleanup; parallel): remove remaining legacy wiring, ensure import-tree c
     Evidence: .sisyphus/evidence/task-2-legacy-ignore.txt
   ```
 
-- [ ] 3. Replace current `specialArgs` contract with explicit config options / `_module.args` shim
+- [x] 3. Replace current `specialArgs` contract with explicit config options / `_module.args` shim
 
   **What to do**:
   - Decide a minimal mechanism to provide `username`, `host`, `os` to modules without widespread specialArgs:

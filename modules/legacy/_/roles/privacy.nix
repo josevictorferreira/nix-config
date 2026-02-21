@@ -1,14 +1,12 @@
 { lib
 , pkgs
 , config
-, username
-, system
 , ...
 }:
 
 let
   cfg = config.jvf.roles.privacy;
-  isDarwin = builtins.match ".*-darwin" system != null;
+  isDarwin = pkgs.stdenv.isDarwin;
   protonmail = pkgs.protonmail-desktop;
 
   protonmailWrapped = pkgs.stdenv.mkDerivation {
@@ -58,7 +56,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = username;
+      default = config.jvf.core.username;
       description = "Username for installing packages to.";
     };
   };

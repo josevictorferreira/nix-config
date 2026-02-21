@@ -1,7 +1,8 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
@@ -17,7 +18,7 @@ let
       '';
     };
 
-  filesystem = import ../../../../lib/filesystem.nix { inherit lib; };
+  filesystem = import ../../../../../../lib/filesystem.nix { inherit lib; };
   internalPlugins = map (file: import file { inherit lib pkgs config; }) (
     filesystem.modulesInDir ./.
   );

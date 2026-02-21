@@ -1,8 +1,8 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
@@ -29,7 +29,7 @@ in
 
     username = lib.mkOption {
       type = lib.types.str;
-      default = username;
+      default = config.jvf.core.username;
       description = "Username for installing packages to.";
     };
   };

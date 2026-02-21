@@ -1,14 +1,21 @@
-{ pkgs
-, username
-, host
-, inputs
-, ...
+{
+  pkgs,
+  username,
+  host,
+  os,
+  inputs,
+  ...
 }:
 let
   inherit (inputs) self;
 in
 
 {
+  # Core identity (transitional: fed from specialArgs, consumed by modules via config)
+  jvf.core = {
+    inherit username host os;
+  };
+
   networking.computerName = "${host}";
   networking.localHostName = "${host}";
 
