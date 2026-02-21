@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, username
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
 }:
 
 let
@@ -111,17 +112,12 @@ let
 
   monitoring = {
     session_name = "monitoring";
-    start_directory = "$HOME/Workspace";
+    start_directory = "$HOME/.config/nix";
     windows = [
       {
-        window_name = "System";
+        window_name = "Monitors";
         panes = [
           "btop"
-        ];
-      }
-      {
-        window_name = "Cluster";
-        panes = [
           "k9s"
         ];
       }
