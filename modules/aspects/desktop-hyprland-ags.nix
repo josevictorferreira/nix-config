@@ -29,7 +29,7 @@
             pkgs.ags
           ];
           configs = {
-            "ags" = ../legacy/_/desktop/hyprland/ags;
+            "ags" = ./assets/desktop/ags;
           };
         };
       };
