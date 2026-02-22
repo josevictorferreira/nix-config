@@ -5,9 +5,9 @@
 { ... }:
 let
   mkClaudecodeOptions =
-    { lib, ... }:
+    { lib, pkgs, ... }:
     let
-      json = lib.formats.json { };
+      json = pkgs.lib.formats.json { };
     in
     {
       options.jvf.programs.claudecode = {
