@@ -79,6 +79,19 @@ in
         services-smb
         services-cephfs
         services-llm-proxy
+        # Role aspects (Phase 7)
+        roles-development
+        roles-monitoring
+        roles-media
+        roles-privacy
+        roles-gaming
+        roles-ai-development
+        roles-local-ai
+        roles-communication
+        roles-designing
+        roles-documenting
+        roles-network-storage
+        roles-ops-development
       ])
       # Host-specific config (last, so it can override)
       ++ [

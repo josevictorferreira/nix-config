@@ -72,6 +72,19 @@ in
         # Service aspects (Phase 5 - smb and llm-proxy only, cephfs is NixOS-only)
         services-smb
         services-llm-proxy
+        # Role aspects (Phase 7)
+        roles-development
+        roles-monitoring
+        roles-media
+        roles-privacy
+        roles-gaming
+        roles-ai-development
+        roles-local-ai
+        roles-communication
+        roles-designing
+        roles-documenting
+        roles-network-storage
+        roles-ops-development
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
