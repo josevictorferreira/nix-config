@@ -17,7 +17,7 @@ let
       };
     };
 
-  hyprConfigDir = ../legacy/_/desktop/hyprland/hypr;
+  hyprConfigDir = ./assets/desktop/hypr;
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
