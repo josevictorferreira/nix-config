@@ -119,6 +119,11 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Phase 5 service migrations left legacy imports in `network-storage.nix` and `ai-development.nix`, causing "option already declared" errors during verification.
 **Verify:** `grep -r "../services/<name>.nix" modules/legacy/_/` and remove all matches after creating dendritic aspect.
 
+### Define Package Option Values in Config
+**Lesson:** When a module builds a package and exposes it via an option, always set the option value in the config section.
+**Context:** `programs-ck-search.nix` built `ckSearchPkg` but never assigned it to `jvf.programs.ck-search.package`, causing "option accessed but has no value" errors when other modules tried to use it.
+**Verify:** Ensure modules set `cfg.package = lib.mkDefault builtPackage;` in their config section if other modules depend on the package option.
+
 ---
 
 ## Context Management
