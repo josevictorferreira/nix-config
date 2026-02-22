@@ -124,174 +124,165 @@ let
 
       '';
 
-      promptEnhancerPkg = pkgs.writeShellApplication {
-        name = "prompt-enhancer";
-        runtimeInputs = [
-          pkgs.bash
-          pkgs.gnused
-          pkgs.gawk
-          pkgs.opencode
-        ];
-        text = ''
-          #!/bin/bash
-          PROMPT_ENHANCER_PRELUDE="${preludePrompt}"
-          RFC2119="${rfc2119}"
-          INCLUDE_RFC2119=2; # 1 for compliance phrase only, 2 for full (well, partially trimmed) RFC test.
-          DEFAULT_ENHANCER_MODEL="openrouter/x-ai/grok-4.1-fast"; 
-          DEBUG__LOG_ARGUMENTS="0";
-          DEBUG__OUTPUT_FENCES="0";
-          DEBUG__SKIP_ENHANCING="0";
-          PUNCTUATION=""
-          ENHANCER_ACTION=""
-          OBJECT=""
-          DEFINITE_OBJECT_FRAGMENT=""
-          DEMONSTRATIVE_OBJECT_FRAGMENT=""
-          ENHANCED_PROMPT_TITLE_HEADING=""
-          EPILOGUE_INDEPENDANT_CLAUSE=""
-          ENHANCER_SUPPLEMENTAL_PHRASE=""
-          ARGS="$*";
-          gsed() { sed "$@"; }
-          if [[ "$ARGS" == *" "* ]]; then
-            PROMPT_OBJECT_ARG="''${ARGS%% *}";
-            REST="''${ARGS#* }";
-          else
-            PROMPT_OBJECT_ARG="$ARGS";
-            REST="";
-          fi;
-          case $PROMPT_OBJECT_ARG in
-            feature) 
-              ENHANCED_PROMPT_TITLE_HEADING="New Feature Request";
-              OBJECT="feature";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this new $OBJECT";
-              ;;
-            change)
-              ENHANCED_PROMPT_TITLE_HEADING="New Change Request";
-              OBJECT="change";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this new $OBJECT to the code's behaviour";
-              ;;
-            refactoring)
-              ENHANCED_PROMPT_TITLE_HEADING="New Refactoring Request Specification";
-              OBJECT="refactoring";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this $OBJECT of the code";
-              ;;
-            tests)
-              ENHANCED_PROMPT_TITLE_HEADING="New Test Request";
-              OBJECT="test(s)";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="$OBJECT for these parts of the codebase";
-              ENHANCER_SUPPLEMENTAL_PHRASE="Avoid writing pointless tests that simply test whether simple constant(s) have expected value(s): focus on testing the BEHAVIOUR of the code."
-              DEMONSTRATIVE_OBJECT_FRAGMENT="these $OBJECT";
-              ;;
-            bugfix)
-              ENHANCED_PROMPT_TITLE_HEADING="Critical Bug Fix Request";
-              OBJECT="problem";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="a fix for this bug in the code";
-              EPILOGUE_INDEPENDANT_CLAUSE="analyzing the problem thoroughly and diagnosing its root cause";
-              ;;
-            question) 
-              ENHANCED_PROMPT_TITLE_HEADING="Do not edit the code! Just answer this question";
-              OBJECT="question";
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this $OBJECT";
-              ENHANCER_ACTION="Do not edit the code, just answer";
-              PUNCTUATION="?";
-              ;;
-            bare)
-              ENHANCED_PROMPT_TITLE_HEADING="ENHANCED_PROMPT_TITLE_HEADING";
-              OBJECT="BARE"; # value disables some of the normal content.
-              ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT";
-              EPILOGUE_INDEPENDANT_CLAUSE="EPILOGUE_INDEPENDANT_CLAUSE";
-              ;;
-          esac;
-          [[ -z $PUNCTUATION ]] &&\
-            PUNCTUATION=".";
-          [[ -z $ENHANCER_ACTION ]] &&\
-            ENHANCER_ACTION="Implement";
-          [[ -z $DEFINITE_OBJECT_FRAGMENT ]] &&\
-            DEFINITE_OBJECT_FRAGMENT="the $OBJECT";
-          [[ -z $DEMONSTRATIVE_OBJECT_FRAGMENT ]] &&\
-            DEMONSTRATIVE_OBJECT_FRAGMENT="this $OBJECT";
-          [[ -z $EPILOGUE_INDEPENDANT_CLAUSE ]] &&\
-            EPILOGUE_INDEPENDANT_CLAUSE="thinking the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT through thoroughly";
-          if [[ "$REST" == *" "* ]]; then
-            MODEL="''${REST%% *}"           # second word
-            USER_PROMPT="''${REST#* }"      # everything after second word
-          else
-            MODEL="$REST"               # if no space, second = rest
-            USER_PROMPT=""              # nothing left
-          fi
-          if ! ${opencodeExec} models | grep -q "$MODEL"; then
-            USER_PROMPT="$MODEL $USER_PROMPT";
-            MODEL=$DEFAULT_ENHANCER_MODEL;
-          fi;
-          if [[ "$DEBUG__LOG_ARGUMENTS" == "1" ]]; then 
-            echo -e "# Debug Information:\n";
-            echo "ARGS='$ARGS'";
-            echo "PROMPT_OBJECT_ARG='$PROMPT_OBJECT_ARG'"
-            echo "MODEL='$MODEL'"
-            echo "USER_PROMPT='$USER_PROMPT'"
-            echo "REST='$REST'";
-            echo "ENHANCED_PROMPT_TITLE_HEADING='$ENHANCED_PROMPT_TITLE_HEADING'";
-            echo "EPILOGUE_INDEPENDANT_CLAUSE='$EPILOGUE_INDEPENDANT_CLAUSE'";
-            echo "DEFINITE_OBJECT_FRAGMENT='$DEFINITE_OBJECT_FRAGMENT'";
-            echo "DEMONSTRATIVE_OBJECT_FRAGMENT='$DEMONSTRATIVE_OBJECT_FRAGMENT'";
-            i=0;
-            for arg in "$@"; do
-              echo "$i: $arg";
-              i=$((i+1))
-            done;
-            echo;
-          fi;
-          if [[ -z "$ENHANCED_PROMPT_TITLE_HEADING" ]] || [[ -z "$USER_PROMPT" ]]; then
-            echo "FATAL ERROR: The user has provided bad arguments to the command they tried to use, and as a result this prompt's content has been corrupted. Please remind the user that this command's first argument should be a model listed by the \`opencode models\` command and the remainder must constitute a non-empty string.";
-            exit 0;
-          fi;
-          ENHANCED=$({
-            echo "$PROMPT_ENHANCER_PRELUDE"
-            
-            if [[ "$OBJECT" != "BARE" ]]; then
-                echo -en "$ENHANCER_ACTION $ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT: "
-            fi
-            
-            echo -e "''${USER_PROMPT}''${PUNCTUATION}"
-            
-            if [[ -n "$ENHANCER_SUPPLEMENTAL_PHRASE" ]]; then
-                echo -e "\n$ENHANCER_SUPPLEMENTAL_PHRASE\n"
-            fi
-          });
-          if [[ "$DEBUG__SKIP_ENHANCING" == "0" ]]; then
-            if ! RAW_OUTPUT=$(echo "$ENHANCED" | ${opencodeExec} --model "$MODEL" --agent plan run); then
-                echo "ERROR: 'opencode' execution failed. Please check your API keys and network connection."
-                exit 1
-            fi
-            ENHANCED="$RAW_OUTPUT"
-          else
-            ENHANCED+=$'\n\n'"DEBUG__SKIP_ENHANCING is set, this is dummy data!";
-          fi;
-          ENHANCED=$(echo "$ENHANCED" | gsed 's/^#\+ *Enhanced.*//i');
-          ENHANCED=$(echo "$ENHANCED" | gsed 's/^#/##/');
-          ENHANCED=$(echo -e "$ENHANCED" | gsed -Ez 's/\n{3,}/\n\n/g');
-          ENHANCED=$(echo -e "$ENHANCED" | awk 'NF{p=1} p');
-          [[ $INCLUDE_RFC2119 -ge 1 && $OBJECT != "BARE" && $OBJECT != "question" ]] &&\
-            ENHANCED="The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\",  \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.\n\n''${ENHANCED}\n";
-          [[ $OBJECT != "BARE" ]] &&\
-            ENHANCED="# ''${ENHANCED_PROMPT_TITLE_HEADING}:\n\n''${ENHANCED}";
-          if [[ $OBJECT != "BARE" && $OBJECT != "question" ]]; then
-            ENHANCED=$({              
-                        [[ $INCLUDE_RFC2119 -ge 2 ]] && echo "$RFC2119";
-                        echo -e "$ENHANCED\n";
-                        echo -e "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!\n";
-                        echo -e "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:\n"
-                        echo -e "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed.";
-                        echo -e "- Next, write the plan into an appropriately named new Markdown file in the project's ./.docs/plans/ directory which includes checkboxes in which to mark the completion of each step.";
-                        echo -e "- Proceed to systematically implement the plan that you just wrote in the Markdown file. You MUST check off each step you've completed in the Markdown file immediately as you complete it, you MAY NOT proceed to the next step until you have checked off the current step.";
-                        echo -e "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.";
-                      });
-          fi;
-          [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "BEGIN";
-          echo -e "''${ENHANCED}";
-          [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "END";
+      promptEnhancerPkg = pkgs.writeScriptBin "prompt-enhancer" ''
+        #!/bin/bash
+        PROMPT_ENHANCER_PRELUDE="${preludePrompt}"
+        RFC2119="${rfc2119}"
+        INCLUDE_RFC2119=2; # 1 for compliance phrase only, 2 for full (well, partially trimmed) RFC test.
+        DEFAULT_ENHANCER_MODEL="openrouter/x-ai/grok-4.1-fast"; 
+        DEBUG__LOG_ARGUMENTS="0";
+        DEBUG__OUTPUT_FENCES="0";
+        DEBUG__SKIP_ENHANCING="0";
+        PUNCTUATION=""
+        ENHANCER_ACTION=""
+        OBJECT=""
+        DEFINITE_OBJECT_FRAGMENT=""
+        DEMONSTRATIVE_OBJECT_FRAGMENT=""
+        ENHANCED_PROMPT_TITLE_HEADING=""
+        EPILOGUE_INDEPENDANT_CLAUSE=""
+        ENHANCER_SUPPLEMENTAL_PHRASE=""
+        ARGS="$*";
+        gsed() { sed "$@"; }
+        if [[ "$ARGS" == *" "* ]]; then
+          PROMPT_OBJECT_ARG="''${ARGS%% *}";
+          REST="''${ARGS#* }";
+        else
+          PROMPT_OBJECT_ARG="$ARGS";
+          REST="";
+        fi;
+        case $PROMPT_OBJECT_ARG in
+          feature) 
+            ENHANCED_PROMPT_TITLE_HEADING="New Feature Request";
+            OBJECT="feature";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this new $OBJECT";
+            ;;
+          change)
+            ENHANCED_PROMPT_TITLE_HEADING="New Change Request";
+            OBJECT="change";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this new $OBJECT to the code's behaviour";
+            ;;
+          refactoring)
+            ENHANCED_PROMPT_TITLE_HEADING="New Refactoring Request Specification";
+            OBJECT="refactoring";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this $OBJECT of the code";
+            ;;
+          tests)
+            ENHANCED_PROMPT_TITLE_HEADING="New Test Request";
+            OBJECT="test(s)";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="$OBJECT for these parts of the codebase";
+            ENHANCER_SUPPLEMENTAL_PHRASE="Avoid writing pointless tests that simply test whether simple constant(s) have expected value(s): focus on testing the BEHAVIOUR of the code."
+            DEMONSTRATIVE_OBJECT_FRAGMENT="these $OBJECT";
+            ;;
+          bugfix)
+            ENHANCED_PROMPT_TITLE_HEADING="Critical Bug Fix Request";
+            OBJECT="problem";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="a fix for this bug in the code";
+            EPILOGUE_INDEPENDANT_CLAUSE="analyzing the problem thoroughly and diagnosing its root cause";
+            ;;
+          question) 
+            ENHANCED_PROMPT_TITLE_HEADING="Do not edit the code! Just answer this question";
+            OBJECT="question";
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="this $OBJECT";
+            ENHANCER_ACTION="Do not edit the code, just answer";
+            PUNCTUATION="?";
+            ;;
+          bare)
+            ENHANCED_PROMPT_TITLE_HEADING="ENHANCED_PROMPT_TITLE_HEADING";
+            OBJECT="BARE"; # value disables some of the normal content.
+            ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT="ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT";
+            EPILOGUE_INDEPENDANT_CLAUSE="EPILOGUE_INDEPENDANT_CLAUSE";
+            ;;
+        esac;
+        [[ -z $PUNCTUATION ]] &&\
+          PUNCTUATION=".";
+        [[ -z $ENHANCER_ACTION ]] &&\
+          ENHANCER_ACTION="Implement";
+        [[ -z $DEFINITE_OBJECT_FRAGMENT ]] &&\
+          DEFINITE_OBJECT_FRAGMENT="the $OBJECT";
+        [[ -z $DEMONSTRATIVE_OBJECT_FRAGMENT ]] &&\
+          DEMONSTRATIVE_OBJECT_FRAGMENT="this $OBJECT";
+        [[ -z $EPILOGUE_INDEPENDANT_CLAUSE ]] &&\
+          EPILOGUE_INDEPENDANT_CLAUSE="thinking the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT through thoroughly";
+        if [[ "$REST" == *" "* ]]; then
+          MODEL="''${REST%% *}"           # second word
+          USER_PROMPT="''${REST#* }"      # everything after second word
+        else
+          MODEL="$REST"               # if no space, second = rest
+          USER_PROMPT=""              # nothing left
+        fi
+        if ! ${opencodeExec} models | grep -q "$MODEL"; then
+          USER_PROMPT="$MODEL $USER_PROMPT";
+          MODEL=$DEFAULT_ENHANCER_MODEL;
+        fi;
+        if [[ "$DEBUG__LOG_ARGUMENTS" == "1" ]]; then 
+          echo -e "# Debug Information:\n";
+          echo "ARGS='$ARGS'";
+          echo "PROMPT_OBJECT_ARG='$PROMPT_OBJECT_ARG'"
+          echo "MODEL='$MODEL'"
+          echo "USER_PROMPT='$USER_PROMPT'"
+          echo "REST='$REST'";
+          echo "ENHANCED_PROMPT_TITLE_HEADING='$ENHANCED_PROMPT_TITLE_HEADING'";
+          echo "EPILOGUE_INDEPENDANT_CLAUSE='$EPILOGUE_INDEPENDANT_CLAUSE'";
+          echo "DEFINITE_OBJECT_FRAGMENT='$DEFINITE_OBJECT_FRAGMENT'";
+          echo "DEMONSTRATIVE_OBJECT_FRAGMENT='$DEMONSTRATIVE_OBJECT_FRAGMENT'";
+          i=0;
+          for arg in "$@"; do
+            echo "$i: $arg";
+            i=$((i+1))
+          done;
+          echo;
+        fi;
+        if [[ -z "$ENHANCED_PROMPT_TITLE_HEADING" ]] || [[ -z "$USER_PROMPT" ]]; then
+          echo "FATAL ERROR: The user has provided bad arguments to the command they tried to use, and as a result this prompt's content has been corrupted. Please remind the user that this command's first argument should be a model listed by the \`opencode models\` command and the remainder must constitute a non-empty string.";
           exit 0;
-        '';
-      };
+        fi;
+        ENHANCED=$({
+          echo "$PROMPT_ENHANCER_PRELUDE"
+          
+          if [[ "$OBJECT" != "BARE" ]]; then
+              echo -en "$ENHANCER_ACTION $ENHANCER_INDEPENDANT_CLAUSE_FRAGMENT: "
+          fi
+          
+          echo -e "''${USER_PROMPT}''${PUNCTUATION}"
+          
+          if [[ -n "$ENHANCER_SUPPLEMENTAL_PHRASE" ]]; then
+              echo -e "\n$ENHANCER_SUPPLEMENTAL_PHRASE\n"
+          fi
+        });
+        if [[ "$DEBUG__SKIP_ENHANCING" == "0" ]]; then
+          if ! RAW_OUTPUT=$(echo "$ENHANCED" | ${opencodeExec} --model "$MODEL" --agent plan run); then
+              echo "ERROR: 'opencode' execution failed. Please check your API keys and network connection."
+              exit 1
+          fi
+          ENHANCED="$RAW_OUTPUT"
+        else
+          ENHANCED+=$'\n\n'"DEBUG__SKIP_ENHANCING is set, this is dummy data!";
+        fi;
+        ENHANCED=$(echo "$ENHANCED" | gsed 's/^#\+ *Enhanced.*//i');
+        ENHANCED=$(echo "$ENHANCED" | gsed 's/^#/##/');
+        ENHANCED=$(echo -e "$ENHANCED" | gsed -Ez 's/\n{3,}/\n\n/g');
+        ENHANCED=$(echo -e "$ENHANCED" | awk 'NF{p=1} p');
+        [[ $INCLUDE_RFC2119 -ge 1 && $OBJECT != "BARE" && $OBJECT != "question" ]] &&\
+          ENHANCED="The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\",  \"MAY\", and \"OPTIONAL\" in this document are to be interpreted as described in RFC 2119.\n\n''${ENHANCED}\n";
+        [[ $OBJECT != "BARE" ]] &&\
+          ENHANCED="# ''${ENHANCED_PROMPT_TITLE_HEADING}:\n\n''${ENHANCED}";
+        if [[ $OBJECT != "BARE" && $OBJECT != "question" ]]; then
+          ENHANCED=$({              
+                      [[ $INCLUDE_RFC2119 -ge 2 ]] && echo "$RFC2119";
+                      echo -e "$ENHANCED\n";
+                      echo -e "## IMPORTANT: Employ our standard pracices to maximize the odds of successful implementation!\n";
+                      echo -e "So long as you proceed systematically, work hard, and adhere to our standard practices, your successful completion of the task is as good as guaranteed! Remember:\n"
+                      echo -e "- Start by $EPILOGUE_INDEPENDANT_CLAUSE. Then, you MUST break the implementation of $DEMONSTRATIVE_OBJECT_FRAGMENT down into small steps to produce a detailed, step-by-step plan that you will use to implement $DEMONSTRATIVE_OBJECT_FRAGMENT. Group the plan's steps into \"phases\": the code MUST continue to build correctly and all tests MUST pass after each phase is completed.";
+                      echo -e "- Next, write the plan into an appropriately named new Markdown file in the project's ./.docs/plans/ directory which includes checkboxes in which to mark the completion of each step.";
+                      echo -e "- Proceed to systematically implement the plan that you just wrote in the Markdown file. You MUST check off each step you've completed in the Markdown file immediately as you complete it, you MAY NOT proceed to the next step until you have checked off the current step.";
+                      echo -e "- Follow through and finish the job: you MUST continue complete the task! Keep working until every step in the Markdown file has been checked off and the entire plan has been completed. The code MUST build correctly and all tests MUST pass afterwards.";
+                    });
+        fi;
+        [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "BEGIN";
+        echo -e "''${ENHANCED}";
+        [[ "$DEBUG__OUTPUT_FENCES" == "1" ]] && echo "END";
+        exit 0;
+      '';
 
       rulesEnforcerModel = "openai/gpt-oss-120b";
 
