@@ -1,19 +1,33 @@
 # Aspect: core-jvf
-# Imports jvf aggregator modules (users, hardware, system, roles) and core
-# identity options as reusable NixOS/Darwin module sets.
+# Imports jvf core identity options and unmigrated program modules
+# as reusable NixOS/Darwin module sets.
 # Hosts pull these via self.modules.{nixos,darwin}.core-jvf.
 #
-# NOTE: hardware/default.nix is NixOS-only (amd-gpu, bluetooth, logitech).
 # NOTE: distro-grub-themes is NOT included here (see task 11).
 { ... }:
+let
+  # Unmigrated program modules still needed by dendritic role aspects.
+  # These provide option definitions (jvf.programs.*, jvf.aiTools.*).
+  # TODO: migrate each to dendritic aspect, then remove from here.
+  unmigrated-programs = [
+    ../legacy/_/common/ai-tools/default.nix
+    ../legacy/_/programs/opencode
+    ../legacy/_/programs/claudecode.nix
+    ../legacy/_/programs/cursor.nix
+    ../legacy/_/programs/droid.nix
+    ../legacy/_/programs/gemini.nix
+    ../legacy/_/programs/weechat
+  ];
+in
 {
   flake.modules.nixos.core-jvf = {
     imports = [
       ../core/options.nix
       # hardware migrated to dendritic aspects (Phase 6 complete)
       # system modules migrated to dendritic aspects (Phase 2 complete)
-      ../legacy/_/roles/default.nix
-    ];
+      # roles migrated to dendritic aspects (Phase 7 complete)
+    ]
+    ++ unmigrated-programs;
   };
 
   flake.modules.darwin.core-jvf = {
@@ -21,7 +35,8 @@
       ../core/options.nix
       # hardware excluded — NixOS-only (amd-gpu, bluetooth, logitech)
       # system modules migrated to dendritic aspects (Phase 2 complete)
-      ../legacy/_/roles/default.nix
-    ];
+      # roles migrated to dendritic aspects (Phase 7 complete)
+    ]
+    ++ unmigrated-programs;
   };
 }

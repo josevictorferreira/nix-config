@@ -70,23 +70,21 @@ in
     openrgb.enable = true;
   };
 
-  # Role
-  jvf.roles.active = [
-    "development"
-    "aiDevelopment"
-    "localAi"
-    "webDevelopment"
-    "aiDevelopment"
-    "opsDevelopment"
-    "monitoring"
-    "communication"
-    "designing"
-    "media"
-    "gaming"
-    "networkStorage"
-    "documenting"
-    "privacy"
-  ];
+  # Roles (Phase 7 - dendritic: enable directly instead of jvf.roles.active)
+  jvf.roles = {
+    development.enable = true;
+    ai-development.enable = true;
+    local-ai.enable = true;
+    opsDevelopment.enable = true;
+    monitoring.enable = true;
+    communication.enable = true;
+    designing.enable = true;
+    media.enable = true;
+    gaming.enable = true;
+    networkStorage.enable = true;
+    documenting.enable = true;
+    privacy.enable = true;
+  };
 
   system.stateVersion = "24.05";
 }

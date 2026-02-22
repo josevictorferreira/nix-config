@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, host
-, os
-, ...
+{
+  pkgs,
+  username,
+  host,
+  os,
+  ...
 }:
 
 {
@@ -59,21 +60,16 @@
   };
   system.stateVersion = 4;
 
-  jvf.system = {
-    hostName = host;
-    modules = [
-      "nixpkgs"
-      "nix-daemon"
-      "security"
-    ];
-  };
+  # System modules now enabled via dendritic aspects in macos-macbook.nix
+  # jvf.system.hostName and jvf.system.modules removed (Phase 7)
 
-  jvf.roles.active = [
-    "networkStorage"
-    "development"
-    "aiDevelopment"
-    "opsDevelopment"
-    "monitoring"
-    "communication"
-  ];
+  # Roles (Phase 7 - dendritic: enable directly instead of jvf.roles.active)
+  jvf.roles = {
+    networkStorage.enable = true;
+    development.enable = true;
+    ai-development.enable = true;
+    opsDevelopment.enable = true;
+    monitoring.enable = true;
+    communication.enable = true;
+  };
 }
