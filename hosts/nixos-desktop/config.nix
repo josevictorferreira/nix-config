@@ -4,9 +4,6 @@
   os,
   ...
 }:
-let
-  inherit (import ./variables.nix) gitUsername;
-in
 {
   imports = [
     ./hardware.nix
@@ -20,7 +17,7 @@ in
   # User configuration
   jvf.users.${username} = {
     enable = true;
-    description = gitUsername;
+    description = "Jose Victor Ferreira";
     authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
     ];
