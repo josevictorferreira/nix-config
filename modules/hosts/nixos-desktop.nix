@@ -39,6 +39,7 @@ in
         secrets-sops
         desktop-hyprland
         boot-grub-theme
+        system-locale
       ])
       # Host-specific config (last, so it can override)
       ++ [

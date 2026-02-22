@@ -40,6 +40,30 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ---
 
+## Dendritic Migration
+
+### git add Before nix eval in Flakes
+**Lesson:** Always `git add` new files before running `nix eval` or `nix flake check`. Flakes use pure evaluation — untracked files are invisible.
+**Context:** Every migration task creates a new aspect file. Forgetting `git add` causes cryptic "file not found" errors during verification.
+**Verify:** Run `git add modules/aspects/<name>.nix` immediately after creating the file, before any Nix command.
+
+### 4-File Checklist Per Aspect Migration
+**Lesson:** Each dendritic aspect migration touches exactly 4 files: (1) create `modules/aspects/<name>.nix`, (2) remove legacy import from `core-jvf.nix`, (3) add to `nixos-desktop.nix` aspects list, (4) add to `macos-macbook.nix` aspects list.
+**Context:** Phase 1 tasks 1-3 all followed this identical pattern. Missing any file causes duplicate option definitions or missing config.
+**Verify:** After each migration, confirm all 4 files are in `git diff --stat`.
+
+### Parameterize isDarwin Instead of specialArgs
+**Lesson:** Use `mkConfig { isDarwin }` closure pattern instead of relying on `system` specialArg for platform branching. Hardcode `isDarwin = true/false` in each platform module.
+**Context:** Legacy modules used `system` specialArg to detect Darwin, risking infinite recursion. Dendritic pattern eliminates this — platform is known at module definition time.
+**Verify:** New aspect files should never reference `system` or `pkgs.stdenv.isDarwin` for top-level config branching.
+
+### Darwin Configs Only Fully Validate on macOS
+**Lesson:** `nix flake check` on Linux skips `darwinConfigurations` eval (incompatible system). Use `nix eval .#darwinConfigurations.<host>.options.<path>` for targeted Darwin option type-checks on Linux.
+**Context:** Phase 1 verified NixOS fully but Darwin only via `nix eval` type probes. Structural errors in Darwin modules may go undetected until macOS rebuild.
+**Verify:** Always run both `nix eval .#darwinConfigurations...` AND `nix flake check` — they catch different classes of errors.
+
+---
+
 ## Context Management
 
 ### Prune Aggressively During Refactors

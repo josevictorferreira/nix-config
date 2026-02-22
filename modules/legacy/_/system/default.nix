@@ -22,7 +22,7 @@ let
     environment = ./environment.nix;
     firewall = ./firewall.nix;
     flatpak = ./flatpak.nix;
-    locale = ./locale.nix;
+    # locale: migrated to dendritic aspect (modules/aspects/system-locale.nix)
     logind = ./logind.nix;
     networking = ./networking.nix;
     nix-daemon = ./nix-daemon.nix;
@@ -36,19 +36,17 @@ let
   isModuleEnabled = name: builtins.elem name config.jvf.system.modules;
 
   mkModuleEnables = lib.mkMerge (
-    map
-      (
-        name:
-        lib.mkIf (isModuleEnabled name) {
-          ${name} = {
-            enable = true;
-          }
-          // lib.optionalAttrs (name == "networking") {
-            hostName = config.jvf.system.hostName;
-          };
+    map (
+      name:
+      lib.mkIf (isModuleEnabled name) {
+        ${name} = {
+          enable = true;
         }
-      )
-      (builtins.attrNames availableModules)
+        // lib.optionalAttrs (name == "networking") {
+          hostName = config.jvf.system.hostName;
+        };
+      }
+    ) (builtins.attrNames availableModules)
   );
 in
 {

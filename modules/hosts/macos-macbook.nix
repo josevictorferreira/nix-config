@@ -38,6 +38,7 @@ in
         repositories
         secrets-sops
         darwin-defaults
+        system-locale
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
