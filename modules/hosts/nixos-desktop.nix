@@ -54,6 +54,7 @@ in
         system-logind
         system-power-management
         system-virtualization
+        system-audio
       ])
       # Host-specific config (last, so it can override)
       ++ [

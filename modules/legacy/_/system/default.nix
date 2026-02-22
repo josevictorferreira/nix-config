@@ -15,7 +15,7 @@
 { config, lib, ... }:
 let
   availableModules = {
-    audio = ./audio.nix;
+    # audio: migrated to dendritic aspect (modules/aspects/system-audio.nix)
     # base-programs: migrated to dendritic aspect (modules/aspects/system-base-programs.nix)
     # base-services: migrated to dendritic aspect (modules/aspects/system-base-services.nix)
     # display: migrated to dendritic aspect (modules/aspects/system-display.nix)

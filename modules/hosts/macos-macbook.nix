@@ -53,6 +53,7 @@ in
         system-logind
         system-power-management
         system-virtualization
+        system-audio
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
