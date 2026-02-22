@@ -3,9 +3,9 @@
 { ... }:
 let
   mkCursorOptions =
-    { lib, ... }:
+    { lib, pkgs, ... }:
     let
-      json = lib.formats.json { };
+      json = pkgs.lib.formats.json { };
     in
     {
       options.jvf.programs.cursor = {
