@@ -82,6 +82,8 @@ let
       imports = [ mkCkSearchOptions ];
 
       config = lib.mkIf cfg.enable {
+        jvf.programs."ck-search".package = lib.mkDefault ckSearchPkg;
+
         users.users."${cfg.username}".packages = [
           (lib.mkDefault ckSearchPkg)
         ];
