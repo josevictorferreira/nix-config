@@ -62,6 +62,21 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Phase 1 verified NixOS fully but Darwin only via `nix eval` type probes. Structural errors in Darwin modules may go undetected until macOS rebuild.
 **Verify:** Always run both `nix eval .#darwinConfigurations...` AND `nix flake check` — they catch different classes of errors.
 
+### Coordinate Subsystem Ownership Between Modules
+**Lesson:** When two aspect modules configure the same subsystem (e.g., sops), one must own the config and the other must only consume it. Never split `defaultSopsFile`/`age.keyFile` across modules.
+**Context:** `system-security.nix` and `secrets-sops.nix` both touched sops config, causing "No key source configured" assertion. Fix: single owner for sops base config.
+**Verify:** Before creating an aspect that uses sops/networking/etc, `grep -r` for existing config of that subsystem across all aspects.
+
+### Use Relative Paths Not inputs.self in Aspects
+**Lesson:** Dendritic aspect modules can't access `inputs.self` directly. Use relative paths (e.g., `./../../secrets/secrets.enc.yaml`) for file references within the repo.
+**Context:** Legacy modules used `${inputs.self}/secrets/...` for sops files. Aspect modules lack `inputs` in scope — `config._module.args.self.outPath` doesn't work either.
+**Verify:** New aspects should never reference `inputs.self`. Use `../..` relative paths from the aspect file location.
+
+### Don't Bridge Legacy Enable Patterns During Migration
+**Lesson:** When migrating a module to dendritic, use only `lib.mkIf cfg.enable`. Don't create `enableEffective` bridges that OR legacy `config.jvf.system.modules` lists with new `cfg.enable`.
+**Context:** A subagent created `enableEffective = cfg.enable || legacyEnabled` referencing the old modules list — caused "undefined variable" errors and unnecessary complexity.
+**Verify:** Aspect modules should have zero references to `config.jvf.system.modules` or `config.jvf.*.modules`.
+
 ---
 
 ## Context Management
