@@ -20,6 +20,11 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Moving `modules/programs/zsh/` to `modules/legacy/_/programs/zsh/` broke imports that referenced `../../../../lib`.
 **Verify:** After `mv` operations, run `nix flake check` to catch broken imports immediately.
 
+### Phase Large File Reorganizations
+**Lesson:** When moving 50+ files, split into phases: (1) batch move files, (2) fix relative path references, (3) update entry points, (4) verify build. Never combine file moves with path fixes in one step.
+**Context:** Moving 87 .nix files from flat `modules/aspects/` to categorized dirs required fixing 14 asset path references and simplifying flake.nix — doing all at once would have been error-prone.
+**Verify:** After each phase, run `nix flake check` before proceeding to next phase.
+
 ---
 
 ## Dendritic Pattern
@@ -28,6 +33,11 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** import-tree discovers ALL `.nix` files under its root directory. Paths containing `/_` are excluded from auto-import.
 **Context:** Used for NixOS-level helper modules (e.g., `modules/core/_/options.nix`) that shouldn't be imported as flake-parts modules.
 **Verify:** Confirm flake.nix uses `(inputs.import-tree ./modules)` and helper modules are in `/_` paths.
+
+### Single import-tree Call for Recursive Discovery
+**Lesson:** Use one `(inputs.import-tree ./modules)` call instead of multiple calls to subdirectories. import-tree recursively discovers all `.nix` files, so subdirectory structure is purely organizational.
+**Context:** Originally had 3 separate import-tree calls for `./modules/flake`, `./modules/hosts`, `./modules/aspects`. Consolidating to one call simplified flake.nix and made directory reorganization transparent.
+**Verify:** `grep "import-tree" flake.nix` should show exactly one call (plus the input declaration).
 
 ### Per-Module Folder Organization
 **Lesson:** Programs go in `modules/programs/<name>/default.nix`. System/services/roles/hardware use flat `.nix` files in category dirs.
@@ -52,11 +62,6 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Every migration task creates a new aspect file. Forgetting `git add` causes cryptic "file not found" errors during verification.
 **Verify:** Run `git add modules/<category>/<name>.nix` immediately after creating the file, before any Nix command.
 
-### 4-File Checklist Per Aspect Migration
-**Lesson:** Each dendritic module migration touches exactly 4 files: (1) create `modules/<category>/<name>.nix`, (2) remove legacy import from `core-jvf.nix`, (3) add to `nixos-desktop.nix` imports, (4) add to `macos-macbook.nix` imports.
-**Context:** Phase 1 tasks 1-3 all followed this identical pattern. Missing any file causes duplicate option definitions or missing config.
-**Verify:** After each migration, confirm all 4 files are in `git diff --stat`.
-
 ### Parameterize isDarwin Instead of specialArgs
 **Lesson:** Use `mkConfig { isDarwin }` closure pattern instead of relying on `system` specialArg for platform branching. Hardcode `isDarwin = true/false` in each platform module.
 **Context:** Legacy modules used `system` specialArg to detect Darwin, risking infinite recursion. Dendritic pattern eliminates this — platform is known at module definition time.
@@ -76,20 +81,6 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Dendritic aspect modules can't access `inputs.self` directly. Use relative paths (e.g., `./../../secrets/secrets.enc.yaml`) for file references within the repo.
 **Context:** Legacy modules used `${inputs.self}/secrets/...` for sops files. Aspect modules lack `inputs` in scope — `config._module.args.self.outPath` doesn't work either.
 **Verify:** New aspects should never reference `inputs.self`. Use `../..` relative paths from the aspect file location.
-
-### Don't Bridge Legacy Enable Patterns During Migration
-**Lesson:** When migrating a module to dendritic, use only `lib.mkIf cfg.enable`. Don't create `enableEffective` bridges that OR legacy `config.jvf.system.modules` lists with new `cfg.enable`.
-**Context:** A subagent created `enableEffective = cfg.enable || legacyEnabled` referencing the old modules list — caused "undefined variable" errors and unnecessary complexity.
-**Verify:** Aspect modules should have zero references to `config.jvf.system.modules` or `config.jvf.*.modules`.
-
----
-
-## Task Delegation
-
-### Always Use Category Parameter for task()
-**Lesson:** When calling `task()`, always provide `category` parameter (e.g., `unspecified-low`, `quick`). The system requires either `category` or `subagent_type`.
-**Context:** Forgetting this causes immediate failure with "Invalid arguments: Must provide either category or subagent_type."
-**Verify:** Check task call includes `category="..."` before executing.
 
 ---
 
@@ -114,15 +105,10 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Phase 2 task list missed `audio.nix` in `modules/system/`. Discovered only after removing `default.nix`, causing build failure.
 **Verify:** Run `ls modules/<category>/` and diff against task list before finalizing any batch migration.
 
-### Clean Host Configs When Removing Legacy Infrastructure
-**Lesson:** After removing a legacy module system (e.g., `modules/system/default.nix`), purge host configs of references to removed options like `jvf.system.modules`.
-**Context:** Host config had `jvf.system.modules = [ ... ]` and `jvf.system.hostName` (correct: `jvf.system.networking.hostName`). Caused "option does not exist" after legacy removal.
-**Verify:** After deleting a `default.nix` aggregator, `grep -r` host configs for any option paths it defined.
-
-### Remove Legacy Imports Immediately After Migration
-**Lesson:** When migrating a module to dendritic aspects, immediately remove its import from all role files that reference it. Don't wait for flake check to fail.
-**Context:** Phase 5 service migrations left legacy imports in `network-storage.nix` and `ai-development.nix`, causing "option already declared" errors during verification.
-**Verify:** `grep -r "../services/<name>.nix" modules/legacy/_/` and remove all matches after creating dendritic aspect.
+### Clean Host Configs After Major Restructuring
+**Lesson:** After removing or restructuring module systems, purge host configs of references to removed options.
+**Context:** Host config had `jvf.system.modules = [ ... ]` and old option paths that no longer existed after restructuring.
+**Verify:** After major changes, `grep -r` host configs for any option paths that may have been affected.
 
 ### Define Package Option Values in Config
 **Lesson:** When a module builds a package and exposes it via an option, always set the option value in the config section.
@@ -181,12 +167,12 @@ Critical lessons from past sessions to avoid repeated friction.
 - **Why:** Nix cannot handle socket files in flake source tree during evaluation.
 - **Check:** If seeing "unsupported type" errors, run `rm -rf .sandbox-state` before `nix develop`.
 
-## Legacy Directory Cleanup
+## Module Directory Management
 
-### Check All References Before Deleting Legacy
-**Lesson:** Before deleting `modules/legacy/_/`, grep for ALL references including indirect imports via other modules.
-**Context:** ai-tools.nix and programs-neovim.nix had hidden legacy imports that only failed after deletion during nix flake check.
-**Verify:** Run `grep -r "modules/legacy" --include="*.nix" .` and fix all matches before `rm -rf modules/legacy/_`.
+### Check All References Before Deleting Directories
+**Lesson:** Before deleting any module directory, grep for ALL references including indirect imports via other modules.
+**Context:** Hidden imports in unrelated files often fail only after deletion during nix flake check.
+**Verify:** Run `grep -r "modules/<dir>" --include="*.nix" .` and fix all matches before `rm -rf`.
 
 ### Distinguish Config Files from Nix Modules
 **Lesson:** When moving config files (like desktop dotfiles), copy only static config - NOT default.nix or other Nix module files.
