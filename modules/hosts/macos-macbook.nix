@@ -34,6 +34,7 @@ in
       (with self.modules.darwin; [
         core-jvf
         users
+        wrappers
         secrets-sops
         darwin-defaults
       ])

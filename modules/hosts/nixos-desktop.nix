@@ -34,6 +34,7 @@ in
       (with self.modules.nixos; [
         core-jvf
         users
+        wrappers
         secrets-sops
         desktop-hyprland
         boot-grub-theme

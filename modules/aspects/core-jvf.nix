@@ -11,8 +11,8 @@
     imports = [
       ../core/options.nix
       ../legacy/_/users/repositories.nix
-      ../legacy/_/users/wrappers.nix
       # users/default.nix migrated to modules/aspects/users.nix
+      # wrappers.nix migrated to modules/aspects/wrappers.nix
       ../legacy/_/hardware/default.nix
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix
@@ -23,8 +23,8 @@
     imports = [
       ../core/options.nix
       ../legacy/_/users/repositories.nix
-      ../legacy/_/users/wrappers.nix
       # users/default.nix migrated to modules/aspects/users.nix
+      # wrappers.nix migrated to modules/aspects/wrappers.nix
       # hardware excluded — NixOS-only (amd-gpu, bluetooth, logitech)
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix
