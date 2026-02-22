@@ -29,7 +29,7 @@ let
     # nixpkgs: migrated to dendritic aspect (modules/aspects/system-nixpkgs.nix)
     # power-management: migrated to dendritic aspect (modules/aspects/system-power-management.nix)
     # security: migrated to dendritic aspect (modules/aspects/system-security.nix)
-    virtualization = ./virtualization.nix;
+    # virtualization: migrated to dendritic aspect (modules/aspects/system-virtualization.nix)
     # xdg: migrated to dendritic aspect (modules/aspects/system-xdg.nix)
   };
 

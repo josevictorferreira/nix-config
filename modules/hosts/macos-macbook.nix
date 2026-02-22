@@ -52,6 +52,7 @@ in
         system-flatpak
         system-logind
         system-power-management
+        system-virtualization
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

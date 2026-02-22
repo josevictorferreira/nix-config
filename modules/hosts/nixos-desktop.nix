@@ -53,6 +53,7 @@ in
         system-flatpak
         system-logind
         system-power-management
+        system-virtualization
       ])
       # Host-specific config (last, so it can override)
       ++ [
