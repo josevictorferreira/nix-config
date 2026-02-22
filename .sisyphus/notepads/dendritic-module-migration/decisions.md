@@ -1,0 +1,1 @@
+- Kept legacy `modules/legacy/_/system/security.nix` file intact (migration only) but removed it from legacy system aggregator `availableModules` to prevent duplicate options and ensure aspect owns `jvf.system.security`.

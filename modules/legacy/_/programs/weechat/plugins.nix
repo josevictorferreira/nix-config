@@ -1,6 +1,6 @@
-{
-  lib,
-  pkgs,
+{ lib
+, pkgs
+,
 }:
 let
   weechatMatrixRs =

@@ -28,7 +28,7 @@ let
     nix-daemon = ./nix-daemon.nix;
     # nixpkgs: migrated to dendritic aspect (modules/aspects/system-nixpkgs.nix)
     power-management = ./power-management.nix;
-    security = ./security.nix;
+    # security: migrated to dendritic aspect (modules/aspects/system-security.nix)
     virtualization = ./virtualization.nix;
     xdg = ./xdg.nix;
   };
@@ -36,17 +36,19 @@ let
   isModuleEnabled = name: builtins.elem name config.jvf.system.modules;
 
   mkModuleEnables = lib.mkMerge (
-    map (
-      name:
-      lib.mkIf (isModuleEnabled name) {
-        ${name} = {
-          enable = true;
+    map
+      (
+        name:
+        lib.mkIf (isModuleEnabled name) {
+          ${name} = {
+            enable = true;
+          }
+          // lib.optionalAttrs (name == "networking") {
+            hostName = config.jvf.system.hostName;
+          };
         }
-        // lib.optionalAttrs (name == "networking") {
-          hostName = config.jvf.system.hostName;
-        };
-      }
-    ) (builtins.attrNames availableModules)
+      )
+      (builtins.attrNames availableModules)
   );
 in
 {

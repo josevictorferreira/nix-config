@@ -101,12 +101,11 @@ let
   # Shared implementation logic, parameterized by platform
   mkWrappersConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.wrappers;
@@ -132,24 +131,26 @@ let
                 fullPath = baseDir + "/" + subPath;
                 entries = builtins.readDir fullPath;
                 results = lib.flatten (
-                  lib.mapAttrsToList (
-                    entryName: entryType:
-                    let
-                      fullEntryPath = fullPath + "/" + entryName;
-                      relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
-                    in
-                    if entryType == "directory" then
-                      collectFilesRecursive baseDir relativePath
-                    else if entryType == "regular" && !(lib.hasSuffix ".nix" entryName) then
-                      [
-                        {
-                          name = relativePath;
-                          path = fullEntryPath;
-                        }
-                      ]
-                    else
-                      [ ]
-                  ) entries
+                  lib.mapAttrsToList
+                    (
+                      entryName: entryType:
+                        let
+                          fullEntryPath = fullPath + "/" + entryName;
+                          relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
+                        in
+                        if entryType == "directory" then
+                          collectFilesRecursive baseDir relativePath
+                        else if entryType == "regular" && !(lib.hasSuffix ".nix" entryName) then
+                          [
+                            {
+                              name = relativePath;
+                              path = fullEntryPath;
+                            }
+                          ]
+                        else
+                          [ ]
+                    )
+                    entries
                 );
               in
               results;
@@ -218,15 +219,15 @@ let
           lib.mapAttrs createStructuredConfig configs;
 
       mkProgramWrapper =
-        {
-          userName,
-          programName,
-          packages,
-          command ? null,
-          env ? { },
-          configs ? { },
-          useDerivationConfig ? false,
-          configPath ? null,
+        { userName
+        , programName
+        , packages
+        , command ? null
+        , env ? { }
+        , configs ? { }
+        , useDerivationConfig ? false
+        , configPath ? null
+        ,
         }:
         let
           home = if isDarwin then "/Users/${userName}" else "/home/${userName}";
@@ -276,132 +277,138 @@ let
           home = if isDarwin then "/Users/${userName}" else "/home/${userName}";
         in
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            programName: programCfg:
-            let
-              wrapper = mkProgramWrapper {
-                inherit userName programName;
-                inherit (programCfg)
-                  packages
-                  command
-                  env
-                  configs
-                  useDerivationConfig
-                  configPath
-                  ;
-              };
+          lib.mapAttrsToList
+            (
+              programName: programCfg:
+              let
+                wrapper = mkProgramWrapper {
+                  inherit userName programName;
+                  inherit (programCfg)
+                    packages
+                    command
+                    env
+                    configs
+                    useDerivationConfig
+                    configPath
+                    ;
+                };
 
-              installWrapper =
-                if wrapper.wrapperEnv == null then
-                  ""
-                else
-                  ''
-                    echo "Installing wrapper for ${programName}..."
-                    mkdir -p ${home}/.local/bin
-                    ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
-                  '';
-
-              setupConfig =
-                if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
-                  ""
-                else
-                  let
-                    targetDir = wrapper.configTargetDir;
-                    darwinCopyDir = ''
-                      find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
+                installWrapper =
+                  if wrapper.wrapperEnv == null then
+                    ""
+                  else
+                    ''
+                      echo "Installing wrapper for ${programName}..."
+                      mkdir -p ${home}/.local/bin
+                      ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
                     '';
-                    linuxCopyDir = ''
-                      if [ -d "${wrapper.configDir}/${programName}" ]; then
-                        cp -r "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
-                      fi
-                      # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
-                      find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
-                    '';
-                  in
-                  ''
-                    echo "Setting up config for ${programName}..."
-                    TARGET_PATH="${targetDir}"
-                    TARGET_DIR="${targetDir}.tmp"
 
-                    rm -rf "$TARGET_DIR"
-                    mkdir -p "$TARGET_DIR"
-
-                    # Copy all files from config directory, dereferencing symlinks
-                    if [ -d "${wrapper.configDir}" ]; then
-                      ${if isDarwin then darwinCopyDir else linuxCopyDir}
-                      chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_DIR"
-                      chmod -R u+rw "$TARGET_DIR"
-                      find "$TARGET_DIR" -type d -exec chmod 755 {} \;
-                      find "$TARGET_DIR" -type f -exec chmod 644 {} \;
-                    fi
-
-                    # Check for changes
-                    if [ -d "$TARGET_PATH" ] && diff -r -q "$TARGET_DIR" "$TARGET_PATH" >/dev/null 2>&1; then
-                      echo "Config for ${programName} unchanged."
-                      rm -rf "$TARGET_DIR"
-                    else
-                      # Atomic swap
-                      BACKUP_DIR=""
-                      if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
-                        echo "Backing up existing ${programName} config..."
-                        rm -rf "$TARGET_PATH".backup.*
-
-                        BACKUP_TIMESTAMP=$(date +%s)
-                        BACKUP_DIR="$TARGET_PATH.backup.$BACKUP_TIMESTAMP"
-                        mv "$TARGET_PATH" "$BACKUP_DIR"
-                      fi
-
-                      rm -rf "$TARGET_PATH"
-                      mv "$TARGET_DIR" "$TARGET_PATH"
-
-                      ${lib.optionalString (programCfg.preserveFiles != [ ]) ''
-                        if [ -n "$BACKUP_DIR" ]; then
-                          # Restore preserved files
-                          ${lib.concatMapStringsSep "\n" (file: ''
-                            if [ -e "$BACKUP_DIR/${file}" ]; then
-                              echo "Restoring preserved file: ${file}..."
-                              rm -rf "$TARGET_PATH/${file}"
-                              cp -r "$BACKUP_DIR/${file}" "$TARGET_PATH/${file}"
-                              # Fix ownership since activation scripts run as root
-                              chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_PATH/${file}"
-                            fi
-                          '') programCfg.preserveFiles}
+                setupConfig =
+                  if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
+                    ""
+                  else
+                    let
+                      targetDir = wrapper.configTargetDir;
+                      darwinCopyDir = ''
+                        find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
+                      '';
+                      linuxCopyDir = ''
+                        if [ -d "${wrapper.configDir}/${programName}" ]; then
+                          cp -r "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
                         fi
-                      ''}
+                        # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
+                        find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
+                      '';
+                    in
+                    ''
+                      echo "Setting up config for ${programName}..."
+                      TARGET_PATH="${targetDir}"
+                      TARGET_DIR="${targetDir}.tmp"
 
-                      ${programCfg.postInstall}
-                    fi
-                  '';
-            in
-            ''
-              ${installWrapper}
-              ${setupConfig}
-            ''
-          ) (uCfg.programs or { })
+                      rm -rf "$TARGET_DIR"
+                      mkdir -p "$TARGET_DIR"
+
+                      # Copy all files from config directory, dereferencing symlinks
+                      if [ -d "${wrapper.configDir}" ]; then
+                        ${if isDarwin then darwinCopyDir else linuxCopyDir}
+                        chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_DIR"
+                        chmod -R u+rw "$TARGET_DIR"
+                        find "$TARGET_DIR" -type d -exec chmod 755 {} \;
+                        find "$TARGET_DIR" -type f -exec chmod 644 {} \;
+                      fi
+
+                      # Check for changes
+                      if [ -d "$TARGET_PATH" ] && diff -r -q "$TARGET_DIR" "$TARGET_PATH" >/dev/null 2>&1; then
+                        echo "Config for ${programName} unchanged."
+                        rm -rf "$TARGET_DIR"
+                      else
+                        # Atomic swap
+                        BACKUP_DIR=""
+                        if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
+                          echo "Backing up existing ${programName} config..."
+                          rm -rf "$TARGET_PATH".backup.*
+
+                          BACKUP_TIMESTAMP=$(date +%s)
+                          BACKUP_DIR="$TARGET_PATH.backup.$BACKUP_TIMESTAMP"
+                          mv "$TARGET_PATH" "$BACKUP_DIR"
+                        fi
+
+                        rm -rf "$TARGET_PATH"
+                        mv "$TARGET_DIR" "$TARGET_PATH"
+
+                        ${lib.optionalString (programCfg.preserveFiles != [ ]) ''
+                          if [ -n "$BACKUP_DIR" ]; then
+                            # Restore preserved files
+                            ${lib.concatMapStringsSep "\n" (file: ''
+                              if [ -e "$BACKUP_DIR/${file}" ]; then
+                                echo "Restoring preserved file: ${file}..."
+                                rm -rf "$TARGET_PATH/${file}"
+                                cp -r "$BACKUP_DIR/${file}" "$TARGET_PATH/${file}"
+                                # Fix ownership since activation scripts run as root
+                                chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_PATH/${file}"
+                              fi
+                            '') programCfg.preserveFiles}
+                          fi
+                        ''}
+
+                        ${programCfg.postInstall}
+                      fi
+                    '';
+              in
+              ''
+                ${installWrapper}
+                ${setupConfig}
+              ''
+            )
+            (uCfg.programs or { })
         );
 
       # Packages for users whose programs have no wrapper command (command == null)
       userPackagesConfig = {
         users.users = lib.mkMerge (
-          lib.mapAttrsToList (
-            userName: uCfg:
-            let
-              userPackages = lib.flatten (
-                lib.mapAttrsToList (
-                  programName: programCfg:
-                  if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
-                ) (uCfg.programs or { })
-              );
-            in
-            if userPackages == [ ] then
-              { }
-            else
-              {
-                "${userName}" = {
-                  packages = userPackages;
-                };
-              }
-          ) cfg.users
+          lib.mapAttrsToList
+            (
+              userName: uCfg:
+                let
+                  userPackages = lib.flatten (
+                    lib.mapAttrsToList
+                      (
+                        programName: programCfg:
+                          if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+                      )
+                      (uCfg.programs or { })
+                  );
+                in
+                if userPackages == [ ] then
+                  { }
+                else
+                  {
+                    "${userName}" = {
+                      packages = userPackages;
+                    };
+                  }
+            )
+            cfg.users
         );
       };
     in
@@ -413,26 +420,30 @@ let
         ++ lib.optional isDarwin {
           system.activationScripts.postActivation.text = lib.concatStringsSep "\n" (
             lib.flatten (
-              lib.mapAttrsToList (
-                userName: uCfg: if (uCfg.programs or { }) == { } then [ ] else [ (mkUserActivation userName uCfg) ]
-              ) cfg.users
+              lib.mapAttrsToList
+                (
+                  userName: uCfg: if (uCfg.programs or { }) == { } then [ ] else [ (mkUserActivation userName uCfg) ]
+                )
+                cfg.users
             )
           );
         }
         ++ lib.optional (!isDarwin) {
           system.activationScripts = lib.mkMerge (
-            lib.mapAttrsToList (
-              userName: uCfg:
-              if (uCfg.programs or { }) == { } then
-                { }
-              else
-                {
-                  "jvf-wrappers-${userName}" = {
-                    supportsDryActivation = true;
-                    text = mkUserActivation userName uCfg;
-                  };
-                }
-            ) cfg.users
+            lib.mapAttrsToList
+              (
+                userName: uCfg:
+                  if (uCfg.programs or { }) == { } then
+                    { }
+                  else
+                    {
+                      "jvf-wrappers-${userName}" = {
+                        supportsDryActivation = true;
+                        text = mkUserActivation userName uCfg;
+                      };
+                    }
+              )
+              cfg.users
           );
         }
       );

@@ -47,7 +47,7 @@ in
       "nix-daemon"
       "nixpkgs"
       "power-management"
-      "security"
+      # "security"  # migrated to dendritic: system-security aspect
       "xdg"
       "virtualization"
     ];
@@ -64,6 +64,9 @@ in
       PUBLICSHARE = "$HOME/Public";
     };
   };
+
+  # Enable dendritic security aspect (replaces legacy "security" module)
+  jvf.system.security.enable = true;
 
   # Static IP configuration
   networking.interfaces.enp4s0.ipv4.addresses = [

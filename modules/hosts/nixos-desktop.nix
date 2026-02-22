@@ -41,6 +41,7 @@ in
         boot-grub-theme
         system-locale
         system-nixpkgs
+        system-security
       ])
       # Host-specific config (last, so it can override)
       ++ [

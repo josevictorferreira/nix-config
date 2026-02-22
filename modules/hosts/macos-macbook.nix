@@ -40,6 +40,7 @@ in
         darwin-defaults
         system-locale
         system-nixpkgs
+        system-security
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
