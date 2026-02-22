@@ -10,7 +10,7 @@ let
   # These provide option definitions (jvf.programs.*, jvf.aiTools.*).
   # TODO: migrate each to dendritic aspect, then remove from here.
   unmigrated-programs = [
-    ../legacy/_/common/ai-tools/default.nix
+    # AI Tools migrated to dendritic aspects (Phase 9 complete)
     ../legacy/_/programs/opencode
     ../legacy/_/programs/claudecode.nix
     ../legacy/_/programs/cursor.nix

@@ -85,6 +85,14 @@ in
         roles-documenting
         roles-network-storage
         roles-ops-development
+        # AI Tools aspects (Phase 9)
+        ai-tools
+        ai-tools-skills
+        ai-tools-agents
+        ai-tools-commands
+        ai-tools-mcp
+        ai-tools-rules
+        ai-tools-scripts
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
