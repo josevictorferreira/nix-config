@@ -12,7 +12,7 @@
       ../core/options.nix
       ../legacy/_/users/repositories.nix
       ../legacy/_/users/wrappers.nix
-      ../legacy/_/users/default.nix
+      # users/default.nix migrated to modules/aspects/users.nix
       ../legacy/_/hardware/default.nix
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix
@@ -24,7 +24,7 @@
       ../core/options.nix
       ../legacy/_/users/repositories.nix
       ../legacy/_/users/wrappers.nix
-      ../legacy/_/users/default.nix
+      # users/default.nix migrated to modules/aspects/users.nix
       # hardware excluded — NixOS-only (amd-gpu, bluetooth, logitech)
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix

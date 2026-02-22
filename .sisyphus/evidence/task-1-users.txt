@@ -1,0 +1,35 @@
+# Task 1: Users Module — Dendritic Migration Evidence
+
+## Date: 2026-02-21
+
+## Files Changed
+- **Created**: `modules/aspects/users.nix` — dendritic flake-parts module
+- **Modified**: `modules/aspects/core-jvf.nix` — removed legacy users/default.nix import
+- **Modified**: `modules/hosts/nixos-desktop.nix` — added `users` to aspects list
+- **Modified**: `modules/hosts/macos-macbook.nix` — added `users` to aspects list
+
+## Design Decisions
+1. **Shared option via `mkUsersOption` function**: Options definition extracted into a reusable function imported by both nixos and darwin modules. Avoids code duplication.
+2. **No `pkgs.stdenv.isDarwin` needed**: Dendritic pattern separates platform concerns at the module level — NixOS config in `flake.modules.nixos.users`, Darwin config in `flake.modules.darwin.users`. No runtime detection needed.
+3. **Legacy file preserved**: `modules/legacy/_/users/default.nix` kept for reference (not deleted).
+
+## Verification Results
+
+### nix eval .#nixosConfigurations.nixos-desktop.options.jvf.users.type.name
+```
+"attrsOf"
+```
+
+### nix eval .#darwinConfigurations.macos-macbook.options.jvf.users.type.name
+```
+"attrsOf"
+```
+
+### nix flake check --show-trace
+```
+Exit 0 — all checks pass
+```
+
+## Notes
+- New file must be `git add`ed for Nix flakes to see it (pure evaluation)
+- `core-jvf.nix` still imports other legacy user modules (repositories.nix, wrappers.nix) — to be migrated in subsequent tasks

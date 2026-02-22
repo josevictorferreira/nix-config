@@ -33,6 +33,7 @@ in
       # Dendritic aspects (all Darwin modules via import-tree)
       (with self.modules.darwin; [
         core-jvf
+        users
         secrets-sops
         darwin-defaults
       ])

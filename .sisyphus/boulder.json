@@ -1,9 +1,9 @@
 {
-  "active_plan": "/home/josevictor/.config/nix/.sisyphus/plans/dendritic-refactor.md",
-  "started_at": "2026-02-21T20:29:23.850Z",
+  "active_plan": "/home/josevictor/.config/nix/.sisyphus/plans/dendritic-module-migration.md",
+  "started_at": "2026-02-21T23:21:30.000Z",
   "session_ids": [
     "ses_37e326d66ffe74F6YaXiKrPJ5u"
   ],
-  "plan_name": "dendritic-refactor",
+  "plan_name": "dendritic-module-migration",
   "agent": "atlas"
 }

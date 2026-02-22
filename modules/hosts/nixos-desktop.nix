@@ -33,6 +33,7 @@ in
       # Dendritic aspects (all NixOS modules via import-tree)
       (with self.modules.nixos; [
         core-jvf
+        users
         secrets-sops
         desktop-hyprland
         boot-grub-theme
