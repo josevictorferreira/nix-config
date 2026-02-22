@@ -7,7 +7,7 @@ let
   mkOpencodeOptions =
     { lib, pkgs, ... }:
     let
-      json = pkgs.lib.formats.json { };
+      json = pkgs.formats.json { };
     in
     {
       options.jvf.programs.opencode = {
