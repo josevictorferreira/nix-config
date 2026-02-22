@@ -30,9 +30,9 @@
           packages = [
             pkgs.waybar
           ];
-          configs = {
-            "waybar" = ./assets/waybar;
-          };
+            configs = {
+              "waybar" = ./assets/waybar/.;
+            };
         };
 
         fonts.packages = [

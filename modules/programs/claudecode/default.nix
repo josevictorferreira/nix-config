@@ -84,17 +84,52 @@ let
                   "moonshotai/kimi-k2-thinking"
                   "google/gemini-3-pro-preview"
                   "z-ai/glm-4.7"
+                  "qwen/qwen3.5-397b-a17b"
+                  "qwen/qwen3-coder-next"
+                  "stepfun/step-3.5-flash"
+                  "moonshotai/kimi-k2.5"
+                  "minimax/minimax-m2.5"
                 ];
                 transformer = {
                   use = [ "openrouter" ];
                 };
               }
+
+              {
+                name = "minimax";
+                api_base_url = "https://api.minimax.io/anthropic/v1";
+                api_key = "\${MINIMAX_API_KEY}";
+                models = [
+                  "MiniMax-M2"
+                  "MiniMax-M2.1"
+                  "MiniMax-M2.5"
+                ];
+              }
+
+              {
+                name = "moonshotai";
+                api_base_url = "https://api.moonshot.ai/anthropic";
+                api_key = "\${KIMI_API_KEY}";
+                models = [
+                  "kimi-k2.5"
+                ];
+              }
+
+              {
+                name = "zai";
+                api_base_url = "https://api.z.ai/api/coding/paas/v4";
+                api_key = "\${Z_AI_API_KEY}";
+                models = [
+                  "glm-5"
+                  "glm-4.7"
+                ];
+              }
             ];
             Router = {
-              default = "openrouter,z-ai/glm-4.7";
+              default = "openrouter,moonshotai/kimi-k2.5";
               background = "openrouter,openai/gpt-oss-120b:exacto";
-              think = "openrouter,moonshotai/kimi-k2-thinking";
-              longContext = "openrouter,z-ai/glm-4.7";
+              think = "openrouter,moonshotai/kimi-k2.5";
+              longContext = "openrouter,moonshotai/kimi-k2.5";
               webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
               image = "openrouter,google/gemini-2.5-flash-image";
               longContextThreshold = 250000;

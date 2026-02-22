@@ -484,7 +484,11 @@ let
                 fi
 
                 # Construct Prompt
-                local COMMIT_MODEL_BASE_PROMPT="${prompt}"
+                local COMMIT_MODEL_BASE_PROMPT
+      COMMIT_MODEL_BASE_PROMPT=$(cat <<'PROMPT_EOF'
+${prompt}
+PROMPT_EOF
+)
 
                 # Replace placeholders locally in bash
                 PROMPT="$COMMIT_MODEL_BASE_PROMPT

@@ -53,6 +53,24 @@ in
             "hypr" = hyprConfigDir;
           };
           postInstall = ''
+            # Create Battery.sh script for hyprlock
+            cat > "$TARGET_PATH/scripts/Battery.sh" << 'BATTERY_EOF'
+            #!/usr/bin/env bash
+            # Battery status script for hyprlock
+
+            if command -v acpi &> /dev/null; then
+                acpi -b | grep -P -o '[0-9]+(?=%)'
+            elif [ -f /sys/class/power_supply/BAT0/capacity ]; then
+                cat /sys/class/power_supply/BAT0/capacity
+            elif [ -f /sys/class/power_supply/BAT1/capacity ]; then
+                cat /sys/class/power_supply/BAT1/capacity
+            else
+                echo "N/A"
+            fi
+            BATTERY_EOF
+
+            # Make all scripts executable
+            find "$TARGET_PATH/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
             echo "Reloading Hyprland..."
             ${config.programs.hyprland.package}/bin/hyprctl reload || true
           '';

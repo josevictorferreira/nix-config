@@ -32,6 +32,8 @@ in
 
   # === MODULE ACTIVATIONS ===
   # All system modules are now enabled via dendritic aspects in modules/hosts/nixos-desktop.nix
+  jvf.system.locale.enable = true;
+
   jvf.system.networking = {
     enable = true;
     hostName = host;
@@ -54,6 +56,9 @@ in
 
   # Enable nixpkgs config (required for allowUnfree to take effect)
   jvf.system.nixpkgs.enable = true;
+
+  # Enable nix-daemon (required for nix-ld dynamic linking support)
+  jvf.system.nix-daemon.enable = true;
 
   # Static IP configuration
   networking.interfaces.enp4s0.ipv4.addresses = [
