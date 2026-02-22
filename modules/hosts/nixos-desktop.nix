@@ -50,6 +50,9 @@ in
         system-environment
         system-display
         system-firewall
+        system-flatpak
+        system-logind
+        system-power-management
       ])
       # Host-specific config (last, so it can override)
       ++ [

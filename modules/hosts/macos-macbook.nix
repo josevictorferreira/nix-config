@@ -49,6 +49,9 @@ in
         system-environment
         system-display
         system-firewall
+        system-flatpak
+        system-logind
+        system-power-management
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

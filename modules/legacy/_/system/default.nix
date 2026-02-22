@@ -21,13 +21,13 @@ let
     # display: migrated to dendritic aspect (modules/aspects/system-display.nix)
     # environment: migrated to dendritic aspect (modules/aspects/system-environment.nix)
     # firewall: migrated to dendritic aspect (modules/aspects/system-firewall.nix)
-    flatpak = ./flatpak.nix;
+    # flatpak: migrated to dendritic aspect (modules/aspects/system-flatpak.nix)
     # locale: migrated to dendritic aspect (modules/aspects/system-locale.nix)
-    logind = ./logind.nix;
+    # logind: migrated to dendritic aspect (modules/aspects/system-logind.nix)
     # networking: migrated to dendritic aspect (modules/aspects/system-networking.nix)
     # nix-daemon: migrated to dendritic aspect (modules/aspects/system-nix-daemon.nix)
     # nixpkgs: migrated to dendritic aspect (modules/aspects/system-nixpkgs.nix)
-    power-management = ./power-management.nix;
+    # power-management: migrated to dendritic aspect (modules/aspects/system-power-management.nix)
     # security: migrated to dendritic aspect (modules/aspects/system-security.nix)
     virtualization = ./virtualization.nix;
     # xdg: migrated to dendritic aspect (modules/aspects/system-xdg.nix)
