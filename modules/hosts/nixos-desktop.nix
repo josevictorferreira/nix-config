@@ -42,6 +42,7 @@ in
         system-locale
         system-networking
         system-nixpkgs
+        system-nix-daemon
         system-security
       ])
       # Host-specific config (last, so it can override)

@@ -25,7 +25,7 @@ let
     # locale: migrated to dendritic aspect (modules/aspects/system-locale.nix)
     logind = ./logind.nix;
     # networking: migrated to dendritic aspect (modules/aspects/system-networking.nix)
-    nix-daemon = ./nix-daemon.nix;
+    # nix-daemon: migrated to dendritic aspect (modules/aspects/system-nix-daemon.nix)
     # nixpkgs: migrated to dendritic aspect (modules/aspects/system-nixpkgs.nix)
     power-management = ./power-management.nix;
     # security: migrated to dendritic aspect (modules/aspects/system-security.nix)
