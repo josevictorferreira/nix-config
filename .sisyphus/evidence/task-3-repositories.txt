@@ -1,0 +1,37 @@
+Task 3: Refactor repositories.nix to dendritic aspect
+=======================================================
+Date: 2026-02-21
+
+## Changes Made
+
+### Created: modules/aspects/repositories.nix
+- flake-parts module defining flake.modules.nixos.repositories and flake.modules.darwin.repositories
+- Shared mkRepositoriesOption (jvf.repositories.users as attrsOf submodule with clonedDirs)
+- Parameterized mkRepositoriesConfig {isDarwin} pattern (matches wrappers.nix convention)
+- Darwin: launchd.agents with RunAtLoad, ProgramArguments, per-user log files
+- NixOS: system.userActivationScripts using inputs.lib.git.cloneRepoText
+
+### Modified: modules/aspects/core-jvf.nix
+- Removed ../legacy/_/users/repositories.nix from both nixos and darwin import lists
+- Added migration comment
+
+### Modified: modules/hosts/nixos-desktop.nix
+- Added `repositories` to self.modules.nixos aspect list
+
+### Modified: modules/hosts/macos-macbook.nix
+- Added `repositories` to self.modules.darwin aspect list
+
+## Verification
+
+### nix eval option type
+$ nix eval .#nixosConfigurations.nixos-desktop.options.jvf.repositories.users.type.name
+"attrsOf"
+
+### nix flake check
+$ nix flake check --show-trace
+Exit 0 — all checks pass (darwinConfigurations skipped: incompatible system)
+
+## Notes
+- Legacy file modules/legacy/_/users/repositories.nix NOT deleted (per instructions)
+- GroupName hardcoded to "staff" for Darwin (was conditional but only darwin branch used it)
+- mkBody logic preserved exactly from legacy module

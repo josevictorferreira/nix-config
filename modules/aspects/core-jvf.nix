@@ -10,9 +10,9 @@
   flake.modules.nixos.core-jvf = {
     imports = [
       ../core/options.nix
-      ../legacy/_/users/repositories.nix
       # users/default.nix migrated to modules/aspects/users.nix
       # wrappers.nix migrated to modules/aspects/wrappers.nix
+      # repositories.nix migrated to modules/aspects/repositories.nix
       ../legacy/_/hardware/default.nix
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix
@@ -22,9 +22,9 @@
   flake.modules.darwin.core-jvf = {
     imports = [
       ../core/options.nix
-      ../legacy/_/users/repositories.nix
       # users/default.nix migrated to modules/aspects/users.nix
       # wrappers.nix migrated to modules/aspects/wrappers.nix
+      # repositories.nix migrated to modules/aspects/repositories.nix
       # hardware excluded — NixOS-only (amd-gpu, bluetooth, logitech)
       ../legacy/_/system/default.nix
       ../legacy/_/roles/default.nix

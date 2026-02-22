@@ -35,6 +35,7 @@ in
         core-jvf
         users
         wrappers
+        repositories
         secrets-sops
         darwin-defaults
       ])

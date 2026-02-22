@@ -35,6 +35,7 @@ in
         core-jvf
         users
         wrappers
+        repositories
         secrets-sops
         desktop-hyprland
         boot-grub-theme

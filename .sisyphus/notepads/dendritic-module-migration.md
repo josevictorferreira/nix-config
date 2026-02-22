@@ -25,3 +25,18 @@
 **Key insight:** Legacy used `system` specialArg for isDarwin check to avoid infinite recursion with `pkgs.stdenv.isDarwin` in top-level config branching. Dendritic approach eliminates this entirely by hardcoding isDarwin per platform module.
 
 **Files:** aspects/wrappers.nix created, core-jvf.nix updated, both host selectors updated.
+
+---
+
+## Task 3: repositories.nix → aspects/repositories.nix ✅
+
+**Pattern:** Same as wrappers — `mkRepositoriesConfig { isDarwin }` parameterized config + shared `mkRepositoriesOption`.
+
+**Key details:**
+- Darwin: `launchd.agents` with `RunAtLoad`, per-user bash script
+- NixOS: `system.userActivationScripts` using `inputs.lib.git.cloneRepoText`
+- GroupName simplified to "staff" for Darwin (only branch that uses it)
+- Legacy `system` specialArg for isDarwin eliminated by parameterization
+
+**Files:** aspects/repositories.nix created, core-jvf.nix updated, both host selectors updated.
+**Verification:** `nix eval` returns "attrsOf", `nix flake check` passes.
