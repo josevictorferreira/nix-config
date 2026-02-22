@@ -170,3 +170,20 @@ Critical lessons from past sessions to avoid repeated friction.
 - **Rule:** When running `nix develop` multiple times in a directory with Unix sockets (`.sock` files) or special files, Nix will fail with "unsupported type". Clean state directory before re-evaluating flake.
 - **Why:** Nix cannot handle socket files in flake source tree during evaluation.
 - **Check:** If seeing "unsupported type" errors, run `rm -rf .sandbox-state` before `nix develop`.
+
+## Legacy Directory Cleanup
+
+### Check All References Before Deleting Legacy
+**Lesson:** Before deleting `modules/legacy/_/`, grep for ALL references including indirect imports via other modules.
+**Context:** ai-tools.nix and programs-neovim.nix had hidden legacy imports that only failed after deletion during nix flake check.
+**Verify:** Run `grep -r "modules/legacy" --include="*.nix" .` and fix all matches before `rm -rf modules/legacy/_`.
+
+### Distinguish Config Files from Nix Modules
+**Lesson:** When moving config files (like desktop dotfiles), copy only static config - NOT default.nix or other Nix module files.
+**Context:** Copied Nix module files to assets/ causing "undefined variable" errors. Config assets should be JSON/YAML/plain files only.
+**Verify:** After copying, check that assets/ contains no `*.nix` files - only actual config files.
+
+### Recover Deleted Content from Git
+**Lesson:** If you delete files that are still needed, use `git show HEAD:path/to/file` to recover content without restoring files.
+**Context:** Had to recover development module content from git after premature deletion to inline into programs-neovim.nix.
+**Verify:** `git show HEAD:path` works even for deleted files if they've been committed before.
