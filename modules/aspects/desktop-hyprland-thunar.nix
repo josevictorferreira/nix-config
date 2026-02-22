@@ -36,7 +36,7 @@
 
         jvf.wrappers.users.${cfg.username}.programs.Thunar = {
           configs = {
-            "Thunar" = ../assets/desktop/thunar;
+            "Thunar" = ./assets/desktop/thunar;
           };
         };
       };

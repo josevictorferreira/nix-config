@@ -29,7 +29,7 @@
             pkgs.qt6Packages.qtstyleplugin-kvantum
           ];
           configs = {
-            "Kvantum" = ../assets/desktop/kvantum;
+            "Kvantum" = ./assets/desktop/kvantum;
           };
         };
       };
