@@ -5,14 +5,14 @@
 {
   flake.modules.nixos.core-jvf = {
     imports = [
-      ../core/options.nix
+      ./_/options.nix
       # All modules migrated to dendritic aspects
     ];
   };
 
   flake.modules.darwin.core-jvf = {
     imports = [
-      ../core/options.nix
+      ./_/options.nix
       # All modules migrated to dendritic aspects
     ];
   };

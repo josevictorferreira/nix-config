@@ -20,7 +20,7 @@
       config = lib.mkIf cfg.enable {
         jvf.wrappers.users.${cfg.username}.programs.xfce4 = {
           configs = {
-            "xfce4" = ./assets/desktop/xfce4;
+            "xfce4" = ./assets/xfce4;
           };
         };
       };

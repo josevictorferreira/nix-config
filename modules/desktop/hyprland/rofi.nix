@@ -34,7 +34,7 @@
               pkgs.rofi
             ];
             configs = {
-              "rofi" = ./assets/desktop/rofi/.;
+              "rofi" = ./assets/rofi/.;
             };
           };
         })

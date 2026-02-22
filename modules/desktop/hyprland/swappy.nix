@@ -31,7 +31,7 @@
             pkgs.swappy
           ];
           configs = {
-            "swappy" = ./assets/desktop/swappy;
+            "swappy" = ./assets/swappy;
           };
         };
       };

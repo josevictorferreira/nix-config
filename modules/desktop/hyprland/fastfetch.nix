@@ -21,7 +21,7 @@
         jvf.wrappers.users.${cfg.username}.programs.fastfetch = {
           packages = [ ];
           configs = {
-            fastfetch = ./assets/desktop/fastfetch;
+            fastfetch = ./assets/fastfetch;
           };
         };
       };

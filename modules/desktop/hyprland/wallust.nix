@@ -29,7 +29,7 @@
             pkgs.swww
           ];
           configs = {
-            "wallust" = ./assets/desktop/wallust;
+            "wallust" = ./assets/wallust;
           };
         };
       };

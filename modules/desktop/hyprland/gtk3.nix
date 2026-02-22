@@ -74,7 +74,7 @@
       # Build the config directory with settings.ini and optional bookmarks
       configDir = pkgs.runCommand "gtk-3.0-config" { } ''
         mkdir -p $out
-        cp ${./assets/desktop/gtk3/settings.ini} $out/settings.ini
+        cp ${./assets/gtk3/settings.ini} $out/settings.ini
         ${lib.optionalString (cfg.bookmarks != [ ]) ''
             cat > $out/bookmarks << 'EOF'
           ${bookmarksContent}

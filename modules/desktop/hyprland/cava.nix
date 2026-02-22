@@ -66,7 +66,7 @@
           ];
           configs = {
             "cava.conf" = cavaConfig;
-            "shaders" = ./assets/desktop/cava/shaders;
+            "shaders" = ./assets/cava/shaders;
           };
         };
       };

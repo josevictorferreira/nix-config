@@ -28,13 +28,10 @@
         "aarch64-darwin"
       ];
 
-      # Auto-discover flake-parts modules via import-tree (ignores paths containing /_)
-      # Legacy NixOS/Darwin modules live under modules/legacy/_/ and are imported
-      # only through aspects (e.g. core-jvf, desktop-hyprland).
+      # Auto-discover all flake-parts modules via import-tree (recursive, skips paths with /_)
+      # Non-flake-parts files (e.g. core/_/options.nix) use /_ path to avoid auto-import.
       imports = [
-        (inputs.import-tree ./modules/flake)
-        (inputs.import-tree ./modules/hosts)
-        (inputs.import-tree ./modules/aspects)
+        (inputs.import-tree ./modules)
       ];
 
       # perSystem (pkgs, formatter, overlays) defined in modules/aspects/overlays.nix

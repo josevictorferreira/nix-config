@@ -31,7 +31,7 @@
             pkgs.waybar
           ];
           configs = {
-            "waybar" = ./assets/desktop/waybar;
+            "waybar" = ./assets/waybar;
           };
         };
 

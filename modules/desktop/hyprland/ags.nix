@@ -29,7 +29,7 @@
             pkgs.ags
           ];
           configs = {
-            "ags" = ./assets/desktop/ags;
+            "ags" = ./assets/ags;
           };
         };
       };

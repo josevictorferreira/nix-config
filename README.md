@@ -7,13 +7,13 @@ My NixOS/Darwin Workspace setup - a unified flake for both NixOS (desktop) and m
 This configuration uses **dendritic modules** (flake-parts pattern) where each module file defines both NixOS and Darwin exports:
 
 ```nix
-# modules/aspects/example.nix
+# modules/programs/example/default.nix
 { ... }:
 let
   mkConfig = { isDarwin }: { config, lib, pkgs, ... }:
-    let cfg = config.jvf.category.example;
+    let cfg = config.jvf.programs.example;
     in {
-      options.jvf.category.example.enable = lib.mkEnableOption "Example feature";
+      options.jvf.programs.example.enable = lib.mkEnableOption "Example feature";
       config = lib.mkIf cfg.enable { /* config */ };
     };
 in
@@ -31,12 +31,16 @@ Hosts import these via `self.modules.{nixos,darwin}.example`. See `modules/hosts
 ./
 ├── hosts/                  # Host-specific configs
 ├── modules/
-│   ├── aspects/           # Dendritic modules (87+ aspects)
-│   │   ├── assets/        # Static configs (desktop dotfiles)
-│   │   ├── programs-*.nix # App configurations
-│   │   ├── system-*.nix   # System services
-│   │   ├── roles-*.nix    # Feature bundles
-│   │   └── ai-tools-*.nix # AI tools
+│   ├── programs/          # Per-program modules (own folders)
+│   │   ├── kitty/
+│   │   ├── neovim/
+│   │   └── ...
+│   ├── system/            # System-level modules
+│   ├── services/          # System services
+│   ├── roles/             # Feature bundles
+│   ├── desktop/           # Desktop environment (Hyprland)
+│   ├── hardware/          # Hardware-specific
+│   ├── ai-tools/          # AI tools DSL
 │   └── hosts/             # Host selector modules
 ├── pkgs/                  # Custom packages
 ├── secrets/               # SOPS encrypted secrets

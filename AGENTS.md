@@ -14,33 +14,80 @@ Based on: KooL's NixOS-Hyprland.
 ## STRUCTURE
 ```
 ./
-├── hosts/              # Machine entry points (nixos/darwin)
+├── hosts/                   # Machine entry points (nixos/darwin)
 ├── modules/
-│   ├── aspects/        # Dendritic flake-parts modules (flake.modules.*.*)
-│   │   ├── assets/     # Static config files (desktop dotfiles)
-│   │   ├── programs-*.nix   # Application configurations
-│   │   ├── system-*.nix     # System services/settings
-│   │   ├── roles-*.nix      # Feature bundles
-│   │   └── desktop-*.nix    # Hyprland/desktop configs
-│   ├── legacy/_/       # Legacy NixOS modules (being migrated)
-│   ├── core/           # Core option definitions
-│   └── hosts/          # Host configuration modules
-├── pkgs/               # Custom packages overlay
-├── secrets/            # SOPS encrypted secrets
-├── templates/          # Project scaffolds
-├── flake.nix           # Entry point (flake-parts)
-└── Makefile            # Command runner
+│   ├── programs/            # Per-program modules (each in own folder)
+│   │   ├── kitty/
+│   │   │   └── default.nix  # Dendritic module (future: + assets, secrets)
+│   │   ├── neovim/
+│   │   ├── git/
+│   │   └── ... (20 programs)
+│   ├── system/              # System-level config modules
+│   │   ├── networking.nix
+│   │   ├── audio.nix
+│   │   └── ... (16 modules)
+│   ├── services/            # System services
+│   │   ├── docker.nix
+│   │   └── ...
+│   ├── roles/               # Feature bundles (opt-in groups)
+│   │   ├── desktop.nix
+│   │   ├── development.nix
+│   │   ├── gaming.nix
+│   │   └── ... (12 roles)
+│   ├── desktop/
+│   │   └── hyprland/        # Hyprland desktop environment
+│   │       ├── default.nix  # Main hyprland module
+│   │       ├── ags.nix, rofi.nix, waybar.nix, ...
+│   │       └── assets/      # Desktop config files (co-located)
+│   │           ├── hypr/    # Hyprland configs
+│   │           ├── rofi/    # Rofi configs + themes
+│   │           ├── waybar/  # Waybar configs + styles
+│   │           └── ...
+│   ├── hardware/            # Hardware-specific modules
+│   │   ├── amd-gpu.nix
+│   │   ├── bluetooth.nix
+│   │   └── ... (4 modules)
+│   ├── ai-tools/            # AI tools DSL modules
+│   │   ├── default.nix      # Core DSL
+│   │   ├── agents.nix, commands.nix, mcp.nix, ...
+│   │   └── ... (7 modules)
+│   ├── boot/                # Boot configuration
+│   │   └── grub-theme.nix
+│   ├── core/                # Core option definitions
+│   │   ├── jvf.nix          # Main jvf options (dendritic)
+│   │   └── _/options.nix    # NixOS options (excluded from import-tree)
+│   ├── darwin/              # macOS-specific modules
+│   │   └── defaults.nix
+│   ├── secrets/             # Secrets management
+│   │   └── sops.nix
+│   ├── hosts/               # Host configuration modules
+│   │   ├── nixos-desktop.nix
+│   │   └── macos-macbook.nix
+│   ├── flake/               # Flake-parts configuration
+│   │   └── default.nix
+│   ├── overlays.nix         # Custom package overlays
+│   ├── repositories.nix     # Nix repository config
+│   ├── users.nix            # User definitions
+│   └── wrappers.nix         # Security wrappers
+├── pkgs/                    # Custom packages overlay
+├── secrets/                 # SOPS encrypted secrets
+├── templates/               # Project scaffolds
+├── flake.nix                # Entry point (single import-tree ./modules)
+└── Makefile                 # Command runner
 ```
 
 ## WHERE TO LOOK
 | Task | Location | Notes |
 |------|----------|-------|
-| **AI Agents** | `modules/aspects/ai-tools-*.nix` | 7 dendritic aspects (skills, agents, commands, etc.) |
-| **New Machine** | `hosts/<hostname>/` | Import aspects in host modules |
-| **New Aspect** | `modules/aspects/<name>.nix` | Export `flake.modules.{nixos,darwin}.<name>` |
+| **New Program** | `modules/programs/<name>/default.nix` | Own folder, dendritic exports |
+| **New System Module** | `modules/system/<name>.nix` | Flat in system/ |
+| **New Service** | `modules/services/<name>.nix` | Flat in services/ |
+| **New Role** | `modules/roles/<name>.nix` | Feature bundles |
+| **Desktop Configs** | `modules/desktop/hyprland/assets/` | Co-located static configs |
+| **AI Agents** | `modules/ai-tools/*.nix` | 7 dendritic modules |
 | **Secrets** | `secrets/secrets.yaml` | Edit via `sops` |
-| **Overlays** | `modules/aspects/overlays.nix` | Custom packages |
-| **Desktop Configs** | `modules/aspects/assets/desktop/` | Static dotfiles (not Nix modules) |
+| **Overlays** | `modules/overlays.nix` | Custom packages |
+| **New Machine** | `hosts/<hostname>/` | Import modules in host files |
 
 ## CONVENTIONS
 - **Options**: `jvf.<category>.<name>.enable` (REQUIRED for everything).
@@ -58,16 +105,16 @@ This project uses **flake-parts** with **dendritic** (branch-like) module organi
 - Platform detection: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`
 - All options use `jvf.<category>.<name>.enable` pattern
 
-### Adding New Aspect Example
+### Adding New Module Example
 ```nix
-# modules/aspects/my-new-aspect.nix
+# modules/programs/my-new-program/default.nix
 { ... }:
 let
   mkConfig = { isDarwin }: { config, lib, pkgs, ... }:
-    let cfg = config.jvf.category.my-new;
+    let cfg = config.jvf.programs.my-new;
     in {
-      options.jvf.category.my-new = {
-        enable = lib.mkEnableOption "My new feature";
+      options.jvf.programs.my-new = {
+        enable = lib.mkEnableOption "My new program";
         username = lib.mkOption {
           type = lib.types.str;
           default = "josevictor";
@@ -78,8 +125,8 @@ let
     };
 in
 {
-  flake.modules.nixos.my-new-aspect = mkConfig { isDarwin = false; };
-  flake.modules.darwin.my-new-aspect = mkConfig { isDarwin = true; };
+  flake.modules.nixos.my-new-program = mkConfig { isDarwin = false; };
+  flake.modules.darwin.my-new-program = mkConfig { isDarwin = true; };
 }
 ```
 
@@ -110,5 +157,5 @@ make clean        # GC
 ```
 
 ## NOTES
-- `modules/common/ai-tools` is a complex module with its own DSL.
+- `modules/ai-tools/` is a complex module with its own DSL.
 - `roles` are the preferred way to configure hosts (e.g., `jvf.roles.work.enable = true`).

@@ -24,10 +24,15 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ## Dendritic Pattern
 
-### import-tree Ignores Paths with `/_`
-**Lesson:** Place legacy/non-dendritic modules under paths containing `/_` (e.g., `modules/legacy/_/`) to exclude them from auto-import.
-**Context:** import-tree scans directories but skips any path containing `/_` substring.
-**Verify:** Confirm `modules/legacy/_/` exists and flake.nix uses `(inputs.import-tree ./modules)`.
+### import-tree Scans Recursively, Ignores `/_` Paths
+**Lesson:** import-tree discovers ALL `.nix` files under its root directory. Paths containing `/_` are excluded from auto-import.
+**Context:** Used for NixOS-level helper modules (e.g., `modules/core/_/options.nix`) that shouldn't be imported as flake-parts modules.
+**Verify:** Confirm flake.nix uses `(inputs.import-tree ./modules)` and helper modules are in `/_` paths.
+
+### Per-Module Folder Organization
+**Lesson:** Programs go in `modules/programs/<name>/default.nix`. System/services/roles/hardware use flat `.nix` files in category dirs.
+**Context:** Per-program folders allow co-location of assets, secrets, and related files. Flat structure for system modules keeps simple things simple.
+**Verify:** New programs create `modules/programs/<name>/default.nix`, not `modules/aspects/programs-<name>.nix`.
 
 ---
 
@@ -45,10 +50,10 @@ Critical lessons from past sessions to avoid repeated friction.
 ### git add Before nix eval in Flakes
 **Lesson:** Always `git add` new files before running `nix eval` or `nix flake check`. Flakes use pure evaluation — untracked files are invisible.
 **Context:** Every migration task creates a new aspect file. Forgetting `git add` causes cryptic "file not found" errors during verification.
-**Verify:** Run `git add modules/aspects/<name>.nix` immediately after creating the file, before any Nix command.
+**Verify:** Run `git add modules/<category>/<name>.nix` immediately after creating the file, before any Nix command.
 
 ### 4-File Checklist Per Aspect Migration
-**Lesson:** Each dendritic aspect migration touches exactly 4 files: (1) create `modules/aspects/<name>.nix`, (2) remove legacy import from `core-jvf.nix`, (3) add to `nixos-desktop.nix` aspects list, (4) add to `macos-macbook.nix` aspects list.
+**Lesson:** Each dendritic module migration touches exactly 4 files: (1) create `modules/<category>/<name>.nix`, (2) remove legacy import from `core-jvf.nix`, (3) add to `nixos-desktop.nix` imports, (4) add to `macos-macbook.nix` imports.
 **Context:** Phase 1 tasks 1-3 all followed this identical pattern. Missing any file causes duplicate option definitions or missing config.
 **Verify:** After each migration, confirm all 4 files are in `git diff --stat`.
 
@@ -93,7 +98,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Export Pattern Must Be `flake.modules.*.*`
 **Lesson:** Dendritic aspect files must export as `{ flake.modules.nixos.name = ...; flake.modules.darwin.name = ...; }`, NOT `{ nixos = ...; darwin = ...; }`.
 **Context:** Subagents frequently create files with wrong export structure, causing "attribute 'nixos' missing" errors.
-**Verify:** `grep "flake.modules" modules/aspects/*.nix` should show the correct pattern.
+**Verify:** `grep "flake.modules" modules/programs/*/default.nix modules/system/*.nix modules/services/*.nix modules/roles/*.nix` should show the correct pattern.
 
 ---
 
@@ -150,7 +155,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Verify File Existence Before Integration
 **Lesson:** Before modifying host configs to reference new aspects, verify the aspect files actually exist and are valid.
 **Context:** nixos-desktop.nix was updated to reference 16 hyprland aspects, but only 4 existed — caused nix eval failures.
-**Verify:** Run `ls modules/aspects/<pattern>` before updating host configs; ensure files exist and `nix flake check` passes.
+**Verify:** Run `ls modules/<category>/<pattern>` before updating host configs; ensure files exist and `nix flake check` passes.
 
 ## Nix String Indentation
 

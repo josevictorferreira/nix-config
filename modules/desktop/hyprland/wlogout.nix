@@ -28,7 +28,7 @@
             pkgs.wlogout
           ];
           configs = {
-            "wlogout" = ./assets/desktop/wlogout;
+            "wlogout" = ./assets/wlogout;
           };
         };
       };
