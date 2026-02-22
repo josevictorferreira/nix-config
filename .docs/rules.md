@@ -77,6 +77,33 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** A subagent created `enableEffective = cfg.enable || legacyEnabled` referencing the old modules list — caused "undefined variable" errors and unnecessary complexity.
 **Verify:** Aspect modules should have zero references to `config.jvf.system.modules` or `config.jvf.*.modules`.
 
+---
+
+## Task Delegation
+
+### Always Use Category Parameter for task()
+**Lesson:** When calling `task()`, always provide `category` parameter (e.g., `unspecified-low`, `quick`). The system requires either `category` or `subagent_type`.
+**Context:** Forgetting this causes immediate failure with "Invalid arguments: Must provide either category or subagent_type."
+**Verify:** Check task call includes `category="..."` before executing.
+
+---
+
+## Dendritic Module Structure
+
+### Export Pattern Must Be `flake.modules.*.*`
+**Lesson:** Dendritic aspect files must export as `{ flake.modules.nixos.name = ...; flake.modules.darwin.name = ...; }`, NOT `{ nixos = ...; darwin = ...; }`.
+**Context:** Subagents frequently create files with wrong export structure, causing "attribute 'nixos' missing" errors.
+**Verify:** `grep "flake.modules" modules/aspects/*.nix` should show the correct pattern.
+
+---
+
+## NixOS Options
+
+### All Options Must Have Defaults for Flake Check
+**Lesson:** When defining options in dendritic modules (especially `username`), always add `default = "josevictor";` to prevent "option has no value" assertion failures.
+**Context:** 12 program modules failed `nix flake check` because username options lacked defaults — required iterative manual fixes.
+**Verify:** Run `nix flake check` immediately after creating modules with options; grep for `default` in option definitions.
+
 ### Audit Directory Contents Not Just Task Lists
 **Lesson:** Before declaring a migration phase complete, `ls` the source directory to find unlisted modules. Task lists may miss files.
 **Context:** Phase 2 task list missed `audio.nix` in `modules/system/`. Discovered only after removing `default.nix`, causing build failure.
@@ -86,6 +113,11 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** After removing a legacy module system (e.g., `modules/system/default.nix`), purge host configs of references to removed options like `jvf.system.modules`.
 **Context:** Host config had `jvf.system.modules = [ ... ]` and `jvf.system.hostName` (correct: `jvf.system.networking.hostName`). Caused "option does not exist" after legacy removal.
 **Verify:** After deleting a `default.nix` aggregator, `grep -r` host configs for any option paths it defined.
+
+### Remove Legacy Imports Immediately After Migration
+**Lesson:** When migrating a module to dendritic aspects, immediately remove its import from all role files that reference it. Don't wait for flake check to fail.
+**Context:** Phase 5 service migrations left legacy imports in `network-storage.nix` and `ai-development.nix`, causing "option already declared" errors during verification.
+**Verify:** `grep -r "../services/<name>.nix" modules/legacy/_/` and remove all matches after creating dendritic aspect.
 
 ---
 

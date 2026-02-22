@@ -16,7 +16,7 @@ in
     ../programs/cursor.nix
     ../programs/droid.nix
     ../programs/gemini.nix
-    ../services/llm-proxy.nix
+    # Note: llm-proxy migrated to dendritic aspect in Phase 5
   ];
   # Note: programs-ck-search migrated to dendritic aspect (Phase 3)
 

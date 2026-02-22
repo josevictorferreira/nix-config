@@ -10,7 +10,7 @@
   flake.modules.nixos.core-jvf = {
     imports = [
       ../core/options.nix
-      ../legacy/_/hardware/default.nix
+      # hardware migrated to dendritic aspects (Phase 6 complete)
       # system modules migrated to dendritic aspects (Phase 2 complete)
       ../legacy/_/roles/default.nix
     ];

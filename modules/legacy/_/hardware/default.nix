@@ -15,34 +15,33 @@
 # - bluetooth - Bluetooth hardware support with bluez stack
 # - logitech - Logitech hardware (mice, keyboards, peripherals)
 
-{ config
-, lib
-, pkgs
-, system
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  system,
+  ...
 }:
 let
   isDarwin = builtins.match ".*-darwin" system != null;
 
   availableHardware = {
     amd-gpu = ./amd-gpu.nix;
-    bluetooth = ./bluetooth.nix;
+    # bluetooth migrated to dendritic aspect: hardware-bluetooth
     logitech = ./logitech.nix;
   };
 
   isHardwareEnabled = name: builtins.elem name config.jvf.hardware.active;
 
   mkHardwareEnables = lib.mkMerge (
-    map
-      (
-        name:
-        lib.mkIf (isHardwareEnabled name) {
-          ${name} = {
-            enable = true;
-          };
-        }
-      )
-      (builtins.attrNames availableHardware)
+    map (
+      name:
+      lib.mkIf (isHardwareEnabled name) {
+        ${name} = {
+          enable = true;
+        };
+      }
+    ) (builtins.attrNames availableHardware)
   );
 in
 {

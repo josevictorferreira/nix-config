@@ -1,7 +1,8 @@
-{ host
-, username
-, os
-, ...
+{
+  host,
+  username,
+  os,
+  ...
 }:
 let
   inherit (import ./variables.nix) gitUsername;
@@ -61,11 +62,13 @@ in
   networking.defaultGateway = "10.10.10.1";
   networking.nameservers = [ "10.10.10.100" ];
 
-  jvf.hardware.active = [
-    "amd-gpu"
-    "bluetooth"
-    "logitech"
-  ];
+  # Hardware aspects (Phase 6 - enabled via dendritic aspects in nixos-desktop.nix)
+  jvf.hardware = {
+    amd-gpu.enable = true;
+    bluetooth.enable = true;
+    logitech.enable = true;
+    openrgb.enable = true;
+  };
 
   # Role
   jvf.roles.active = [

@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  ...
 }:
 
 let
@@ -13,10 +14,8 @@ let
   isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
-  imports =
-    [ ]
-    ++ (if isDarwin then [ ./../services/smb.nix ] else [ ])
-    ++ (if !isDarwin then [ ./../services/cephfs.nix ] else [ ]);
+  imports = [ ];
+  # Note: services migrated to dendritic aspects in Phase 5
 
   options.jvf.roles.networkStorage = {
     enable = lib.mkEnableOption "Enable homelab storage mount on the home directory.";

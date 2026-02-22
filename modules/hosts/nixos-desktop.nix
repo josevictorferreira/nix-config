@@ -55,6 +55,11 @@ in
         system-power-management
         system-virtualization
         system-audio
+        # Hardware aspects (Phase 6)
+        hardware-amd-gpu
+        hardware-bluetooth
+        hardware-logitech
+        hardware-openrgb
         # Program aspects (Phase 3)
         programs-alacritty
         programs-btop
@@ -70,6 +75,10 @@ in
         programs-steam
         programs-tmux
         programs-zsh
+        # Service aspects (Phase 5)
+        services-smb
+        services-cephfs
+        services-llm-proxy
       ])
       # Host-specific config (last, so it can override)
       ++ [

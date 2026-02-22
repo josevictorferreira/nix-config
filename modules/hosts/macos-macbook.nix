@@ -69,6 +69,9 @@ in
         programs-steam
         programs-tmux
         programs-zsh
+        # Service aspects (Phase 5 - smb and llm-proxy only, cephfs is NixOS-only)
+        services-smb
+        services-llm-proxy
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)
