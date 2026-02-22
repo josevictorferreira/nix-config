@@ -192,3 +192,24 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** If you delete files that are still needed, use `git show HEAD:path/to/file` to recover content without restoring files.
 **Context:** Had to recover development module content from git after premature deletion to inline into programs-neovim.nix.
 **Verify:** `git show HEAD:path` works even for deleted files if they've been committed before.
+
+## Nixpkgs Lib Functions
+
+### pkgs.formats for Structured Config
+**Lesson:** Use `pkgs.formats.json { }` (not `lib.formats` or `pkgs.lib.formats`) for generating structured config in NixOS modules.
+**Context:** `lib.formats` is not available in module lib context; `formats` is an attribute of nixpkgs pkgs, not lib.
+**Verify:** Test with `nix repl '<nixpkgs>'` then `:pkgs.formats.json { }` to confirm.
+
+## Shell Script Builders
+
+### writeShellApplication Runs ShellCheck
+**Lesson:** `pkgs.writeShellApplication` runs shellcheck validation; use `pkgs.writeScriptBin` to skip validation for scripts with complex quoted text.
+**Context:** RFC2119 text in prompt-enhancer contained quotes that caused shellcheck failures. writeScriptBin doesn't run shellcheck.
+**Verify:** If script fails with "SC1078" or "SC1079" errors, switch to writeScriptBin.
+
+## Module Option Values
+
+### Enable Options Must Be Set in Host Configs
+**Lesson:** Aspects with enable options require explicit `enable = true;` in host configs for their config to take effect.
+**Context:** `jvf.system.nixpkgs.enable` was missing from host config, so allowUnfree settings never applied, causing Steam build failure.
+**Verify:** After adding an aspect to imports, check if it has required enable options that need setting in host config.
