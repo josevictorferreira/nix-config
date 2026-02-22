@@ -77,6 +77,16 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** A subagent created `enableEffective = cfg.enable || legacyEnabled` referencing the old modules list — caused "undefined variable" errors and unnecessary complexity.
 **Verify:** Aspect modules should have zero references to `config.jvf.system.modules` or `config.jvf.*.modules`.
 
+### Audit Directory Contents Not Just Task Lists
+**Lesson:** Before declaring a migration phase complete, `ls` the source directory to find unlisted modules. Task lists may miss files.
+**Context:** Phase 2 task list missed `audio.nix` in `modules/system/`. Discovered only after removing `default.nix`, causing build failure.
+**Verify:** Run `ls modules/<category>/` and diff against task list before finalizing any batch migration.
+
+### Clean Host Configs When Removing Legacy Infrastructure
+**Lesson:** After removing a legacy module system (e.g., `modules/system/default.nix`), purge host configs of references to removed options like `jvf.system.modules`.
+**Context:** Host config had `jvf.system.modules = [ ... ]` and `jvf.system.hostName` (correct: `jvf.system.networking.hostName`). Caused "option does not exist" after legacy removal.
+**Verify:** After deleting a `default.nix` aggregator, `grep -r` host configs for any option paths it defined.
+
 ---
 
 ## Context Management

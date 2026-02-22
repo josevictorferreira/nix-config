@@ -1,8 +1,7 @@
-{
-  host,
-  username,
-  os,
-  ...
+{ host
+, username
+, os
+, ...
 }:
 let
   inherit (import ./variables.nix) gitUsername;
@@ -31,7 +30,10 @@ in
 
   # === MODULE ACTIVATIONS ===
   # All system modules are now enabled via dendritic aspects in modules/hosts/nixos-desktop.nix
-  jvf.system.networking.hostName = host;
+  jvf.system.networking = {
+    enable = true;
+    hostName = host;
+  };
 
   # XDG user directories (fixes Brave "Open folder" for Downloads)
   jvf.system.xdg.userDirs = {
