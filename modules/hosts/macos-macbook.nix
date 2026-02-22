@@ -47,6 +47,8 @@ in
         system-security
         system-xdg
         system-environment
+        system-display
+        system-firewall
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

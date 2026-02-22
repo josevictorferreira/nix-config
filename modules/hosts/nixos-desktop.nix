@@ -48,6 +48,8 @@ in
         system-security
         system-xdg
         system-environment
+        system-display
+        system-firewall
       ])
       # Host-specific config (last, so it can override)
       ++ [

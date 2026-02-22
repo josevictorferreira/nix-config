@@ -18,9 +18,9 @@ let
     audio = ./audio.nix;
     # base-programs: migrated to dendritic aspect (modules/aspects/system-base-programs.nix)
     # base-services: migrated to dendritic aspect (modules/aspects/system-base-services.nix)
-    display = ./display.nix;
+    # display: migrated to dendritic aspect (modules/aspects/system-display.nix)
     # environment: migrated to dendritic aspect (modules/aspects/system-environment.nix)
-    firewall = ./firewall.nix;
+    # firewall: migrated to dendritic aspect (modules/aspects/system-firewall.nix)
     flatpak = ./flatpak.nix;
     # locale: migrated to dendritic aspect (modules/aspects/system-locale.nix)
     logind = ./logind.nix;
