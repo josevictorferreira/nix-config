@@ -34,7 +34,7 @@
               pkgs.rofi
             ];
             configs = {
-              "rofi" = ../legacy/_/desktop/hyprland/rofi/.;
+              "rofi" = ./assets/desktop/rofi/.;
             };
           };
         })
