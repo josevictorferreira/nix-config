@@ -1,8 +1,7 @@
-{
-  host,
-  username,
-  os,
-  ...
+{ host
+, username
+, os
+, ...
 }:
 let
   inherit (import ./variables.nix) gitUsername;

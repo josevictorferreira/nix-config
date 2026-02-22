@@ -11,7 +11,7 @@
     imports = [
       ../core/options.nix
       ../legacy/_/hardware/default.nix
-      ../legacy/_/system/default.nix
+      # system modules migrated to dendritic aspects (Phase 2 complete)
       ../legacy/_/roles/default.nix
     ];
   };
@@ -20,7 +20,7 @@
     imports = [
       ../core/options.nix
       # hardware excluded — NixOS-only (amd-gpu, bluetooth, logitech)
-      ../legacy/_/system/default.nix
+      # system modules migrated to dendritic aspects (Phase 2 complete)
       ../legacy/_/roles/default.nix
     ];
   };

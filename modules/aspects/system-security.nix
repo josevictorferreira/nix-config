@@ -68,10 +68,13 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config, lib, ... }:
+    { config
+    , lib
+    , inputs
+    , ...
+    }:
     let
       cfg = config.jvf.system.security;
-      secretsFile = ./../../secrets/secrets.enc.yaml;
     in
     {
       imports = [ mkSecurityOptions ];
@@ -135,7 +138,7 @@ let
             };
 
             sops = lib.mkIf cfg.enableSops {
-              defaultSopsFile = secretsFile;
+              defaultSopsFile = inputs.self.outPath + "/secrets/secrets.enc.yaml";
               age.keyFile = cfg.sopsAgeKeyPath;
             };
 
@@ -144,7 +147,7 @@ let
         else
           {
             sops = lib.mkIf cfg.enableSops {
-              defaultSopsFile = secretsFile;
+              defaultSopsFile = inputs.self.outPath + "/secrets/secrets.enc.yaml";
               age.keyFile = cfg.sopsAgeKeyPath;
             };
 
