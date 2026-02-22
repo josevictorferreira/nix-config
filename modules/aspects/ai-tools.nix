@@ -1,7 +1,6 @@
 # Aspect: ai-tools
 # Main AI Tools aggregator. Enables the entire AI tooling subsystem.
-# Imports sub-aspects (rules, scripts) and still-legacy sub-modules
-# (mcp, agents, commands, skills) until they are migrated.
+# Sub-aspects (mcp, agents, commands, skills, rules, scripts) are imported separately.
 { ... }:
 let
   mkOptions =
@@ -26,11 +25,9 @@ let
     {
       imports = [
         mkOptions
-        # Legacy sub-modules not yet migrated to dendritic aspects
-        ../legacy/_/common/ai-tools/mcp
-        ../legacy/_/common/ai-tools/agents
-        ../legacy/_/common/ai-tools/commands
-        ../legacy/_/common/ai-tools/skills
+        # Sub-aspects imported separately by host:
+        # ai-tools-mcp, ai-tools-agents, ai-tools-commands,
+        # ai-tools-skills, ai-tools-rules, ai-tools-scripts
       ];
 
       config = lib.mkIf cfg.enable { };

@@ -28,7 +28,47 @@ let
     }:
     let
       cfg = config.jvf.programs.neovim;
-      devTools = import ../legacy/_/common/development { inherit pkgs; };
+
+      # Development tools (inlined from deleted legacy module)
+      lspServers = [
+        pkgs.rust-analyzer
+        pkgs.bash-language-server
+        pkgs.lua-language-server
+        pkgs.vscode-langservers-extracted
+        pkgs.dockerfile-language-server
+        pkgs.docker-compose-language-service
+        pkgs.ruff
+        pkgs.vim-language-server
+        pkgs.yaml-language-server
+        pkgs.gleam
+        pkgs.dot-language-server
+        pkgs.jdt-language-server
+        pkgs.crystalline
+        pkgs.tailwindcss-language-server
+        pkgs.ruby-lsp
+        pkgs.protols
+        pkgs.typescript-language-server
+        pkgs.emmet-ls
+        pkgs.nixd
+        pkgs.helm-ls
+        pkgs.gopls
+        pkgs.autotools-language-server
+      ];
+
+      formatters = [
+        pkgs.stylua
+        pkgs.prettier
+        pkgs.nixfmt
+        pkgs.nixpkgs-fmt
+      ];
+
+      languages = [
+        pkgs.nodejs_24
+        pkgs.lua51Packages.lua
+        pkgs.lua51Packages.luarocks
+        pkgs.cargo
+        pkgs.rustc
+      ];
     in
     {
       imports = [ mkNeovimOptions ];
@@ -45,9 +85,9 @@ let
           pkgs.openssh
           pkgs.cmake
         ]
-        ++ devTools.lspServers
-        ++ devTools.formatters
-        ++ devTools.languages
+        ++ lspServers
+        ++ formatters
+        ++ languages
         ++ (lib.optionals (!isDarwin) [
           pkgs.glibc
           pkgs.glibc.dev
