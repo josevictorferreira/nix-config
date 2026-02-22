@@ -26,7 +26,7 @@
         jvf.wrappers.users.${cfg.username}.programs.swaync = {
           packages = [ pkgs.swaynotificationcenter ];
           configs = {
-            "swaync" = ../legacy/_/desktop/hyprland/swaync/.;
+            "swaync" = ./assets/desktop/swaync/.;
           };
         };
       };

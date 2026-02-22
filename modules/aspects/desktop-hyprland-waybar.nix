@@ -31,7 +31,7 @@
             pkgs.waybar
           ];
           configs = {
-            "waybar" = ../legacy/_/desktop/hyprland/waybar;
+            "waybar" = ./assets/desktop/waybar;
           };
         };
 
