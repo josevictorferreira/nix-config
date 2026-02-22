@@ -46,6 +46,8 @@ in
         system-nixpkgs
         system-nix-daemon
         system-security
+        system-xdg
+        system-environment
       ])
       # Host-specific config (last, so it can override)
       ++ [

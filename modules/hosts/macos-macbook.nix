@@ -45,6 +45,8 @@ in
         system-nixpkgs
         system-nix-daemon
         system-security
+        system-xdg
+        system-environment
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

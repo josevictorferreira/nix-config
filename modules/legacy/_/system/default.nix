@@ -19,7 +19,7 @@ let
     # base-programs: migrated to dendritic aspect (modules/aspects/system-base-programs.nix)
     # base-services: migrated to dendritic aspect (modules/aspects/system-base-services.nix)
     display = ./display.nix;
-    environment = ./environment.nix;
+    # environment: migrated to dendritic aspect (modules/aspects/system-environment.nix)
     firewall = ./firewall.nix;
     flatpak = ./flatpak.nix;
     # locale: migrated to dendritic aspect (modules/aspects/system-locale.nix)
@@ -30,7 +30,7 @@ let
     power-management = ./power-management.nix;
     # security: migrated to dendritic aspect (modules/aspects/system-security.nix)
     virtualization = ./virtualization.nix;
-    xdg = ./xdg.nix;
+    # xdg: migrated to dendritic aspect (modules/aspects/system-xdg.nix)
   };
 
   isModuleEnabled = name: builtins.elem name config.jvf.system.modules;
