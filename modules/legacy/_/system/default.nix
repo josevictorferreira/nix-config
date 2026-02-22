@@ -16,8 +16,8 @@
 let
   availableModules = {
     audio = ./audio.nix;
-    base-programs = ./base-programs.nix;
-    base-services = ./base-services.nix;
+    # base-programs: migrated to dendritic aspect (modules/aspects/system-base-programs.nix)
+    # base-services: migrated to dendritic aspect (modules/aspects/system-base-services.nix)
     display = ./display.nix;
     environment = ./environment.nix;
     firewall = ./firewall.nix;

@@ -1,0 +1,55 @@
+# Aspect: system-base-programs
+# Defines jvf.system.base-programs options and platform-specific program config.
+# NixOS: gnupg agent, nm-applet, mtr, dconf, seahorse, fuse.
+# Darwin: gnupg agent only.
+{ ... }:
+let
+  mkBaseProgramsOptions =
+    { lib, ... }:
+    {
+      options.jvf.system.base-programs = {
+        enable = lib.mkEnableOption "base system programs configuration" // {
+          description = ''
+            Whether to enable configuration for basic system programs.
+            Configures:
+            - gnupg agent with SSH support
+            - network-manager applet (NixOS only)
+            - dconf (NixOS only)
+            - seahorse (NixOS only)
+            - FUSE with user other permissions (NixOS only)
+            - MTR network diagnostic (NixOS only)
+          '';
+        };
+      };
+    };
+
+  mkConfig =
+    { isDarwin }:
+    { config, lib, ... }:
+    let
+      cfg = config.jvf.system.base-programs;
+    in
+    {
+      imports = [ mkBaseProgramsOptions ];
+
+      config = lib.mkIf cfg.enable (
+        {
+          programs.gnupg.agent = {
+            enable = true;
+            enableSSHSupport = true;
+          };
+        }
+        // lib.optionalAttrs (!isDarwin) {
+          programs.nm-applet.indicator = true;
+          programs.mtr.enable = true;
+          programs.dconf.enable = true;
+          programs.seahorse.enable = false;
+          programs.fuse.userAllowOther = true;
+        }
+      );
+    };
+in
+{
+  flake.modules.nixos.system-base-programs = mkConfig { isDarwin = false; };
+  flake.modules.darwin.system-base-programs = mkConfig { isDarwin = true; };
+}

@@ -39,6 +39,8 @@ in
         secrets-sops
         desktop-hyprland
         boot-grub-theme
+        system-base-programs
+        system-base-services
         system-locale
         system-networking
         system-nixpkgs

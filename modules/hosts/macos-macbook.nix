@@ -38,6 +38,8 @@ in
         repositories
         secrets-sops
         darwin-defaults
+        system-base-programs
+        system-base-services
         system-locale
         system-networking
         system-nixpkgs
