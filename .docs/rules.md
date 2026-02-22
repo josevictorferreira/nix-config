@@ -127,3 +127,22 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Large refactoring generates many tool outputs. Prune context after each wave/phase to avoid hitting limits.
 **Context:** Nix evaluation outputs, file reads, and bash commands accumulate quickly during multi-wave refactors.
 **Verify:** Use `distill` for key findings and `prune` for noise every 3-4 tasks.
+
+---
+
+## Parallel Task Execution
+
+### Avoid Parallel Tasks Modifying Same Files
+**Lesson:** When delegating parallel tasks, ensure they modify DISJOINT sets of files. Shared files (core-jvf.nix, host configs) cause coordination deadlocks.
+**Context:** Phase 6 hardware migration had 4 parallel agents all trying to modify core-jvf.nix and nixos-desktop.nix — all timed out waiting on each other.
+**Verify:** Before parallel delegation, check which files each task will modify. Group by file targets or use sequential execution.
+
+### Use run_in_background=false for File Creation
+**Lesson:** File creation tasks should use `run_in_background=false` (synchronous). Background file creation causes race conditions when subsequent tasks need those files.
+**Context:** Phase 8 Hyprland used background tasks to create aspects, but host configs referenced them before creation completed — causing "file not found" errors.
+**Verify:** If task creates files needed by subsequent tasks in same phase, use synchronous execution.
+
+### Verify File Existence Before Integration
+**Lesson:** Before modifying host configs to reference new aspects, verify the aspect files actually exist and are valid.
+**Context:** nixos-desktop.nix was updated to reference 16 hyprland aspects, but only 4 existed — caused nix eval failures.
+**Verify:** Run `ls modules/aspects/<pattern>` before updating host configs; ensure files exist and `nix flake check` passes.
