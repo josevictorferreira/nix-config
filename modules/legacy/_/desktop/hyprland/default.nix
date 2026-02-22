@@ -1,8 +1,9 @@
-{ lib
-, config
-, pkgs
-, username
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  username,
+  ...
 }:
 
 let
@@ -17,14 +18,13 @@ in
 {
   imports = [
     ./hypr
-    ./ags
+    # ./ags migrated to modules/aspects/desktop-hyprland-ags.nix
     ./cava
     ./qt5ct
     ./qt6ct
-    ./rofi
+
     ./swaync
     ./wallust
-    ./waybar
     ./wlogout
     ./swappy
     ./kvantum
@@ -51,10 +51,9 @@ in
       cava.enable = true;
       qt5ct.enable = true;
       qt6ct.enable = true;
-      rofi.enable = true;
+
       swaync.enable = true;
       wallust.enable = true;
-      waybar.enable = true;
       wlogout.enable = true;
       swappy.enable = true;
       kvantum.enable = true;
@@ -63,20 +62,76 @@ in
       gtk3 = {
         enable = true;
         bookmarks = [
-          { path = "/home/${cfg.username}/Documents"; name = "Documents"; icon = "folder-documents"; }
-          { path = "/home/${cfg.username}/Pictures"; name = "Pictures"; icon = "folder-pictures"; }
-          { path = "/home/${cfg.username}/Videos"; name = "Videos"; icon = "folder-videos"; }
-          { path = "/home/${cfg.username}/Downloads"; name = "Downloads"; icon = "folder-download"; }
-          { path = "/home/${cfg.username}/Homelab"; name = "Homelab"; icon = "folder-cloud"; }
-          { path = "/home/${cfg.username}/.config/nix"; name = "NixConfig"; icon = "folder-orange-script"; }
-          { path = "/home/${cfg.username}/.config/nvim"; name = "NeovimConfig"; icon = "folder-green-script"; }
-          { path = "/home/${cfg.username}/Workspace"; name = "Workspace"; icon = "folder-cyan-development"; }
-          { path = "/home/${cfg.username}/Workspace/homelab"; name = "Homelab"; icon = "folder-blue-cloud"; }
-          { path = "/home/${cfg.username}/Workspace/ai-workspace/comfyui/ComfyUI"; name = "ComfyUI"; icon = "folder-magenta-templates"; }
-          { path = "/home/${cfg.username}/Workspace/valoris"; name = "Valoris"; icon = "folder-teal-publicshare"; }
-          { path = "/home/${cfg.username}/Workspace/agrosmart/booster"; name = "Booster"; icon = "folder-green-publicshare"; }
-          { path = "/home/${cfg.username}/Workspace/agrosmart/agrosmart-api"; name = "BoosterPro"; icon = "folder-green-publicshare"; }
-          { path = "/home/${cfg.username}/Workspace/agrosmart/nexus/nexus-backend"; name = "Nexus"; icon = "folder-violet-publicshare"; }
+          {
+            path = "/home/${cfg.username}/Documents";
+            name = "Documents";
+            icon = "folder-documents";
+          }
+          {
+            path = "/home/${cfg.username}/Pictures";
+            name = "Pictures";
+            icon = "folder-pictures";
+          }
+          {
+            path = "/home/${cfg.username}/Videos";
+            name = "Videos";
+            icon = "folder-videos";
+          }
+          {
+            path = "/home/${cfg.username}/Downloads";
+            name = "Downloads";
+            icon = "folder-download";
+          }
+          {
+            path = "/home/${cfg.username}/Homelab";
+            name = "Homelab";
+            icon = "folder-cloud";
+          }
+          {
+            path = "/home/${cfg.username}/.config/nix";
+            name = "NixConfig";
+            icon = "folder-orange-script";
+          }
+          {
+            path = "/home/${cfg.username}/.config/nvim";
+            name = "NeovimConfig";
+            icon = "folder-green-script";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace";
+            name = "Workspace";
+            icon = "folder-cyan-development";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/homelab";
+            name = "Homelab";
+            icon = "folder-blue-cloud";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/ai-workspace/comfyui/ComfyUI";
+            name = "ComfyUI";
+            icon = "folder-magenta-templates";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/valoris";
+            name = "Valoris";
+            icon = "folder-teal-publicshare";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/agrosmart/booster";
+            name = "Booster";
+            icon = "folder-green-publicshare";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/agrosmart/agrosmart-api";
+            name = "BoosterPro";
+            icon = "folder-green-publicshare";
+          }
+          {
+            path = "/home/${cfg.username}/Workspace/agrosmart/nexus/nexus-backend";
+            name = "Nexus";
+            icon = "folder-violet-publicshare";
+          }
         ];
       };
       fastfetch.enable = true;

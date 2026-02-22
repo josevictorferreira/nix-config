@@ -38,6 +38,23 @@ in
         repositories
         secrets-sops
         desktop-hyprland
+        # Hyprland sub-aspects (Phase 8)
+        desktop-hyprland-hypr
+        desktop-hyprland-ags
+        desktop-hyprland-rofi
+        desktop-hyprland-swaync
+        desktop-hyprland-waybar
+        desktop-hyprland-cava
+        desktop-hyprland-qt5ct
+        desktop-hyprland-qt6ct
+        desktop-hyprland-kvantum
+        desktop-hyprland-thunar
+        desktop-hyprland-xfce4
+        desktop-hyprland-gtk3
+        desktop-hyprland-fastfetch
+        desktop-hyprland-swappy
+        desktop-hyprland-wallust
+        desktop-hyprland-wlogout
         boot-grub-theme
         system-base-programs
         system-base-services

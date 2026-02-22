@@ -28,6 +28,7 @@ in
 
   # Desktop
   jvf.desktop.hyprland.enable = true;
+  jvf.desktop.hyprland.waybar.enable = true;
 
   # === MODULE ACTIVATIONS ===
   # All system modules are now enabled via dendritic aspects in modules/hosts/nixos-desktop.nix
