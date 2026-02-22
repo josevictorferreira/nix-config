@@ -39,6 +39,7 @@ in
         secrets-sops
         darwin-defaults
         system-locale
+        system-networking
         system-nixpkgs
         system-security
       ])

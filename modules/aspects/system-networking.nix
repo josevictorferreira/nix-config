@@ -1,0 +1,69 @@
+# Aspect: system-networking
+# Defines jvf.system.networking options and platform-specific networking config.
+# NixOS: networking.hostName + networkmanager.enable.
+# Darwin: just networking.hostName (no NetworkManager).
+{ ... }:
+let
+  mkNetworkingOptions =
+    { lib, ... }:
+    {
+      options.jvf.system.networking = {
+        enable = lib.mkEnableOption "basic networking configuration" // {
+          description = ''
+            Whether to enable basic networking configuration.
+            Configures:
+            - NetworkManager (primary network management)
+            - NTP time synchronization
+          '';
+        };
+
+        hostName = lib.mkOption {
+          type = lib.types.str;
+          default = "nixos";
+          description = "The hostname of the system.";
+        };
+
+        manageTime = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Whether to configure time synchronization settings.";
+        };
+
+        additionalTimeServers = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ "pool.ntp.org" ];
+          description = "Additional NTP time servers to use.";
+        };
+      };
+    };
+
+  mkConfig =
+    { isDarwin }:
+    { config, lib, ... }:
+    let
+      cfg = config.jvf.system.networking;
+    in
+    {
+      imports = [ mkNetworkingOptions ];
+
+      config = lib.mkIf cfg.enable (
+        if (!isDarwin) then
+          {
+            networking = {
+              hostName = cfg.hostName;
+              networkmanager.enable = true;
+            };
+          }
+        else
+          {
+            networking = {
+              hostName = cfg.hostName;
+            };
+          }
+      );
+    };
+in
+{
+  flake.modules.nixos.system-networking = mkConfig { isDarwin = false; };
+  flake.modules.darwin.system-networking = mkConfig { isDarwin = true; };
+}

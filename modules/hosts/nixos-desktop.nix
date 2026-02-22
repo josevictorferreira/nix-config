@@ -40,6 +40,7 @@ in
         desktop-hyprland
         boot-grub-theme
         system-locale
+        system-networking
         system-nixpkgs
         system-security
       ])
