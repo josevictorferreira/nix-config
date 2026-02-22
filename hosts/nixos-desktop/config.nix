@@ -1,7 +1,8 @@
-{ host
-, username
-, os
-, ...
+{
+  host,
+  username,
+  os,
+  ...
 }:
 let
   inherit (import ./variables.nix) gitUsername;
@@ -29,39 +30,19 @@ in
   jvf.desktop.hyprland.enable = true;
 
   # === MODULE ACTIVATIONS ===
-  # All system modules (Phase 1 & 2)
-  jvf.system = {
-    hostName = host;
-    modules = [
-      "audio"
-      "base-programs"
-      "base-services"
-      "display"
-      "environment"
-      "firewall"
-      "flatpak"
-      "locale"
-      "logind"
-      "networking"
-      "nix-daemon"
-      "nixpkgs"
-      "power-management"
-      # "security"  # migrated to dendritic: system-security aspect
-      "xdg"
-      "virtualization"
-    ];
+  # All system modules are now enabled via dendritic aspects in modules/hosts/nixos-desktop.nix
+  jvf.system.networking.hostName = host;
 
-    # XDG user directories (fixes Brave "Open folder" for Downloads)
-    xdg.userDirs = {
-      DESKTOP = "$HOME/Desktop";
-      DOWNLOAD = "$HOME/Downloads";
-      DOCUMENTS = "$HOME/Documents";
-      MUSIC = "$HOME/Music";
-      PICTURES = "$HOME/Pictures";
-      VIDEOS = "$HOME/Videos";
-      TEMPLATES = "$HOME/Templates";
-      PUBLICSHARE = "$HOME/Public";
-    };
+  # XDG user directories (fixes Brave "Open folder" for Downloads)
+  jvf.system.xdg.userDirs = {
+    DESKTOP = "$HOME/Desktop";
+    DOWNLOAD = "$HOME/Downloads";
+    DOCUMENTS = "$HOME/Documents";
+    MUSIC = "$HOME/Music";
+    PICTURES = "$HOME/Pictures";
+    VIDEOS = "$HOME/Videos";
+    TEMPLATES = "$HOME/Templates";
+    PUBLICSHARE = "$HOME/Public";
   };
 
   # Enable dendritic security aspect (replaces legacy "security" module)
