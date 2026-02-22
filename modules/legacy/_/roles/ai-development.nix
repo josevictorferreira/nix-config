@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -10,7 +11,6 @@ in
 {
   imports = [
     ../common/ai-tools/default.nix
-    ../programs/ck-search.nix
     ../programs/opencode
     ../programs/claudecode.nix
     ../programs/cursor.nix
@@ -18,6 +18,7 @@ in
     ../programs/gemini.nix
     ../services/llm-proxy.nix
   ];
+  # Note: programs-ck-search migrated to dendritic aspect (Phase 3)
 
   options.jvf.roles.aiDevelopment = {
     enable = lib.mkOption {

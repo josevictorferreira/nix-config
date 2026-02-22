@@ -54,6 +54,21 @@ in
         system-power-management
         system-virtualization
         system-audio
+        # Program aspects (Phase 3)
+        programs-alacritty
+        programs-btop
+        programs-ck-search
+        programs-easyeffects
+        programs-ghostty
+        programs-git
+        programs-k9s
+        programs-kitty
+        programs-mistral-vibe
+        programs-neovim
+        programs-starship
+        programs-steam
+        programs-tmux
+        programs-zsh
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

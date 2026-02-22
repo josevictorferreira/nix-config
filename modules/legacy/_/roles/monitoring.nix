@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
@@ -9,10 +10,8 @@ let
   isDarwin = pkgs.stdenv.isDarwin;
 in
 {
-  imports = [
-    ../programs/btop.nix
-    ../programs/k9s.nix
-  ];
+  # Program modules migrated to dendritic aspects (Phase 3)
+  # - programs-btop, programs-k9s now in hosts/nixos-desktop.nix aspects list
 
   options.jvf.roles.monitoring = {
     enable = lib.mkOption {

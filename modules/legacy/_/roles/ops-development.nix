@@ -1,16 +1,16 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
   cfg = config.jvf.roles.opsDevelopment;
 in
 {
-  imports = [
-    ../programs/k9s.nix
-  ];
+  # Program modules migrated to dendritic aspects (Phase 3)
+  # - programs-k9s now in hosts/nixos-desktop.nix aspects list
 
   options.jvf.roles.opsDevelopment = {
     enable = lib.mkOption {

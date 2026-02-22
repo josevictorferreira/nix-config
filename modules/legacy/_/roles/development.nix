@@ -1,23 +1,20 @@
-{ lib
-, pkgs
-, config
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  ...
 }:
 
 let
   cfg = config.jvf.roles.development;
 in
 {
-  imports = [
-    ../programs/ghostty.nix
-    ../programs/alacritty.nix
-    ../programs/kitty.nix
-    ../programs/git.nix
-    ../programs/neovim.nix
-    ../programs/tmux
-    ../programs/zsh
-    ../programs/starship.nix
-  ];
+  # Program modules migrated to dendritic aspects (Phase 3)
+  # - programs-alacritty, programs-btop, programs-ck-search
+  # - programs-easyeffects, programs-ghostty, programs-git
+  # - programs-k9s, programs-kitty, programs-mistral-vibe
+  # - programs-neovim, programs-starship, programs-steam
+  # - programs-tmux, programs-zsh
 
   options.jvf.roles.development = {
     enable = lib.mkOption {

@@ -1,16 +1,16 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 
 let
   cfg = config.jvf.roles.media;
 in
 {
-  imports = [
-    ../programs/easyeffects.nix
-  ];
+  # Program modules migrated to dendritic aspects (Phase 3)
+  # - programs-easyeffects now in hosts/nixos-desktop.nix aspects list
 
   options.jvf.roles.media = {
     enable = lib.mkOption {

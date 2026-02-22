@@ -1,8 +1,9 @@
-{ lib
-, pkgs
-, config
-, system
-, ...
+{
+  lib,
+  pkgs,
+  config,
+  system,
+  ...
 }:
 
 let
@@ -12,7 +13,8 @@ let
   isDarwin = builtins.match ".*-darwin" system != null;
 in
 {
-  imports = if !isDarwin then [ ../programs/steam.nix ] else [ ];
+  # Program modules migrated to dendritic aspects (Phase 3)
+  # - programs-steam now in hosts/nixos-desktop.nix aspects list
 
   options.jvf.roles.gaming = {
     enable = lib.mkOption {
