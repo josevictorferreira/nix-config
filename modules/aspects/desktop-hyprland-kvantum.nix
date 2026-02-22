@@ -29,7 +29,7 @@
             pkgs.qt6Packages.qtstyleplugin-kvantum
           ];
           configs = {
-            "Kvantum" = ../../modules/legacy/_/desktop/hyprland/kvantum/.;
+            "Kvantum" = ../assets/desktop/kvantum;
           };
         };
       };

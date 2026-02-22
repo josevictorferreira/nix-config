@@ -29,7 +29,7 @@
             pkgs.swww
           ];
           configs = {
-            "wallust" = ../../modules/legacy/_/desktop/hyprland/wallust/.;
+            "wallust" = ../assets/desktop/wallust;
           };
         };
       };

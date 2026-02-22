@@ -31,7 +31,7 @@
             pkgs.swappy
           ];
           configs = {
-            "swappy" = ../../modules/legacy/_/desktop/hyprland/swappy/.;
+            "swappy" = ../assets/desktop/swappy;
           };
         };
       };

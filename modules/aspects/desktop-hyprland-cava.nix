@@ -66,7 +66,7 @@
           ];
           configs = {
             "cava.conf" = cavaConfig;
-            "shaders" = ../../modules/legacy/_/desktop/hyprland/cava/shaders;
+            "shaders" = ../assets/desktop/cava/shaders;
           };
         };
       };

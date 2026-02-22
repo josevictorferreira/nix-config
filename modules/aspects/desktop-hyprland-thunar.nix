@@ -36,7 +36,7 @@
 
         jvf.wrappers.users.${cfg.username}.programs.Thunar = {
           configs = {
-            "Thunar" = ../../modules/legacy/_/desktop/hyprland/thunar/.;
+            "Thunar" = ../assets/desktop/thunar;
           };
         };
       };

@@ -21,7 +21,7 @@
         jvf.wrappers.users.${cfg.username}.programs.fastfetch = {
           packages = [ ];
           configs = {
-            fastfetch = ../../modules/legacy/_/desktop/hyprland/fastfetch/.;
+            fastfetch = ../assets/desktop/fastfetch;
           };
         };
       };

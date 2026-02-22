@@ -28,7 +28,7 @@
             pkgs.wlogout
           ];
           configs = {
-            "wlogout" = ../../modules/legacy/_/desktop/hyprland/wlogout/.;
+            "wlogout" = ../assets/desktop/wlogout;
           };
         };
       };

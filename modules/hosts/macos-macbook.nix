@@ -58,16 +58,22 @@ in
         programs-alacritty
         programs-btop
         programs-ck-search
+        programs-claudecode
+        programs-cursor
+        programs-droid
         programs-easyeffects
+        programs-gemini
         programs-ghostty
         programs-git
         programs-k9s
         programs-kitty
         programs-mistral-vibe
         programs-neovim
+        programs-opencode
         programs-starship
         programs-steam
         programs-tmux
+        programs-weechat
         programs-zsh
         # Service aspects (Phase 5 - smb and llm-proxy only, cephfs is NixOS-only)
         services-smb
