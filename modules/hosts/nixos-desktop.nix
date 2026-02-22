@@ -40,6 +40,7 @@ in
         desktop-hyprland
         boot-grub-theme
         system-locale
+        system-nixpkgs
       ])
       # Host-specific config (last, so it can override)
       ++ [

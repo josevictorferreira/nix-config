@@ -39,6 +39,7 @@ in
         secrets-sops
         darwin-defaults
         system-locale
+        system-nixpkgs
       ])
       ++ [
         # Platform identity (required for pkgs resolution in legacy modules)

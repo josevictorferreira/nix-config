@@ -26,7 +26,7 @@ let
     logind = ./logind.nix;
     networking = ./networking.nix;
     nix-daemon = ./nix-daemon.nix;
-    nixpkgs = ./nixpkgs.nix;
+    # nixpkgs: migrated to dendritic aspect (modules/aspects/system-nixpkgs.nix)
     power-management = ./power-management.nix;
     security = ./security.nix;
     virtualization = ./virtualization.nix;
