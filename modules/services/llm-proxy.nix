@@ -8,8 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.services.llm-proxy = {
-        enable = lib.mkEnableOption "LLM API Key Proxy";
-
         port = lib.mkOption {
           type = lib.types.port;
           default = 18000;
@@ -154,7 +152,7 @@ let
     {
       imports = [ mkLlmProxyOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         lib.mkMerge [
           # Default package
           {

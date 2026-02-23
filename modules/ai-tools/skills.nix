@@ -11,7 +11,6 @@ let
     , ...
     }:
     let
-      cfg = config.jvf.aiTools.skills;
       programs = [
         "opencode"
         "claudecode"
@@ -32,10 +31,10 @@ let
             (lib.toUpper first) + rest)
           (lib.splitString "-" s));
 
-      mkSkillConfig = skillName: skillOptions: skillCfg:
-        lib.mkIf skillCfg.enable (lib.mkMerge (
+      mkSkillConfig = skillName: skillOptions:
+        lib.mkMerge (
           map (program: { jvf.programs.${program}.skills.${skillName} = skillOptions; }) programs
-        ));
+        );
 
       skillOptions_auditing_security = {
         allowed-tools = [
@@ -7187,44 +7186,26 @@ let
 
     in
     {
-      options.jvf.aiTools.skills = {
-        "auditing-security".enable = (lib.mkEnableOption "auditing-security") // { default = true; };
-        "creating-skills".enable = (lib.mkEnableOption "creating-skills") // { default = true; };
-        "research-tools".enable = (lib.mkEnableOption "research-tools") // { default = true; };
-        "grafana".enable = (lib.mkEnableOption "grafana") // { default = true; };
-        "browser-debug-tools".enable = (lib.mkEnableOption "browser-debug-tools") // { default = true; };
-        "vision-tools".enable = (lib.mkEnableOption "vision-tools") // { default = true; };
-        "kubernetes-tools".enable = (lib.mkEnableOption "kubernetes-tools") // { default = true; };
-        "developing-containers".enable = (lib.mkEnableOption "developing-containers") // { default = true; };
-        "creating-nix-modules".enable = (lib.mkEnableOption "creating-nix-modules") // { default = true; };
-        "managing-flakes".enable = (lib.mkEnableOption "managing-flakes") // { default = true; };
-        "writing-nix-code".enable = (lib.mkEnableOption "writing-nix-code") // { default = true; };
-        "pythonic-scraping-websites".enable = (lib.mkEnableOption "pythonic-scraping-websites") // { default = true; };
-        "developing-rails-background-jobs".enable = (lib.mkEnableOption "developing-rails-background-jobs") // { default = true; };
-        "developing-rails-event-store".enable = (lib.mkEnableOption "developing-rails-event-store") // { default = true; };
-        "developing-rails-scrapers".enable = (lib.mkEnableOption "developing-rails-scrapers") // { default = true; };
-        "developing-rspec-tests".enable = (lib.mkEnableOption "developing-rspec-tests") // { default = true; };
-        "fixing-rubocop-offenses".enable = (lib.mkEnableOption "fixing-rubocop-offenses") // { default = true; };
-      };
+      options.jvf.aiTools.skills = { };
 
       config = lib.mkMerge [
-        (mkSkillConfig "auditing-security" skillOptions_auditing_security cfg."auditing-security")
-        (mkSkillConfig "creating-skills" skillOptions_creating_skills cfg."creating-skills")
-        (mkSkillConfig "research-tools" skillOptions_research_tools cfg."research-tools")
-        (mkSkillConfig "grafana" skillOptions_grafana cfg."grafana")
-        (mkSkillConfig "browser-debug-tools" skillOptions_browser_debug_tools cfg."browser-debug-tools")
-        (mkSkillConfig "vision-tools" skillOptions_vision_tools cfg."vision-tools")
-        (mkSkillConfig "kubernetes-tools" skillOptions_kubernetes_tools cfg."kubernetes-tools")
-        (mkSkillConfig "developing-containers" skillOptions_developing_containers cfg."developing-containers")
-        (mkSkillConfig "creating-nix-modules" skillOptions_creating_nix_modules cfg."creating-nix-modules")
-        (mkSkillConfig "managing-flakes" skillOptions_managing_flakes cfg."managing-flakes")
-        (mkSkillConfig "writing-nix-code" skillOptions_writing_nix_code cfg."writing-nix-code")
-        (mkSkillConfig "pythonic-scraping-websites" skillOptions_pythonic_scraping_websites cfg."pythonic-scraping-websites")
-        (mkSkillConfig "developing-rails-background-jobs" skillOptions_developing_rails_background_jobs cfg."developing-rails-background-jobs")
-        (mkSkillConfig "developing-rails-event-store" skillOptions_developing_rails_event_store cfg."developing-rails-event-store")
-        (mkSkillConfig "developing-rails-scrapers" skillOptions_developing_rails_scrapers cfg."developing-rails-scrapers")
-        (mkSkillConfig "developing-rspec-tests" skillOptions_developing_rspec_tests cfg."developing-rspec-tests")
-        (mkSkillConfig "fixing-rubocop-offenses" skillOptions_fixing_rubocop_offenses cfg."fixing-rubocop-offenses")
+        (mkSkillConfig "auditing-security" skillOptions_auditing_security)
+        (mkSkillConfig "creating-skills" skillOptions_creating_skills)
+        (mkSkillConfig "research-tools" skillOptions_research_tools)
+        (mkSkillConfig "grafana" skillOptions_grafana)
+        (mkSkillConfig "browser-debug-tools" skillOptions_browser_debug_tools)
+        (mkSkillConfig "vision-tools" skillOptions_vision_tools)
+        (mkSkillConfig "kubernetes-tools" skillOptions_kubernetes_tools)
+        (mkSkillConfig "developing-containers" skillOptions_developing_containers)
+        (mkSkillConfig "creating-nix-modules" skillOptions_creating_nix_modules)
+        (mkSkillConfig "managing-flakes" skillOptions_managing_flakes)
+        (mkSkillConfig "writing-nix-code" skillOptions_writing_nix_code)
+        (mkSkillConfig "pythonic-scraping-websites" skillOptions_pythonic_scraping_websites)
+        (mkSkillConfig "developing-rails-background-jobs" skillOptions_developing_rails_background_jobs)
+        (mkSkillConfig "developing-rails-event-store" skillOptions_developing_rails_event_store)
+        (mkSkillConfig "developing-rails-scrapers" skillOptions_developing_rails_scrapers)
+        (mkSkillConfig "developing-rspec-tests" skillOptions_developing_rspec_tests)
+        (mkSkillConfig "fixing-rubocop-offenses" skillOptions_fixing_rubocop_offenses)
       ];
     };
 in

@@ -13,7 +13,6 @@
     in
     {
       options.jvf.desktop.hyprland.rofi = {
-        enable = lib.mkEnableOption "Rofi application launcher and dmenu replacement";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -21,22 +20,15 @@
         };
       };
 
-      config = lib.mkMerge [
-        # Auto-enable when hyprland desktop is enabled
-        (lib.mkIf config.jvf.desktop.hyprland.enable {
-          jvf.desktop.hyprland.rofi.enable = lib.mkDefault true;
-        })
-
-        (lib.mkIf cfg.enable {
-          jvf.wrappers.users.${cfg.username}.programs.rofi = {
-            packages = [
-              pkgs.rofi
-            ];
-            configs = {
-              "rofi" = ./assets/rofi/.;
-            };
+      config = {
+        jvf.wrappers.users.${cfg.username}.programs.rofi = {
+          packages = [
+            pkgs.rofi
+          ];
+          configs = {
+            "rofi" = ./assets/rofi/.;
           };
-        })
-      ];
+        };
+      };
     };
 }

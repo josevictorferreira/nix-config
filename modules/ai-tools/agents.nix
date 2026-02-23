@@ -1232,16 +1232,7 @@ let
   mkOptions =
     { lib, ... }:
     {
-      options.jvf.aiTools.agents = {
-        enableAll = lib.mkEnableOption "all AI tools agents";
-      }
-      // builtins.mapAttrs
-        (name: _: {
-          enable = (lib.mkEnableOption name) // {
-            default = true;
-          };
-        })
-        (oldApiAgents // newApiAgents);
+      options.jvf.aiTools.agents = { };
     };
 
   # ── Config module ──
@@ -1253,25 +1244,18 @@ let
     , ...
     }:
     let
-      cfg = config.jvf.aiTools.agents;
       allAgents = oldApiAgents // newApiAgents;
     in
     {
       imports = [ mkOptions ];
 
       config = lib.mkMerge (
-        # Per-agent configs: when agent is enabled, set its config on all 4 programs
+        # Per-agent configs: set on all 4 programs
         lib.mapAttrsToList
           (
-            name: agentAttrs: lib.mkIf cfg.${name}.enable (mkAgentConfig lib name agentAttrs)
+            name: agentAttrs: mkAgentConfig lib name agentAttrs
           )
           allAgents
-        ++ [
-          # enableAll: when set, enable all agents
-          (lib.mkIf cfg.enableAll {
-            jvf.aiTools.agents = builtins.mapAttrs (_: _: { enable = true; }) allAgents;
-          })
-        ]
       );
     };
 in

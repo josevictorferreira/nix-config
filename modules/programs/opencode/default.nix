@@ -11,8 +11,6 @@ let
     in
     {
       options.jvf.programs.opencode = {
-        enable = lib.mkEnableOption "Install opencode and write per-user ~/.config/opencode/config.json";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -127,7 +125,7 @@ let
     {
       imports = [ mkOpencodeOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         # ── Default settings ──────────────────────────────────────────────
         jvf.programs.opencode.settings = {
           theme = lib.mkDefault "one-dark";

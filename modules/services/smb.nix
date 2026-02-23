@@ -8,8 +8,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.services.smb = {
-        enable = lib.mkEnableOption "Enable the mount of the smb share";
-
         name = lib.mkOption {
           type = lib.types.str;
           example = "Homelab";
@@ -78,7 +76,7 @@ let
     {
       imports = [ mkSmbOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if isDarwin then
           {
             launchd.agents."${group}-smb" = smbMount { username = cfg.username; };

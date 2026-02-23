@@ -1,13 +1,14 @@
 # Aspect: roles-designing
 # Bundles design and creative tools (inkscape).
-{ ... }:
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.designing = {
-        enable = lib.mkEnableOption "designing tools bundle";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -16,11 +17,12 @@ let
       };
     };
 
-  designingModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
@@ -28,7 +30,27 @@ let
     {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
+        users.users."${cfg.username}".packages = [
+          pkgs.inkscape-with-extensions
+        ];
+      };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.designing;
+    in
+    {
+      imports = [ mkOptions ];
+
+      config = {
         users.users."${cfg.username}".packages = [
           pkgs.inkscape-with-extensions
         ];
@@ -36,6 +58,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-designing = designingModule;
-  flake.modules.darwin.roles-designing = designingModule;
+  flake.modules.nixos.roles-designing = nixosModule;
+  flake.modules.darwin.roles-designing = darwinModule;
 }

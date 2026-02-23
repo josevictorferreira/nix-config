@@ -1,15 +1,16 @@
 # Aspect: roles-development
 # Bundles core development programs and CLI tools.
-# Enables program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git),
+# Imports program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git),
 # virtualization (podman, libvirtd), and installs user-level dev packages.
-{ ... }:
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.development = {
-        enable = lib.mkEnableOption "development tools bundle";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -18,35 +19,104 @@ let
       };
     };
 
-  developmentModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.development;
     in
     {
-      imports = [ mkOptions ];
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        programs-ghostty
+        programs-alacritty
+        programs-kitty
+        programs-neovim
+        programs-zsh
+        programs-starship
+        programs-tmux
+        programs-git
+        system-virtualization
+      ]);
 
-      config = lib.mkIf cfg.enable {
-        jvf.system.virtualization.enable = true;
+      config = {
         jvf.system.virtualization.username = cfg.username;
 
-        jvf.programs = {
-          ghostty.enable = true;
-          alacritty.enable = true;
-          kitty.enable = true;
-          neovim.enable = true;
-          zsh.enable = true;
-          starship.enable = true;
-          tmux.enable = true;
-          git = {
-            enable = true;
-            name = "Jose Victor Ferreira";
-            email = "root@josevictor.me";
-          };
+        jvf.programs.git = {
+          name = "Jose Victor Ferreira";
+          email = "root@josevictor.me";
+        };
+
+        users.users."${cfg.username}".packages = [
+          pkgs.fastfetch
+          pkgs.dbeaver-bin
+          pkgs.insomnia
+          pkgs.curl
+          pkgs.gnupg
+          pkgs.gnumake
+          pkgs.coreutils
+          pkgs.gh
+          pkgs.eza
+          pkgs.fzf
+          pkgs.ripgrep
+          pkgs.vim
+          pkgs.openssl
+          pkgs.openssh
+          pkgs.wget
+          pkgs.tree
+          pkgs.xsel
+          pkgs.sops
+          pkgs.age
+          pkgs.zip
+          pkgs.unzip
+          pkgs.imagemagick
+          pkgs.jq
+          pkgs.yq
+          pkgs.bat
+          pkgs.brave
+          pkgs.p7zip
+        ];
+      };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.development;
+    in
+    {
+      imports = [
+        mkOptions
+      ]
+      ++ (with darwinAspects; [
+        programs-ghostty
+        programs-alacritty
+        programs-kitty
+        programs-neovim
+        programs-zsh
+        programs-starship
+        programs-tmux
+        programs-git
+        system-virtualization
+      ]);
+
+      config = {
+        jvf.system.virtualization.username = cfg.username;
+
+        jvf.programs.git = {
+          name = "Jose Victor Ferreira";
+          email = "root@josevictor.me";
         };
 
         users.users."${cfg.username}".packages = [
@@ -82,6 +152,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-development = developmentModule;
-  flake.modules.darwin.roles-development = developmentModule;
+  flake.modules.nixos.roles-development = nixosModule;
+  flake.modules.darwin.roles-development = darwinModule;
 }

@@ -16,8 +16,6 @@
     in
     {
       options.jvf.services.cephFs = {
-        enable = lib.mkEnableOption "Mount CephFS subvolume via fileSystems";
-
         name = lib.mkOption {
           type = lib.types.str;
           example = "Homelab";
@@ -74,7 +72,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         environment.systemPackages = [ pkgs.ceph-client ];
 
         system.fsPackages = [ pkgs.bindfs ];

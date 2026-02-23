@@ -1,18 +1,15 @@
 # Aspect: roles-base
 # Fundamental system configuration every host needs.
-# Enables: base-programs, base-services, environment, firewall, networking.
-{ ... }:
+# Imports: base-programs, base-services, environment, firewall, networking.
+{ self, ... }:
 let
-  mkBaseOptions =
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
+  mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.base = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Whether to enable base system configuration.";
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -21,42 +18,43 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  nixosModule =
+    { config, ... }:
     {
-      config,
-      lib,
-      ...
-    }:
-    let
-      cfg = config.jvf.roles.base;
-    in
-    {
-      imports = [ mkBaseOptions ];
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        system-base-programs
+        system-base-services
+        system-environment
+        system-firewall
+        system-networking
+      ]);
 
-      config = lib.mkIf cfg.enable (
-        {
-          jvf.system.base-programs.enable = true;
-          jvf.system.environment.enable = true;
-        }
-        // (
-          if !isDarwin then
-            {
-              jvf.system.base-services.enable = true;
-              jvf.system.firewall.enable = true;
-              jvf.system.networking.enable = true;
-              jvf.system.networking.hostName = config.jvf.core.host;
-            }
-          else
-            {
-              jvf.system.networking.enable = true;
-              jvf.system.networking.hostName = config.jvf.core.host;
-            }
-        )
-      );
+      config = {
+        jvf.system.networking.hostName = config.jvf.core.host;
+      };
+    };
+
+  darwinModule =
+    { config, ... }:
+    {
+      imports = [
+        mkOptions
+      ]
+      ++ (with darwinAspects; [
+        system-base-programs
+        system-environment
+        system-networking
+      ]);
+
+      config = {
+        jvf.system.networking.hostName = config.jvf.core.host;
+      };
     };
 in
 {
-  flake.modules.nixos.roles-base = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-base = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-base = nixosModule;
+  flake.modules.darwin.roles-base = darwinModule;
 }

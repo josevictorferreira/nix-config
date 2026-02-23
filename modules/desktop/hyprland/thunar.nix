@@ -13,7 +13,6 @@
     in
     {
       options.jvf.desktop.hyprland.thunar = {
-        enable = lib.mkEnableOption "Enable Thunar file manager";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -21,7 +20,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         programs = {
           thunar.enable = true;
           thunar.plugins = [

@@ -62,7 +62,6 @@
     in
     {
       options.jvf.desktop.hyprland.qt5ct = {
-        enable = lib.mkEnableOption "Qt5ct settings for Hyprland";
         username = lib.mkOption {
           type = lib.types.str;
           description = "Username for which qt5ct settings will be applied.";
@@ -70,7 +69,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.qt5ct = {
           packages = [
             pkgs.libsForQt5.qt5ct

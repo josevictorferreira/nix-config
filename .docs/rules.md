@@ -56,10 +56,10 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Legacy code passed `{ os, username, host, system, inputs }` via specialArgs. This violated dendritic principles and caused maintenance issues.
 **Verify:** `grep -rn 'specialArgs' modules/` should only return comments/docs.
 
-### Host Configs Are Pure Enable-Lists
-**Lesson:** Host config files should only contain: `jvf.core.*` identity, `jvf.<aspect>.enable` toggles, and `system.stateVersion`. Never add raw NixOS/Darwin config blocks.
-**Context:** Host configs previously had raw networking, security.sudo, fonts.packages blocks. These were extracted to aspects.
-**Verify:** `wc -l hosts/*/config.nix` should be <50 lines each.
+### Host Configs Are Pure Identity + Data
+**Lesson:** Host config files should only contain: `jvf.core.*` identity, role/aspect data options (NOT enable toggles), and `system.stateVersion`. Never add raw NixOS/Darwin config blocks.
+**Context:** P0 switched to inclusion-based architecture — modules are active when imported, no `enable = true` toggles needed. Host configs went from ~90 lines with enable toggles to ~46 lines of pure identity + data.
+**Verify:** `wc -l hosts/*/config.nix` should be <50 lines each. `grep -c 'enable' hosts/*/config.nix` should return 0.
 
 ---
 
@@ -84,10 +84,10 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** `programs-ck-search.nix` built `ckSearchPkg` but never assigned it to `jvf.programs.ck-search.package`, causing "option accessed but has no value" errors when other modules tried to use it.
 **Verify:** Ensure modules set `cfg.package = lib.mkDefault builtPackage;` in their config section if other modules depend on the package option.
 
-### Enable Options Must Be Set in Host Configs
-**Lesson:** Aspects with enable options require explicit `enable = true;` in host configs for their config to take effect.
-**Context:** `jvf.system.nixpkgs.enable` was missing from host config, so allowUnfree settings never applied, causing Steam build failure.
-**Verify:** After adding an aspect to imports, check if it has required enable options that need setting in host config.
+### Modules Active by Inclusion (Post-P0)
+**Lesson:** Leaf modules no longer have `mkEnableOption`. Importing an aspect = activating it. To disable, remove it from the host selector's import list (or from the role that imports it).
+**Context:** P0 stripped `mkEnableOption` from ~65 leaf modules. The old pattern required both importing AND setting `enable = true` — a violation of the dendritic "import = active" principle.
+**Verify:** `grep -rn 'mkEnableOption' modules/programs/ modules/system/ modules/hardware/ modules/services/` should return 0 results (except ai-tools DSL internals and sub-feature enables like `lfs.enable`, `matrix.enable`).
 
 ---
 
@@ -180,3 +180,37 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Before splitting a large file, check if `isDarwin` (or other parameters) are legitimately used throughout. A 1000+ line file with cohesive logic (one program's config, mostly data declarations) is NOT automatically a split candidate.
 **Context:** `wrappers.nix`, `opencode/default.nix`, `zsh/default.nix` were flagged as monoliths but are cohesive single-purpose files. Splitting would create cross-file dependencies for no readability gain.
 **Verify:** `grep isDarwin <file>` — if used in multiple places with real branching, the `mkConfig { isDarwin }` pattern is justified.
+
+---
+
+## Inclusion-Based Architecture (P0)
+
+### Roles Are Import Closures, Not Enable Bundles
+**Lesson:** Role modules use `imports = with nixosAspects; [ ... ];` to pull in program/service/system aspects transitively. Hosts import roles, roles import aspects — no `enable` toggles anywhere.
+**Context:** The old pattern had roles setting `jvf.programs.X.enable = true` which required both import AND enable. The new pattern: importing a role = importing all its dependency aspects. Roles accept `{ self, ... }` at the top level to access `self.modules.nixos.*`.
+**Verify:** `grep -c 'mkEnableOption\|mkIf cfg.enable' modules/roles/*.nix` should return 0 for all files.
+
+### Roles Can Import self.modules.nixos.* Without Infinite Recursion
+**Lesson:** Flake-parts modules can reference `self.modules.nixos.*` in their NixOS module's `imports` list without causing infinite recursion. The flake-parts layer evaluates lazily — module DEFINITIONS happen at flake-parts time, but `imports` resolution happens at NixOS module evaluation time.
+**Context:** Confirmed by real-world repos (drupol/infra, Doc-Steve/dendritic-design-with-flake-parts) and Oracle analysis. Pattern: `{ self, ... }: let nixosAspects = self.modules.nixos; in { flake.modules.nixos.role-X = { imports = with nixosAspects; [ ... ]; }; }`.
+**Verify:** `nix flake check` — if roles cause recursion, this will fail immediately.
+
+### Sub-Feature Enables Are Intentional Exceptions
+**Lesson:** Some modules intentionally keep `mkEnableOption` for **sub-features** within an already-active module. Examples: `git.lfs.enable`, `tmux.tmuxp.enable`, `weechat.matrix.enable`, `gemini.antigravity.enable`. These are NOT violations of the inclusion pattern.
+**Context:** Sub-features toggle optional heavyweight dependencies or protocol support within an active module. The module itself is active by inclusion; the sub-feature is opt-in within it.
+**Verify:** Sub-feature enables should be nested under the module's option namespace, not at the top level.
+
+### ai-tools DSL Enables Are Intentional Exceptions
+**Lesson:** The 6 ai-tools modules (`agents.nix`, `commands.nix`, `mcp.nix`, etc.) keep `mkEnableOption` for per-agent, per-command, per-server toggles. These are **DSL-internal** controls, not module-level enables.
+**Context:** ai-tools is a complex DSL where each agent/command/server is independently toggleable. Path: `jvf.aiTools.*`. This is a data-driven pattern, not the old import+enable pattern.
+**Verify:** ai-tools enables should all be under `jvf.aiTools.*`, never `jvf.programs.*` or `jvf.system.*`.
+
+### Host Selectors Import Roles + Infra, Not Leaf Aspects
+**Lesson:** After P0, host selector files (`modules/hosts/*.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) ai-tools, (5) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
+**Context:** nixos-desktop.nix went from 133 → 101 lines, macos-macbook.nix from 109 → 71 lines by removing ~30 leaf aspect imports that roles now handle.
+**Verify:** `grep -c 'programs-' modules/hosts/nixos-desktop.nix` should return 0 (programs come via roles).
+
+### Self-Referencing Assertions After Enable Removal
+**Lesson:** When stripping `mkEnableOption` from a module, check for assertions that reference the module's own `.enable` option. These become self-referencing errors since the option no longer exists.
+**Context:** `zsh/default.nix` had `assertion = config.jvf.programs.zsh.enable -> pkgs ? zsh;` — after removing the enable option, this caused an eval error. Fixed to `assertion = pkgs ? zsh;`.
+**Verify:** After removing `mkEnableOption`, grep the same file for `config.jvf.<module>.enable` references.

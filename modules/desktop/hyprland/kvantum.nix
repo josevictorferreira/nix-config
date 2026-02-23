@@ -13,7 +13,6 @@
     in
     {
       options.jvf.desktop.hyprland.kvantum = {
-        enable = lib.mkEnableOption "Generate a 16 color schema based on an image.";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -21,7 +20,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.Kvantum = {
           packages = [
             pkgs.libsForQt5.qtstyleplugin-kvantum

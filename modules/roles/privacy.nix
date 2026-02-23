@@ -1,19 +1,13 @@
 # Aspect: roles-privacy
-# Defines jvf.roles.privacy options for privacy-focused tools.
+# Privacy-focused tools.
 # NixOS: Proton suite (Pass, Authenticator, VPN, Mail wrapped).
 # Darwin: empty (Proton tools are Linux-only).
 { ... }:
 let
-  mkPrivacyOptions =
+  mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.privacy = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Whether to enable some privacy related tools.";
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -22,12 +16,11 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.privacy;
@@ -72,21 +65,25 @@ let
       };
     in
     {
-      imports = [ mkPrivacyOptions ];
+      imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
-        users.users."${cfg.username}".packages = lib.mkMerge (
-          lib.optional (!isDarwin) [
-            pkgs.proton-pass
-            pkgs.proton-authenticator
-            pkgs.protonvpn-gui
-            protonmailWrapped
-          ]
-        );
+      config = {
+        users.users."${cfg.username}".packages = [
+          pkgs.proton-pass
+          pkgs.proton-authenticator
+          pkgs.protonvpn-gui
+          protonmailWrapped
+        ];
       };
+    };
+
+  darwinModule =
+    { ... }:
+    {
+      imports = [ mkOptions ];
     };
 in
 {
-  flake.modules.nixos.roles-privacy = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-privacy = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-privacy = nixosModule;
+  flake.modules.darwin.roles-privacy = darwinModule;
 }

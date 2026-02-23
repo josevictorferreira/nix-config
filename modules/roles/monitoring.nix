@@ -1,19 +1,16 @@
 # Aspect: roles-monitoring
-# Defines jvf.roles.monitoring options and platform-specific monitoring/admin tools.
+# Monitoring and admin tools.
 # NixOS: btop + disk/network/system utilities + gparted.
 # Darwin: btop + disk/network/system utilities (no gparted).
-{ ... }:
+{ self, ... }:
 let
-  mkMonitoringOptions =
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
+  mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.monitoring = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Whether to enable administrative tools.";
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -22,43 +19,70 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+  commonPackages = pkgs: [
+    pkgs.baobab
+    pkgs.btop
+    pkgs.duf
+    pkgs.inxi
+    pkgs.mtr
+    pkgs.lsof
+    pkgs.ncdu
+    pkgs.htop-vim
+    pkgs.inetutils
+    pkgs.dig
+    pkgs.nettools
+    pkgs.nmap
+    pkgs.arp-scan
+    pkgs.pciutils
+  ];
+
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.monitoring;
     in
     {
-      imports = [ mkMonitoringOptions ];
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        programs-btop
+      ]);
 
-      config = lib.mkIf cfg.enable {
-        jvf.programs.btop.enable = true;
+      config = {
+        users.users."${cfg.username}".packages = (commonPackages pkgs) ++ [ pkgs.gparted ];
+      };
+    };
 
-        users.users."${cfg.username}".packages = [
-          pkgs.baobab # disk usage analyzer
-          pkgs.btop # system monitor (via jvf.programs)
-          pkgs.duf # disk usage/free utility
-          pkgs.inxi # system information tool
-          pkgs.mtr # network diagnostic
-          pkgs.lsof # list open files
-          pkgs.ncdu # NCurses Disk Usage
-          pkgs.htop-vim # interactive process viewer
-          pkgs.inetutils # networking utilities
-          pkgs.dig # DNS lookup
-          pkgs.nettools # network configuration tools
-          pkgs.nmap # network scanner
-          pkgs.arp-scan # ARP scanner
-          pkgs.pciutils
-        ]
-        ++ (lib.optional (!isDarwin) pkgs.gparted);
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.monitoring;
+    in
+    {
+      imports = [
+        mkOptions
+      ]
+      ++ (with darwinAspects; [
+        programs-btop
+      ]);
+
+      config = {
+        users.users."${cfg.username}".packages = commonPackages pkgs;
       };
     };
 in
 {
-  flake.modules.nixos.roles-monitoring = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-monitoring = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-monitoring = nixosModule;
+  flake.modules.darwin.roles-monitoring = darwinModule;
 }

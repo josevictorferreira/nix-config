@@ -87,7 +87,6 @@
     in
     {
       options.jvf.desktop.hyprland.gtk3 = {
-        enable = lib.mkEnableOption "Gtk 3.0 settings.";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -129,7 +128,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs."gtk-3.0" = {
           packages = [ ];
           configs = {

@@ -62,7 +62,6 @@
     in
     {
       options.jvf.desktop.hyprland.qt6ct = {
-        enable = lib.mkEnableOption "qt6ct settings for Hyprland";
 
         username = lib.mkOption {
           type = lib.types.str;
@@ -71,7 +70,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.qt6ct = {
           packages = [
             pkgs.qt6Packages.qt6ct

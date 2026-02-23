@@ -14,8 +14,6 @@ let
             { ... }:
             {
               options = {
-                enable = lib.mkEnableOption "this user account";
-
                 homeMode = lib.mkOption {
                   type = lib.types.str;
                   default = "755";
@@ -89,7 +87,7 @@ in
           })
           cfg.users;
         users.mutableUsers = true;
-        users.groups = lib.mapAttrs (name: userCfg: lib.mkIf userCfg.enable { }) cfg.users;
+        users.groups = lib.mapAttrs (name: userCfg: { }) cfg.users;
       };
     };
 

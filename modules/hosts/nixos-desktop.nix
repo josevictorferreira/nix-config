@@ -28,13 +28,15 @@ in
     modules =
       # Dendritic aspects (all NixOS modules via import-tree)
       (with self.modules.nixos; [
+        # Core infrastructure
         core-jvf
         users
         wrappers
         repositories
         secrets-sops
+
+        # Desktop environment
         desktop-hyprland
-        # Hyprland sub-aspects (Phase 8)
         desktop-hyprland-hypr
         desktop-hyprland-ags
         desktop-hyprland-rofi
@@ -52,72 +54,38 @@ in
         desktop-hyprland-wallust
         desktop-hyprland-wlogout
         boot-grub-theme
-        system-base-programs
-        system-base-services
+
+        # System infra (not pulled by roles)
         system-locale
-        system-networking
         system-nixpkgs
         system-nix-daemon
         system-security
-        system-xdg
-        system-environment
-        system-display
-        system-firewall
-        system-flatpak
-        system-logind
-        system-power-management
-        system-virtualization
-        system-audio
-        # Hardware aspects (Phase 6)
+
+        # Hardware
+        hardware-boot
+        hardware-btrfs
         hardware-amd-gpu
         hardware-bluetooth
         hardware-logitech
         hardware-openrgb
-        # Hardware aspects (Phase 4 - dendritic refactor)
-        hardware-boot
-        hardware-btrfs
-        # Program aspects (Phase 3)
-        programs-alacritty
-        programs-btop
-        programs-ck-search
-        programs-claudecode
-        programs-cursor
-        programs-droid
-        programs-easyeffects
-        programs-gemini
-        programs-ghostty
-        programs-git
-        programs-k9s
-        programs-kitty
-        programs-mistral-vibe
-        programs-neovim
-        programs-opencode
-        programs-starship
-        programs-steam
-        programs-tmux
-        programs-weechat
-        programs-zsh
-        # Service aspects (Phase 5)
-        services-smb
-        services-cephfs
-        services-llm-proxy
-        # Role aspects (Phase 7)
+
+        # Roles (pull programs/services/system deps transitively)
         roles-base
         roles-desktop
         roles-development
-        roles-monitoring
-        roles-media
-        roles-privacy
-        roles-gaming
         roles-ai-development
         roles-local-ai
+        roles-ops-development
+        roles-monitoring
         roles-communication
         roles-designing
-        roles-documenting
+        roles-media
+        roles-gaming
         roles-network-storage
-        roles-ops-development
-        # AI Tools aspects (Phase 9)
-        # ai-tools removed - default.nix was empty
+        roles-documenting
+        roles-privacy
+
+        # AI tools DSL
         ai-tools-skills
         ai-tools-agents
         ai-tools-commands

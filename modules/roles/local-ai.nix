@@ -1,14 +1,15 @@
 # Aspect: roles-local-ai
 # Bundles local AI development tools.
 # Enables ollama, LMStudio, llama-cpp with GPU acceleration support.
-{ ... }:
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.local-ai = {
-        enable = lib.mkEnableOption "local AI development tools";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -45,53 +46,46 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.local-ai;
 
       # ROCm libraries needed for llama.cpp backend
-      rocmLibs = with pkgs.rocmPackages; [
-        clr
-        clr.icd
-        rocm-runtime
-        hipblas
-        rocblas
-        rocsolver
+      rocmLibs = [
+        pkgs.rocmPackages.clr
+        pkgs.rocmPackages.clr.icd
+        pkgs.rocmPackages.rocm-runtime
+        pkgs.rocmPackages.hipblas
+        pkgs.rocmPackages.rocblas
+        pkgs.rocmPackages.rocsolver
       ];
 
       # Additional system libraries needed by the ROCm stack
-      systemLibs = with pkgs; [
-        stdenv.cc.cc.lib # libstdc++
-        numactl # libnuma
-        elfutils.out # libelf (need .out for the library)
-        libdrm # libdrm
+      systemLibs = [
+        pkgs.stdenv.cc.cc.lib # libstdc++
+        pkgs.numactl # libnuma
+        pkgs.elfutils.out # libelf (need .out for the library)
+        pkgs.libdrm # libdrm
       ];
 
       # All extra libraries for the FHS environment
       allExtraLibs = rocmLibs ++ systemLibs;
 
       # Create a wrapped lmstudio that sets LD_LIBRARY_PATH for child processes
-      # This includes both the bundled ROCm vendor libs and system libs
       lmstudio-rocm = pkgs.symlinkJoin {
         name = "lmstudio-rocm";
         paths = [ pkgs.lmstudio ];
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
-          # Wrap lm-studio with environment for ROCm
-          # Set LD_LIBRARY_PATH to include:
-          # 1. LM Studio's bundled vendor libs (expanded at runtime via $HOME)
-          # 2. System ROCm and support libraries from nix store
-          # 3. FHS paths for libraries inside the sandbox
           wrapProgram $out/bin/lm-studio \
             --run 'export LD_LIBRARY_PATH="$HOME/.lmstudio/extensions/backends/vendor/linux-llama-rocm-vendor-v3:${lib.makeLibraryPath allExtraLibs}:/usr/lib64:/usr/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"'
 
-          # Wrap lms CLI as well
           wrapProgram $out/bin/lms \
             --run 'export LD_LIBRARY_PATH="$HOME/.lmstudio/extensions/backends/vendor/linux-llama-rocm-vendor-v3:${lib.makeLibraryPath allExtraLibs}:/usr/lib64:/usr/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"'
         '';
@@ -100,17 +94,31 @@ let
     {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
-        users.users."${cfg.username}".packages =
-          [ ]
-          ++ lib.optionals (!isDarwin) [
-            lmstudio-rocm
-            pkgs.llama-cpp-rocm
-          ];
+      config = {
+        users.users."${cfg.username}".packages = [
+          lmstudio-rocm
+          pkgs.llama-cpp-rocm
+        ];
       };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.local-ai;
+    in
+    {
+      imports = [ mkOptions ];
+
+      config = { };
     };
 in
 {
-  flake.modules.nixos.roles-local-ai = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-local-ai = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-local-ai = nixosModule;
+  flake.modules.darwin.roles-local-ai = darwinModule;
 }

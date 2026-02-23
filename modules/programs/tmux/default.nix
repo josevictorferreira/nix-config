@@ -14,7 +14,6 @@ let
     in
     {
       options.jvf.programs.tmux = {
-        enable = lib.mkEnableOption "tmux, a terminal multiplexer";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -384,7 +383,7 @@ let
 
       config = lib.mkMerge [
         # tmux config
-        (lib.mkIf cfg.enable {
+        {
           jvf.wrappers.users.${cfg.username}.programs.tmux = {
             packages = [
               cfg.package
@@ -394,8 +393,7 @@ let
             };
           };
 
-          jvf.programs.tmuxp.enable = true;
-        })
+        }
 
         # tmuxp config
         (lib.mkIf tmuxpCfg.enable {

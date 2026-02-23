@@ -13,7 +13,6 @@
     in
     {
       options.jvf.desktop.hyprland.ags = {
-        enable = lib.mkEnableOption "AGS - Awesome Hyprland Widgets";
 
         username = lib.mkOption {
           type = lib.types.str;
@@ -22,7 +21,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.ags = {
           packages = [
             pkgs.ags

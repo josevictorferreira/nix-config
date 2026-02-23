@@ -7,8 +7,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.desktop.hyprland.hypr = {
-        enable = lib.mkEnableOption "Hyprland with JVF configurations.";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -32,7 +30,7 @@ in
     {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         services.hypridle.enable = false;
 
         programs.hyprland = {

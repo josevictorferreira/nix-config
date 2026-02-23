@@ -9,8 +9,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs.zsh = {
-        enable = lib.mkEnableOption "zsh with advanced features";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -925,13 +923,13 @@ let
     {
       imports = [ mkZshOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         lib.mkMerge [
           {
             # Assertion test
             assertions = [
               {
-                assertion = config.jvf.programs.zsh.enable -> pkgs ? zsh;
+                assertion = pkgs ? zsh;
                 message = "zsh package must be available";
               }
             ];

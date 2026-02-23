@@ -1,19 +1,15 @@
 # Aspect: roles-desktop
 # Desktop environment system configuration.
-# Enables: audio, display, logind, power-management, xdg, flatpak.
+# Imports: audio, display, logind, power-management, xdg, flatpak.
 # NixOS-only: all of these are NixOS-specific system services.
-{ ... }:
+{ self, ... }:
 let
-  mkDesktopOptions =
+  nixosAspects = self.modules.nixos;
+
+  mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.desktop = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Whether to enable desktop system configuration.";
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -22,37 +18,37 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    {
-      config,
-      lib,
-      ...
-    }:
+  nixosModule =
+    { config, ... }:
     let
       cfg = config.jvf.roles.desktop;
     in
     {
-      imports = [ mkDesktopOptions ];
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        system-audio
+        system-display
+        system-logind
+        system-power-management
+        system-xdg
+        system-flatpak
+      ]);
 
-      config = lib.mkIf cfg.enable (
-        if !isDarwin then
-          {
-            jvf.system.audio.enable = true;
-            jvf.system.display.enable = true;
-            jvf.system.logind.enable = true;
-            jvf.system.power-management.enable = true;
-            jvf.system.power-management.username = cfg.username;
-            jvf.system.xdg.enable = true;
-            jvf.system.xdg.username = cfg.username;
-            jvf.system.flatpak.enable = true;
-          }
-        else
-          { }
-      );
+      config = {
+        jvf.system.power-management.username = cfg.username;
+        jvf.system.xdg.username = cfg.username;
+      };
+    };
+
+  darwinModule =
+    { ... }:
+    {
+      imports = [ mkOptions ];
     };
 in
 {
-  flake.modules.nixos.roles-desktop = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-desktop = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-desktop = nixosModule;
+  flake.modules.darwin.roles-desktop = darwinModule;
 }

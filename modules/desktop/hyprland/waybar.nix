@@ -13,7 +13,6 @@
     in
     {
       options.jvf.desktop.hyprland.waybar = {
-        enable = lib.mkEnableOption "Wayland bar for Sway and Wlroots based compositors";
 
         username = lib.mkOption {
           type = lib.types.str;
@@ -22,7 +21,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         programs.waybar.enable = true;
 
         jvf.wrappers.users.${cfg.username}.programs.waybar = {

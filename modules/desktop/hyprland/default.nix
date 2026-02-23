@@ -20,7 +20,6 @@
     in
     {
       options.jvf.desktop.hyprland = {
-        enable = lib.mkEnableOption "Hyprland desktop";
 
         username = lib.mkOption {
           type = lib.types.str;
@@ -29,25 +28,9 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.desktop.hyprland = {
-          hypr.enable = true;
-          ags.enable = true;
-          cava.enable = true;
-          qt5ct.enable = true;
-          qt6ct.enable = true;
-          rofi.enable = true;
-
-          swaync.enable = true;
-          waybar.enable = true;
-          wallust.enable = true;
-          wlogout.enable = true;
-          swappy.enable = true;
-          kvantum.enable = true;
-          thunar.enable = true;
-          xfce4.enable = true;
           gtk3 = {
-            enable = true;
             bookmarks = [
               {
                 path = "/home/${cfg.username}/Documents";
@@ -121,7 +104,6 @@
               }
             ];
           };
-          fastfetch.enable = true;
         };
 
         services.greetd.enable = lib.mkDefault false;

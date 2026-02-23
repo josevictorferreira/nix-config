@@ -49,7 +49,6 @@
     in
     {
       options.jvf.desktop.hyprland.cava = {
-        enable = lib.mkEnableOption "Cava - Console-based Audio Visualizer";
 
         username = lib.mkOption {
           type = lib.types.str;
@@ -58,7 +57,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.cava = {
           packages = [
             pkgs.cava

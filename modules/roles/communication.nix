@@ -1,14 +1,15 @@
 # Aspect: roles-communication
 # Bundles communication tools (discord, slack, telegram, weechat).
-# Enables weechat program aspect with matrix support.
-{ ... }:
+# Imports weechat program aspect with matrix support.
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.communication = {
-        enable = lib.mkEnableOption "communication tools bundle";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -17,23 +18,54 @@ let
       };
     };
 
-  communicationModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.communication;
     in
     {
-      imports = [ mkOptions ];
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        programs-weechat
+      ]);
 
-      config = lib.mkIf cfg.enable {
-        jvf.programs.weechat = {
-          enable = true;
-          matrix.enable = true;
-        };
+      config = {
+        jvf.programs.weechat.matrix.enable = true;
+
+        users.users."${cfg.username}".packages = [
+          pkgs.discord
+          pkgs.brave
+        ];
+      };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.communication;
+    in
+    {
+      imports = [
+        mkOptions
+      ]
+      ++ (with darwinAspects; [
+        programs-weechat
+      ]);
+
+      config = {
+        jvf.programs.weechat.matrix.enable = true;
 
         users.users."${cfg.username}".packages = [
           pkgs.discord
@@ -43,6 +75,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-communication = communicationModule;
-  flake.modules.darwin.roles-communication = communicationModule;
+  flake.modules.nixos.roles-communication = nixosModule;
+  flake.modules.darwin.roles-communication = darwinModule;
 }

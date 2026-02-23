@@ -8,7 +8,6 @@ let
     { config, lib, pkgs, ... }:
     let
       inherit (lib)
-        mkEnableOption
         mkOption
         types
         literalExpression
@@ -47,8 +46,6 @@ let
     in
     {
       options.jvf.programs.git = {
-        enable = mkEnableOption (lib.mdDoc "Git version control system");
-
         package = mkOption {
           type = types.package;
           default = pkgs.git;
@@ -214,16 +211,16 @@ let
     {
       imports = [ mkGitOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         {
           assertions = [
             {
               assertion = cfg.name != null;
-              message = "jvf.programs.git.name must be set when jvf.programs.git.enable = true";
+              message = "jvf.programs.git.name must be set";
             }
             {
               assertion = cfg.email != null;
-              message = "jvf.programs.git.email must be set when jvf.programs.git.enable = true";
+              message = "jvf.programs.git.email must be set";
             }
           ];
 

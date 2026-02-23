@@ -1,13 +1,14 @@
 # Aspect: roles-documenting
 # Bundles document viewing and editing tools (obsidian, libreoffice, zathura, etc).
-{ ... }:
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+  darwinAspects = self.modules.darwin;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.documenting = {
-        enable = lib.mkEnableOption "documenting tools bundle";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -16,11 +17,12 @@ let
       };
     };
 
-  documentingModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.documenting;
@@ -28,7 +30,31 @@ let
     {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
+        users.users."${cfg.username}".packages = [
+          pkgs.font-manager
+          pkgs.obsidian
+          pkgs.koreader
+          pkgs.libreoffice-still
+          pkgs.zathura
+        ];
+      };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.documenting;
+    in
+    {
+      imports = [ mkOptions ];
+
+      config = {
         users.users."${cfg.username}".packages = [
           pkgs.font-manager
           pkgs.obsidian
@@ -40,6 +66,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-documenting = documentingModule;
-  flake.modules.darwin.roles-documenting = documentingModule;
+  flake.modules.nixos.roles-documenting = nixosModule;
+  flake.modules.darwin.roles-documenting = darwinModule;
 }

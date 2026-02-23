@@ -4,26 +4,42 @@ My NixOS/Darwin Workspace setup - a unified flake for both NixOS (desktop) and m
 
 ## Architecture
 
-This configuration uses **dendritic modules** (flake-parts pattern) where each module file defines both NixOS and Darwin exports:
+This configuration uses **dendritic modules** (flake-parts pattern) with an **inclusion-based architecture**:
+
+- Each module file exports `flake.modules.nixos.<name>` and `flake.modules.darwin.<name>`
+- **Import = active** — no `mkEnableOption` toggles. Importing a module enables it.
+- **Roles** are import closures that transitively pull in program/service/system aspects
+- Hosts import roles + infra aspects; roles import leaf aspects
 
 ```nix
-# modules/programs/example/default.nix
+# modules/programs/example/default.nix (leaf aspect — no enable option)
 { ... }:
 let
-  mkConfig = { isDarwin }: { config, lib, pkgs, ... }:
-    let cfg = config.jvf.programs.example;
-    in {
-      options.jvf.programs.example.enable = lib.mkEnableOption "Example feature";
-      config = lib.mkIf cfg.enable { /* config */ };
+  mkConfig = { isDarwin }: { config, lib, pkgs, ... }: {
+    options.jvf.programs.example.username = lib.mkOption {
+      type = lib.types.str;
+      default = config.jvf.core.username;
     };
-in
-{
-  flake.modules.nixos.example = mkConfig { isDarwin = false; };
-  flake.modules.darwin.example = mkConfig { isDarwin = true; };
+    config = { /* always active when imported */ };
+  };
+in {
+  flake.modules.nixos.programs-example = mkConfig { isDarwin = false; };
+  flake.modules.darwin.programs-example = mkConfig { isDarwin = true; };
+}
+
+# modules/roles/development.nix (role — import closure)
+{ self, ... }:
+let nixosAspects = self.modules.nixos;
+in {
+  flake.modules.nixos.roles-development = {
+    imports = with nixosAspects; [
+      programs-ghostty programs-neovim programs-zsh programs-git
+    ];
+  };
 }
 ```
 
-Hosts import these via `self.modules.{nixos,darwin}.example`. See `modules/hosts/nixos-desktop.nix` and `macos-macbook.nix` for full examples.
+See `modules/hosts/nixos-desktop.nix` and `macos-macbook.nix` for full host examples.
 
 ## Structure
 

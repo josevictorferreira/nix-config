@@ -8,10 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.aiTools.baseRule = {
-        enable = (lib.mkEnableOption "base rule file used globally") // {
-          default = true;
-        };
-
         content = lib.mkOption {
           type = lib.types.str;
           description = "The content of the rules file.";
@@ -35,7 +31,7 @@ let
     {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.programs.opencode.baseRules = cfg.content;
         jvf.programs.claudecode.baseRules = cfg.content;
         jvf.programs.droid.baseRules = cfg.content;

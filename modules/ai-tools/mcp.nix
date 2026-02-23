@@ -8,9 +8,6 @@ let
   mkOptions =
     { lib, ... }:
     {
-      options.jvf.aiTools.mcpServers = {
-        enableAll = lib.mkEnableOption "all MCP servers";
-      };
     };
 
   mkConfig =

@@ -9,10 +9,6 @@ let
     {
       options.jvf.aiTools.scripts = {
         "prompt-enhancer" = {
-          enable = (lib.mkEnableOption "prompt enhancer") // {
-            default = true;
-          };
-
           username = lib.mkOption {
             type = lib.types.str;
             default = config.jvf.core.username;
@@ -26,10 +22,6 @@ let
         };
 
         "rules-enforcer" = {
-          enable = (lib.mkEnableOption "rules enforcer") // {
-            default = true;
-          };
-
           username = lib.mkOption {
             type = lib.types.str;
             default = config.jvf.core.username;
@@ -428,12 +420,12 @@ let
           jvf.aiTools.scripts."prompt-enhancer".package = lib.mkDefault promptEnhancerPkg;
           jvf.aiTools.scripts."rules-enforcer".package = lib.mkDefault rulesEnforcerPkg;
         }
-        (lib.mkIf peCfg.enable {
+        {
           users.users."${peCfg.username}".packages = [ peCfg.package ];
-        })
-        (lib.mkIf reCfg.enable {
+        }
+        {
           users.users."${reCfg.username}".packages = [ reCfg.package ];
-        })
+        }
       ];
     };
 in

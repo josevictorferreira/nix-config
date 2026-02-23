@@ -11,8 +11,6 @@ let
     in
     {
       options.jvf.programs.gemini = {
-        enable = lib.mkEnableOption "Install gemini-cli and write per-user ~/.gemini/config.json";
-
         antigravity.enable = lib.mkEnableOption "Install Antigravity Tools (Gemini CLI companion)";
 
         username = lib.mkOption {
@@ -151,7 +149,7 @@ let
     {
       imports = [ mkGeminiOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.programs.gemini.settings = {
           general.previewFeatures = true;
           general.vimMode = true;

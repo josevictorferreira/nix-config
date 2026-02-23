@@ -1,14 +1,14 @@
 # Aspect: roles-media
 # Bundles media creation and playback tools.
-# Enables easyeffects (NixOS only) and installs media packages.
-{ ... }:
+# Imports easyeffects (NixOS only) and installs media packages.
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
+
   mkOptions =
     { config, lib, ... }:
     {
       options.jvf.roles.media = {
-        enable = lib.mkEnableOption "media tools bundle";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -17,12 +17,12 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+  nixosModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.media;
@@ -40,17 +40,42 @@ let
       ];
     in
     {
+      imports = [
+        mkOptions
+      ]
+      ++ (with nixosAspects; [
+        programs-easyeffects
+      ]);
+
+      config = {
+        users.users."${cfg.username}".packages = commonPackages ++ linuxPackages;
+      };
+    };
+
+  darwinModule =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      cfg = config.jvf.roles.media;
+
+      commonPackages = [
+        pkgs.ffmpeg
+        (pkgs.mpv.override { scripts = [ pkgs.mpvScripts.mpris ]; })
+      ];
+    in
+    {
       imports = [ mkOptions ];
 
-      config = lib.mkIf cfg.enable {
-        jvf.programs.easyeffects.enable = !isDarwin;
-
-        users.users."${cfg.username}".packages =
-          commonPackages ++ (lib.optionals (!isDarwin) linuxPackages);
+      config = {
+        users.users."${cfg.username}".packages = commonPackages;
       };
     };
 in
 {
-  flake.modules.nixos.roles-media = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-media = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-media = nixosModule;
+  flake.modules.darwin.roles-media = darwinModule;
 }
