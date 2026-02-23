@@ -1,8 +1,8 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-28
+**Generated:** 2026-02-22
 **Commit:** N/A (Dynamic)
-**Branch:** main
+**Branch:** feature/dendritic-config
 
 > **IMPORTANT:** Before starting any implementation, read `.docs/rules.md` for project-specific lessons and gotchas.
 
@@ -94,9 +94,11 @@ Based on: KooL's NixOS-Hyprland.
 
 ## CONVENTIONS
 - **Options**: `jvf.<category>.<name>.enable` (REQUIRED for everything).
+- **Identity**: `config.jvf.core.username` is the single source of truth for username. NEVER hardcode `"josevictor"` in module defaults.
+- **specialArgs**: Only `inputs` passed via specialArgs. Identity (username/host/os) comes from `config.jvf.core.*`, set in host config files.
 - **Naming**: Kebab-case files.
 - **Imports**: Group top-level. Specific imports only (no `import ./dir`).
-- **Platform**: Check `pkgs.stdenv.isDarwin` or `isDarwin` variable.
+- **Platform**: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`.
 - **Formatting**: `nixpkgs-fmt` (via `make format`).
 
 ## DENDRITIC MODULE PATTERN
@@ -146,6 +148,8 @@ Then add to host files:
 
 ## ANTI-PATTERNS (THIS PROJECT)
 - **Home Manager**: BANNED. Use native NixOS/Darwin modules + `users.users`.
+- **specialArgs for identity**: BANNED. Only `inputs` via specialArgs. Use `config.jvf.core.*` for username/host/os.
+- **Hardcoded username**: BANNED. Use `config.jvf.core.username` as default in all module options.
 - **Implicit Enable**: NEVER enable by default. Must be opt-in.
 - **Relative ../ imports**: Use absolute path from root for cross-module.
 - **Old Module Style**: Don't create `modules/{programs,system,roles}/default.nix` aggregators

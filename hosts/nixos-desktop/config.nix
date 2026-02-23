@@ -65,8 +65,6 @@
   networking.defaultGateway = "10.10.10.1";
   networking.nameservers = [ "10.10.10.100" ];
 
-  # Hardware aspects (Phase 6 - enabled via dendritic aspects in nixos-desktop.nix)
-  # Hardware aspects (Phase 4 - dendritic refactor)
   jvf.hardware = {
     boot.enable = true;
     btrfs.enable = true;
@@ -76,7 +74,6 @@
     openrgb.enable = true;
   };
 
-  # Roles (Phase 7 - dendritic: enable directly instead of jvf.roles.active)
   jvf.roles = {
     development.enable = true;
     ai-development.enable = true;
