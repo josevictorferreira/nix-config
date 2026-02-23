@@ -46,9 +46,9 @@
           };
           postInstall = ''
             # Make notification scripts executable
-            chmod +x "$out/scripts/on-low-notification.sh" 2>/dev/null || true
-            chmod +x "$out/scripts/on-normal-notification.sh" 2>/dev/null || true
-            chmod +x "$out/scripts/on-critical-notification.sh" 2>/dev/null || true
+            chmod +x "$TARGET_PATH/scripts/on-low-notification.sh" 2>/dev/null || true
+            chmod +x "$TARGET_PATH/scripts/on-normal-notification.sh" 2>/dev/null || true
+            chmod +x "$TARGET_PATH/scripts/on-critical-notification.sh" 2>/dev/null || true
           '';
         };
       };

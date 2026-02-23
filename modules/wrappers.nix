@@ -314,7 +314,7 @@ let
                       '';
                       linuxCopyDir = ''
                         if [ -d "${wrapper.configDir}/${programName}" ]; then
-                          cp -r "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
+                          cp -rL "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
                         fi
                         # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
                         find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
