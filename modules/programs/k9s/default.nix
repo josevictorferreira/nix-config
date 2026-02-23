@@ -4,7 +4,7 @@
 { ... }:
 let
   mkK9sOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       defaultSettings = {
         liveViewAutoRefresh = false;
@@ -213,7 +213,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
 
@@ -241,11 +241,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.k9s;

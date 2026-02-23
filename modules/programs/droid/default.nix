@@ -1,13 +1,13 @@
 { ... }:
 let
   mkDroidOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs.droid = {
         enable = lib.mkEnableOption "Enable factory droid-cli program";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username to install the program";
         };
         settings = lib.mkOption {
@@ -45,12 +45,11 @@ let
 
   mkDroidConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.droid;
@@ -59,24 +58,25 @@ let
 
       droidFHS =
         if isLinux then
-          pkgs.buildFHSEnv {
-            name = "droid-fhs";
-            targetPkgs = pkgs: [
-              pkgs.stdenv.cc.cc.lib
-              pkgs.zlib
-              pkgs.openssl
-              pkgs.curl
-              pkgs.ripgrep
-              pkgs.coreutils
-            ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/factory-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "droid-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "droid-fhs";
+              targetPkgs = pkgs: [
+                pkgs.stdenv.cc.cc.lib
+                pkgs.zlib
+                pkgs.openssl
+                pkgs.curl
+                pkgs.ripgrep
+                pkgs.coreutils
+              ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/factory-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "droid-runner" ''
               exec "$HOME/.local/bin/droid" "$@"
             ''}";
-          }
+            }
         else
           null;
 

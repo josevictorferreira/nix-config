@@ -5,7 +5,7 @@
 { ... }:
 let
   mkOpencodeOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       json = pkgs.formats.json { };
     in
@@ -15,7 +15,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
 
@@ -65,12 +65,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -148,10 +147,12 @@ let
 
           tools = lib.mkDefault (
             builtins.listToAttrs (
-              map (name: {
-                name = "${name}*";
-                value = false;
-              }) (builtins.attrNames cfg.mcps)
+              map
+                (name: {
+                  name = "${name}*";
+                  value = false;
+                })
+                (builtins.attrNames cfg.mcps)
             )
           );
 
@@ -872,9 +873,9 @@ let
           # ── Plugins (from plugins.nix) ─────────────────────────────────
           plugin = [
             "opencode-antigravity-auth@1.5.5"
-            "oh-my-opencode@3.7.3"
+            "oh-my-opencode@3.8.3"
             "openslimedit@latest"
-            "@tarquinen/opencode-dcp@2.1.5"
+            "@tarquinen/opencode-dcp@2.1.7"
             "@howaboua/opencode-usage-plugin"
           ];
         };

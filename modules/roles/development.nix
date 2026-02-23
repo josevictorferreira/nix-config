@@ -5,14 +5,14 @@
 { ... }:
 let
   mkOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.roles.development = {
         enable = lib.mkEnableOption "development tools bundle";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for installing packages to.";
         };
       };
@@ -20,11 +20,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.development;

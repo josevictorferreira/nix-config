@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-cava =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.cava;
@@ -54,7 +53,7 @@
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username to configure Cava for.";
         };
       };

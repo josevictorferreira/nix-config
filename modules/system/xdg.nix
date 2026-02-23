@@ -5,7 +5,7 @@
 { ... }:
 let
   mkXdgOptions =
-    { lib, username, ... }:
+    { config, lib, ... }:
     {
       options.jvf.system.xdg = {
         enable = lib.mkEnableOption "XDG desktop integration configuration" // {
@@ -20,7 +20,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = username;
+          default = config.jvf.core.username;
           description = "The username to use for XDG configurations.";
         };
 

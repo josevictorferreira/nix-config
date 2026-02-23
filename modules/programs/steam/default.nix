@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   mkOptions =
-    { ... }:
+    { config, ... }:
     {
       enable = lib.mkEnableOption "Steam gaming platform" // {
         description = ''
@@ -15,7 +15,7 @@ let
 
       username = lib.mkOption {
         type = lib.types.str;
-        default = "josevictor";
+        default = config.jvf.core.username;
         description = "Username for installing packages to.";
       };
     };
@@ -27,7 +27,7 @@ let
       cfg = config.jvf.programs.steam;
     in
     {
-      options.jvf.programs.steam = mkOptions { };
+      options.jvf.programs.steam = mkOptions { inherit config; };
 
       config = lib.mkIf cfg.enable (
         if isDarwin then

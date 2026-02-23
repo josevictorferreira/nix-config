@@ -5,7 +5,7 @@
 { ... }:
 let
   mkBtopOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       defaultPackage = "btop";
     in
@@ -15,7 +15,7 @@ let
         package = lib.mkPackageOption pkgs defaultPackage { };
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure btop.";
         };
         settings = lib.mkOption {
@@ -118,11 +118,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.btop;

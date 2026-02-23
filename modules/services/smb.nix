@@ -5,7 +5,7 @@
 { ... }:
 let
   mkSmbOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.services.smb = {
         enable = lib.mkEnableOption "Enable the mount of the smb share";
@@ -18,7 +18,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Local user to add to the group created with the `name` option.";
         };
 

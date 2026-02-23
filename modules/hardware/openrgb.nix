@@ -4,11 +4,10 @@
 { ... }:
 let
   mkConfig =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.hardware.openrgb;

@@ -12,7 +12,7 @@
         enable = lib.mkEnableOption "Fastfetch hyprland and nixos settings.";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure fastfetch";
         };
       };

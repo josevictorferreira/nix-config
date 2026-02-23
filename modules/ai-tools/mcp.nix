@@ -15,12 +15,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       mkMcpModule = inputs.lib.aiTools.mkMcpModule;

@@ -5,7 +5,7 @@
 { ... }:
 let
   mkGeminiOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       json = pkgs.formats.json { };
     in
@@ -17,7 +17,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
 
@@ -61,12 +61,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       json = pkgs.formats.json { };
@@ -74,24 +73,25 @@ let
 
       geminiFHS =
         if !isDarwin then
-          pkgs.buildFHSEnv {
-            name = "gemini-cli-fhs";
-            targetPkgs = pkgs: [
-              pkgs.stdenv.cc.cc.lib
-              pkgs.zlib
-              pkgs.openssl
-              pkgs.nodejs
-              pkgs.ripgrep
-              pkgs.coreutils
-            ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "gemini-cli-fhs";
+              targetPkgs = pkgs: [
+                pkgs.stdenv.cc.cc.lib
+                pkgs.zlib
+                pkgs.openssl
+                pkgs.nodejs
+                pkgs.ripgrep
+                pkgs.coreutils
+              ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
               exec "$HOME/.npm-global/bin/gemini" "$@"
             ''}";
-          }
+            }
         else
           null;
 

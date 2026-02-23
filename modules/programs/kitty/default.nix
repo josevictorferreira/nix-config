@@ -5,7 +5,7 @@
 { ... }:
 let
   mkKittyOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       defaultSettings = {
         font_family = "JetBrainsMonoNL Nerd Font SemiBold";
@@ -35,7 +35,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
 
@@ -56,22 +56,23 @@ let
   toConfigFormat =
     lib: settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then
-          "${key} ${if value then "yes" else "no"}"
-        else
-          "${key} ${builtins.toString value}"
-      ) settings
+      lib.mapAttrsToList
+        (
+          key: value:
+          if builtins.isBool value then
+            "${key} ${if value then "yes" else "no"}"
+          else
+            "${key} ${builtins.toString value}"
+        )
+        settings
     );
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.kitty;

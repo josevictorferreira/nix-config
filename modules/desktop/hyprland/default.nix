@@ -4,11 +4,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland;
@@ -25,7 +24,7 @@
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for Hyprland desktop setup.";
         };
       };

@@ -4,14 +4,14 @@
 { ... }:
 let
   mkOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.roles.networkStorage = {
         enable = lib.mkEnableOption "homelab storage mount on the home directory";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for network storage.";
         };
       };
@@ -19,11 +19,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.networkStorage;

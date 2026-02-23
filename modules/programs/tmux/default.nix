@@ -5,7 +5,7 @@
 { ... }:
 let
   mkTmuxOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       defaultPlugins = [
         pkgs.tmuxPlugins.yank
@@ -17,7 +17,7 @@ let
         enable = lib.mkEnableOption "tmux, a terminal multiplexer";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
         package = lib.mkPackageOption pkgs "tmux" { };
@@ -30,13 +30,13 @@ let
     };
 
   mkTmuxpOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     {
       options.jvf.programs.tmuxp = {
         enable = lib.mkEnableOption "tmuxp, a tmux session manager";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
         package = lib.mkPackageOption pkgs "tmuxp" { };
@@ -45,11 +45,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.tmux;

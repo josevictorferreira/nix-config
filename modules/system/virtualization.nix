@@ -5,7 +5,7 @@
 { ... }:
 let
   mkVirtualizationOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.system.virtualization = {
         enable = lib.mkEnableOption "virtualization support (libvirtd and podman)" // {
@@ -19,7 +19,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "The username to use for virtualization services.";
         };
       };

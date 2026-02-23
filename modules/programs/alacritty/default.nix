@@ -5,7 +5,7 @@
 { ... }:
 let
   mkAlacrittyOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       fontFamily = "IBM Plex Mono";
 
@@ -89,7 +89,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure alacritty";
         };
 
@@ -109,11 +109,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.alacritty;

@@ -4,7 +4,7 @@
 { ... }:
 let
   mkAmdGpuOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.hardware.amd-gpu = {
         enable = lib.mkEnableOption "AMD GPU support" // {
@@ -17,7 +17,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Primary user to add to corectrl group.";
         };
 
@@ -51,11 +51,10 @@ let
     };
 
   mkConfig =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.hardware.amd-gpu;

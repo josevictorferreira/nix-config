@@ -1785,20 +1785,21 @@ let
       options.jvf.aiTools.commands = {
         enableAll = lib.mkEnableOption "all AI tools commands";
       }
-      // builtins.mapAttrs (name: _: {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
-        };
-      }) commands;
+      // builtins.mapAttrs
+        (name: _: {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+        })
+        commands;
     };
 
   # ── Config module ──
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      ...
+    { config
+    , lib
+    , ...
     }:
     let
       cfg = config.jvf.aiTools.commands;
@@ -1808,16 +1809,20 @@ let
 
       config = lib.mkMerge (
         # Per-command configs: when command is enabled, set on all 4 programs
-        lib.mapAttrsToList (
-          name: cmdAttrs:
-          lib.mkIf cfg.${name}.enable (
-            lib.mkMerge (
-              map (p: {
-                jvf.programs.${p}.commands.${name} = cmdAttrs;
-              }) programs
-            )
+        lib.mapAttrsToList
+          (
+            name: cmdAttrs:
+              lib.mkIf cfg.${name}.enable (
+                lib.mkMerge (
+                  map
+                    (p: {
+                      jvf.programs.${p}.commands.${name} = cmdAttrs;
+                    })
+                    programs
+                )
+              )
           )
-        ) commands
+          commands
         ++ [
           # enableAll: when set, enable all commands
           (lib.mkIf cfg.enableAll {

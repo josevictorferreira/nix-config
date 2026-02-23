@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-wlogout =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.wlogout;
@@ -17,7 +16,7 @@
         enable = lib.mkEnableOption "A Wayland logout menu";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure wlogout";
         };
       };

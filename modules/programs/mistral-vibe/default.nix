@@ -1,13 +1,13 @@
 { ... }:
 let
   mkMistralVibeOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs.mistral-vibe = {
         enable = lib.mkEnableOption "Enable mistral vibe program";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username to install the program";
         };
       };
@@ -15,11 +15,10 @@ let
 
   mkMistralVibeConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.mistral-vibe;

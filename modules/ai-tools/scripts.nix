@@ -5,7 +5,7 @@
 { ... }:
 let
   mkOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.aiTools.scripts = {
         "prompt-enhancer" = {
@@ -15,7 +15,7 @@ let
 
           username = lib.mkOption {
             type = lib.types.str;
-            default = "josevictor";
+            default = config.jvf.core.username;
             description = "Username for installing the script package.";
           };
 
@@ -32,7 +32,7 @@ let
 
           username = lib.mkOption {
             type = lib.types.str;
-            default = "josevictor";
+            default = config.jvf.core.username;
             description = "Username for installing the script package.";
           };
 
@@ -46,11 +46,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       peCfg = config.jvf.aiTools.scripts."prompt-enhancer";

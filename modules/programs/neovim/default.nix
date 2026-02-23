@@ -5,14 +5,14 @@
 { ... }:
 let
   mkNeovimOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs.neovim = {
         enable = lib.mkEnableOption "neovim, a hyperextensible text editor";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
       };
@@ -20,11 +20,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.neovim;

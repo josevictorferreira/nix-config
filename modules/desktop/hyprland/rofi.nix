@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-rofi =
-    {
-      lib,
-      config,
-      pkgs,
-      ...
+    { lib
+    , config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.rofi;
@@ -17,7 +16,7 @@
         enable = lib.mkEnableOption "Rofi application launcher and dmenu replacement";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure rofi wrapper";
         };
       };

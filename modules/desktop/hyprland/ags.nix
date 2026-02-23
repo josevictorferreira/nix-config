@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-ags =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.ags;
@@ -18,7 +17,7 @@
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username to configure AGS for.";
         };
       };

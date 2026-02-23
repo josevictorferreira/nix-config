@@ -159,14 +159,14 @@ let
 
   # ── Options ──────────────────────────────────────────────────────────
   mkWeechatOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs.weechat = {
         enable = lib.mkEnableOption "weechat, an extensible chat client";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install configuration";
         };
 
@@ -224,11 +224,10 @@ let
   # ── Config ───────────────────────────────────────────────────────────
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.weechat;
@@ -352,13 +351,15 @@ let
       flattenSettings =
         prefix: attrs:
         lib.concatLists (
-          lib.mapAttrsToList (
-            name: value:
-            let
-              key = if prefix == "" then name else "${prefix}.${name}";
-            in
-            if lib.isAttrs value then flattenSettings key value else [ { inherit key value; } ]
-          ) attrs
+          lib.mapAttrsToList
+            (
+              name: value:
+              let
+                key = if prefix == "" then name else "${prefix}.${name}";
+              in
+              if lib.isAttrs value then flattenSettings key value else [{ inherit key value; }]
+            )
+            attrs
         );
 
       flattenedSettings = flattenSettings "" cfg.settings;

@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-qt5ct =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.qt5ct;
@@ -67,7 +66,7 @@
         username = lib.mkOption {
           type = lib.types.str;
           description = "Username for which qt5ct settings will be applied.";
-          default = "josevictor";
+          default = config.jvf.core.username;
         };
       };
 

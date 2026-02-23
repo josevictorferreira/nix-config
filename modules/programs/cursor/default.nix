@@ -3,7 +3,7 @@
 { ... }:
 let
   mkCursorOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       json = pkgs.formats.json { };
     in
@@ -12,7 +12,7 @@ let
         enable = lib.mkEnableOption "Install cursor router and write per-user ~/.cursor-router/config.json";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration";
         };
         baseRules = lib.mkOption {
@@ -50,19 +50,20 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.cursor;
       json = pkgs.formats.json { };
-      filteredSkills = lib.filterAttrs (
-        _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
-      ) cfg.skills;
+      filteredSkills = lib.filterAttrs
+        (
+          _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
+        )
+        cfg.skills;
     in
     {
       imports = [ mkCursorOptions ];

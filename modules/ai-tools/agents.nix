@@ -1235,21 +1235,22 @@ let
       options.jvf.aiTools.agents = {
         enableAll = lib.mkEnableOption "all AI tools agents";
       }
-      // builtins.mapAttrs (name: _: {
-        enable = (lib.mkEnableOption name) // {
-          default = true;
-        };
-      }) (oldApiAgents // newApiAgents);
+      // builtins.mapAttrs
+        (name: _: {
+          enable = (lib.mkEnableOption name) // {
+            default = true;
+          };
+        })
+        (oldApiAgents // newApiAgents);
     };
 
   # ── Config module ──
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.aiTools.agents;
@@ -1260,9 +1261,11 @@ let
 
       config = lib.mkMerge (
         # Per-agent configs: when agent is enabled, set its config on all 4 programs
-        lib.mapAttrsToList (
-          name: agentAttrs: lib.mkIf cfg.${name}.enable (mkAgentConfig lib name agentAttrs)
-        ) allAgents
+        lib.mapAttrsToList
+          (
+            name: agentAttrs: lib.mkIf cfg.${name}.enable (mkAgentConfig lib name agentAttrs)
+          )
+          allAgents
         ++ [
           # enableAll: when set, enable all agents
           (lib.mkIf cfg.enableAll {

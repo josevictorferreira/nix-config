@@ -4,11 +4,10 @@
 { ... }:
 {
   flake.modules.nixos.services-cephfs =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.services.cephFs;
@@ -51,13 +50,13 @@
 
         clientId = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "CephX client id (without the 'client.' prefix).";
         };
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Local user to add to the 'homelab' group.";
         };
 

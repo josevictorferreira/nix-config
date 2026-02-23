@@ -5,7 +5,7 @@
 { ... }:
 let
   mkPowerManagementOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.system.power-management = {
         enable = lib.mkEnableOption "power management configuration" // {
@@ -19,7 +19,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = ''
             Username of the user for whom power management optimizations should be applied.
           '';

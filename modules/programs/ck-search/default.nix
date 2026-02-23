@@ -1,14 +1,14 @@
 { ... }:
 let
   mkCkSearchOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs."ck-search" = {
         enable = lib.mkEnableOption "CK Search tool";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for installing packages to.";
         };
 
@@ -21,11 +21,10 @@ let
 
   mkCkSearchConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs."ck-search";

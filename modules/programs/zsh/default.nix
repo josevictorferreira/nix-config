@@ -6,14 +6,14 @@
 let
   # ── Options ──────────────────────────────────────────────────────────
   mkZshOptions =
-    { lib, ... }:
+    { config, lib, ... }:
     {
       options.jvf.programs.zsh = {
         enable = lib.mkEnableOption "zsh with advanced features";
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for zsh configuration";
         };
 
@@ -105,11 +105,10 @@ let
   # ── Config ───────────────────────────────────────────────────────────
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.zsh;
@@ -433,145 +432,145 @@ let
               '';
             in
             ''
-              # Utility: Trim string to max characters
-              function _trim_string() {
-                local input="$1"
-                local max_chars="$2"
-                if (( ''${#input} > max_chars )); then
-                  echo "''${input:0:max_chars}...[TRUNCATED]"
-                else
-                  echo "$input"
-                fi
-              }
+                            # Utility: Trim string to max characters
+                            function _trim_string() {
+                              local input="$1"
+                              local max_chars="$2"
+                              if (( ''${#input} > max_chars )); then
+                                echo "''${input:0:max_chars}...[TRUNCATED]"
+                              else
+                                echo "$input"
+                              fi
+                            }
 
-              function _generate_commit_message() {
-                local MODEL_NAME="${model}"
-                local MAX_CHARS=${maxCharacters}
-                local OPENROUTER_API_KEY_COMMIT
-                local STAGED_CHANGES
-                local README_CONTENT=""
-                local RECENT_COMMITS=""
-                local PROMPT
-                local PROMPT_TRUNCATED
-                local PAYLOAD
-                local RESPONSE
-                local RESPONSE_BODY
-                local COMMIT_MESSAGE
+                            function _generate_commit_message() {
+                              local MODEL_NAME="${model}"
+                              local MAX_CHARS=${maxCharacters}
+                              local OPENROUTER_API_KEY_COMMIT
+                              local STAGED_CHANGES
+                              local README_CONTENT=""
+                              local RECENT_COMMITS=""
+                              local PROMPT
+                              local PROMPT_TRUNCATED
+                              local PAYLOAD
+                              local RESPONSE
+                              local RESPONSE_BODY
+                              local COMMIT_MESSAGE
 
-                if [ -f /run/secrets/openrouter_api_key_commit ]; then
-                    OPENROUTER_API_KEY_COMMIT=$(cat /run/secrets/openrouter_api_key_commit)
-                else
-                    echo "[ERROR] Secret /run/secrets/openrouter_api_key_commit not found." >&2
-                    return 1
-                fi
+                              if [ -f /run/secrets/openrouter_api_key_commit ]; then
+                                  OPENROUTER_API_KEY_COMMIT=$(cat /run/secrets/openrouter_api_key_commit)
+                              else
+                                  echo "[ERROR] Secret /run/secrets/openrouter_api_key_commit not found." >&2
+                                  return 1
+                              fi
 
-                if ! ${pkgs.git}/bin/git rev-parse --git-dir > /dev/null 2>&1; then
-                  return 1
-                fi
+                              if ! ${pkgs.git}/bin/git rev-parse --git-dir > /dev/null 2>&1; then
+                                return 1
+                              fi
 
-                STAGED_CHANGES=$(${pkgs.git}/bin/git diff --cached --no-ext-diff --unified=0)
+                              STAGED_CHANGES=$(${pkgs.git}/bin/git diff --cached --no-ext-diff --unified=0)
 
-                if [[ -z "$STAGED_CHANGES" ]]; then
-                  return 1
-                fi
+                              if [[ -z "$STAGED_CHANGES" ]]; then
+                                return 1
+                              fi
 
-                if [[ -f "README.md" ]]; then
-                  README_CONTENT=$(cat README.md)
-                fi
+                              if [[ -f "README.md" ]]; then
+                                README_CONTENT=$(cat README.md)
+                              fi
 
-                if ${pkgs.git}/bin/git rev-parse HEAD > /dev/null 2>&1; then
-                  RECENT_COMMITS=$(${pkgs.git}/bin/git log -n 3 --pretty=format:"%h %s" 2>/dev/null)
-                fi
+                              if ${pkgs.git}/bin/git rev-parse HEAD > /dev/null 2>&1; then
+                                RECENT_COMMITS=$(${pkgs.git}/bin/git log -n 3 --pretty=format:"%h %s" 2>/dev/null)
+                              fi
 
-                # Construct Prompt
-                local COMMIT_MODEL_BASE_PROMPT
-      COMMIT_MODEL_BASE_PROMPT=$(cat <<'PROMPT_EOF'
-${prompt}
-PROMPT_EOF
-)
+                              # Construct Prompt
+                              local COMMIT_MODEL_BASE_PROMPT
+                    COMMIT_MODEL_BASE_PROMPT=$(cat <<'PROMPT_EOF'
+              ${prompt}
+              PROMPT_EOF
+              )
 
-                # Replace placeholders locally in bash
-                PROMPT="$COMMIT_MODEL_BASE_PROMPT
+                              # Replace placeholders locally in bash
+                              PROMPT="$COMMIT_MODEL_BASE_PROMPT
 
-                ---
+                              ---
 
-                With the project README.md in mind:
-                \`\`\`
-                $README_CONTENT
-                \`\`\`
+                              With the project README.md in mind:
+                              \`\`\`
+                              $README_CONTENT
+                              \`\`\`
 
-                ---
+                              ---
 
-                This were the last 3 commit messages in the repository:
-                \`\`\`
-                $RECENT_COMMITS
-                \`\`\`
+                              This were the last 3 commit messages in the repository:
+                              \`\`\`
+                              $RECENT_COMMITS
+                              \`\`\`
 
-                ---
+                              ---
 
-                The following changes were made to the repository:
-                \`\`\`
-                $STAGED_CHANGES
-                \`\`\`
-                "
+                              The following changes were made to the repository:
+                              \`\`\`
+                              $STAGED_CHANGES
+                              \`\`\`
+                              "
 
-                PROMPT_TRUNCATED=$(_trim_string "$PROMPT" "$MAX_CHARS")
+                              PROMPT_TRUNCATED=$(_trim_string "$PROMPT" "$MAX_CHARS")
 
-                # Prepare JSON payload
-                PAYLOAD=$(${pkgs.jq}/bin/jq -n \
-                  --arg model "$MODEL_NAME" \
-                  --arg content "$PROMPT_TRUNCATED" \
-                  '{model: $model, messages: [{role:"user", content: $content}]}')
+                              # Prepare JSON payload
+                              PAYLOAD=$(${pkgs.jq}/bin/jq -n \
+                                --arg model "$MODEL_NAME" \
+                                --arg content "$PROMPT_TRUNCATED" \
+                                '{model: $model, messages: [{role:"user", content: $content}]}')
 
-                RESPONSE=$(${pkgs.curl}/bin/curl -sS -w "%{http_code}" \
-                  -H "Authorization: Bearer $OPENROUTER_API_KEY_COMMIT" \
-                  -H "Content-Type: application/json" \
-                  -X POST https://openrouter.ai/api/v1/chat/completions \
-                  --data-binary "$PAYLOAD" 2>&1)
+                              RESPONSE=$(${pkgs.curl}/bin/curl -sS -w "%{http_code}" \
+                                -H "Authorization: Bearer $OPENROUTER_API_KEY_COMMIT" \
+                                -H "Content-Type: application/json" \
+                                -X POST https://openrouter.ai/api/v1/chat/completions \
+                                --data-binary "$PAYLOAD" 2>&1)
 
-                RESPONSE_BODY="''${RESPONSE%???}"
+                              RESPONSE_BODY="''${RESPONSE%???}"
 
-                COMMIT_MESSAGE=$(printf '%s' "$RESPONSE_BODY" | \
-                  ${pkgs.jq}/bin/jq -r '.choices[0].message.content' 2>/dev/null)
+                              COMMIT_MESSAGE=$(printf '%s' "$RESPONSE_BODY" | \
+                                ${pkgs.jq}/bin/jq -r '.choices[0].message.content' 2>/dev/null)
 
-                echo "$COMMIT_MESSAGE"
-              }
+                              echo "$COMMIT_MESSAGE"
+                            }
 
-              function gai() {
-                local MSG
-                MSG=$(_generate_commit_message)
-                local EXIT_CODE=$?
+                            function gai() {
+                              local MSG
+                              MSG=$(_generate_commit_message)
+                              local EXIT_CODE=$?
 
-                if [ $EXIT_CODE -ne 0 ]; then
-                  echo "[ERROR] Failed to generate commit message." >&2
-                  return 1
-                fi
+                              if [ $EXIT_CODE -ne 0 ]; then
+                                echo "[ERROR] Failed to generate commit message." >&2
+                                return 1
+                              fi
 
-                if [[ -z "$MSG" ]]; then
-                  echo "[ERROR] Empty commit message." >&2
-                  return 1
-                fi
+                              if [[ -z "$MSG" ]]; then
+                                echo "[ERROR] Empty commit message." >&2
+                                return 1
+                              fi
 
-                ${pkgs.git}/bin/git commit -F - <<< "$MSG"
-              }
+                              ${pkgs.git}/bin/git commit -F - <<< "$MSG"
+                            }
 
-              function gaim() {
-                local MSG
-                MSG=$(_generate_commit_message)
-                local EXIT_CODE=$?
+                            function gaim() {
+                              local MSG
+                              MSG=$(_generate_commit_message)
+                              local EXIT_CODE=$?
 
-                if [ $EXIT_CODE -ne 0 ]; then
-                  echo "[ERROR] Failed to generate commit message." >&2
-                  return 1
-                fi
+                              if [ $EXIT_CODE -ne 0 ]; then
+                                echo "[ERROR] Failed to generate commit message." >&2
+                                return 1
+                              fi
 
-                if [[ -z "$MSG" ]]; then
-                  echo "[ERROR] Empty commit message." >&2
-                  return 1
-                fi
+                              if [[ -z "$MSG" ]]; then
+                                echo "[ERROR] Empty commit message." >&2
+                                return 1
+                              fi
 
-                ${pkgs.git}/bin/git commit --edit -m "$MSG"
-              }
+                              ${pkgs.git}/bin/git commit --edit -m "$MSG"
+                            }
             '';
         })
 
@@ -951,14 +950,16 @@ PROMPT_EOF
 
                 # Load custom plugins
                 (lib.concatStringsSep "\n" (
-                  map (pkg: ''
-                    # Load ${pkg.name}
-                    for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
-                      if [ -f "$script" ]; then
-                        source "$script"
-                      fi
-                    done
-                  '') customPkgs
+                  map
+                    (pkg: ''
+                      # Load ${pkg.name}
+                      for script in ${pkg}/*.plugin.zsh ${pkg}/*.zsh; do
+                        if [ -f "$script" ]; then
+                          source "$script"
+                        fi
+                      done
+                    '')
+                    customPkgs
                 ))
 
                 # Force ls aliases after OMZ loading
@@ -970,9 +971,11 @@ PROMPT_EOF
 
               shellInit = lib.concatStringsSep "\n" [
                 environmentShellInit
-                (lib.concatMapStringsSep "\n" (key: ''
-                  export ${lib.toUpper key}="$(cat /run/secrets/${key})"
-                '') cfg.secrets.keys)
+                (lib.concatMapStringsSep "\n"
+                  (key: ''
+                    export ${lib.toUpper key}="$(cat /run/secrets/${key})"
+                  '')
+                  cfg.secrets.keys)
                 historyShellInit
                 completionShellInit
                 keybindingsShellInit

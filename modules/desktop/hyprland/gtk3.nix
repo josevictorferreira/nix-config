@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-gtk3 =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.gtk3;
@@ -53,22 +52,26 @@
         cfg.folderIcons
         // (lib.listToAttrs (
           lib.filter (x: x.value != null) (
-            map (b: {
-              name = b.path;
-              value = b.icon;
-            }) cfg.bookmarks
+            map
+              (b: {
+                name = b.path;
+                value = b.icon;
+              })
+              cfg.bookmarks
           )
         ));
 
       # Generate gio set commands for folder icons
       folderIconCommands = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (path: icon: ''
-          if [ -d "${path}" ]; then
-            if ${pkgs.glib}/bin/gio set "${path}" metadata::custom-icon-name "${icon}" 2>/dev/null; then
-              echo "Set icon '${icon}' for ${path}"
+        lib.mapAttrsToList
+          (path: icon: ''
+            if [ -d "${path}" ]; then
+              if ${pkgs.glib}/bin/gio set "${path}" metadata::custom-icon-name "${icon}" 2>/dev/null; then
+                echo "Set icon '${icon}' for ${path}"
+              fi
             fi
-          fi
-        '') allFolderIcons
+          '')
+          allFolderIcons
       );
 
       # Build the config directory with settings.ini and optional bookmarks
@@ -87,7 +90,7 @@
         enable = lib.mkEnableOption "Gtk 3.0 settings.";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure gtk3 wrapper";
         };
 

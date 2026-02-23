@@ -5,15 +5,17 @@
 { ... }:
 let
   mkGhosttyOptions =
-    { lib, pkgs, ... }:
+    { config, lib, pkgs, ... }:
     let
       toConfigFormat =
         settings:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            key: value:
-            if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
-          ) settings
+          lib.mapAttrsToList
+            (
+              key: value:
+              if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
+            )
+            settings
         );
     in
     {
@@ -23,7 +25,7 @@ let
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to install the configuration.";
         };
 
@@ -43,12 +45,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      toConfigFormat,
-      ...
+    { config
+    , lib
+    , pkgs
+    , toConfigFormat
+    , ...
     }:
     let
       cfg = config.jvf.programs.ghostty;

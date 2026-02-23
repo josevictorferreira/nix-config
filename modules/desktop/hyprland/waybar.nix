@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-waybar =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.waybar;
@@ -18,7 +17,7 @@
 
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure waybar wrapper";
         };
       };
@@ -30,9 +29,9 @@
           packages = [
             pkgs.waybar
           ];
-            configs = {
-              "waybar" = ./assets/waybar/.;
-            };
+          configs = {
+            "waybar" = ./assets/waybar/.;
+          };
         };
 
         fonts.packages = [

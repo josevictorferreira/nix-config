@@ -12,7 +12,7 @@
         enable = lib.mkEnableOption "Enable xfce4 file manager";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for which to configure xfce4";
         };
       };
