@@ -34,9 +34,9 @@ boot: ## Rebuild boot NixOS configuration.
 
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
-		sudo darwin-rebuild switch --flake .#macos-macbook --show-trace; \
+		sudo -H darwin-rebuild switch --flake .#macos-macbook --show-trace; \
 	else \
-		sudo nixos-rebuild switch --flake .#nixos-desktop --show-trace && \
+		sudo -H nixos-rebuild switch --flake .#nixos-desktop --show-trace && \
       hyprctl reload && \
       (notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  " 2>/dev/null || echo "✅ Rebuild completed"); \
 	fi
