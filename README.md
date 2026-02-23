@@ -39,25 +39,26 @@ in {
 }
 ```
 
-See `modules/hosts/nixos-desktop.nix` and `macos-macbook.nix` for full host examples.
+See `modules/hosts/nixos-desktop/` and `modules/hosts/macos-macbook/` for full host examples.
 
 ## Structure
 
 ```
 ./
-├── hosts/                  # Host-specific configs
 ├── modules/
+│   ├── hosts/             # Host configurations (merged selector + identity + config)
+│   │   ├── nixos-desktop/
+│   │   └── macos-macbook/
 │   ├── programs/          # Per-program modules (own folders)
 │   │   ├── kitty/
 │   │   ├── neovim/
 │   │   └── ...
 │   ├── system/            # System-level modules
 │   ├── services/          # System services
-│   ├── roles/             # Feature bundles
+│   ├── roles/             # Import-closure bundles
 │   ├── desktop/           # Desktop environment (Hyprland)
 │   ├── hardware/          # Hardware-specific
-│   ├── ai-tools/          # AI tools DSL
-│   └── hosts/             # Host selector modules
+│   └── ai-tools/          # AI tools DSL
 ├── pkgs/                  # Custom packages
 ├── secrets/               # SOPS encrypted secrets
 └── templates/             # Project scaffolds

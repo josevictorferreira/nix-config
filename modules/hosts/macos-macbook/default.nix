@@ -1,6 +1,5 @@
-# Dendritic host selector: macos-macbook
-# Defines flake.darwinConfigurations.macos-macbook using aspects list.
-# Host-specific settings remain in hosts/macos-macbook/config.nix.
+# Host configuration: macos-macbook
+# Single source of truth — selector + identity + machine-specific config.
 { inputs, self, ... }:
 let
   system = "aarch64-darwin";
@@ -15,7 +14,7 @@ let
   specialArgs = {
     inputs = inputs // {
       inherit (inputs) self;
-      lib = import ../../lib {
+      lib = import ../../../lib {
         lib = pkgs.lib;
         inherit pkgs system;
       };
@@ -60,12 +59,33 @@ in
         ai-tools-scripts
       ])
       ++ [
-        # Platform identity (required for pkgs resolution in legacy modules)
+        # Platform binding
         { nixpkgs.hostPlatform = system; }
-      ]
-      # Host-specific config (last, so it can override)
-      ++ [
-        ../../hosts/macos-macbook/config.nix
+
+        # Host identity & overrides
+        (
+          { ... }:
+          {
+            # Core identity
+            jvf.core = {
+              username = "josevictorferreira";
+              host = "macos-macbook";
+              os = "macos";
+            };
+
+            # macOS primary user (required by nix-darwin)
+            system.primaryUser = "josevictorferreira";
+
+            # User configuration
+            jvf.users.josevictorferreira = {
+              authorizedKeys = [
+                "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
+              ];
+            };
+
+            system.stateVersion = 4;
+          }
+        )
       ];
   };
 }

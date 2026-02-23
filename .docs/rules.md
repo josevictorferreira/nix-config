@@ -58,8 +58,8 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ### Host Configs Are Pure Identity + Data
 **Lesson:** Host config files should only contain: `jvf.core.*` identity, role/aspect data options (NOT enable toggles), and `system.stateVersion`. Never add raw NixOS/Darwin config blocks.
-**Context:** P0 switched to inclusion-based architecture — modules are active when imported, no `enable = true` toggles needed. Host configs went from ~90 lines with enable toggles to ~46 lines of pure identity + data.
-**Verify:** `wc -l hosts/*/config.nix` should be <50 lines each. `grep -c 'enable' hosts/*/config.nix` should return 0.
+**Context:** P0 switched to inclusion-based architecture — modules are active when imported, no `enable = true` toggles needed. P7 merged selector+config into single files.
+**Verify:** Host identity sections in `modules/hosts/*/default.nix` should be <30 lines. `grep -c 'enable' modules/hosts/*/default.nix` should return 0.
 
 ---
 
@@ -206,9 +206,24 @@ Critical lessons from past sessions to avoid repeated friction.
 **Verify:** ai-tools enables should all be under `jvf.aiTools.*`, never `jvf.programs.*` or `jvf.system.*`.
 
 ### Host Selectors Import Roles + Infra, Not Leaf Aspects
-**Lesson:** After P0, host selector files (`modules/hosts/*.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) ai-tools, (5) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
-**Context:** nixos-desktop.nix went from 133 → 101 lines, macos-macbook.nix from 109 → 71 lines by removing ~30 leaf aspect imports that roles now handle.
-**Verify:** `grep -c 'programs-' modules/hosts/nixos-desktop.nix` should return 0 (programs come via roles).
+**Lesson:** After P0, host files (`modules/hosts/<hostname>/default.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) ai-tools, (5) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
+**Context:** nixos-desktop went from 133 → 146 lines (merged selector+config), macos-macbook from 109+19 → 91 lines. Programs come via roles.
+**Verify:** `grep -c 'programs-' modules/hosts/nixos-desktop/default.nix` should return 0 (programs come via roles).
+
+### Host Consolidation: Single Directory Per Host (P7)
+**Lesson:** Each host lives in `modules/hosts/<hostname>/default.nix` — selector + identity + config merged into one file. Machine-specific hardware goes in `modules/hosts/<hostname>/_/hardware.nix` (the `/_` prefix excludes it from import-tree auto-discovery).
+**Context:** The old two-location pattern had `modules/hosts/<name>.nix` (selector) + `hosts/<name>/config.nix` (identity). Merging eliminates cross-file coordination and the top-level `hosts/` directory.
+**Verify:** `ls modules/hosts/*/default.nix` should list all hosts. `ls modules/hosts/*/_/hardware.nix` for machine-specific hardware. No top-level `hosts/` directory should exist.
+
+### hardware.nix Must Be in `/_` to Avoid import-tree
+**Lesson:** Plain NixOS hardware modules (containing `modulesPath` in `_module.args`) MUST be placed in `_/hardware.nix` under the host directory. import-tree treats all `.nix` files as flake-parts modules — a plain NixOS module causes infinite recursion during eval.
+**Context:** First P7 attempt placed `hardware.nix` directly in `modules/hosts/nixos-desktop/` — import-tree picked it up, tried to eval as flake-parts module, and hit infinite recursion from `modulesPath`. Moving to `_/hardware.nix` fixed it.
+**Verify:** `find modules/hosts -name 'hardware.nix' -not -path '*/_/*'` should return 0 results.
+
+### Verify Flake Input Names When Merging Host Files
+**Lesson:** When merging selector + config files, verify that flake input references match `flake.nix` input names exactly. Subagents may use wrong names (e.g., `inputs.nix-darwin` vs `inputs.darwin`).
+**Context:** P7 merge created `inputs.nix-darwin.lib.darwinSystem` but the flake input is named `darwin`. Darwin configs are skipped on Linux `nix flake check`, so this wasn't caught automatically.
+**Verify:** `grep -rn 'inputs\.' modules/hosts/*/default.nix` — cross-reference every input name against `flake.nix`.
 
 ### Self-Referencing Assertions After Enable Removal
 **Lesson:** When stripping `mkEnableOption` from a module, check for assertions that reference the module's own `.enable` option. These become self-referencing errors since the option no longer exists.

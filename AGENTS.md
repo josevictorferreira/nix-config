@@ -14,8 +14,13 @@ Based on: KooL's NixOS-Hyprland.
 ## STRUCTURE
 ```
 ./
-├── hosts/                   # Machine entry points (nixos/darwin)
 ├── modules/
+│   ├── hosts/               # Host configurations (single source of truth)
+│   │   ├── nixos-desktop/
+│   │   │   ├── default.nix  # Selector + identity + config (merged)
+│   │   │   └── _/hardware.nix  # Machine-specific filesystems/UUIDs
+│   │   └── macos-macbook/
+│   │       └── default.nix  # Selector + identity + config (merged)
 │   ├── programs/            # Per-program modules (each in own folder)
 │   │   ├── kitty/
 │   │   │   └── default.nix  # Dendritic module (future: + assets, secrets)
@@ -29,11 +34,11 @@ Based on: KooL's NixOS-Hyprland.
 │   ├── services/            # System services
 │   │   ├── docker.nix
 │   │   └── ...
-│   ├── roles/               # Feature bundles (opt-in groups)
+│   ├── roles/               # Import-closure bundles (pull deps transitively)
 │   │   ├── desktop.nix
 │   │   ├── development.nix
 │   │   ├── gaming.nix
-│   │   └── ... (12 roles)
+│   │   └── ... (14 roles)
 │   ├── desktop/
 │   │   └── hyprland/        # Hyprland desktop environment
 │   │       ├── default.nix  # Main hyprland module
@@ -50,9 +55,8 @@ Based on: KooL's NixOS-Hyprland.
 │   │   ├── btrfs.nix        # Btrfs autoScrub
 │   │   └── ... (6 modules)
 │   ├── ai-tools/            # AI tools DSL modules
-│   │   ├── default.nix      # Core DSL
 │   │   ├── agents.nix, commands.nix, mcp.nix, ...
-│   │   └── ... (7 modules)
+│   │   └── ... (6 modules)
 │   ├── boot/                # Boot configuration
 │   │   └── grub-theme.nix
 │   ├── core/                # Core option definitions
@@ -62,9 +66,6 @@ Based on: KooL's NixOS-Hyprland.
 │   │   └── defaults.nix
 │   ├── secrets/             # Secrets management
 │   │   └── sops.nix
-│   ├── hosts/               # Host configuration modules
-│   │   ├── nixos-desktop.nix
-│   │   └── macos-macbook.nix
 │   ├── flake/               # Flake-parts configuration
 │   │   └── default.nix
 │   ├── overlays.nix         # Custom package overlays
@@ -90,10 +91,10 @@ Based on: KooL's NixOS-Hyprland.
 | **AI Agents** | `modules/ai-tools/*.nix` | 7 dendritic modules |
 | **Secrets** | `secrets/secrets.yaml` | Edit via `sops` |
 | **Overlays** | `modules/overlays.nix` | Custom packages |
-| **New Machine** | `hosts/<hostname>/` | Import modules in host files |
+| **New Machine** | `modules/hosts/<hostname>/default.nix` | Selector + identity + config merged |
 
 ## CONVENTIONS
-- **Options**: `jvf.<category>.<name>.enable` (REQUIRED for everything).
+- **Architecture**: Import = active. No `mkEnableOption` on leaf modules. Roles are import closures.
 - **Identity**: `config.jvf.core.username` is the single source of truth for username. NEVER hardcode `"josevictor"` in module defaults.
 - **specialArgs**: Only `inputs` passed via specialArgs. Identity (username/host/os) comes from `config.jvf.core.*`, set in host config files.
 - **Naming**: Kebab-case files.
@@ -106,51 +107,48 @@ Based on: KooL's NixOS-Hyprland.
 This project uses **flake-parts** with **dendritic** (branch-like) module organization:
 
 - Each aspect file exports: `flake.modules.nixos.<name>` and `flake.modules.darwin.<name>`
-- Host files import aspects via `self.modules.{nixos,darwin}.<name>`
+- **Import = active** — no `mkEnableOption` on leaf modules. Importing enables them.
+- Roles are import closures: `imports = with self.modules.nixos; [ prog-a prog-b ... ];`
+- Host files (`modules/hosts/<name>/default.nix`) are single source of truth (selector + identity + config)
 - Platform detection: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`
-- All options use `jvf.<category>.<name>.enable` pattern
+- Machine-specific hardware goes in `modules/hosts/<name>/_/hardware.nix` (excluded from import-tree)
 
-### Adding New Module Example
+### Adding New Leaf Module
 ```nix
 # modules/programs/my-new-program/default.nix
 { ... }:
 let
-  mkConfig = { isDarwin }: { config, lib, pkgs, ... }:
-    let cfg = config.jvf.programs.my-new;
-    in {
-      options.jvf.programs.my-new = {
-        enable = lib.mkEnableOption "My new program";
-        username = lib.mkOption {
-          type = lib.types.str;
-          default = config.jvf.core.username;
-          description = "Username for configuration";
-        };
-      };
-      config = lib.mkIf cfg.enable { /* config here */ };
+  mkConfig = { isDarwin }: { config, lib, pkgs, ... }: {
+    options.jvf.programs.my-new.username = lib.mkOption {
+      type = lib.types.str;
+      default = config.jvf.core.username;
     };
+    config = { /* always active when imported */ };
+  };
 in
 {
-  flake.modules.nixos.my-new-program = mkConfig { isDarwin = false; };
-  flake.modules.darwin.my-new-program = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-my-new = mkConfig { isDarwin = false; };
+  flake.modules.darwin.programs-my-new = mkConfig { isDarwin = true; };
 }
 ```
 
-Then add to host files:
+Then add to the appropriate **role** (not host):
 ```nix
-# modules/hosts/nixos-desktop.nix
-{
-  imports = with self.modules.nixos; [
-    # ... other aspects
-    my-new-aspect
-  ];
-}
+# modules/roles/development.nix — imports pull in deps transitively
+imports = with nixosAspects; [ programs-my-new ... ];
+```
+
+Or directly to host selector if not role-appropriate:
+```nix
+# modules/hosts/nixos-desktop/default.nix
+(with self.modules.nixos; [ ... programs-my-new ... ])
 ```
 
 ## ANTI-PATTERNS (THIS PROJECT)
 - **Home Manager**: BANNED. Use native NixOS/Darwin modules + `users.users`.
 - **specialArgs for identity**: BANNED. Only `inputs` via specialArgs. Use `config.jvf.core.*` for username/host/os.
 - **Hardcoded username**: BANNED. Use `config.jvf.core.username` as default in all module options.
-- **Implicit Enable**: NEVER enable by default. Must be opt-in.
+- **Implicit Enable**: Modules activate by inclusion (import). No enable toggles on leaf modules.
 - **Relative ../ imports**: Use absolute path from root for cross-module.
 - **Old Module Style**: Don't create `modules/{programs,system,roles}/default.nix` aggregators
 
@@ -165,7 +163,8 @@ make clean        # GC
 
 ## NOTES
 - `modules/ai-tools/` is a complex module with its own DSL.
-- `roles` are the preferred way to configure hosts (e.g., `jvf.roles.work.enable = true`).
+- `roles` are import closures that pull in program/service/system aspects transitively.
+- Hosts import roles; roles import leaf aspects. No enable toggles.
 
 ## HIERARCHY
 Subdirectory AGENTS.md for complex modules:
