@@ -3,16 +3,6 @@ let
   mkOptions =
     { config, ... }:
     {
-      enable = lib.mkEnableOption "Steam gaming platform" // {
-        description = ''
-          Whether to enable Steam gaming platform.
-          Configures Steam with firewall rules for:
-          - Remote Play
-          - Dedicated servers
-          - Local network game transfers
-        '';
-      };
-
       username = lib.mkOption {
         type = lib.types.str;
         default = config.jvf.core.username;
@@ -29,7 +19,7 @@ let
     {
       options.jvf.programs.steam = mkOptions { inherit config; };
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if isDarwin then
           {
             # Steam is NixOS-only, no Darwin support

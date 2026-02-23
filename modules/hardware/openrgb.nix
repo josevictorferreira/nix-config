@@ -9,20 +9,8 @@ let
     , pkgs
     , ...
     }:
-    let
-      cfg = config.jvf.hardware.openrgb;
-    in
     {
-      options.jvf.hardware.openrgb = {
-        enable = lib.mkEnableOption "OpenRGB support" // {
-          description = ''
-            Whether to enable OpenRGB RGB lighting control.
-            Installs openrgb-with-all-plugins for hardware RGB management.
-          '';
-        };
-      };
-
-      config = lib.mkIf cfg.enable {
+      config = {
         environment.systemPackages = [
           pkgs.openrgb-with-all-plugins
         ];

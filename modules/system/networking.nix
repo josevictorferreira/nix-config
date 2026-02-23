@@ -8,15 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.networking = {
-        enable = lib.mkEnableOption "basic networking configuration" // {
-          description = ''
-            Whether to enable basic networking configuration.
-            Configures:
-            - NetworkManager (primary network management)
-            - NTP time synchronization
-          '';
-        };
-
         hostName = lib.mkOption {
           type = lib.types.str;
           default = "nixos";
@@ -46,7 +37,7 @@ let
     {
       imports = [ mkNetworkingOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             networking = {

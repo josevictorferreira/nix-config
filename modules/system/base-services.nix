@@ -8,20 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.base-services = {
-        enable = lib.mkEnableOption "base system services" // {
-          description = ''
-            Whether to enable common base system services.
-            Configures:
-            - Lorri (auto-evaluate dev shells)
-            - D-Bus for inter-process communication
-            - Udev for device management
-            - Smart disk monitoring (disabled by default)
-            - Envfs for fast environment variable reloading
-            - GVFS for virtual filesystem access
-            - Thumbnail generation
-          '';
-        };
-
         enableGvfs = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -69,7 +55,7 @@ let
     {
       imports = [ mkBaseServicesOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             services = {

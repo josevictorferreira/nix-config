@@ -8,16 +8,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.system.xdg = {
-        enable = lib.mkEnableOption "XDG desktop integration configuration" // {
-          description = ''
-            Whether to enable XDG desktop integration configuration.
-            Configures:
-            - Desktop portals for application integration
-            - MIME type application associations
-            - GTK desktop integration
-          '';
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -151,7 +141,7 @@ let
     {
       imports = [ mkXdgOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           let
             home = "/home/${cfg.username}";

@@ -11,7 +11,6 @@ let
     in
     {
       options.jvf.programs.btop = {
-        enable = lib.mkEnableOption "btop, a modern resource monitor";
         package = lib.mkPackageOption pkgs defaultPackage { };
         username = lib.mkOption {
           type = lib.types.str;
@@ -134,7 +133,7 @@ let
         {
           jvf.programs.btop.package = lib.mkDefault defaultPkg;
         }
-        (lib.mkIf cfg.enable {
+        ({
           jvf.wrappers.users.${cfg.username}.programs.btop = {
             packages = [
               cfg.package

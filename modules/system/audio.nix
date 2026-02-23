@@ -8,18 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.audio = {
-        enable = lib.mkEnableOption "system audio (pipewire) configuration" // {
-          description = ''
-            Whether to enable system-wide audio configuration using PipeWire.
-            Configures:
-            - PipeWire daemon
-            - ALSA compatibility
-            - PulseAudio compatibility
-            - WirePlumber session manager
-            - 32-bit ALSA support for Wine/Steam
-          '';
-        };
-
         alsa32BitSupport = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -43,7 +31,7 @@ let
     {
       imports = [ mkAudioOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             # Disable PulseAudio when using PipeWire

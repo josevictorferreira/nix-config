@@ -7,13 +7,6 @@ let
     { lib, ... }:
     {
       options.jvf.hardware.logitech = {
-        enable = lib.mkEnableOption "Logitech hardware support" // {
-          description = ''
-            Whether to enable Logitech wireless hardware support.
-            Configures Logitech daemon for peripherals (mice, keyboards, etc).
-          '';
-        };
-
         enableGraphical = lib.mkOption {
           type = lib.types.bool;
           default = false;
@@ -34,7 +27,7 @@ in
     {
       imports = [ mkLogitechOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         hardware.logitech.wireless = {
           enable = true;
           enableGraphical = lib.mkDefault cfg.enableGraphical;

@@ -7,13 +7,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.hardware.boot = {
-        enable = lib.mkEnableOption "Boot configuration" // {
-          description = ''
-            Whether to enable boot configuration with zen kernel,
-            grub, plymouth, binfmt (appimage), and system tweaks.
-          '';
-        };
-
         kernel = lib.mkOption {
           type = lib.types.enum [
             "zen"
@@ -106,7 +99,7 @@ let
     {
       imports = [ mkBootOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         boot = {
           kernelModules = cfg.kernelModules;
           extraModulePackages = [ ];

@@ -7,12 +7,6 @@ let
     { lib, ... }:
     {
       options.jvf.hardware.btrfs = {
-        enable = lib.mkEnableOption "Btrfs filesystem support" // {
-          description = ''
-            Whether to enable Btrfs support with auto-scrub and tools.
-          '';
-        };
-
         autoScrub = {
           enable = lib.mkOption {
             type = lib.types.bool;
@@ -45,7 +39,7 @@ let
     {
       imports = [ mkBtrfsOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         boot.supportedFilesystems = [ "btrfs" ];
 
         environment.systemPackages = [

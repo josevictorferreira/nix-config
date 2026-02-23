@@ -9,7 +9,6 @@ let
     in
     {
       options.jvf.programs.cursor = {
-        enable = lib.mkEnableOption "Install cursor router and write per-user ~/.cursor-router/config.json";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -67,7 +66,7 @@ let
     {
       imports = [ mkCursorOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.cursor = {
           packages = [
             pkgs.code-cursor

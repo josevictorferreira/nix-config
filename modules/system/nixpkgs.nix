@@ -8,13 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.nixpkgs = {
-        enable = lib.mkEnableOption "Nixpkgs unfree configuration" // {
-          description = ''
-            Whether to enable nixpkgs configuration for unfree packages.
-            Allows installation of proprietary software like Steam.
-          '';
-        };
-
         allowUnfree = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -42,7 +35,7 @@ let
     {
       imports = [ mkNixpkgsOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         nixpkgs.config = {
           allowUnfree = cfg.allowUnfree;
           allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) cfg.allowedUnfreePackages;

@@ -8,7 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.programs.starship = {
-        enable = lib.mkEnableOption "Starship prompt";
       };
     };
 
@@ -80,7 +79,7 @@ let
     {
       imports = [ mkStarshipOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             programs.starship = {

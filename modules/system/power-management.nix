@@ -8,15 +8,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.system.power-management = {
-        enable = lib.mkEnableOption "power management configuration" // {
-          description = ''
-            Whether to enable power management optimizations.
-            Configures:
-            - zram swap for compressed memory
-            - CPU frequency governor for efficiency
-          '';
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -88,7 +79,7 @@ let
     {
       imports = [ mkPowerManagementOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             users.users."${cfg.username}".packages = [

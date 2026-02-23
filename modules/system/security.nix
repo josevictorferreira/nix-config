@@ -8,17 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.security = {
-        enable = lib.mkEnableOption "system security configuration" // {
-          description = ''
-            Whether to enable system security configuration.
-            Configures:
-            - Realtime kernel scheduling support (rtkit)
-            - Polkit for system-level permission management
-            - SSH daemon for remote access
-            - PAM services for security
-          '';
-        };
-
         enableSsh = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -79,7 +68,7 @@ let
     {
       imports = [ mkSecurityOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             security = {

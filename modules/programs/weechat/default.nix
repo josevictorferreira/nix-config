@@ -162,8 +162,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs.weechat = {
-        enable = lib.mkEnableOption "weechat, an extensible chat client";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -410,7 +408,7 @@ let
     {
       imports = [ mkWeechatOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         sops.secrets = {
           slack_api_token = {
             path = secretPaths.slack;

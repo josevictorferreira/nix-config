@@ -8,12 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.display = {
-        enable = lib.mkEnableOption "display variables configuration" // {
-          description = ''
-            Whether to enable display variables configuration.
-          '';
-        };
-
         keyboardLayout = lib.mkOption {
           type = lib.types.str;
           default = "us";
@@ -31,7 +25,7 @@ let
     {
       imports = [ mkDisplayOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             services.xserver = {

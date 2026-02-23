@@ -8,18 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.base-programs = {
-        enable = lib.mkEnableOption "base system programs configuration" // {
-          description = ''
-            Whether to enable configuration for basic system programs.
-            Configures:
-            - gnupg agent with SSH support
-            - network-manager applet (NixOS only)
-            - dconf (NixOS only)
-            - seahorse (NixOS only)
-            - FUSE with user other permissions (NixOS only)
-            - MTR network diagnostic (NixOS only)
-          '';
-        };
       };
     };
 
@@ -32,7 +20,7 @@ let
     {
       imports = [ mkBaseProgramsOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         {
           programs.gnupg.agent = {
             enable = true;

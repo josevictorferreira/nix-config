@@ -22,16 +22,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.logind = {
-        enable = lib.mkEnableOption "logind configuration" // {
-          description = ''
-            Whether to enable logind configuration for power management and session handling.
-            Configures:
-            - Lid switch behavior
-            - Power/suspend key handling
-            - Allow regular users to perform power operations
-          '';
-        };
-
         handleLidSwitch = lib.mkOption {
           type = powerActionType lib;
           default = "lock";
@@ -61,7 +51,7 @@ let
     {
       imports = [ mkLogindOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             services.logind.settings = {

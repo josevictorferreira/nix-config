@@ -7,14 +7,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.hardware.amd-gpu = {
-        enable = lib.mkEnableOption "AMD GPU support" // {
-          description = ''
-            Whether to enable AMD GPU hardware support.
-            Configures kernel modules, video drivers, hardware acceleration,
-            and ROCm runtime for AMD GPUs.
-          '';
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -62,7 +54,7 @@ let
     {
       imports = [ mkAmdGpuOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         users.users.${cfg.username}.extraGroups = [ "corectrl" ];
         programs.corectrl.enable = true;
         environment.systemPackages = [

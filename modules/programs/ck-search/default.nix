@@ -4,8 +4,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs."ck-search" = {
-        enable = lib.mkEnableOption "CK Search tool";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -79,7 +77,7 @@ let
     {
       imports = [ mkCkSearchOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.programs."ck-search".package = lib.mkDefault ckSearchPkg;
 
         users.users."${cfg.username}".packages = [

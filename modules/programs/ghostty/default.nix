@@ -20,7 +20,6 @@ let
     in
     {
       options.jvf.programs.ghostty = {
-        enable = lib.mkEnableOption "ghostty, a fast terminal emulator";
         package = lib.mkPackageOption pkgs "ghostty" { };
 
         username = lib.mkOption {
@@ -89,7 +88,7 @@ let
     {
       imports = [ mkGhosttyOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.programs.ghostty.settings = lib.mkDefault defaultSettings;
 
         jvf.wrappers.users.${cfg.username}.programs.ghostty = {

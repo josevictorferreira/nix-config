@@ -7,13 +7,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.environment = {
-        enable = lib.mkEnableOption "environment variables configuration" // {
-          description = ''
-            Whether to enable environment variables configuration.
-            Sets commonly used XDG and application-specific environment variables.
-          '';
-        };
-
         steamExtraCompatToolsPath = lib.mkOption {
           type = lib.types.str;
           default = "$HOME/.steam/root/compatibilitytools.d";
@@ -42,7 +35,7 @@ let
     {
       imports = [ mkEnvironmentOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         environment = {
           variables = {
             STEAM_EXTRA_COMPAT_TOOLS_PATHS = cfg.steamExtraCompatToolsPath;

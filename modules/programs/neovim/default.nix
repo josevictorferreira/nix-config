@@ -8,8 +8,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs.neovim = {
-        enable = lib.mkEnableOption "neovim, a hyperextensible text editor";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -72,7 +70,7 @@ let
     {
       imports = [ mkNeovimOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         users.users."${cfg.username}".packages = [
           pkgs.neovim
           pkgs.fzf

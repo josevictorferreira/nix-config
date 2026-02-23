@@ -11,7 +11,6 @@ let
     in
     {
       options.jvf.programs.claudecode = {
-        enable = lib.mkEnableOption "Install claude-code router and write per-user ~/.claude-code-router/config.json";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -320,7 +319,7 @@ let
     {
       imports = [ mkClaudecodeOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         {
           jvf.wrappers.users.${cfg.username}.programs = {
             claude = {

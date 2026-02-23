@@ -4,7 +4,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs.droid = {
-        enable = lib.mkEnableOption "Enable factory droid-cli program";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -113,7 +112,7 @@ let
     {
       imports = [ mkDroidOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.programs.droid.settings = {
           mcpServers = lib.mkDefault cfg.mcps;
           customModels = [

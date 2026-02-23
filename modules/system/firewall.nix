@@ -8,13 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.firewall = {
-        enable = lib.mkEnableOption "system firewall configuration" // {
-          description = ''
-            Whether to enable system firewall configuration.
-            Provides basic ingress filtering while allowing useful services.
-          '';
-        };
-
         allowedTCPPorts = lib.mkOption {
           type = lib.types.listOf lib.types.port;
           default = [
@@ -41,7 +34,7 @@ let
     {
       imports = [ mkFirewallOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             networking.firewall = {

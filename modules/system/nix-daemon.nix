@@ -8,17 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.nix-daemon = {
-        enable = lib.mkEnableOption "Nix daemon optimization and settings" // {
-          description = ''
-            Whether to enable Nix daemon configuration.
-            Configures:
-            - Nix experimental features (flakes, nix-command)
-            - Cache optimization (auto-optimise-store)
-            - Garbage collection settings
-            - Hyprland binary cache
-          '';
-        };
-
         autoOptimiseStore = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -75,7 +64,7 @@ let
     {
       imports = [ mkNixDaemonOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         {
           nix = {
             settings = {

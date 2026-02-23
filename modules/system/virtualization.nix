@@ -8,15 +8,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.system.virtualization = {
-        enable = lib.mkEnableOption "virtualization support (libvirtd and podman)" // {
-          description = ''
-            Whether to enable virtualization services.
-            Configures:
-            - libvirtd for KVM/QEMU virtualization
-            - Podman with Docker compatibility
-          '';
-        };
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -38,7 +29,7 @@ let
     {
       imports = [ mkVirtualizationOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             virtualisation.libvirtd.enable = lib.mkDefault false;

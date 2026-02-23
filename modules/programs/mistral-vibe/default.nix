@@ -4,7 +4,6 @@ let
     { config, lib, ... }:
     {
       options.jvf.programs.mistral-vibe = {
-        enable = lib.mkEnableOption "Enable mistral vibe program";
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -124,7 +123,7 @@ let
     {
       imports = [ mkMistralVibeOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.mistral-vibe = {
           packages = [
             mistralVibePkg

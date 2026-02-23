@@ -7,13 +7,6 @@ let
     { lib, ... }:
     {
       options.jvf.hardware.bluetooth = {
-        enable = lib.mkEnableOption "Bluetooth support" // {
-          description = ''
-            Whether to enable Bluetooth hardware support.
-            Configures Bluetooth daemon with profile support.
-          '';
-        };
-
         powerOnBoot = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -62,7 +55,7 @@ in
     {
       imports = [ mkBluetoothOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         hardware.bluetooth = {
           enable = true;
           inherit (cfg) powerOnBoot;

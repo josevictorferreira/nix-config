@@ -213,7 +213,6 @@ let
     in
     {
       options.jvf.programs.k9s = {
-        enable = lib.mkEnableOption "k9s, a terminal-based UI for Kubernetes";
         package = lib.mkPackageOption pkgs "k9s" { };
 
         username = lib.mkOption {
@@ -288,7 +287,7 @@ let
     {
       imports = [ mkK9sOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         environment = {
           variables = {
             K9S_CONFIG_DIR = "$HOME/.config/k9s";

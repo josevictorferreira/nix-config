@@ -3,7 +3,6 @@ let
   mkOptions =
     { config, ... }:
     {
-      enable = lib.mkEnableOption "easyeffects, an audio effects pipeline for PipeWire";
       username = lib.mkOption {
         type = lib.types.str;
         default = config.jvf.core.username;
@@ -19,7 +18,7 @@ let
     {
       options.jvf.programs.easyeffects = mkOptions { inherit config; };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         users.users."${cfg.username}".packages = [
           pkgs.easyeffects
         ];

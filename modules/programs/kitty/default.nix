@@ -31,8 +31,6 @@ let
     in
     {
       options.jvf.programs.kitty = {
-        enable = lib.mkEnableOption "kitty, a GPU-accelerated terminal emulator";
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -79,7 +77,7 @@ let
     {
       imports = [ mkKittyOptions ];
 
-      config = lib.mkIf cfg.enable {
+      config = {
         jvf.wrappers.users.${cfg.username}.programs.kitty = {
           packages = [
             cfg.package

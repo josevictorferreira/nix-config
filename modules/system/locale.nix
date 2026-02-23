@@ -8,13 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.locale = {
-        enable = lib.mkEnableOption "locale and timezone configuration" // {
-          description = ''
-            Whether to enable locale and timezone configuration.
-            Sets up system localization settings and timezone.
-          '';
-        };
-
         timeZone = lib.mkOption {
           type = lib.types.str;
           default = "America/Sao_Paulo";
@@ -44,7 +37,7 @@ let
     {
       imports = [ mkLocaleOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             time.timeZone = cfg.timeZone;

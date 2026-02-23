@@ -8,13 +8,6 @@ let
     { lib, ... }:
     {
       options.jvf.system.flatpak = {
-        enable = lib.mkEnableOption "flatpak support" // {
-          description = ''
-            Whether to enable Flatpak support and setup common repositories.
-            Includes Flathub repository configuration.
-          '';
-        };
-
         enableFlathub = lib.mkOption {
           type = lib.types.bool;
           default = true;
@@ -36,7 +29,7 @@ let
     {
       imports = [ mkFlatpakOptions ];
 
-      config = lib.mkIf cfg.enable (
+      config = (
         if (!isDarwin) then
           {
             services.flatpak.enable = true;
