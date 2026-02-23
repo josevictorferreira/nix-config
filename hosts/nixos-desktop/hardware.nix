@@ -1,8 +1,9 @@
-{ pkgs
-, username
-, lib
-, modulesPath
-, ...
+# Machine-specific hardware configuration
+{
+  config,
+  lib,
+  modulesPath,
+  ...
 }:
 
 {
@@ -10,98 +11,20 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  console = {
-    earlySetup = false;
-  };
+  # Boot loader
+  boot.loader.grub.devices = [ "/dev/sda" ];
 
-  environment.systemPackages = [
-    pkgs.btrfs-progs
+  # Hardware-specific kernel modules detected by nixos-generate-config
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ahci"
+    "nvme"
+    "usb_storage"
+    "usbhid"
+    "sd_mod"
   ];
 
-  boot = {
-    kernelModules = [ "kvm-amd" ];
-    extraModulePackages = [ ];
-    supportedFilesystems = [ "btrfs" ];
-    kernelPackages = pkgs.linuxPackages_zen;
-
-    kernelParams = [
-      "quiet"
-      "loglevel=3"
-      "systemd.show_status=auto"
-      "udev.log_level=3"
-      "rd.udev.log_level=3"
-      "vt.global_cursor_default=0"
-      "boot.shell_on_fail"
-      "plymouth.use-simpledrm"
-    ];
-
-    initrd = {
-      availableKernelModules = [
-        "xhci_pci"
-        "ahci"
-        "nvme"
-        "usb_storage"
-        "usbhid"
-        "sd_mod"
-      ];
-      verbose = false;
-    };
-
-    kernel.sysctl = {
-      "vm.max_map_count" = 2147483642;
-    };
-
-    loader = {
-      systemd-boot.enable = false;
-
-      efi.canTouchEfiVariables = true;
-
-      timeout = 1;
-
-      grub = {
-        enable = true;
-        device = "nodev";
-        efiSupport = true;
-        gfxmodeBios = "auto";
-        memtest86.enable = true;
-        configurationLimit = 10;
-        useOSProber = true;
-      };
-    };
-
-    tmp = {
-      useTmpfs = false;
-      tmpfsSize = "30%";
-    };
-
-    binfmt.registrations.appimage = {
-      wrapInterpreterInShell = false;
-      interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-      recognitionType = "magic";
-      offset = 0;
-      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-      magicOrExtension = ''\x7fELF....AI\x02'';
-    };
-
-    consoleLogLevel = 0;
-
-    plymouth = {
-      enable = true;
-      theme = "bgrt";
-    };
-  };
-
-  services.btrfs.autoScrub = {
-    enable = true;
-    interval = "monthly";
-    fileSystems = [ "/" ];
-  };
-
-  distro-grub-themes = {
-    enable = true;
-    theme = "nixos";
-  };
-
+  # Machine-specific filesystems (partlabels/UUIDs)
   fileSystems."/boot" = {
     device = "/dev/disk/by-partlabel/boot";
     fsType = "vfat";
@@ -163,7 +86,7 @@
     neededForBoot = false;
   };
 
-  fileSystems."/home/${username}/Downloads" = {
+  fileSystems."/home/${config.jvf.core.username}/Downloads" = {
     device = "/mnt/external_storage/Downloads";
     fsType = "none";
     options = [
@@ -178,20 +101,12 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /home/${username}/Downloads 0755 ${username} users -"
+    "d /home/${config.jvf.core.username}/Downloads 0755 ${config.jvf.core.username} users -"
   ];
 
-  swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
+  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
 
   networking.useDHCP = lib.mkDefault true;
-
-  hardware.enableRedistributableFirmware = true;
-
-  hardware.firmware = [
-    pkgs.linux-firmware
-  ];
-
-  hardware.i2c.enable = true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
