@@ -1,21 +1,18 @@
-{
-  host,
-  username,
-  os,
-  ...
-}:
+{ ... }:
 {
   imports = [
     ./hardware.nix
   ];
 
-  # Core identity (transitional: fed from specialArgs, consumed by modules via config)
+  # Core identity - hardcoded per-host
   jvf.core = {
-    inherit username host os;
+    username = "josevictor";
+    host = "nixos-desktop";
+    os = "nixos";
   };
 
   # User configuration
-  jvf.users.${username} = {
+  jvf.users.josevictor = {
     enable = true;
     description = "Jose Victor Ferreira";
     authorizedKeys = [
@@ -33,7 +30,7 @@
 
   jvf.system.networking = {
     enable = true;
-    hostName = host;
+    hostName = "nixos-desktop";
   };
 
   # XDG user directories (fixes Brave "Open folder" for Downloads)
@@ -57,7 +54,7 @@
   # Enable nix-daemon (required for nix-ld dynamic linking support)
   jvf.system.nix-daemon.enable = true;
 
-  # Static IP configuration
+  # Static IP configuration (kept raw for now - very host-specific)
   networking.interfaces.enp4s0.ipv4.addresses = [
     {
       address = "10.10.10.10";
@@ -69,7 +66,10 @@
   networking.nameservers = [ "10.10.10.100" ];
 
   # Hardware aspects (Phase 6 - enabled via dendritic aspects in nixos-desktop.nix)
+  # Hardware aspects (Phase 4 - dendritic refactor)
   jvf.hardware = {
+    boot.enable = true;
+    btrfs.enable = true;
     amd-gpu.enable = true;
     bluetooth.enable = true;
     logitech.enable = true;

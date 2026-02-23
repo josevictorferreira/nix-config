@@ -11,12 +11,8 @@ let
     config.allowUnfree = true;
   };
 
-  # Compatibility: specialArgs still passed until all modules migrate to jvf.core.*
+  # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)
   specialArgs = {
-    os = "nixos";
-    username = "josevictor";
-    host = "nixos-desktop";
-    inherit system;
     inputs = inputs // {
       inherit (inputs) self;
       lib = import ../../lib {
@@ -77,6 +73,9 @@ in
         hardware-bluetooth
         hardware-logitech
         hardware-openrgb
+        # Hardware aspects (Phase 4 - dendritic refactor)
+        hardware-boot
+        hardware-btrfs
         # Program aspects (Phase 3)
         programs-alacritty
         programs-btop

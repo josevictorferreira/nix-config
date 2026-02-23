@@ -11,12 +11,8 @@ let
     config.allowUnfree = true;
   };
 
-  # Compatibility: specialArgs still passed until all modules migrate to jvf.core.*
+  # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)
   specialArgs = {
-    os = "macos";
-    username = "josevictorferreira";
-    host = "macos-macbook";
-    inherit system;
     inputs = inputs // {
       inherit (inputs) self;
       lib = import ../../lib {
