@@ -34,23 +34,7 @@
         (inputs.import-tree ./modules)
       ];
 
-      # perSystem (pkgs, formatter, overlays) defined in modules/aspects/overlays.nix
-
-      flake = {
-        templates = {
-          sandbox-postgres-ruby = {
-            path = ./templates/sandbox-postgres-ruby;
-            description = "Sandbox with PostgreSQL 16 and Ruby 3.3";
-          };
-          sandbox-postgres-django = {
-            path = ./templates/sandbox-postgres-django;
-            description = "Sandbox with PostgreSQL (PostGIS/TimescaleDB) and Django";
-          };
-          frontend-bun-vite = {
-            path = ./templates/frontend-bun-vite;
-            description = "Frontend template using Bun and Vite.js";
-          };
-        };
-      };
+      # perSystem (pkgs, formatter, overlays) defined in modules/overlays.nix
+      # flake.templates defined in modules/flake/templates.nix
     };
 }

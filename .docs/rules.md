@@ -170,3 +170,13 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** `hosts/<hostname>/hardware.nix` should only contain machine-specific UUIDs/partlabels/filesystems. Extract reusable patterns (kernel, grub, plymouth, btrfs) to `modules/hardware/*.nix` aspects.
 **Context:** 150+ line hardware.nix monoliths mix reusable boot config with machine-specific UUIDs. Extract boot.nix, btrfs.nix aspects; hardware.nix becomes pure filesystem+swap definitions.
 **Verify:** `wc -l hosts/*/hardware.nix` should be <50 lines after extraction.
+
+
+---
+
+## Refactoring Decisions
+
+### Assess Monolith Cohesion Before Splitting
+**Lesson:** Before splitting a large file, check if `isDarwin` (or other parameters) are legitimately used throughout. A 1000+ line file with cohesive logic (one program's config, mostly data declarations) is NOT automatically a split candidate.
+**Context:** `wrappers.nix`, `opencode/default.nix`, `zsh/default.nix` were flagged as monoliths but are cohesive single-purpose files. Splitting would create cross-file dependencies for no readability gain.
+**Verify:** `grep isDarwin <file>` — if used in multiple places with real branching, the `mkConfig { isDarwin }` pattern is justified.
