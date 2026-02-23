@@ -4,7 +4,12 @@
 { ... }:
 let
   mkK9sOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       defaultSettings = {
         liveViewAutoRefresh = false;
@@ -241,10 +246,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.k9s;
@@ -258,6 +264,21 @@ let
             "all"
             "monitoring"
             "rook-ceph"
+          ];
+        };
+        view = {
+          active = "pods";
+        };
+      };
+
+      agrosmartEks = {
+        cluster = "agrosmart-eks";
+        readOnly = false;
+        namespace = {
+          active = "default";
+          favorites = [
+            "production"
+            "all"
           ];
         };
         view = {
@@ -291,6 +312,9 @@ let
             };
             "clusters/ze-homelab/ze-homelab/config.yaml" = {
               k9s = defaultHomelabConfig;
+            };
+            "clusters/agrosmart-eks/agrosmart-eks/config.yaml" = {
+              k9s = agrosmartEks;
             };
           };
         };

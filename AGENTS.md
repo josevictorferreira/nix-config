@@ -1,6 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-22
+**Generated:** 2026-02-23
 **Commit:** N/A (Dynamic)
 **Branch:** feature/dendritic-config
 
@@ -166,3 +166,8 @@ make clean        # GC
 ## NOTES
 - `modules/ai-tools/` is a complex module with its own DSL.
 - `roles` are the preferred way to configure hosts (e.g., `jvf.roles.work.enable = true`).
+
+## HIERARCHY
+Subdirectory AGENTS.md for complex modules:
+- [modules/ai-tools/AGENTS.md](modules/ai-tools/AGENTS.md) — AI tools DSL
+- [modules/desktop/hyprland/AGENTS.md](modules/desktop/hyprland/AGENTS.md) — Hyprland desktop
