@@ -3,10 +3,11 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-swaync =
-    { lib
-    , config
-    , pkgs
-    , ...
+    {
+      lib,
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.swaync;
@@ -25,7 +26,8 @@
         jvf.wrappers.users.${cfg.username}.programs.swaync = {
           packages = [ pkgs.swaynotificationcenter ];
           configs = {
-            "swaync" = ./assets/swaync/.;
+            "swaync/config.json" = builtins.readFile ./assets/swaync/config.json;
+            "swaync/style.css" = builtins.readFile ./assets/swaync/style.css;
             "swaync/scripts/on-low-notification.sh" = pkgs.writeText "on-low-notification.sh" ''
               #!/usr/bin/env bash
               # Play sound for low urgency notifications
