@@ -14,20 +14,17 @@
   options.jvf.core = {
     username = lib.mkOption {
       type = lib.types.str;
-      default = "josevictor";
       description = "Primary username for this host.";
     };
 
     host = lib.mkOption {
       type = lib.types.str;
-      default = "nixos-desktop";
       description = "Hostname identifier (e.g. nixos-desktop, macos-macbook).";
     };
 
     os = lib.mkOption {
       type = lib.types.str;
-      default = "nixos";
-      description = "OS type: nixos or macos.";
+      description = "OS type: nixos, darwin, or macos.";
     };
   };
 }

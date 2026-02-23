@@ -3,11 +3,10 @@
 { ... }:
 {
   flake.modules.nixos.desktop-hyprland-swaync =
-    {
-      lib,
-      config,
-      pkgs,
-      ...
+    { lib
+    , config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.swaync;

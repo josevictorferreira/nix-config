@@ -1,9 +1,8 @@
 # Machine-specific hardware configuration
-{
-  config,
-  lib,
-  modulesPath,
-  ...
+{ config
+, lib
+, modulesPath
+, ...
 }:
 
 {
@@ -101,7 +100,7 @@
     "d /home/${config.jvf.core.username}/Downloads 0755 ${config.jvf.core.username} users -"
   ];
 
-  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
+  swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
 
   networking.useDHCP = lib.mkDefault true;
 

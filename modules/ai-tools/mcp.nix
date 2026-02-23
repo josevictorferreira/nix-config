@@ -7,8 +7,7 @@
 let
   mkOptions =
     { lib, ... }:
-    {
-    };
+    { };
 
   mkConfig =
     { isDarwin }:

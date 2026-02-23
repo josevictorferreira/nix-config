@@ -7,8 +7,7 @@ let
   mkBaseProgramsOptions =
     { lib, ... }:
     {
-      options.jvf.system.base-programs = {
-      };
+      options.jvf.system.base-programs = { };
     };
 
   mkConfig =

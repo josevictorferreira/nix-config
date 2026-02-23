@@ -5,7 +5,11 @@
 { ... }:
 let
   mkOpencodeOptions =
-    { config, lib, pkgs, ... }:
+    { config
+    , lib
+    , pkgs
+    , ...
+    }:
     let
       json = pkgs.formats.json { };
     in
@@ -871,7 +875,7 @@ let
           # ── Plugins (from plugins.nix) ─────────────────────────────────
           plugin = [
             "opencode-antigravity-auth@1.5.5"
-            "oh-my-opencode@3.8.3"
+            "oh-my-opencode@3.8.4"
             "openslimedit@latest"
             "@tarquinen/opencode-dcp@2.1.7"
             "@howaboua/opencode-usage-plugin"

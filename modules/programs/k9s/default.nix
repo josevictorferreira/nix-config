@@ -4,11 +4,10 @@
 { ... }:
 let
   mkK9sOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       defaultSettings = {
@@ -244,11 +243,10 @@ let
     };
 
   k9sModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.k9s;

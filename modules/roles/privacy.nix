@@ -17,10 +17,9 @@ let
     };
 
   nixosModule =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.privacy;

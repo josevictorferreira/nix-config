@@ -162,9 +162,6 @@ let
           # Sops secrets declarations
           {
             sops.secrets = {
-              llm_proxy_api_key = {
-                mode = "0400";
-              };
               gemini_api_key = {
                 mode = "0400";
               };

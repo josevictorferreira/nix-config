@@ -7,8 +7,7 @@ let
   mkStarshipOptions =
     { lib, ... }:
     {
-      options.jvf.programs.starship = {
-      };
+      options.jvf.programs.starship = { };
     };
 
   starshipSettings = {
