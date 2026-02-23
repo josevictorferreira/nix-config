@@ -46,7 +46,9 @@ Based on: KooL's NixOS-Hyprland.
 │   ├── hardware/            # Hardware-specific modules
 │   │   ├── amd-gpu.nix
 │   │   ├── bluetooth.nix
-│   │   └── ... (4 modules)
+│   │   ├── boot.nix         # Kernel, grub, plymouth, binfmt
+│   │   ├── btrfs.nix        # Btrfs autoScrub
+│   │   └── ... (6 modules)
 │   ├── ai-tools/            # AI tools DSL modules
 │   │   ├── default.nix      # Core DSL
 │   │   ├── agents.nix, commands.nix, mcp.nix, ...
@@ -84,6 +86,7 @@ Based on: KooL's NixOS-Hyprland.
 | **New Service** | `modules/services/<name>.nix` | Flat in services/ |
 | **New Role** | `modules/roles/<name>.nix` | Feature bundles |
 | **Desktop Configs** | `modules/desktop/hyprland/assets/` | Co-located static configs |
+| **Hardware/Boot** | `modules/hardware/boot.nix` | Kernel, grub, plymouth, binfmt |
 | **AI Agents** | `modules/ai-tools/*.nix` | 7 dendritic modules |
 | **Secrets** | `secrets/secrets.yaml` | Edit via `sops` |
 | **Overlays** | `modules/overlays.nix` | Custom packages |
@@ -117,7 +120,7 @@ let
         enable = lib.mkEnableOption "My new program";
         username = lib.mkOption {
           type = lib.types.str;
-          default = "josevictor";
+          default = config.jvf.core.username;
           description = "Username for configuration";
         };
       };
