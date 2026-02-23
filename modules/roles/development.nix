@@ -18,8 +18,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  developmentModule =
     { config
     , lib
     , pkgs
@@ -83,6 +82,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-development = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-development = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-development = developmentModule;
+  flake.modules.darwin.roles-development = developmentModule;
 }

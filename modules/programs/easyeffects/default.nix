@@ -11,8 +11,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  easyeffectsModule =
     { pkgs, config, ... }:
     let
       cfg = config.jvf.programs.easyeffects;
@@ -32,6 +31,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-easyeffects = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-easyeffects = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-easyeffects = easyeffectsModule;
+  flake.modules.darwin.programs-easyeffects = easyeffectsModule;
 }

@@ -17,8 +17,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  communicationModule =
     { config
     , lib
     , pkgs
@@ -44,6 +43,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-communication = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-communication = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-communication = communicationModule;
+  flake.modules.darwin.roles-communication = communicationModule;
 }

@@ -222,8 +222,7 @@ let
     };
 
   # ── Config ───────────────────────────────────────────────────────────
-  mkConfig =
-    { isDarwin }:
+  weechatModule =
     { config
     , lib
     , pkgs
@@ -453,6 +452,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-weechat = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-weechat = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-weechat = weechatModule;
+  flake.modules.darwin.programs-weechat = weechatModule;
 }

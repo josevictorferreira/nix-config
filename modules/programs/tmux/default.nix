@@ -43,8 +43,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  tmuxModule =
     { config
     , lib
     , pkgs
@@ -431,6 +430,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-tmux = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-tmux = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-tmux = tmuxModule;
+  flake.modules.darwin.programs-tmux = tmuxModule;
 }

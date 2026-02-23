@@ -244,8 +244,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  k9sModule =
     {
       config,
       lib,
@@ -322,6 +321,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-k9s = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-k9s = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-k9s = k9sModule;
+  flake.modules.darwin.programs-k9s = k9sModule;
 }

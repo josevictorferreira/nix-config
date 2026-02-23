@@ -13,8 +13,7 @@ let
       };
     };
 
-  mkMistralVibeConfig =
-    { isDarwin }:
+  mistralVibeModule =
     { config
     , lib
     , pkgs
@@ -135,6 +134,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-mistral-vibe = mkMistralVibeConfig { isDarwin = false; };
-  flake.modules.darwin.programs-mistral-vibe = mkMistralVibeConfig { isDarwin = true; };
+  flake.modules.nixos.programs-mistral-vibe = mistralVibeModule;
+  flake.modules.darwin.programs-mistral-vibe = mistralVibeModule;
 }

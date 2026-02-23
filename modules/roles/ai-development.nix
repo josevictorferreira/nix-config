@@ -17,8 +17,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  aiDevelopmentModule =
     { config
     , lib
     , pkgs
@@ -65,6 +64,6 @@ let
     };
 in
 {
-  flake.modules.nixos.roles-ai-development = mkConfig { isDarwin = false; };
-  flake.modules.darwin.roles-ai-development = mkConfig { isDarwin = true; };
+  flake.modules.nixos.roles-ai-development = aiDevelopmentModule;
+  flake.modules.darwin.roles-ai-development = aiDevelopmentModule;
 }

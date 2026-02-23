@@ -19,8 +19,7 @@ let
       };
     };
 
-  mkCkSearchConfig =
-    { isDarwin }:
+  ckSearchModule =
     { config
     , lib
     , pkgs
@@ -90,6 +89,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-ck-search = mkCkSearchConfig { isDarwin = false; };
-  flake.modules.darwin.programs-ck-search = mkCkSearchConfig { isDarwin = true; };
+  flake.modules.nixos.programs-ck-search = ckSearchModule;
+  flake.modules.darwin.programs-ck-search = ckSearchModule;
 }

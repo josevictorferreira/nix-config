@@ -67,8 +67,7 @@ let
         settings
     );
 
-  mkConfig =
-    { isDarwin }:
+  kittyModule =
     { config
     , lib
     , pkgs
@@ -97,6 +96,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-kitty = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-kitty = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-kitty = kittyModule;
+  flake.modules.darwin.programs-kitty = kittyModule;
 }

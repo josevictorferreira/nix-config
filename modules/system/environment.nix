@@ -34,8 +34,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  environmentModule =
     { config, lib, ... }:
     let
       cfg = config.jvf.system.environment;
@@ -55,6 +54,6 @@ let
     };
 in
 {
-  flake.modules.nixos.system-environment = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-environment = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-environment = environmentModule;
+  flake.modules.darwin.system-environment = environmentModule;
 }

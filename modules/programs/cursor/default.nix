@@ -48,8 +48,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  cursorModule =
     { config
     , lib
     , pkgs
@@ -98,6 +97,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-cursor = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-cursor = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-cursor = cursorModule;
+  flake.modules.darwin.programs-cursor = cursorModule;
 }

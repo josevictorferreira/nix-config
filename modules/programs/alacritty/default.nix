@@ -107,8 +107,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  alacrittyModule =
     { config
     , lib
     , pkgs
@@ -139,6 +138,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-alacritty = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-alacritty = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-alacritty = alacrittyModule;
+  flake.modules.darwin.programs-alacritty = alacrittyModule;
 }

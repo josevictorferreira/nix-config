@@ -34,8 +34,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  nixpkgsModule =
     { config, lib, ... }:
     let
       cfg = config.jvf.system.nixpkgs;
@@ -52,6 +51,6 @@ let
     };
 in
 {
-  flake.modules.nixos.system-nixpkgs = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-nixpkgs = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-nixpkgs = nixpkgsModule;
+  flake.modules.darwin.system-nixpkgs = nixpkgsModule;
 }
