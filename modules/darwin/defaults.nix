@@ -1,8 +1,35 @@
 # Aspect: darwin-defaults (Darwin only)
 # macOS system preferences: Finder, Dock, trackpad, keyboard, global domain.
-{ ... }:
+{ lib, pkgs, ... }:
 {
   flake.modules.darwin.darwin-defaults = {
+    # Security & PAM
+    security.sudo.extraConfig = ''
+      Defaults pwfeedback
+    '';
+
+    security.pam.services.sudo_local = {
+      enable = true;
+      reattach = true;
+      touchIdAuth = true;
+    };
+
+    # macOS packages
+    environment.systemPackages = with pkgs; [
+      m-cli
+      mas
+      pam-reattach
+    ];
+
+    # Fonts
+    fonts.packages = with pkgs; [
+      noto-fonts
+      jetbrains-mono
+      font-awesome
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.droid-sans-mono
+    ];
+
     system.defaults = {
       finder = {
         AppleShowAllExtensions = true;
