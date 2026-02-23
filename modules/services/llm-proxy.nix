@@ -23,10 +23,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.services.llm-proxy;
@@ -60,7 +61,7 @@ let
           if isDarwin then
             "sha256-1r6d6nkycs3dli21dvbvi2gfad39gnspsjx952myw8skkav2jw2j"
           else
-            "sha256-LUy/Et3Ew87eVCNygyMh+zsUU12k3cNDWo3jMgN+YEY=";
+            "sha256-iGWTTCZMpAM8bHXGrq5lmNZzzzy6cAoz6Q7JXVrg/5Y=";
       };
 
       # State directory for writable files
