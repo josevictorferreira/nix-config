@@ -11,9 +11,6 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Boot loader
-  boot.loader.grub.devices = [ "/dev/sda" ];
-
   # Hardware-specific kernel modules detected by nixos-generate-config
   boot.initrd.availableKernelModules = [
     "xhci_pci"
