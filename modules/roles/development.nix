@@ -1,7 +1,7 @@
 # Aspect: roles-development
 # Bundles core development programs and CLI tools.
-# Enables program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git)
-# and installs user-level dev packages.
+# Enables program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git),
+# virtualization (podman, libvirtd), and installs user-level dev packages.
 { ... }:
 let
   mkOptions =
@@ -32,6 +32,9 @@ let
       imports = [ mkOptions ];
 
       config = lib.mkIf cfg.enable {
+        jvf.system.virtualization.enable = true;
+        jvf.system.virtualization.username = cfg.username;
+
         jvf.programs = {
           ghostty.enable = true;
           alacritty.enable = true;

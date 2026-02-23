@@ -24,6 +24,7 @@
   system.stateVersion = 4;
 
   jvf.roles = {
+    base.enable = true;
     networkStorage.enable = true;
     development.enable = true;
     ai-development.enable = true;

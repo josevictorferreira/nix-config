@@ -28,11 +28,6 @@
   # All system modules are now enabled via dendritic aspects in modules/hosts/nixos-desktop.nix
   jvf.system.locale.enable = true;
 
-  jvf.system.networking = {
-    enable = true;
-    hostName = "nixos-desktop";
-  };
-
   # XDG user directories (fixes Brave "Open folder" for Downloads)
   jvf.system.xdg.userDirs = {
     DESKTOP = "$HOME/Desktop";
@@ -75,6 +70,8 @@
   };
 
   jvf.roles = {
+    base.enable = true;
+    desktop.enable = true;
     development.enable = true;
     ai-development.enable = true;
     local-ai.enable = true;

@@ -75,6 +75,7 @@ in
         services-smb
         services-llm-proxy
         # Role aspects (Phase 7)
+        roles-base
         roles-development
         roles-monitoring
         roles-media
@@ -88,7 +89,7 @@ in
         roles-network-storage
         roles-ops-development
         # AI Tools aspects (Phase 9)
-        ai-tools
+        # ai-tools removed - default.nix was empty
         ai-tools-skills
         ai-tools-agents
         ai-tools-commands
