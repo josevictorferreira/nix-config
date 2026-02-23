@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Directory local music folder
 mDIR="$HOME/Music/"

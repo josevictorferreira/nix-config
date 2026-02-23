@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 BACKEND=wayland
 
 if pgrep -x "rofi" > /dev/null; then

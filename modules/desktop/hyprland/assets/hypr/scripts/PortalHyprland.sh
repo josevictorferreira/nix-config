@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Restart xdg-desktop-portal for Hyprland
 # NixOS-compatible: discovers binaries via PATH instead of hardcoded FHS paths
 

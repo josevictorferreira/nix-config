@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Set variables for parameters. First numbers corresponts to Monitor Resolution
 # i.e 2160 means 2160p

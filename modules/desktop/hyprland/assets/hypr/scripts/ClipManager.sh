@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 while true; do
     result=$(
         rofi -i -dmenu \

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 polkit=(
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"

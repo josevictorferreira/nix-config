@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 iDIR="$HOME/.config/swaync/icons"
 
 get_kbd_backlight() {

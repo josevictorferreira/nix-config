@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 wallust_refresh=$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
 

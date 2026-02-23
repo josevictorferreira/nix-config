@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 notif="$HOME/.config/swaync/images/bell.png"
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 rofi_config="$HOME/.config/rofi/config-calc.rasi"
 

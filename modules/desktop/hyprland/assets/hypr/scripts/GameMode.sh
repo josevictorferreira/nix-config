@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 notif="$HOME/.config/swaync/images/bell.png"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 

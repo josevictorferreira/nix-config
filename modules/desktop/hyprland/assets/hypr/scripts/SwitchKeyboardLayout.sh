@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 layout_file="$HOME/.cache/kb_layout"
 settings_file="$HOME/.config/hypr/UserConfigs/UserSettings.conf"

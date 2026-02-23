@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 notif="$HOME/.config/swaync/images/bell.png"
 
 wifi_blocked=$(rfkill list wifi | grep -o "Soft blocked: yes")

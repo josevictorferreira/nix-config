@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Variables
 current_wallpaper="$HOME/.wallpaper_current"

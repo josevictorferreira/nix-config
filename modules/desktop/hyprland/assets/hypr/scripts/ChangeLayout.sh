@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 notif="$HOME/.config/swaync/images/bell.png"
 
 LAYOUT=$(hyprctl -j getoption general:layout | jq '.str' | sed 's/"//g')

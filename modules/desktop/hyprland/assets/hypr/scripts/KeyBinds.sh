@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 pkill yad || true
 
 KEYBINDS_CONF="$HOME/.config/hypr/configs/Keybinds.conf"

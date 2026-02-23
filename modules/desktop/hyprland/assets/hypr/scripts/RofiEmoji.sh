@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sed '1,/^# # DATA # #$/d' "$0" | \
 rofi -i -dmenu -config ~/.config/rofi/config-emoji.rasi | \

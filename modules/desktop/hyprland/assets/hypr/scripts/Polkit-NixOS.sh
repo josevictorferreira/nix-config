@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 polkit_gnome_paths=$(find /nix/store -name 'polkit-gnome-authentication-agent-1' -type f 2>/dev/null)
 

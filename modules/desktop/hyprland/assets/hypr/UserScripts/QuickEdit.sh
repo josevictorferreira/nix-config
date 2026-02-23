@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Define preferred text editor and terminal
 edit=${EDITOR:-vim}
