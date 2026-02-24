@@ -41,10 +41,11 @@ in
     )}
 
     # Secrets - only export if secret file exists
+    # Secret files use lowercase_snake_case, env vars use UPPERCASE_SNAKE_CASE
     ${lib.concatStringsSep "\n" (
       map (key: ''
         if [ -r /run/secrets/${key} ]; then
-          export ${key}=$(cat /run/secrets/${key})
+          export ${lib.toUpper key}=$(cat /run/secrets/${key})
         fi
       '') cfg.secrets.keys
     )}

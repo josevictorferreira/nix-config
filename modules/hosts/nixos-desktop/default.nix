@@ -98,7 +98,7 @@ in
 
         # Host identity & overrides
         (
-          { ... }:
+          { config, ... }:
           {
             # Core identity
             jvf.core = {
@@ -139,6 +139,27 @@ in
             networking.nameservers = [ "10.10.10.100" ];
 
             system.stateVersion = "24.05";
+          }
+        )
+        # Secrets configuration - make secrets readable by the user
+        (
+          { config, ... }:
+          let
+            username = config.jvf.core.username;
+            secretKeys = config.jvf.programs.zsh.secrets.keys;
+          in
+          {
+            # Declare all zsh secrets with user ownership so they can be read
+            sops.secrets = builtins.listToAttrs (
+              map (key: {
+                name = key;
+                value = {
+                  owner = username;
+                  group = "users";
+                  mode = "0400";
+                };
+              }) secretKeys
+            );
           }
         )
       ];
