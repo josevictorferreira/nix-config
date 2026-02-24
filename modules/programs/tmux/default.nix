@@ -148,7 +148,7 @@ let
         set -euo pipefail
 
         TMUXP_DIR="''${TMUXP_CONFIGDIR:-$HOME/.config/tmuxp}"
-        DYNAMIC_SESSIONS="${lib.concatStringsSep " " dynamicSessions}"
+        DYNAMIC_SESSIONS=(${lib.concatStringsSep " " dynamicSessions})
 
         if [ ! -d "$TMUXP_DIR" ]; then
           echo "tmuxp config directory not found: $TMUXP_DIR" >&2
@@ -177,7 +177,7 @@ let
 
         # Check if this is a dynamic session
         is_dynamic=false
-        for ds in $DYNAMIC_SESSIONS; do
+        for ds in "''${DYNAMIC_SESSIONS[@]}"; do
           if [ "$selected" = "$ds" ]; then
             is_dynamic=true
             break
@@ -188,7 +188,7 @@ let
           # Find next available SESSION_ID by checking existing tmux sessions
           # Extract session IDs from existing sessions matching the pattern
           existing_ids=$(${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' 2>/dev/null | \
-            grep -oP '(?<=Sandbox )\d+$' || echo "0")
+            grep -oE 'Sandbox [0-9]+' | sed 's/Sandbox //' || echo "0")
 
           # Find the maximum ID and add 1
           max_id=0
@@ -395,6 +395,11 @@ let
 
         }
 
+        # tmuxp picker (available whenever tmux is enabled)
+        {
+          environment.systemPackages = [ tmuxpPicker ];
+        }
+
         # tmuxp config
         (lib.mkIf tmuxpCfg.enable {
           environment = {
@@ -409,7 +414,6 @@ let
               pkgs.fastfetch
               pkgs.fzf
               tmuxpCfg.package
-              tmuxpPicker
             ];
             configs = {
               "chat.yaml" = chat;

@@ -5,17 +5,20 @@
 { ... }:
 let
   mkGhosttyOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       toConfigFormat =
         settings:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (
-              key: value:
-              if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
-            )
-            settings
+          lib.mapAttrsToList (
+            key: value:
+            if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
+          ) settings
         );
     in
     {
@@ -44,11 +47,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , toConfigFormat
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      toConfigFormat,
+      ...
     }:
     let
       cfg = config.jvf.programs.ghostty;
@@ -63,7 +67,7 @@ let
       tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
         ${lib.optionalString isDarwin tmuxpDarwinPath}
 
-        exec tmuxp load -y main
+        exec ${lib.getExe pkgs.tmuxp} load -y main
       '';
 
       defaultSettings = {

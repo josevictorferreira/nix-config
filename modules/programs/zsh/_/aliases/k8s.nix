@@ -10,7 +10,7 @@ in
     "hi" = "helm install";
     "hu" = "helm upgrade";
     "hd" = "helm delete";
-    "hl" = "helm list";
+    "hls" = "helm list";
     "hs" = "helm status";
     "hg" = "helm get";
 

@@ -49,7 +49,7 @@ let
 
         sopsAgeKeyPath = lib.mkOption {
           type = lib.types.path;
-          default = "/etc/sops/age/keys.txt";
+          default = "/home/josevictor/.config/sops/age/keys.txt";
           description = "Path to the age key file used by sops";
         };
       };

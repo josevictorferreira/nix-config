@@ -40,9 +40,13 @@ in
       lib.mapAttrsToList (name: path: ''export ${name}="${path}"'') cfg.workspace.projects
     )}
 
-    # Secrets
+    # Secrets - only export if secret file exists
     ${lib.concatStringsSep "\n" (
-      map (key: "export ${key}=$(cat /run/secrets/${key})") cfg.secrets.keys
+      map (key: ''
+        if [ -r /run/secrets/${key} ]; then
+          export ${key}=$(cat /run/secrets/${key})
+        fi
+      '') cfg.secrets.keys
     )}
   '';
 }

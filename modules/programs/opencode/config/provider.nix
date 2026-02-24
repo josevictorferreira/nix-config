@@ -1,13 +1,7 @@
 # config/provider.nix - AI provider configurations for OpenCode
 {
-  config,
-  lib,
-  pkgs,
   ...
 }:
-let
-  cfg = config.jvf.programs.opencode;
-in
 {
   config.jvf.programs.opencode.settings.provider = {
     local = {

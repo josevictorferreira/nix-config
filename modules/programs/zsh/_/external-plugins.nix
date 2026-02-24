@@ -80,12 +80,24 @@ in
   environment.systemPackages = plugins;
 
   programs.zsh.interactiveShellInit = lib.mkIf cfg.setAsDefaultShell ''
-    # Source external plugins
-    source ${builtins.elemAt plugins 0}/fast-syntax-highlighting.plugin.zsh
-    source ${builtins.elemAt plugins 1}/zsh-autosuggestions.zsh
-    source ${builtins.elemAt plugins 2}/zsh-completions.plugin.zsh
-    source ${builtins.elemAt plugins 3}/fzf-tab.plugin.zsh
-    source ${builtins.elemAt plugins 4}/zsh-history-substring-search.zsh
-    source ${builtins.elemAt plugins 5}/zsh-vi-mode.plugin.zsh
+    # Source external plugins (with existence checks for GC resilience)
+    if [ -f ${builtins.elemAt plugins 0}/fast-syntax-highlighting.plugin.zsh ]; then
+      source ${builtins.elemAt plugins 0}/fast-syntax-highlighting.plugin.zsh
+    fi
+    if [ -f ${builtins.elemAt plugins 1}/zsh-autosuggestions.zsh ]; then
+      source ${builtins.elemAt plugins 1}/zsh-autosuggestions.zsh
+    fi
+    if [ -f ${builtins.elemAt plugins 2}/zsh-completions.plugin.zsh ]; then
+      source ${builtins.elemAt plugins 2}/zsh-completions.plugin.zsh
+    fi
+    if [ -f ${builtins.elemAt plugins 3}/fzf-tab.plugin.zsh ]; then
+      source ${builtins.elemAt plugins 3}/fzf-tab.plugin.zsh
+    fi
+    if [ -f ${builtins.elemAt plugins 4}/zsh-history-substring-search.zsh ]; then
+      source ${builtins.elemAt plugins 4}/zsh-history-substring-search.zsh
+    fi
+    if [ -f ${builtins.elemAt plugins 5}/zsh-vi-mode.plugin.zsh ]; then
+      source ${builtins.elemAt plugins 5}/zsh-vi-mode.plugin.zsh
+    fi
   '';
 }

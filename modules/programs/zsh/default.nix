@@ -23,6 +23,10 @@ let
         ./_/aliases/notes.nix
         ./_/aliases/projects.nix
         ./_/aliases/work.nix
+        ./_/functions/git-ai.nix
+        ./_/functions/development.nix
+        ./_/functions/kubernetes.nix
+        ./_/functions/navigation.nix
       ];
 
       config = {
@@ -35,7 +39,7 @@ let
 
         programs.zsh = lib.mkIf cfg.setAsDefaultShell {
           enable = true;
-          oh-my-zsh = {
+          ohMyZsh = {
             enable = true;
             theme = "agnoster";
             plugins = cfg.plugins;

@@ -1,21 +1,11 @@
 # config/plugins.nix - Plugin, agent, and command configurations for OpenCode
 {
-  config,
-  lib,
-  pkgs,
   ...
 }:
-let
-  cfg = config.jvf.programs.opencode;
-in
 {
   config = {
     jvf.programs.opencode.settings.plugin = [
-      "opencode-antigravity-auth@1.5.5"
       "oh-my-opencode@3.8.4"
-      "openslimedit@latest"
-      "@tarquinen/opencode-dcp@2.1.7"
-      "@howaboua/opencode-usage-plugin"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings = {
@@ -183,13 +173,6 @@ in
           model = "kimi-for-coding/k2p5";
         };
       };
-    };
-
-    jvf.programs.opencode.commands.mystatus = lib.mkDefault {
-      name = "mystatus";
-      agent = "general";
-      description = "Query quota usage for all AI accounts";
-      prompt = "Use the `mystatus` tool to query quota usage. Return the result as-is without modification.";
     };
   };
 }
