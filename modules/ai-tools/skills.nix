@@ -5,8 +5,7 @@
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
+    { lib
     , pkgs
     , ...
     }:

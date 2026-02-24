@@ -1,10 +1,8 @@
 # Aspect: roles-local-ai
 # Bundles local AI development tools.
 # Enables ollama, LMStudio, llama-cpp with GPU acceleration support.
-{ self, ... }:
+{ ... }:
 let
-  nixosAspects = self.modules.nixos;
-  darwinAspects = self.modules.darwin;
 
   mkOptions =
     { config, lib, ... }:
@@ -102,14 +100,7 @@ let
     };
 
   darwinModule =
-    { config
-    , lib
-    , pkgs
-    , ...
-    }:
-    let
-      cfg = config.jvf.roles.local-ai;
-    in
+    { ... }:
     {
       imports = [ mkOptions ];
 

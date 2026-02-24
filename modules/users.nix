@@ -87,7 +87,7 @@ in
           })
           cfg.users;
         users.mutableUsers = true;
-        users.groups = lib.mapAttrs (name: userCfg: { }) cfg.users;
+        users.groups = lib.mapAttrs (_: _: { }) cfg.users;
       };
     };
 
@@ -101,7 +101,7 @@ in
 
       config = {
         users.users = lib.mapAttrs
-          (name: userCfg: {
+          (_: userCfg: {
             description = userCfg.description;
             openssh.authorizedKeys.keys = userCfg.authorizedKeys;
             packages = userCfg.packages;

@@ -98,7 +98,7 @@ in
 
         # Host identity & overrides
         (
-          { config, ... }:
+          { ... }:
           {
             # Core identity
             jvf.core = {

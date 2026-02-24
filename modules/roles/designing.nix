@@ -1,9 +1,7 @@
 # Aspect: roles-designing
 # Bundles design and creative tools (inkscape).
-{ self, ... }:
+{ ... }:
 let
-  nixosAspects = self.modules.nixos;
-  darwinAspects = self.modules.darwin;
 
   mkOptions =
     { config, lib, ... }:
@@ -19,7 +17,6 @@ let
 
   nixosModule =
     { config
-    , lib
     , pkgs
     , ...
     }:
@@ -38,7 +35,6 @@ let
 
   darwinModule =
     { config
-    , lib
     , pkgs
     , ...
     }:

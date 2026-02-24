@@ -1,6 +1,6 @@
 # Aspect: darwin-defaults (Darwin only)
 # macOS system preferences: Finder, Dock, trackpad, keyboard, global domain.
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 {
   flake.modules.darwin.darwin-defaults = {
     # Security & PAM

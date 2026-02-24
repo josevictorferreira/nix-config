@@ -37,7 +37,7 @@ let
     };
 
   mkConfig =
-    { isDarwin }:
+    _:
     { config
     , lib
     , pkgs

@@ -20,7 +20,6 @@ let
 
   nixosModule =
     { config
-    , lib
     , pkgs
     , ...
     }:
@@ -64,7 +63,6 @@ let
 
   darwinModule =
     { config
-    , lib
     , pkgs
     , ...
     }:

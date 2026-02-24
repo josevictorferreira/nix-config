@@ -4,9 +4,7 @@
 { ... }:
 let
   mkConfig =
-    { config
-    , lib
-    , pkgs
+    { pkgs
     , ...
     }:
     {

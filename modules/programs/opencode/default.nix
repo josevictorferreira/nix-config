@@ -17,7 +17,7 @@ let
       cfg = config.jvf.programs.opencode;
 
       # Import wrapper definitions
-      wrapperDefs = import ./_/wrapper.nix { inherit lib pkgs; };
+      wrapperDefs = import ./_/wrapper.nix { inherit pkgs; };
       inherit (wrapperDefs) shellScriptBinLinux shellScriptBinDarwin;
     in
     {

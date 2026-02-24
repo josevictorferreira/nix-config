@@ -393,7 +393,7 @@ let
                   userPackages = lib.flatten (
                     lib.mapAttrsToList
                       (
-                        programName: programCfg:
+                        _: programCfg:
                           if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
                       )
                       (uCfg.programs or { })

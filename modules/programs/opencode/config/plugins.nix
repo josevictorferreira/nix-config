@@ -157,8 +157,7 @@
           model = "github-copilot/gemini-3-pro-preview";
         };
         quick = {
-          model = "zai-coding-plan/glm-5";
-          variant = "fast";
+          model = "openrouter/x-ai/grok-4.1-fast";
         };
         most-capable = {
           model = "github-copilot/claude-opus-4.6";

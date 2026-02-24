@@ -1,9 +1,7 @@
 # Aspect: roles-documenting
 # Bundles document viewing and editing tools (obsidian, libreoffice, zathura, etc).
-{ self, ... }:
+{ ... }:
 let
-  nixosAspects = self.modules.nixos;
-  darwinAspects = self.modules.darwin;
 
   mkOptions =
     { config, lib, ... }:
@@ -19,7 +17,6 @@ let
 
   nixosModule =
     { config
-    , lib
     , pkgs
     , ...
     }:
@@ -42,7 +39,6 @@ let
 
   darwinModule =
     { config
-    , lib
     , pkgs
     , ...
     }:

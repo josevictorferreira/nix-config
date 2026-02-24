@@ -20,7 +20,6 @@ in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
     { config
-    , lib
     , pkgs
     , ...
     }:

@@ -4,7 +4,7 @@
 { ... }:
 let
   mkBootOptions =
-    { config, lib, ... }:
+    { lib, ... }:
     {
       options.jvf.hardware.boot = {
         kernel = lib.mkOption {

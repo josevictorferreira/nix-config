@@ -1230,17 +1230,15 @@ let
 
   # ── Options module ──
   mkOptions =
-    { lib, ... }:
+    { ... }:
     {
       options.jvf.aiTools.agents = { };
     };
 
   # ── Config module ──
   mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , pkgs
+    _:
+    { lib
     , ...
     }:
     let

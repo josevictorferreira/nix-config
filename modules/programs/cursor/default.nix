@@ -56,7 +56,7 @@ let
     }:
     let
       cfg = config.jvf.programs.cursor;
-      json = pkgs.formats.json { };
+
       filteredSkills = lib.filterAttrs
         (
           _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })

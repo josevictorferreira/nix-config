@@ -1,5 +1,5 @@
 # wrapper.nix - FHS environment and wrapper scripts for OpenCode
-{ lib, pkgs }:
+{ pkgs }:
 let
   openCodeFHS = pkgs.buildFHSEnv {
     name = "opencode-fhs";

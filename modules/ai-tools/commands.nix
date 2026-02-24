@@ -1780,21 +1780,15 @@ let
 
   # ── Options module ──
   mkOptions =
-    { lib, ... }:
+    { ... }:
     {
       options.jvf.aiTools.commands = { };
     };
 
   # ── Config module ──
   mkConfig =
-    { isDarwin }:
-    { config
-    , lib
-    , ...
-    }:
-    let
-      cfg = config.jvf.aiTools.commands;
-    in
+    _:
+    { lib, ... }:
     {
       imports = [ mkOptions ];
 

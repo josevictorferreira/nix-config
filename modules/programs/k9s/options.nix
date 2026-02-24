@@ -5,9 +5,7 @@
   pkgs,
   ...
 }:
-let
-  json = pkgs.formats.json { };
-in
+
 {
   options.jvf.programs.k9s = {
     package = lib.mkPackageOption pkgs "k9s" { };

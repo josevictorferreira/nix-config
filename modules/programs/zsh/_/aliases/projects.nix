@@ -18,5 +18,12 @@ in
     # Personal Projects
     "nixcfg" = "cd ~/.config/nix";
     "dotfiles" = "cd ~/.config";
+
+    # Legacy workspace projects
+    "exer" = "cd ${cfg.workspace.root}/exercism";
+    "readm" = "cd ${cfg.workspace.root}/readmore-project";
+    "ebook" = "cd ${cfg.workspace.root}/ebookit";
+    "ebookit" = "cd ${cfg.workspace.root}/ebookit/ebookit-extension";
+    "rinha" = "cd ${cfg.workspace.root}/rinha-backend";
   };
 }

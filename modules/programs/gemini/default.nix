@@ -17,7 +17,7 @@ let
       ...
     }:
     let
-      json = pkgs.formats.json { };
+
       cfg = config.jvf.programs.gemini;
 
       geminiFHS =

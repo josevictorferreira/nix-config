@@ -1,7 +1,6 @@
-{ pkgs, system }:
+{ pkgs }:
 
 { projectRoot
-, services ? { postgres = true; }
 , packages ? [ ]
 , env ? { }
 , shellHook ? ""

@@ -7,7 +7,9 @@ in
   programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
     # Directory Navigation
     "ws" = "cd ${cfg.workspace.root}";
+    "wspc" = "cd ${cfg.workspace.root}";
     "hl" = "cd ${cfg.workspace.shared}";
+    "shared" = "cd ${cfg.workspace.shared}";
     "dl" = "cd ~/Downloads";
     "doc" = "cd ~/Documents";
     "code" = "cd ~/Workspace";
