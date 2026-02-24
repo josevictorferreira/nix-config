@@ -5,6 +5,9 @@ let
 in
 {
   programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+    # Editor
+    "v" = "nvim";
+
     # Make
     "m" = "make";
 
