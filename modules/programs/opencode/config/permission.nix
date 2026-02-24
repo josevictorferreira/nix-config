@@ -1,13 +1,5 @@
 # config/permission.nix - Permission configurations for OpenCode
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
-  cfg = config.jvf.programs.opencode;
-in
+{ ... }:
 {
   config.jvf.programs.opencode.settings.permission = {
     edit = "ask";

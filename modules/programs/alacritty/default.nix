@@ -107,7 +107,6 @@ let
 
   alacrittyModule =
     { config
-    , lib
     , pkgs
     , ...
     }:

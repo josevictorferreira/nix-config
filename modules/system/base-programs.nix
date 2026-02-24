@@ -5,17 +5,15 @@
 { ... }:
 let
   mkBaseProgramsOptions =
-    { lib, ... }:
+    { ... }:
     {
       options.jvf.system.base-programs = { };
     };
 
   mkConfig =
     { isDarwin }:
-    { config, lib, ... }:
-    let
-      cfg = config.jvf.system.base-programs;
-    in
+    { lib, ... }:
+    let in
     {
       imports = [ mkBaseProgramsOptions ];
 

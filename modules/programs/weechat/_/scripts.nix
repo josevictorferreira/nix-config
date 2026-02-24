@@ -1,13 +1,10 @@
 # _/scripts.nix - Weechat script derivations and defaults
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 let
-  cfg = config.jvf.programs.weechat;
-
   # Vimode script derivation
   viModeScript = pkgs.stdenv.mkDerivation {
     pname = "vimode";

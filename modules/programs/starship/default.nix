@@ -5,7 +5,7 @@
 { ... }:
 let
   mkStarshipOptions =
-    { lib, ... }:
+    { ... }:
     {
       options.jvf.programs.starship = { };
     };
@@ -71,7 +71,6 @@ let
     , ...
     }:
     let
-      cfg = config.jvf.programs.starship;
       format = pkgs.formats.toml { };
       configFile = format.generate "starship.toml" starshipSettings;
     in

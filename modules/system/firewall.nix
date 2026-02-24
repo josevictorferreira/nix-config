@@ -27,7 +27,7 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config, lib, ... }:
+    { config, ... }:
     let
       cfg = config.jvf.system.firewall;
     in

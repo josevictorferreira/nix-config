@@ -1,13 +1,9 @@
 # config/formatter.nix - Formatter configurations for OpenCode
 {
-  config,
   lib,
   pkgs,
   ...
 }:
-let
-  cfg = config.jvf.programs.opencode;
-in
 {
   config.jvf.programs.opencode.settings.formatter = {
     nixfmt = {

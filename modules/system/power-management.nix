@@ -69,7 +69,6 @@ let
   mkConfig =
     { isDarwin }:
     { config
-    , lib
     , pkgs
     , ...
     }:

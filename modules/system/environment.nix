@@ -28,7 +28,7 @@ let
     };
 
   environmentModule =
-    { config, lib, ... }:
+    { config, ... }:
     let
       cfg = config.jvf.system.environment;
     in
