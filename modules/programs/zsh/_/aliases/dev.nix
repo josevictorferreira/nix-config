@@ -5,6 +5,9 @@ let
 in
 {
   programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+    # Make
+    "m" = "make";
+
     # Git
     "g" = "git";
     "ga" = "git add";
