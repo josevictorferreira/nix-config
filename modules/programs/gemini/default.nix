@@ -4,66 +4,17 @@
 # Depends on inputs.lib.aiTools for TOML/skill config generation.
 { ... }:
 let
-  mkGeminiOptions =
-    { config, lib, pkgs, ... }:
-    let
-      json = pkgs.formats.json { };
-    in
-    {
-      options.jvf.programs.gemini = {
-        antigravity.enable = lib.mkEnableOption "Install Antigravity Tools (Gemini CLI companion)";
-
-        username = lib.mkOption {
-          type = lib.types.str;
-          default = config.jvf.core.username;
-          description = "Username for which to install the configuration";
-        };
-
-        baseRules = lib.mkOption {
-          type = lib.types.str;
-          default = "";
-          description = "A set of base rules to apply to the Gemini configuration";
-        };
-
-        agents = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
-          default = { };
-          description = "Agents to install as commands (Gemini CLI doesn't have native agents, so they become commands)";
-        };
-
-        skills = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
-          default = { };
-          description = "Skills to install into the configuration (string prompts or structured objects)";
-        };
-
-        commands = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
-          default = { };
-          description = "Commands to install into the configuration (string prompts or structured objects)";
-        };
-
-        mcps = lib.mkOption {
-          type = lib.types.attrsOf json.type;
-          default = { };
-          description = "MCP tools to install into the configuration (structured objects)";
-        };
-
-        settings = lib.mkOption {
-          type = json.type;
-          default = { };
-          description = "Settings written to ~/.gemini/settings.json";
-        };
-      };
-    };
+  # Import default settings generator
+  mkDefaultSettings = import ./_/settings.nix;
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       json = pkgs.formats.json { };
@@ -71,25 +22,24 @@ let
 
       geminiFHS =
         if !isDarwin then
-          pkgs.buildFHSEnv
-            {
-              name = "gemini-cli-fhs";
-              targetPkgs = pkgs: [
-                pkgs.stdenv.cc.cc.lib
-                pkgs.zlib
-                pkgs.openssl
-                pkgs.nodejs
-                pkgs.ripgrep
-                pkgs.coreutils
-              ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
+          pkgs.buildFHSEnv {
+            name = "gemini-cli-fhs";
+            targetPkgs = pkgs: [
+              pkgs.stdenv.cc.cc.lib
+              pkgs.zlib
+              pkgs.openssl
+              pkgs.nodejs
+              pkgs.ripgrep
+              pkgs.coreutils
+            ];
+            profile = ''
+              export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
+              mkdir -p "$TMPDIR"
+            '';
+            runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
               exec "$HOME/.npm-global/bin/gemini" "$@"
             ''}";
-            }
+          }
         else
           null;
 
@@ -147,36 +97,13 @@ let
       '';
     in
     {
-      imports = [ mkGeminiOptions ];
+      imports = [ ./options.nix ];
 
       config = {
-        jvf.programs.gemini.settings = {
-          general.previewFeatures = true;
-          general.vimMode = true;
-          general.preferredEditor = "nvim";
-          general.checkpointing.enabled = true;
-          general.enablePromptCompletion = true;
-          mcp = lib.mkDefault cfg.mcps;
-          ui.theme = "Dracula";
-          context.fileName = [
-            "CLAUDE.md"
-            "AGENTS.md"
-            "GEMINI.md"
-            "CONTEXT.md"
-          ];
-          tools.autoAccept = true;
-          tools.enableHooks = true;
-          tools.shell.showCOlor = true;
-          tools.shell.pager = "bcat";
-          tools.mcp.allowed = builtins.attrNames cfg.mcps;
-          security.enablePermanentToolApproval = true;
-          privacy.usageStatisticsEnabled = true;
-          experimental.enableAgents = true;
-          experimental.jitContext = true;
-          experimental.skills = true;
-          experimental.introspectionAgentSettings.enabled = true;
-          telemetry.enabled = false;
-        };
+        # Set default settings using imported generator
+        jvf.programs.gemini.settings = lib.mkDefault (mkDefaultSettings {
+          inherit (cfg) mcps;
+        });
 
         jvf.wrappers.users.${cfg.username}.programs.gemini = {
           packages = [

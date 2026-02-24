@@ -1,46 +1,8 @@
+# Aspect: programs-droid
 { ... }:
 let
-  mkDroidOptions =
-    { config, lib, ... }:
-    {
-      options.jvf.programs.droid = {
-        username = lib.mkOption {
-          type = lib.types.str;
-          default = config.jvf.core.username;
-          description = "Username to install the program";
-        };
-        settings = lib.mkOption {
-          type = lib.types.attrs;
-          default = { };
-          description = "Settings written to ~/.factory/settings.json";
-        };
-        baseRules = lib.mkOption {
-          type = lib.types.str;
-          default = "";
-          description = "A set of base rules to apply to the OpenCode configuration.";
-        };
-        agents = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.attrs);
-          default = { };
-          description = "Agents to install into the configuration (string prompts or structured objects)";
-        };
-        commands = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.attrs);
-          default = { };
-          description = "Commands to install into the configuration (string prompts or structured objects)";
-        };
-        mcps = lib.mkOption {
-          type = lib.types.attrsOf lib.types.attrs;
-          default = { };
-          description = "MCP tools to install into the configuration (structured objects)";
-        };
-        skills = lib.mkOption {
-          type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.attrs);
-          default = { };
-          description = "Skills to install into the configuration";
-        };
-      };
-    };
+  # Import default settings generator
+  mkDefaultSettings = import ./_/settings.nix;
 
   mkDroidConfig =
     { isDarwin }:
@@ -52,7 +14,6 @@ let
     }:
     let
       cfg = config.jvf.programs.droid;
-      json = pkgs.formats.json { };
       isLinux = !isDarwin;
 
       droidFHS =
@@ -110,44 +71,11 @@ let
       '';
     in
     {
-      imports = [ mkDroidOptions ];
+      imports = [ ./options.nix ];
 
       config = {
-        jvf.programs.droid.settings = {
-          mcpServers = lib.mkDefault cfg.mcps;
-          customModels = [
-            {
-              model = "minimax/minimax-m2.1";
-              displayName = "Minimax M2.1 [OpenRouter]";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-            }
-            {
-              model = "z-ai/glm-4.7";
-              displayName = "GLM 4.7 [OpenRouter]";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-            }
-            {
-              model = "moonshotai/kimi-k2-thinking";
-              displayName = "Kimi K2 Thinking [OpenRouter]";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-            }
-            {
-              model = "moonshotai/kimi-k2-0905:exacto";
-              displayName = "Minimax K2 0905 [OpenRouter]";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-            }
-            {
-              model = "z-ai/glm-4.6:exacto";
-              displayName = "GLM 4.6 [OpenRouter]";
-              baseUrl = "https://openrouter.ai/api/v1";
-              apiKey = "OPENROUTER_API_KEY_CODE_AGENT";
-            }
-          ];
-        };
+        # Set default settings from imported config generator
+        jvf.programs.droid.settings = lib.mkDefault (mkDefaultSettings { inherit (cfg) mcps; }).settings;
 
         jvf.wrappers.users.${cfg.username}.programs.droid = {
           packages = [
