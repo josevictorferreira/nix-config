@@ -1,6 +1,6 @@
 # Default k9s settings
 # Pure data export - no module boilerplate
-{ }:
+_:
 {
   settings = {
     liveViewAutoRefresh = false;

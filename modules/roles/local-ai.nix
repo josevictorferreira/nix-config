@@ -1,7 +1,7 @@
 # Aspect: roles-local-ai
 # Bundles local AI development tools.
 # Enables ollama, LMStudio, llama-cpp with GPU acceleration support.
-{ ... }:
+_:
 let
 
   mkOptions =

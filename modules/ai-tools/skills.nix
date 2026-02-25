@@ -1,7 +1,7 @@
 # Aspect: ai-tools-skills
 # Consolidated AI tools skills module.
 # Migrated from modules/legacy/_/common/ai-tools/skills/
-{ ... }:
+_:
 let
   mkConfig =
     { isDarwin }:

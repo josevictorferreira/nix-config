@@ -2,7 +2,7 @@
 # Defines jvf.system.xdg options and platform-specific XDG config.
 # NixOS: portals, MIME associations, user directories, activation scripts.
 # Darwin: empty config (no XDG desktop integration).
-{ ... }:
+_:
 let
   mkXdgOptions =
     { config, lib, ... }:
@@ -141,8 +141,7 @@ let
     {
       imports = [ mkXdgOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           let
             home = "/home/${cfg.username}";
             # Generate user-dirs.dirs content
@@ -210,8 +209,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

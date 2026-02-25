@@ -25,9 +25,9 @@ let
           "droid"
           "gemini"
         ];
-        skillOptions = args.skillOptions;
+        inherit (args) skillOptions;
         skillName =
-          if skillOptions ? name then skillOptions.name else throw "mkSkillModule: skillOptions.name is required";
+          skillOptions.name or (throw "mkSkillModule: skillOptions.name is required");
       in
       {
         options = {
@@ -41,7 +41,7 @@ let
       }
     else
       let
-        name = args.name;
+        inherit (args) name;
         description = args.description or "";
         prompt = args.prompt or "";
         model = args.model or "";
@@ -114,9 +114,9 @@ let
           "droid"
           "gemini"
         ];
-        agentOptions = args.agentOptions;
+        inherit (args) agentOptions;
         agentName =
-          if agentOptions ? name then agentOptions.name else throw "mkAgentModule: agentOptions.name is required";
+          agentOptions.name or (throw "mkAgentModule: agentOptions.name is required");
       in
       {
         options = {
@@ -130,7 +130,7 @@ let
       }
     else
       let
-        name = args.name;
+        inherit (args) name;
         model = args.model or "";
         mode = args.mode or "primary";
         temperature = args.temperature or null;
@@ -224,7 +224,7 @@ let
     if newApi then
       let
         optionName = args.name or "MCP Server";
-        mcpOptions = args.mcpOptions;
+        inherit (args) mcpOptions;
         programs = args.programs or (builtins.attrNames mcpOptions);
         mcpNames = args.mcpNames or { };
         mcpNameForProgram = program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
@@ -281,14 +281,9 @@ let
           "droid"
           "gemini"
         ];
-        commandOptions = args.commandOptions;
+        inherit (args) commandOptions;
         commandName =
-          if args ? name then
-            args.name
-          else if commandOptions ? name then
-            commandOptions.name
-          else
-            throw "mkCommandModule: either name or commandOptions.name is required";
+          args.name or (commandOptions.name or (throw "mkCommandModule: either name or commandOptions.name is required"));
       in
       {
         options = {
@@ -302,7 +297,7 @@ let
       }
     else
       let
-        name = args.name;
+        inherit (args) name;
         description = args.description or "";
         agent = args.agent or "";
         prompt = args.prompt or "";
@@ -519,7 +514,7 @@ let
           formatValue =
             key: v:
             "  ${key}: \"${
-                if lib.isList v then lib.concatStringsSep ", " (map (x: toString x) v) else (toString v)
+                if lib.isList v then lib.concatStringsSep ", " (map toString v) else (toString v)
               }\"";
         in
         "metadata:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList formatValue metadata));

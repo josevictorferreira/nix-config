@@ -2,7 +2,7 @@
 # Defines jvf.system.logind options and platform-specific session config.
 # NixOS: services.logind.settings for lid switch and power key handling.
 # Darwin: empty config (logind not available on macOS).
-{ ... }:
+_:
 let
   powerActionType =
     lib:
@@ -51,8 +51,7 @@ let
     {
       imports = [ mkLogindOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             services.logind.settings = {
               Login = {
@@ -63,8 +62,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

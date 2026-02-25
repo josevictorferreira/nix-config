@@ -10,7 +10,7 @@ in
       ohMyZsh = {
         enable = true;
         theme = "agnoster";
-        plugins = cfg.plugins;
+        inherit (cfg) plugins;
       };
     };
   };

@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-wlogout (NixOS only)
 # Wlogout - A Wayland logout menu.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-wlogout =
     { config

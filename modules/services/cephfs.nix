@@ -1,7 +1,7 @@
 # Aspect: services-cephfs (NixOS only)
 # Mounts a CephFS subvolume via native ceph + bindfs for user-friendly access.
 # Darwin does not support CephFS.
-{ ... }:
+_:
 {
   flake.modules.nixos.services-cephfs =
     { config

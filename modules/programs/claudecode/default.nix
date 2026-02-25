@@ -2,7 +2,7 @@
 # Defines jvf.programs.claudecode options for Claude Code and Claude Code Router.
 # Linux: uses FHS environment for glibc compatibility.
 # Darwin: direct npm global installation.
-{ ... }:
+_:
 let
   # Import default router config as pure data
   defaultRouterConfig = import ./_/router-config.nix { };
@@ -137,8 +137,7 @@ let
     {
       imports = [ ./options.nix ];
 
-      config = (
-        {
+      config = {
           # Set default router settings from imported config
           jvf.programs.claudecode.routerSettings = lib.mkDefault defaultRouterConfig;
 
@@ -198,8 +197,7 @@ let
             # Symlink the immutable file to the target location
             ln -sf "$sourceFile" "$targetFile"
           '';
-        }
-      );
+        };
     };
 in
 {

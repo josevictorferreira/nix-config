@@ -1,6 +1,6 @@
 # Aspect: roles-designing
 # Bundles design and creative tools (inkscape).
-{ ... }:
+_:
 let
 
   mkOptions =

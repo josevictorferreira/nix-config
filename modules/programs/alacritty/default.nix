@@ -2,7 +2,7 @@
 # Defines jvf.programs.alacritty options and platform-specific alacritty terminal config.
 # NixOS: alacritty package + config via wrappers + IBM Plex Mono + nerd-fonts.
 # Darwin: alacritty package + config via wrappers + IBM Plex Mono + nerd-fonts.
-{ ... }:
+_:
 let
   mkAlacrittyOptions =
     { config, lib, pkgs, ... }:

@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-xfce4 (NixOS only)
 # XFCE4 settings for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-xfce4 =
     { config, lib, ... }:

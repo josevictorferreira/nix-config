@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-waybar (NixOS only)
 # Waybar status bar for Hyprland. Packages + wrapper configs + fonts.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-waybar =
     { config

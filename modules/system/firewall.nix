@@ -2,7 +2,7 @@
 # Defines jvf.system.firewall options and platform-specific firewall config.
 # NixOS: networking.firewall with configurable TCP/UDP ports.
 # Darwin: empty config (firewall managed by macOS).
-{ ... }:
+_:
 let
   mkFirewallOptions =
     { lib, ... }:
@@ -34,18 +34,16 @@ let
     {
       imports = [ mkFirewallOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             networking.firewall = {
               enable = true;
-              allowedTCPPorts = cfg.allowedTCPPorts;
-              allowedUDPPorts = cfg.allowedUDPPorts;
+              inherit (cfg) allowedTCPPorts;
+              inherit (cfg) allowedUDPPorts;
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

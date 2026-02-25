@@ -2,7 +2,7 @@
 # Defines jvf.services.smb options for SMB/CIFS share mounting.
 # NixOS: empty config (currently unused).
 # Darwin: launchd agent, sops secrets/templates, users.groups for SMB mount.
-{ ... }:
+_:
 let
   mkSmbOptions =
     { config, lib, ... }:
@@ -76,26 +76,25 @@ let
     {
       imports = [ mkSmbOptions ];
 
-      config = (
-        if isDarwin then
+      config = if isDarwin then
           {
-            launchd.agents."${group}-smb" = smbMount { username = cfg.username; };
+            launchd.agents."${group}-smb" = smbMount { inherit (cfg) username; };
 
             sops.secrets."${group}_smb_username" = {
               owner = cfg.username;
-              group = group;
+              inherit group;
               mode = "0400";
             };
             sops.secrets."${group}_smb_password" = {
               owner = cfg.username;
-              group = group;
+              inherit group;
               mode = "0400";
             };
 
             sops.templates."nsmb.conf" = {
               path = "${homeDir}/Library/Preferences/nsmb.conf";
               owner = cfg.username;
-              group = group;
+              inherit group;
               mode = "0600";
               content = ''
                 [default]
@@ -116,7 +115,7 @@ let
 
             sops.templates.${scriptName} = {
               owner = cfg.username;
-              group = group;
+              inherit group;
               mode = "0755";
               content = ''
                 #!/bin/sh
@@ -140,8 +139,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

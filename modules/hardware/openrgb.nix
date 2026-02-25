@@ -1,7 +1,7 @@
 # Aspect: hardware-openrgb
 # OpenRGB support: RGB lighting control for PC hardware.
 # NixOS-only (no Darwin equivalent).
-{ ... }:
+_:
 let
   mkConfig =
     { pkgs

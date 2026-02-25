@@ -2,7 +2,7 @@
 # Privacy-focused tools.
 # NixOS: Proton suite (Pass, Authenticator, VPN, Mail wrapped).
 # Darwin: empty (Proton tools are Linux-only).
-{ ... }:
+_:
 let
   mkOptions =
     { config, lib, ... }:

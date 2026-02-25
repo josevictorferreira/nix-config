@@ -2,7 +2,7 @@
 # Defines jvf.system.audio options and platform-specific audio config.
 # NixOS: PipeWire with ALSA, PulseAudio compat, WirePlumber.
 # Darwin: empty config (audio managed by macOS).
-{ ... }:
+_:
 let
   mkAudioOptions =
     { lib, ... }:
@@ -31,8 +31,7 @@ let
     {
       imports = [ mkAudioOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             # Disable PulseAudio when using PipeWire
             services.pulseaudio.enable = false;
@@ -56,8 +55,7 @@ let
             services.libinput.enable = true;
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

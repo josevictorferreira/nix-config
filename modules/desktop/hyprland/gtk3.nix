@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-gtk3 (NixOS only)
 # GTK 3.0 settings, bookmarks, and folder icons for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-gtk3 =
     { config

@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-qt6ct (NixOS only)
 # Qt6ct settings for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-qt6ct =
     { config

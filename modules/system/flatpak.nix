@@ -2,7 +2,7 @@
 # Defines jvf.system.flatpak options and platform-specific Flatpak config.
 # NixOS: flatpak service, rpcbind, Flathub repo setup.
 # Darwin: empty config (Flatpak not available on macOS).
-{ ... }:
+_:
 let
   mkFlatpakOptions =
     { lib, ... }:
@@ -29,8 +29,7 @@ let
     {
       imports = [ mkFlatpakOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             services.flatpak.enable = true;
 
@@ -44,8 +43,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

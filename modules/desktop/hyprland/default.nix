@@ -1,7 +1,7 @@
 # Aspect: desktop-hyprland (NixOS only)
 # Main Hyprland desktop orchestrator. Enables all sub-aspects when active.
 # Sub-modules (hypr, ags, cava, etc.) are standalone dendritic aspects.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland =
     { config

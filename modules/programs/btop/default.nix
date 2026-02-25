@@ -2,7 +2,7 @@
 # Defines jvf.programs.btop options for btop resource monitor.
 # NixOS: btop-rocm default, full config with wrappers.
 # Darwin: btop default, full config with wrappers.
-{ ... }:
+_:
 let
   mkBtopOptions =
     { config, lib, pkgs, ... }:
@@ -133,7 +133,7 @@ let
         {
           jvf.programs.btop.package = lib.mkDefault defaultPkg;
         }
-        ({
+        {
           jvf.wrappers.users.${cfg.username}.programs.btop = {
             packages = [
               cfg.package
@@ -148,7 +148,7 @@ let
               };
             };
           };
-        })
+        }
       ];
     };
 in

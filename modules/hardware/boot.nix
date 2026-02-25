@@ -1,7 +1,7 @@
 # Aspect: hardware-boot
 # Boot configuration: kernel, grub, plymouth, binfmt, sysctl, firmware.
 # NixOS-only (no Darwin equivalent).
-{ ... }:
+_:
 let
   mkBootOptions =
     { lib, ... }:
@@ -101,9 +101,9 @@ let
 
       config = {
         boot = {
-          kernelModules = cfg.kernelModules;
+          inherit (cfg) kernelModules;
           extraModulePackages = [ ];
-          kernelPackages = kernelPackages;
+          inherit kernelPackages;
 
           kernelParams = [
             "quiet"
@@ -133,8 +133,8 @@ let
               efiSupport = true;
               gfxmodeBios = "auto";
               memtest86.enable = true;
-              configurationLimit = cfg.grub.configurationLimit;
-              useOSProber = cfg.grub.useOSProber;
+              inherit (cfg.grub) configurationLimit;
+              inherit (cfg.grub) useOSProber;
             };
           };
 
@@ -158,7 +158,7 @@ let
 
           plymouth = lib.mkIf cfg.plymouth.enable {
             enable = true;
-            theme = cfg.plymouth.theme;
+            inherit (cfg.plymouth) theme;
           };
         };
 

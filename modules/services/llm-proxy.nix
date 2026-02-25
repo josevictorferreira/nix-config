@@ -2,7 +2,7 @@
 # LLM API Key Proxy service with sops secrets integration.
 # NixOS: systemd service with StateDirectory.
 # Darwin: launchd agent with KeepAlive.
-{ ... }:
+_:
 let
   mkLlmProxyOptions =
     { lib, ... }:
@@ -153,8 +153,7 @@ let
     {
       imports = [ mkLlmProxyOptions ];
 
-      config = (
-        lib.mkMerge [
+      config = lib.mkMerge [
           # Default package
           {
             jvf.services.llm-proxy.package = lib.mkDefault llmProxyPkg;
@@ -223,8 +222,7 @@ let
               };
             };
           })
-        ]
-      );
+        ];
     };
 in
 {

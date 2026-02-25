@@ -2,7 +2,7 @@
 # Base AI rule definitions (global constraints for all AI consumers).
 # Provides jvf.aiTools.baseRule options and propagates content to
 # opencode, claudecode, droid, and gemini base rules.
-{ ... }:
+_:
 let
   mkOptions =
     { lib, ... }:

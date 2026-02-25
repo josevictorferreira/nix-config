@@ -2,7 +2,7 @@
 # Defines jvf.programs.tmux and jvf.programs.tmuxp options.
 # tmux: terminal multiplexer with vi keys, C-a prefix, mouse, plugins.
 # tmuxp: session manager with picker script and 9 session configs.
-{ ... }:
+_:
 let
   # Import helpers as pure data/functions
   mkTmuxConf = import ./_/tmux-conf.nix;
@@ -20,7 +20,7 @@ let
       tmuxpCfg = config.jvf.programs.tmuxp;
 
       # Generate tmux.conf using imported function
-      tmuxConf = mkTmuxConf { inherit lib; } { plugins = cfg.plugins; };
+      tmuxConf = mkTmuxConf { inherit lib; } { inherit (cfg) plugins; };
 
       # tmuxp sessions
       dynamicSessions = [ "valorisBackend" ];

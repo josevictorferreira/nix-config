@@ -3,7 +3,7 @@
 # per-user program environment management.
 # NixOS: per-user activation scripts with supportsDryActivation.
 # Darwin: postActivation script for all users.
-{ ... }:
+_:
 let
   # Shared option definition — identical for both platforms
   mkWrappersOption =
@@ -13,12 +13,12 @@ let
         users = lib.mkOption {
           type = lib.types.attrsOf (
             lib.types.submodule (
-              { ... }:
+              _:
               {
                 options.programs = lib.mkOption {
                   type = lib.types.attrsOf (
                     lib.types.submodule (
-                      { ... }:
+                      _:
                       {
                         options = {
                           preserveFiles = lib.mkOption {

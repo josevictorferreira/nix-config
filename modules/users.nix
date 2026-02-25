@@ -2,7 +2,7 @@
 # Defines jvf.users option (attrsOf submodule) and platform-specific user config.
 # NixOS: full user management (groups, homeMode, extraGroups, isNormalUser).
 # Darwin: lightweight user config (description, authorizedKeys, packages).
-{ ... }:
+_:
 let
   # Shared option definition — identical for both platforms
   mkUsersOption =
@@ -11,7 +11,7 @@ let
       options.jvf.users = lib.mkOption {
         type = lib.types.attrsOf (
           lib.types.submodule (
-            { ... }:
+            _:
             {
               options = {
                 homeMode = lib.mkOption {
@@ -77,12 +77,12 @@ in
       config = {
         users.users = lib.mapAttrs
           (name: userCfg: {
-            description = userCfg.description;
+            inherit (userCfg) description;
             openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-            packages = userCfg.packages;
+            inherit (userCfg) packages;
             group = name;
-            homeMode = userCfg.homeMode;
-            extraGroups = userCfg.extraGroups;
+            inherit (userCfg) homeMode;
+            inherit (userCfg) extraGroups;
             isNormalUser = true;
           })
           cfg.users;
@@ -102,9 +102,9 @@ in
       config = {
         users.users = lib.mapAttrs
           (_: userCfg: {
-            description = userCfg.description;
+            inherit (userCfg) description;
             openssh.authorizedKeys.keys = userCfg.authorizedKeys;
-            packages = userCfg.packages;
+            inherit (userCfg) packages;
           })
           cfg.users;
       };

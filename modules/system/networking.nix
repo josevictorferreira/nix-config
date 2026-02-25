@@ -2,7 +2,7 @@
 # Defines jvf.system.networking options and platform-specific networking config.
 # NixOS: networking.hostName + networkmanager.enable.
 # Darwin: just networking.hostName (no NetworkManager).
-{ ... }:
+_:
 let
   mkNetworkingOptions =
     { lib, ... }:
@@ -37,21 +37,19 @@ let
     {
       imports = [ mkNetworkingOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             networking = {
-              hostName = cfg.hostName;
+              inherit (cfg) hostName;
               networkmanager.enable = true;
             };
           }
         else
           {
             networking = {
-              hostName = cfg.hostName;
+              inherit (cfg) hostName;
             };
-          }
-      );
+          };
     };
 in
 {

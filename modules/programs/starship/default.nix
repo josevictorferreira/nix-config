@@ -2,10 +2,10 @@
 # Defines jvf.programs.starship options and platform-specific prompt config.
 # NixOS: uses native programs.starship module.
 # Darwin: manual install + TOML config + shell init hooks.
-{ ... }:
+_:
 let
   mkStarshipOptions =
-    { ... }:
+    _:
     {
       options.jvf.programs.starship = { };
     };
@@ -76,8 +76,7 @@ let
     {
       imports = [ mkStarshipOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             programs.starship = {
               enable = true;
@@ -102,8 +101,7 @@ let
               export STARSHIP_CONFIG="${configFile}"
               eval "$(${pkgs.starship}/bin/starship init bash)"
             '';
-          }
-      );
+          };
     };
 in
 {

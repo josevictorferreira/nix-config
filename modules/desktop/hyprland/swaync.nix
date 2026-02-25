@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-swaync (NixOS only)
 # Swaync notification daemon with Hyprland integration.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-swaync =
     { lib

@@ -2,7 +2,7 @@
 # AI tool scripts: prompt-enhancer and rules-enforcer.
 # Installs shell script packages for enhancing prompts and enforcing
 # project rules via OpenRouter API.
-{ ... }:
+_:
 let
   mkOptions =
     { config, lib, ... }:

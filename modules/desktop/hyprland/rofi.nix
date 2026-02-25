@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-rofi (NixOS only)
 # Rofi application launcher with Hyprland theming.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-rofi =
     { lib

@@ -2,10 +2,10 @@
 # Defines jvf.system.base-programs options and platform-specific program config.
 # NixOS: gnupg agent, nm-applet, mtr, dconf, seahorse, fuse.
 # Darwin: gnupg agent only.
-{ ... }:
+_:
 let
   mkBaseProgramsOptions =
-    { ... }:
+    _:
     {
       options.jvf.system.base-programs = { };
     };
@@ -13,12 +13,10 @@ let
   mkConfig =
     { isDarwin }:
     { lib, ... }:
-    let in
     {
       imports = [ mkBaseProgramsOptions ];
 
-      config = (
-        {
+      config = {
           programs.gnupg.agent = {
             enable = true;
             enableSSHSupport = true;
@@ -30,8 +28,7 @@ let
           programs.dconf.enable = true;
           programs.seahorse.enable = false;
           programs.fuse.userAllowOther = true;
-        }
-      );
+        };
     };
 in
 {

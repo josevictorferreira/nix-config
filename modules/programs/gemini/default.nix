@@ -2,7 +2,7 @@
 # Installs Gemini CLI with auto-update wrapper and per-user config.
 # Uses jvf.wrappers for config management.
 # Depends on inputs.lib.aiTools for TOML/skill config generation.
-{ ... }:
+_:
 let
   # Import default settings generator
   mkDefaultSettings = import ./_/settings.nix;

@@ -1,7 +1,7 @@
 # Aspect: hardware-bluetooth
 # Defines jvf.hardware.bluetooth options and NixOS Bluetooth config.
 # NixOS-only: hardware.bluetooth + blueman service.
-{ ... }:
+_:
 let
   mkBluetoothOptions =
     { lib, ... }:

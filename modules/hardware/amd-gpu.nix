@@ -1,7 +1,7 @@
 # Aspect: hardware-amd-gpu
 # AMD GPU support: kernel modules, video drivers, hardware acceleration, ROCm.
 # NixOS-only (no Darwin equivalent).
-{ ... }:
+_:
 let
   mkAmdGpuOptions =
     { config, lib, ... }:
@@ -85,7 +85,7 @@ let
 
         hardware.graphics = {
           enable = true;
-          enable32Bit = cfg.enable32Bit;
+          inherit (cfg) enable32Bit;
           extraPackages =
             with pkgs;
             [

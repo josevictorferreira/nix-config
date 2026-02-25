@@ -1,7 +1,7 @@
 # Aspect: hardware-logitech
 # Logitech wireless hardware support for peripherals (mice, keyboards, etc).
 # NixOS-only (no Darwin equivalent).
-{ ... }:
+_:
 let
   mkLogitechOptions =
     { lib, ... }:

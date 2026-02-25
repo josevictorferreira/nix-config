@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-ags (NixOS only)
 # AGS - Awesome Hyprland Widgets. Packages + wrapper configs.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-ags =
     { config

@@ -2,7 +2,7 @@
 # Automatic git repo cloning for users into their home directories.
 # NixOS: system.userActivationScripts (uses inputs.lib.git.cloneRepoText).
 # Darwin: launchd.agents (RunAtLoad plist per user).
-{ ... }:
+_:
 let
   # Shared option definition — identical for both platforms
   mkRepositoriesOption =
@@ -11,7 +11,7 @@ let
       options.jvf.repositories.users = lib.mkOption {
         type = lib.types.attrsOf (
           lib.types.submodule (
-            { ... }:
+            _:
             {
               options.clonedDirs = lib.mkOption {
                 type = lib.types.attrsOf lib.types.str;
@@ -73,8 +73,7 @@ let
       imports = [ mkRepositoriesOption ];
 
       config = lib.mkMerge (
-        [ ]
-        ++ lib.optional isDarwin {
+        lib.optional isDarwin {
           launchd.agents = lib.mkMerge (
             lib.mapAttrsToList
               (

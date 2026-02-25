@@ -1,6 +1,6 @@
 # Aspect: programs-cursor
 # Defines jvf.programs.cursor options for Cursor editor.
-{ ... }:
+_:
 let
   mkCursorOptions =
     { config, lib, pkgs, ... }:
@@ -40,7 +40,7 @@ let
           description = "Skills to install into the configuration";
         };
         settings = lib.mkOption {
-          type = json.type;
+          inherit (json) type;
           default = { };
           description = "Cursor settings.";
         };

@@ -2,7 +2,7 @@
 # Defines jvf.system.virtualization options and platform-specific virtualization config.
 # NixOS: libvirtd, podman with Docker compat, container settings.
 # Darwin: empty config (virtualization handled natively by macOS).
-{ ... }:
+_:
 let
   mkVirtualizationOptions =
     { config, lib, ... }:
@@ -29,8 +29,7 @@ let
     {
       imports = [ mkVirtualizationOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             virtualisation.libvirtd.enable = lib.mkDefault false;
             virtualisation.podman = {
@@ -70,8 +69,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

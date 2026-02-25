@@ -1,7 +1,7 @@
 # Aspect: ai-tools-commands
 # All AI Tools command (slash-command) definitions consolidated.
 # Migrated from legacy commands/default.nix and all sub-command files.
-{ ... }:
+_:
 let
   # Programs that receive command config
   programs = [
@@ -1780,7 +1780,7 @@ let
 
   # ── Options module ──
   mkOptions =
-    { ... }:
+    _:
     {
       options.jvf.aiTools.commands = { };
     };

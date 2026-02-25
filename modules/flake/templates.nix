@@ -1,6 +1,6 @@
 # Flake templates — project scaffolds.
 # Moved here from flake.nix to keep the entrypoint minimal.
-{ ... }:
+_:
 {
   flake.templates = {
     sandbox-postgres-ruby = {

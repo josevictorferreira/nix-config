@@ -2,7 +2,7 @@
 # Defines jvf.system.base-services options and platform-specific service config.
 # NixOS: dbus, udev, libinput, envfs, gvfs, tumbler, smartd, lorri, fstrim.
 # Darwin: empty config (no system services needed).
-{ ... }:
+_:
 let
   mkBaseServicesOptions =
     { lib, ... }:
@@ -55,8 +55,7 @@ let
     {
       imports = [ mkBaseServicesOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             services = {
               dbus.enable = true;
@@ -84,8 +83,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

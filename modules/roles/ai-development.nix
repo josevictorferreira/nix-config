@@ -47,10 +47,10 @@ let
         # Cursor integration with shared configs
         jvf.programs.cursor = {
           baseRules = config.jvf.aiTools.baseRule.content;
-          agents = config.jvf.programs.opencode.agents;
-          commands = config.jvf.programs.opencode.commands;
-          skills = config.jvf.programs.opencode.skills;
-          mcps = config.jvf.programs.claudecode.mcps;
+          inherit (config.jvf.programs.opencode) agents;
+          inherit (config.jvf.programs.opencode) commands;
+          inherit (config.jvf.programs.opencode) skills;
+          inherit (config.jvf.programs.claudecode) mcps;
         };
 
         users.users."${cfg.username}".packages = [
@@ -90,10 +90,10 @@ let
         # Cursor integration with shared configs
         jvf.programs.cursor = {
           baseRules = config.jvf.aiTools.baseRule.content;
-          agents = config.jvf.programs.opencode.agents;
-          commands = config.jvf.programs.opencode.commands;
-          skills = config.jvf.programs.opencode.skills;
-          mcps = config.jvf.programs.claudecode.mcps;
+          inherit (config.jvf.programs.opencode) agents;
+          inherit (config.jvf.programs.opencode) commands;
+          inherit (config.jvf.programs.opencode) skills;
+          inherit (config.jvf.programs.claudecode) mcps;
         };
 
         users.users."${cfg.username}".packages = [

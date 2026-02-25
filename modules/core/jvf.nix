@@ -1,7 +1,7 @@
 # Aspect: core-jvf
 # Imports jvf core identity options.
 # Hosts pull these via self.modules.{nixos,darwin}.core-jvf.
-{ ... }:
+_:
 {
   flake.modules.nixos.core-jvf = {
     imports = [

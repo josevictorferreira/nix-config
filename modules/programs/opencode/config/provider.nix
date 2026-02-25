@@ -1,7 +1,5 @@
 # config/provider.nix - AI provider configurations for OpenCode
-{
-  ...
-}:
+_:
 {
   config.jvf.programs.opencode.settings.provider = {
     local = {

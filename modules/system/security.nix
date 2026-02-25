@@ -2,7 +2,7 @@
 # Defines jvf.system.security options and platform-specific security config.
 # NixOS: sudo/polkit/rtkit/openssh/pam/gnome-keyring/fwupd/seatd.
 # Darwin: minimal config (sops handled by secrets-sops aspect).
-{ ... }:
+_:
 let
   mkSecurityOptions =
     { lib, ... }:
@@ -68,8 +68,7 @@ let
     {
       imports = [ mkSecurityOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             security = {
               sudo.extraConfig = ''
@@ -147,8 +146,7 @@ let
             };
 
             environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
-          }
-      );
+          };
     };
 in
 {

@@ -1,7 +1,7 @@
 # Aspect: system-environment
 # Defines jvf.system.environment options for global environment variables.
 # Same config for both NixOS and Darwin.
-{ ... }:
+_:
 let
   mkEnvironmentOptions =
     { lib, ... }:

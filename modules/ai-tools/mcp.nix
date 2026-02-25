@@ -3,10 +3,10 @@
 # Each server is individually toggleable via jvf.aiTools.mcp.<name>.enable.
 # Legacy status preserved: most servers default-disabled (were commented out),
 # only zai-mcp-server defaults to enabled.
-{ ... }:
+_:
 let
   mkOptions =
-    { ... }:
+    _:
     { };
 
   mkConfig =
@@ -18,7 +18,7 @@ let
     , ...
     }:
     let
-      mkMcpModule = inputs.lib.aiTools.mkMcpModule;
+      inherit (inputs.lib.aiTools) mkMcpModule;
 
       # --- playwriter ---
       playwriterDef = mkMcpModule {
@@ -35,7 +35,7 @@ let
           };
           claudecode = {
             type = "stdio";
-            command = (lib.getExe' pkgs.nodejs "npx");
+            command = lib.getExe' pkgs.nodejs "npx";
             args = [
               "playwriter@latest"
             ];

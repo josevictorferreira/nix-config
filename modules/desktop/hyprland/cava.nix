@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-cava (NixOS only)
 # Cava - Console-based Audio Visualizer for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-cava =
     { config

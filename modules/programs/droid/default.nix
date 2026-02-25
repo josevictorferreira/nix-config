@@ -1,5 +1,5 @@
 # Aspect: programs-droid
-{ ... }:
+_:
 let
   # Import default settings generator
   mkDefaultSettings = import ./_/settings.nix;

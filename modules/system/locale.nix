@@ -2,7 +2,7 @@
 # Defines jvf.system.locale options and platform-specific locale/timezone config.
 # NixOS: full locale + timezone + extraLocaleSettings.
 # Darwin: empty config (no locale settings needed).
-{ ... }:
+_:
 let
   mkLocaleOptions =
     { lib, ... }:
@@ -37,13 +37,12 @@ let
     {
       imports = [ mkLocaleOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             time.timeZone = cfg.timeZone;
 
             i18n = {
-              defaultLocale = cfg.defaultLocale;
+              inherit (cfg) defaultLocale;
               extraLocaleSettings = lib.mkIf cfg.useConsistentLocale {
                 LC_ADDRESS = cfg.defaultLocale;
                 LC_IDENTIFICATION = cfg.defaultLocale;
@@ -58,8 +57,7 @@ let
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

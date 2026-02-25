@@ -15,7 +15,7 @@ let
     inputs = inputs // {
       inherit (inputs) self;
       lib = import ../../../lib {
-        lib = pkgs.lib;
+        inherit (pkgs) lib;
         inherit pkgs system;
       };
     };
@@ -64,7 +64,7 @@ in
 
         # Host identity & overrides
         (
-          { ... }:
+          _:
           {
             # Core identity
             jvf.core = {

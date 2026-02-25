@@ -2,7 +2,7 @@
 # Defines jvf.system.display options and platform-specific display config.
 # NixOS: XServer keyboard layout + console config.
 # Darwin: empty config (display managed by macOS).
-{ ... }:
+_:
 let
   mkDisplayOptions =
     { lib, ... }:
@@ -25,8 +25,7 @@ let
     {
       imports = [ mkDisplayOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             services.xserver = {
               enable = true;
@@ -40,8 +39,7 @@ let
             console.useXkbConfig = true;
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

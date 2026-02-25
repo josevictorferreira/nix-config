@@ -1,6 +1,6 @@
 # Aspect: roles-documenting
 # Bundles document viewing and editing tools (obsidian, libreoffice, zathura, etc).
-{ ... }:
+_:
 let
 
   mkOptions =

@@ -2,7 +2,7 @@
 # Defines jvf.system.nixpkgs options and unfree package configuration.
 # NixOS: nixpkgs.config with allowUnfree + predicate.
 # Darwin: identical config (same nixpkgs.config structure).
-{ ... }:
+_:
 let
   mkNixpkgsOptions =
     { lib, ... }:
@@ -37,7 +37,7 @@ let
 
       config = {
         nixpkgs.config = {
-          allowUnfree = cfg.allowUnfree;
+          inherit (cfg) allowUnfree;
           allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) cfg.allowedUnfreePackages;
         };
       };

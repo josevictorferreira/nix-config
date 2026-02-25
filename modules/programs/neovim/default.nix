@@ -2,7 +2,7 @@
 # Installs neovim + development tooling (LSP servers, formatters, languages).
 # NixOS-only: glibc, glibc.dev.
 # Clones .nvim config repo via jvf.repositories.
-{ ... }:
+_:
 let
   mkNeovimOptions =
     { config, lib, ... }:

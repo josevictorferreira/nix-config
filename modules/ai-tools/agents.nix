@@ -1,7 +1,7 @@
 # Aspect: ai-tools-agents
 # All AI Tools agent definitions (frontend, general, ruby).
 # Consolidates legacy agents/default.nix and all sub-agent files.
-{ ... }:
+_:
 let
   # Programs that receive agent config
   programs = [
@@ -1230,7 +1230,7 @@ let
 
   # ── Options module ──
   mkOptions =
-    { ... }:
+    _:
     {
       options.jvf.aiTools.agents = { };
     };

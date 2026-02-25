@@ -49,7 +49,7 @@ in
     };
 
     settings = lib.mkOption {
-      type = json.type;
+      inherit (json) type;
       default = { };
       description = "Settings written to ~/.gemini/settings.json";
     };

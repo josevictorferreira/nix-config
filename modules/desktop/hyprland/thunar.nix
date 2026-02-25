@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-thunar (NixOS only)
 # Thunar file manager for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-thunar =
     { config

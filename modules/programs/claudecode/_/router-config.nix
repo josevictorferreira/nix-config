@@ -1,6 +1,6 @@
 # Default router settings for claude-code-router
 # Pure data export - no module boilerplate
-{ }:
+_:
 {
   LOG = true;
   HOST = "127.0.0.1";

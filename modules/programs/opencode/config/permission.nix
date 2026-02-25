@@ -1,5 +1,5 @@
 # config/permission.nix - Permission configurations for OpenCode
-{ ... }:
+_:
 {
   config.jvf.programs.opencode.settings.permission = {
     edit = "ask";

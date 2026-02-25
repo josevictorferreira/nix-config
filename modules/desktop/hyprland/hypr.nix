@@ -1,7 +1,7 @@
 # Aspect: desktop-hyprland-hypr (NixOS only)
 # Hyprland compositor configuration with hypridle, hyprlock, pyprland.
 # Configures jvf.wrappers.users for config file management.
-{ ... }:
+_:
 let
   mkOptions =
     { config, lib, ... }:

@@ -2,7 +2,7 @@
 # Defines jvf.system.nix-daemon options and platform-specific nix daemon config.
 # Both platforms: nix.settings, optimise, gc.
 # NixOS only: programs.nix-ld.enable.
-{ ... }:
+_:
 let
   mkNixDaemonOptions =
     { lib, ... }:
@@ -64,12 +64,11 @@ let
     {
       imports = [ mkNixDaemonOptions ];
 
-      config = (
-        {
+      config = {
           nix = {
             settings = {
               experimental-features = cfg.experimentalFeatures;
-              substituters = cfg.substituters;
+              inherit (cfg) substituters;
               trusted-substituters = cfg.trustedSubstituters;
               trusted-public-keys = cfg.trustedPublicKeys;
             };
@@ -84,8 +83,7 @@ let
         }
         // lib.optionalAttrs (!isDarwin) {
           programs.nix-ld.enable = true;
-        }
-      );
+        };
     };
 in
 {

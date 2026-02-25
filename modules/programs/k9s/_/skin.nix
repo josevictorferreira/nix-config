@@ -1,6 +1,6 @@
 # TokyoNight skin for k9s
 # Pure data export - no module boilerplate
-{ }:
+_:
 let
   foreground = "#c0caf5";
   background = "#24283b";

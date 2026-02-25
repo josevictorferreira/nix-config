@@ -2,7 +2,7 @@
 # Defines jvf.programs.ghostty options and platform-specific ghostty config.
 # NixOS: installs ghostty package + nerd-fonts + config via jvf.wrappers.
 # Darwin: config via jvf.wrappers only (ghostty installed via App Store).
-{ ... }:
+_:
 let
   mkGhosttyOptions =
     {

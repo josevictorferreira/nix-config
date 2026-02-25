@@ -2,7 +2,7 @@
 # Defines jvf.programs.opencode options for OpenCode AI coding tool.
 # NixOS: FHS environment wrapper for glibc compatibility + config via wrappers.
 # Darwin: direct execution + config via wrappers.
-{ ... }:
+_:
 let
   mkConfig =
     { isDarwin }:

@@ -2,7 +2,7 @@
 # Defines jvf.programs.git options and platform-specific git configuration.
 # NixOS: enables programs.git + LFS via system module.
 # Darwin: packages + wrappers only (no programs.git module).
-{ ... }:
+_:
 let
   mkGitOptions =
     { config, lib, pkgs, ... }:
@@ -211,8 +211,7 @@ let
     {
       imports = [ mkGitOptions ];
 
-      config = (
-        {
+      config = {
           assertions = [
             {
               assertion = cfg.name != null;
@@ -263,8 +262,7 @@ let
         // lib.optionalAttrs (!isDarwin) {
           programs.git.enable = true;
           programs.git.lfs.enable = cfg.lfs.enable;
-        }
-      );
+        };
     };
 in
 {

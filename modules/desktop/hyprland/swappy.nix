@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-swappy (NixOS only)
 # Wayland native screenshot tool for Hyprland.
-{ ... }:
+_:
 {
   flake.modules.nixos.desktop-hyprland-swappy =
     { config

@@ -1,6 +1,6 @@
 # k9s cluster configurations
 # Pure data export - no module boilerplate
-{ }:
+_:
 {
   homelab = {
     cluster = "ze-homelab";

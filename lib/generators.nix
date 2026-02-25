@@ -61,8 +61,8 @@ let
       (
         acc: nameValue:
         let
-          name = nameValue.name;
-          value = nameValue.value;
+          inherit (nameValue) name;
+          inherit (nameValue) value;
         in
         if builtins.isAttrs value then
           acc
@@ -82,12 +82,10 @@ let
 
   mkValueString =
     v:
-    if v == true then
-      "True"
-    else if v == false then
-      "False"
-    else if builtins.isNull v then
+    if builtins.isNull v then
       "\"\"" # explicit empty string
+    else if builtins.typeOf v == "bool" then
+      if v then "True" else "False"
     else if builtins.typeOf v == "string" then
     # quote and escape " and \
       let
@@ -103,7 +101,7 @@ let
     content:
     lib.generators.toINIWithGlobalSection
       {
-        mkKeyValue = mkKeyValue;
+        inherit mkKeyValue;
       }
       {
         globalSection = flattenConfig content;

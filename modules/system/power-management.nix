@@ -2,7 +2,7 @@
 # Defines jvf.system.power-management options and platform-specific power config.
 # NixOS: zram swap, CPU frequency governor, cpufrequtils package.
 # Darwin: empty config (power management handled by macOS).
-{ ... }:
+_:
 let
   mkPowerManagementOptions =
     { config, lib, ... }:
@@ -78,8 +78,7 @@ let
     {
       imports = [ mkPowerManagementOptions ];
 
-      config = (
-        if (!isDarwin) then
+      config = if (!isDarwin) then
           {
             users.users."${cfg.username}".packages = [
               pkgs.cpufrequtils
@@ -95,12 +94,11 @@ let
 
             powerManagement = {
               enable = true;
-              cpuFreqGovernor = cfg.cpuFreqGovernor;
+              inherit (cfg) cpuFreqGovernor;
             };
           }
         else
-          { }
-      );
+          { };
     };
 in
 {

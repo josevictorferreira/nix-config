@@ -2,7 +2,7 @@
 # Defines jvf.programs.kitty options and platform-specific kitty terminal config.
 # NixOS: kitty package + config via wrappers + nerd-fonts.
 # Darwin: kitty package + config via wrappers + nerd-fonts.
-{ ... }:
+_:
 let
   mkKittyOptions =
     { config, lib, pkgs, ... }:

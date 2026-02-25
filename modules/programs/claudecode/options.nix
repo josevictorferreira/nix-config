@@ -41,12 +41,12 @@ in
       description = "Skills to install into the configuration";
     };
     settings = lib.mkOption {
-      type = json.type;
+      inherit (json) type;
       default = { };
       description = "ClaudeCode settings.";
     };
     routerSettings = lib.mkOption {
-      type = json.type;
+      inherit (json) type;
       default = { };
       description = "Settings written to ~/.claude-code-router/config.json";
     };

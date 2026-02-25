@@ -47,13 +47,13 @@ in
     };
 
     ohMyOpenCodeSettings = lib.mkOption {
-      type = json.type;
+      inherit (json) type;
       default = { };
       description = "Settings written to ~/.config/opencode/oh-my-opencode.json";
     };
 
     settings = lib.mkOption {
-      type = json.type;
+      inherit (json) type;
       default = { };
       description = "Settings written to ~/.config/opencode/config.json";
     };

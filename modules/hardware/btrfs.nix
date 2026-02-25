@@ -1,7 +1,7 @@
 # Aspect: hardware-btrfs
 # Btrfs filesystem support: autoScrub, btrfs-progs.
 # NixOS-only (no Darwin equivalent).
-{ ... }:
+_:
 let
   mkBtrfsOptions =
     { lib, ... }:
@@ -48,8 +48,8 @@ let
 
         services.btrfs.autoScrub = lib.mkIf cfg.autoScrub.enable {
           enable = true;
-          interval = cfg.autoScrub.interval;
-          fileSystems = cfg.autoScrub.fileSystems;
+          inherit (cfg.autoScrub) interval;
+          inherit (cfg.autoScrub) fileSystems;
         };
       };
     };
