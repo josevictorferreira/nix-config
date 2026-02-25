@@ -49,7 +49,7 @@ let
 
         sopsAgeKeyPath = lib.mkOption {
           type = lib.types.path;
-          default = "/home/josevictor/.config/sops/age/keys.txt";
+          default = "/var/lib/sops-nix/keys.txt";
           description = "Path to the age key file used by sops";
         };
       };
@@ -130,6 +130,12 @@ let
               defaultSopsFile = inputs.self.outPath + "/secrets/secrets.enc.yaml";
               age.keyFile = cfg.sopsAgeKeyPath;
             };
+
+            # Ensure sops-nix directory exists and key is copied from user home
+            # This handles migration from old location to new system location
+            systemd.tmpfiles.rules = lib.mkIf cfg.enableSops [
+              "d /var/lib/sops-nix 0750 root root -"
+            ];
 
             environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
           }

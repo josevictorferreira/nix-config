@@ -5,7 +5,9 @@
 {
   config = {
     jvf.programs.opencode.settings.plugin = [
-      "oh-my-opencode@3.8.4"
+      "openslimedit@1.0.1"
+      "@tarquinen/opencode-dcp@2.1.7"
+      "oh-my-opencode@3.8.5"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings = {

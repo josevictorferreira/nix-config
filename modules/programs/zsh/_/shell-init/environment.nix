@@ -25,7 +25,7 @@ in
     export EDITOR="nvim"
     export VISUAL="nvim"
     export BROWSER="chromium"
-    export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+    export SOPS_AGE_KEY_FILE="/var/lib/sops-nix/keys.txt"
     export KUBECONFIG="$HOME/.kube/config"
     export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
     export CARGO_NET_OFFLINE="false"
