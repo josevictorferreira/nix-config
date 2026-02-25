@@ -18,5 +18,19 @@
 
       # Formatter (must remain accessible via `nix fmt`)
       formatter = pkgs.nixpkgs-fmt;
+
+      # Statix lint check - ensures codebase is always linted
+      checks.statix = pkgs.stdenv.mkDerivation {
+        name = "statix-check";
+        src = ../.;
+        nativeBuildInputs = [ pkgs.statix ];
+        buildPhase = ''
+          statix check . 2>&1 | tee $out
+        '';
+        installPhase = ''
+          mkdir -p $out
+          echo "Statix check passed" > $out/result
+        '';
+      };
     };
 }
