@@ -130,10 +130,9 @@ let
               age.keyFile = cfg.sopsAgeKeyPath;
             };
 
-            # Ensure sops-nix directory exists and key is copied from user home
-            # This handles migration from old location to new system location
+            # Ensure sops-nix directory exists with correct ownership
             systemd.tmpfiles.rules = lib.mkIf cfg.enableSops [
-              "d /var/lib/sops-nix 0750 root root -"
+              "d /var/lib/sops-nix 0750 ${config.jvf.core.username} ${config.jvf.core.username} -"
             ];
 
             environment.variables.SOPS_AGE_KEY_FILE = lib.mkIf cfg.enableSops cfg.sopsAgeKeyPath;
