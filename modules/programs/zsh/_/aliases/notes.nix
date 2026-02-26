@@ -10,6 +10,6 @@ in
     "nt" = "cd ~/Notes && nvim";
     "nsearch" = "rg ~/Notes";
     # Todo (homelab shared)
-    "gtodo" = "nvim ~/Homelab/notetaking/checklists/Todo.md";
+    "gtodo" = "nvim ~/Homelab/notetaking/01-projects/active/Todo.md";
   };
 }
