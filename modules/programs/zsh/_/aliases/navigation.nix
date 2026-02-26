@@ -16,6 +16,7 @@ in
     "proj" = "cd ~/Workspace";
     "dots" = "cd ~/.config";
     "nixcfg" = "cd ~/.config/nix";
+    "nixc" = "cd ~/.config/nix";
 
     # Zoxide Integration
     "z" = "__zoxide_z";
