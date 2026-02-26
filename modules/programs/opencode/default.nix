@@ -48,15 +48,6 @@ let
             ".docs/rules.md"
           ];
 
-          tools = lib.mkDefault (
-            builtins.listToAttrs (
-              map (name: {
-                name = "${name}*";
-                value = false;
-              }) (builtins.attrNames cfg.mcps)
-            )
-          );
-
           watcher = {
             ignore = [
               "node_modules/**"
@@ -69,14 +60,13 @@ let
             ];
           };
 
-          model = "zai-coding-plan/glm-4.7:fast";
-          small_model = "copilot/grok-code-fast-1";
+          model = "openrouter/stepfun/step-3.5-flash";
+          small_model = "openrouter/qwen/qwen3.5-27b";
         };
 
         # ── Wrappers config ───────────────────────────────────────────
         jvf.wrappers.users.${cfg.username}.programs.opencode = {
           preserveFiles = [
-            "antigravity-accounts.json"
             "node_modules"
             "dcp.jsonc"
             "package.json"
@@ -95,17 +85,6 @@ let
               "AGENTS.md" = cfg.baseRules;
               "opencode.json" = cfg.settings;
               "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
-              "antigravity.json" = {
-                account_selection_strategy = "round-robin";
-                switch_on_first_rate_limit = true;
-                pid_offset_enabled = true;
-              };
-              "toolbox.jsonc" = {
-                mcp = cfg.mcps;
-              };
-              "toolbox.json" = {
-                mcp = cfg.mcps;
-              };
             }
           ];
         };

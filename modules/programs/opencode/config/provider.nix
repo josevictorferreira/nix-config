@@ -1,6 +1,5 @@
 # config/provider.nix - AI provider configurations for OpenCode
-_:
-{
+_: {
   config.jvf.programs.opencode.settings.provider = {
     local = {
       npm = "@ai-sdk/openai-compatible";
@@ -93,264 +92,24 @@ _:
             thinker = {
               name = "GLM-4.7 Deep Thinker";
               reasoningEffort = "high";
-              thinking.type = "enabled";
-              fast.disabled = true;
+              thinking = {
+                type = "enabled";
+              };
               max_tokens = 4096;
               temperature = 1.0;
-              clear_thinking = false;
             };
             fast = {
               name = "GLM-4.7 Fast";
               reasoningEffort = "low";
               textVerbosity = "low";
               thinking.type = "disabled";
-              temperature = 0.4;
+              temperature = 0.1;
               clear_thinking = false;
             };
           };
         };
         "glm-4.7-flash" = {
           name = "GLM-4.7 Flash";
-        };
-      };
-    };
-
-    google = {
-      npm = "@ai-sdk/google";
-      models = {
-        "antigravity-gemini-3.1-pro" = {
-          name = "Gemini 3.1 Pro (Antigravity)";
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            low = {
-              thinkingLevel = "low";
-            };
-            high = {
-              thinkingLevel = "high";
-            };
-          };
-        };
-        "antigravity-gemini-3-pro" = {
-          name = "Gemini 3 Pro (Antigravity)";
-          limit = {
-            context = 1048576;
-            output = 65535;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            low = {
-              thinkingLevel = "low";
-            };
-            high = {
-              thinkingLevel = "high";
-            };
-          };
-        };
-        "antigravity-gemini-3-flash" = {
-          name = "Gemini 3 Flash (Antigravity)";
-          limit = {
-            context = 1048576;
-            output = 65536;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            minimal = {
-              thinkingLevel = "minimal";
-            };
-            low = {
-              thinkingLevel = "low";
-            };
-            medium = {
-              thinkingLevel = "medium";
-            };
-            high = {
-              thinkingLevel = "high";
-            };
-          };
-        };
-        "antigravity-claude-sonnet-4-6" = {
-          name = "Claude Sonnet 4.6 (Antigravity)";
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-        };
-        "antigravity-claude-sonnet-4-6-thinking" = {
-          name = "Claude Sonnet 4.6 Thinking (Antigravity)";
-          limit = {
-            context = 200000;
-            output = 64000;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            low = {
-              thinkingConfig = {
-                thinkingBudget = 8192;
-              };
-            };
-            max = {
-              thinkingConfig = {
-                thinkingBudget = 32768;
-              };
-            };
-          };
-        };
-        "antigravity-claude-opus-4-5-thinking" = {
-          name = "Claude Opus 4.5 Thinking (Antigravity)";
-          limit = {
-            context = 200000;
-            output = 64000;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            low = {
-              thinkingConfig = {
-                thinkingBudget = 8192;
-              };
-            };
-            max = {
-              thinkingConfig = {
-                thinkingBudget = 32768;
-              };
-            };
-          };
-        };
-        "antigravity-claude-opus-4-6-thinking" = {
-          name = "Claude Opus 4.6 Thinking (Antigravity)";
-          limit = {
-            context = 200000;
-            output = 64000;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-          variants = {
-            low = {
-              thinkingConfig = {
-                thinkingBudget = 8192;
-              };
-            };
-            max = {
-              thinkingConfig = {
-                thinkingBudget = 32768;
-              };
-            };
-          };
-        };
-        "gemini-2.5-flash" = {
-          name = "Gemini 2.5 Flash (Gemini CLI)";
-          limit = {
-            context = 1048576;
-            output = 65536;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-        };
-        "gemini-2.5-pro" = {
-          name = "Gemini 2.5 Pro (Gemini CLI)";
-          limit = {
-            context = 1048576;
-            output = 65536;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-        };
-        "gemini-3-flash-preview" = {
-          name = "Gemini 3 Flash Preview (Gemini CLI)";
-          limit = {
-            context = 1048576;
-            output = 65536;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-        };
-        "gemini-3.1-pro-preview" = {
-          name = "Gemini 3.1 Pro Preview (Gemini CLI)";
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
-        };
-        "gemini-3-pro-preview" = {
-          name = "Gemini 3 Pro Preview (Gemini CLI)";
-          limit = {
-            context = 1048576;
-            output = 65535;
-          };
-          modalities = {
-            input = [
-              "text"
-              "image"
-              "pdf"
-            ];
-            output = [ "text" ];
-          };
         };
       };
     };
