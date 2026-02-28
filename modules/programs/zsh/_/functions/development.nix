@@ -20,5 +20,11 @@ in
     function bb64() {
       echo -n "$1" | ${pkgs.coreutils}/bin/base64 -d
     }
+
+
+    # Run nix app from current flake
+    function nr() {
+      nix run .#$1
+    }
   '';
 }

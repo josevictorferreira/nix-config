@@ -48,6 +48,7 @@ in
     "nxs" = "nix search nixpkgs";
     "nxe" = "nix-shell -p";
     "nxp" = "nix-shell -p";
+    "nd" = "nix develop -c zsh";
 
     # Kubernetes
     "k" = "kubectl";

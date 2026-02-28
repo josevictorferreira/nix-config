@@ -6,8 +6,11 @@ let
 
   pkgs = import inputs.nixpkgs {
     inherit system;
-    overlays = [ inputs.bun2nix.overlays.default ];
-    config.allowUnfree = true;
+    overlays = [
+      inputs.bun2nix.overlays.default
+      # Python 3.12 as default - sphinx 9.x requires 3.12+
+      (final: prev: { python3 = prev.python312; })
+    ];
   };
 
   # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)
@@ -138,7 +141,8 @@ in
             networking.defaultGateway = "10.10.10.1";
             networking.nameservers = [ "10.10.10.100" ];
 
-            system.stateVersion = "24.05";
+            # Python 3.12 as default - sphinx 9.x requires 3.12+
+            nixpkgs.pkgs = pkgs;
           }
         )
         # Secrets configuration - make secrets readable by the user

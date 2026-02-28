@@ -6,8 +6,11 @@ let
 
   pkgs = import inputs.nixpkgs-darwin {
     inherit system;
-    overlays = [ inputs.bun2nix.overlays.default ];
-    config.allowUnfree = true;
+    overlays = [
+      inputs.bun2nix.overlays.default
+      # Python 3.12 as default - sphinx 9.x requires 3.12+
+      (final: prev: { python3 = prev.python312; })
+    ];
   };
 
   # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)

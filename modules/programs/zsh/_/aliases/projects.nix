@@ -11,7 +11,7 @@ in
     # Valoris
     "val" = "cd ${cfg.workspace.root}/valoris 2>/dev/null || cd ~/Workspace/valoris";
     "valb" =
-      "cd ${cfg.workspace.root}/valoris/valoris-backend 2>/dev/null || cd ~/Workspace/valoris/valoris-backend";
+      "cd ${cfg.workspace.root}/valoris/backend 2>/dev/null || cd ~/Workspace/valoris/backend";
     "valf" =
       "cd ${cfg.workspace.root}/valoris/valoris-frontend 2>/dev/null || cd ~/Workspace/valoris/valoris-frontend";
 
