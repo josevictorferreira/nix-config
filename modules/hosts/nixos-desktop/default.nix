@@ -4,19 +4,51 @@
 let
   system = "x86_64-linux";
 
+  # python311 sphinx-9.1.0 fix: sphinx dropped python3.11, but ceph and the
+  # jaraco ecosystem (cherrypy → jaraco-collections → inflect) still need it.
+  #
+  # Two layers needed:
+  #   1. Override python311 globally (fixes non-ceph packages like cherrypy)
+  #   2. Override ceph to compose sphinx fix WITH ceph's internal overrides
+  #      (ceph calls python311.override{packageOverrides=X} which replaces layer 1)
+  sphinxFix = pself: psuper: {
+    sphinx = psuper.sphinx.overridePythonAttrs { disabled = false; };
+  };
+
+  python311SphinxOverlay = final: prev: let
+    py = prev.python311.override {
+      self = py;
+      packageOverrides = sphinxFix;
+    };
+  in {
+    python311 = py;
+    # Ceph internally does python311.override { packageOverrides = cephPkgOverrides }
+    # which REPLACES our packageOverrides. Fix: override ceph-client to use a python311
+    # where sphinxFix is pre-composed into any future packageOverrides.
+    ceph = prev.ceph.override {
+      python311 = let
+        base = prev.python311;
+        origOverride = base.override;
+      in base // {
+        override = attrs:
+          origOverride (attrs // {
+            packageOverrides =
+              if attrs ? packageOverrides then
+                prev.lib.composeExtensions sphinxFix attrs.packageOverrides
+              else
+                sphinxFix;
+          });
+      };
+    };
+  };
+
   pkgs = import inputs.nixpkgs {
     inherit system;
+    config.allowUnfree = true;
     overlays = [
       inputs.bun2nix.overlays.default
-      # Fix sphinx 9.x requiring Python 3.12 - override to allow 3.11
-      (final: prev: {
-        python311Packages = prev.python311Packages // {
-          sphinx = prev.python311Packages.sphinx.overrideAttrs (_: {
-            disabled = false;
-          });
-        };
-      })
     ];
+  };
 
   # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)
   specialArgs = {
@@ -108,6 +140,8 @@ in
         (
           _:
           {
+            # Fix: sphinx 9.1.0 dropped python3.11; ceph + jaraco ecosystem need it.
+            nixpkgs.overlays = [ python311SphinxOverlay ];
             # Core identity
             jvf.core = {
               username = "josevictor";
