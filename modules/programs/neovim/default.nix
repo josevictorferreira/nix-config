@@ -40,7 +40,6 @@ let
         pkgs.gleam
         pkgs.dot-language-server
         pkgs.jdt-language-server
-        pkgs.crystalline
         pkgs.tailwindcss-language-server
         pkgs.ruby-lsp
         pkgs.protols

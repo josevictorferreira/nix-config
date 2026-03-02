@@ -12,3 +12,6 @@ result/
 result
 .claude/
 .ck/
+
+# Nix config with secrets
+nix.conf

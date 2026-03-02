@@ -1,5 +1,5 @@
 # Aspect: roles-documenting
-# Bundles document viewing and editing tools (obsidian, libreoffice, zathura, etc).
+# Bundles document viewing and editing tools (obsidian, zathura, etc).
 _:
 let
 
@@ -16,9 +16,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.documenting;
@@ -31,16 +32,16 @@ let
           pkgs.font-manager
           pkgs.obsidian
           pkgs.koreader
-          pkgs.libreoffice-still
           pkgs.zathura
         ];
       };
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.documenting;
@@ -53,7 +54,6 @@ let
           pkgs.font-manager
           pkgs.obsidian
           pkgs.koreader
-          pkgs.libreoffice-still
           pkgs.zathura
         ];
       };
