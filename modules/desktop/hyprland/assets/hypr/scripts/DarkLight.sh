@@ -7,13 +7,7 @@ swaync_style="$HOME/.config/swaync/style.css"
 ags_style="$HOME/.config/ags/user/style.css"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 notif="$HOME/.config/swaync/images/bell.png"
-wallust_rofi="$HOME/.config/wallust/templates/colors-rofi.rasi"
-
 kitty_conf="$HOME/.config/kitty/kitty.conf"
-
-wallust_config="$HOME/.config/wallust/wallust.toml"
-pallete_dark="dark16"
-pallete_light="light16"
 
 pkill swaybg
 
@@ -39,31 +33,6 @@ update_theme_mode() {
 notify_user() {
     notify-send -u low -i "$notif" "Switching to $1 mode"
 }
-
-if [ "$next_mode" = "Dark" ]; then
-    sed -i 's/^palette = .*/palette = "'"$pallete_dark"'"/' "$wallust_config" 
-else
-    sed -i 's/^palette = .*/palette = "'"$pallete_light"'"/' "$wallust_config" 
-fi
-
-set_waybar_style() {
-    theme="$1"
-    waybar_styles="$HOME/.config/waybar/style"
-    waybar_style_link="$HOME/.config/waybar/style.css"
-    style_prefix="\\[${theme}\\].*\\.css$"
-
-    style_file=$(find "$waybar_styles" -maxdepth 1 -type f -regex ".*$style_prefix" | shuf -n 1)
-
-    if [ -n "$style_file" ]; then
-        ln -sf "$style_file" "$waybar_style_link"
-    else
-        echo "Style file not found for $theme theme."
-    fi
-}
-
-set_waybar_style "$next_mode"
-notify_user "$next_mode"
-
 
 if [ "$next_mode" = "Dark" ]; then
     sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(0, 0, 0, 0.8);/' "${swaync_style}"
@@ -119,13 +88,6 @@ fi
 sed -i "s|^color_scheme_path=.*$|color_scheme_path=$qt5ct_color_scheme|" "$HOME/.config/qt5ct/qt5ct.conf"
 sed -i "s|^color_scheme_path=.*$|color_scheme_path=$qt6ct_color_scheme|" "$HOME/.config/qt6ct/qt6ct.conf"
 kvantummanager --set "$kvantum_theme"
-
-
-if [ "$next_mode" = "Dark" ]; then
-    sed -i '24s/.*/background: rgba(0,0,0,0.7);/' $wallust_rofi
-else
-    sed -i '24s/.*/background: rgba(255,255,255,0.9);/' $wallust_rofi
-fi
 
 
 set_custom_gtk_theme() {

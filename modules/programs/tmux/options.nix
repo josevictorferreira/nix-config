@@ -8,7 +8,6 @@
 let
   defaultPlugins = [
     pkgs.tmuxPlugins.yank
-    pkgs.tmuxPlugins.onedark-theme
   ];
 in
 {

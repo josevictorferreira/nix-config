@@ -85,20 +85,38 @@ let
         custom-shader-animation = true;
         confirm-close-surface = false;
         shell-integration = "zsh";
-        theme = "Atom One Dark";
+
         command = tmuxpInitScript;
       };
+
+      themeOverrides = {
+        background = "#${config.jvf.theme.colors.background}";
+        foreground = "#${config.jvf.theme.colors.foreground}";
+        cursor-color = "#${config.jvf.theme.colors.cursor}";
+        font-family = config.jvf.theme.fonts.monospace;
+        font-size = config.jvf.theme.fonts.size;
+      };
+
+      baseSettings = lib.removeAttrs defaultSettings [ "theme" ];
+
+      paletteIndices = lib.genList lib.id 16;
+
+      paletteLines = lib.concatStringsSep "\n" (
+        map (
+          i: "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) paletteIndices
+      );
     in
     {
       imports = [ mkGhosttyOptions ];
 
       config = {
-        jvf.programs.ghostty.settings = lib.mkDefault defaultSettings;
+        jvf.programs.ghostty.settings = lib.mkDefault (baseSettings // themeOverrides);
 
         jvf.wrappers.users.${cfg.username}.programs.ghostty = {
           packages = lib.optional (!isDarwin) cfg.package;
           configs = {
-            "config" = toConfigFormat cfg.settings;
+            "config" = toConfigFormat cfg.settings + "\n" + paletteLines;
           };
         };
 

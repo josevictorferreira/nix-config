@@ -40,11 +40,7 @@ no-effects() {
     swww img -o "$focused_monitor" "$current_wallpaper" $SWWW_PARAMS &
     # Wait for swww command to complete
     wait $!
-    # Run other commands after swww
-    wallust run "$current_wallpaper" -s &
-    # Wait to complete
-    wait $!
-    # Refresh rofi, waybar, wallust palettes
+    # Refresh rofi, waybar palettes
     "${SCRIPTSDIR}/Refresh.sh"
     notify-send -u low -i "$iDIR/bell.png" "No wallpaper effects"
     # copying wallpaper for rofi menu
@@ -76,11 +72,7 @@ main() {
             swww img -o "$focused_monitor" "$wallpaper_output" $SWWW_PARAMS &
             # Wait for swww command to complete
             sleep 1.5
-            # Wait for other commands to finish
-            wallust run "$wallpaper_output" -s &
-            # Wait for other commands to finish
-            sleep 0.5
-            # Refresh rofi, waybar, wallust palettes
+            # Refresh rofi, waybar palettes
             "${SCRIPTSDIR}/Refresh.sh"
             notify-send -u low -i "$iDIR/bell.png" "$choice effects applied"
         else

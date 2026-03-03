@@ -38,10 +38,5 @@ for monitor in "${monitors[@]}"; do
     fi
 done
 
-# Check the flag before executing further commands
-if [ "$ln_success" = true ]; then
-    # execute wallust
-    echo 'about to execute wallust'
-    # execute wallust skipping tty and terminal changes
-    wallust run "$wallpaper_path" -s &
-fi
+# Wallust runtime removed — colors are now Nix-generated at rebuild time.
+# Symlink/copy above is kept for rofi and wallpaper effects.

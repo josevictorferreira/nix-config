@@ -1,6 +1,7 @@
 # Aspect: desktop-hyprland-hypr (NixOS only)
 # Hyprland compositor configuration with hypridle, hyprlock, pyprland.
 # Configures jvf.wrappers.users for config file management.
+# Theme adapter: generates wallust/wallust-hyprland.conf from jvf.theme.colors.
 _:
 let
   mkOptions =
@@ -19,12 +20,36 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;
+      colors = config.jvf.theme.colors;
+
+      # Theme adapter: generate hyprland color variables
+      hyprlandColorsConf = pkgs.writeText "wallust-hyprland.conf" ''
+        $background = rgb(${colors.background})
+        $foreground = rgb(${colors.foreground})
+        $color0 = rgb(${colors.color0})
+        $color1 = rgb(${colors.color1})
+        $color2 = rgb(${colors.color2})
+        $color3 = rgb(${colors.color3})
+        $color4 = rgb(${colors.color4})
+        $color5 = rgb(${colors.color5})
+        $color6 = rgb(${colors.color6})
+        $color7 = rgb(${colors.color7})
+        $color8 = rgb(${colors.color8})
+        $color9 = rgb(${colors.color9})
+        $color10 = rgb(${colors.color10})
+        $color11 = rgb(${colors.color11})
+        $color12 = rgb(${colors.color12})
+        $color13 = rgb(${colors.color13})
+        $color14 = rgb(${colors.color14})
+        $color15 = rgb(${colors.color15})
+      '';
     in
     {
       imports = [ mkOptions ];
@@ -49,6 +74,10 @@ in
             "hypr" = hyprConfigDir;
           };
           postInstall = ''
+            # Theme adapter: inject generated colors (replaces wallust runtime gen)
+            mkdir -p "$TARGET_PATH/wallust"
+            cp ${hyprlandColorsConf} "$TARGET_PATH/wallust/wallust-hyprland.conf"
+
             # Create Battery.sh script for hyprlock
             cat > "$TARGET_PATH/scripts/Battery.sh" << 'BATTERY_EOF'
             #!/usr/bin/env bash

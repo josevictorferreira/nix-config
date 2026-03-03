@@ -15,32 +15,42 @@ let
     sphinx = psuper.sphinx.overridePythonAttrs { disabled = false; };
   };
 
-  python311SphinxOverlay = final: prev: let
-    py = prev.python311.override {
-      self = py;
-      packageOverrides = sphinxFix;
-    };
-  in {
-    python311 = py;
-    # Ceph internally does python311.override { packageOverrides = cephPkgOverrides }
-    # which REPLACES our packageOverrides. Fix: override ceph-client to use a python311
-    # where sphinxFix is pre-composed into any future packageOverrides.
-    ceph = prev.ceph.override {
-      python311 = let
-        base = prev.python311;
-        origOverride = base.override;
-      in base // {
-        override = attrs:
-          origOverride (attrs // {
-            packageOverrides =
-              if attrs ? packageOverrides then
-                prev.lib.composeExtensions sphinxFix attrs.packageOverrides
-              else
-                sphinxFix;
-          });
+  python311SphinxOverlay =
+    final: prev:
+    let
+      py = prev.python311.override {
+        self = py;
+        packageOverrides = sphinxFix;
+      };
+    in
+    {
+      python311 = py;
+      # Ceph internally does python311.override { packageOverrides = cephPkgOverrides }
+      # which REPLACES our packageOverrides. Fix: override ceph-client to use a python311
+      # where sphinxFix is pre-composed into any future packageOverrides.
+      ceph = prev.ceph.override {
+        python311 =
+          let
+            base = prev.python311;
+            origOverride = base.override;
+          in
+          base
+          // {
+            override =
+              attrs:
+              origOverride (
+                attrs
+                // {
+                  packageOverrides =
+                    if attrs ? packageOverrides then
+                      prev.lib.composeExtensions sphinxFix attrs.packageOverrides
+                    else
+                      sphinxFix;
+                }
+              );
+          };
       };
     };
-  };
 
   pkgs = import inputs.nixpkgs {
     inherit system;
@@ -69,6 +79,7 @@ in
       (with self.modules.nixos; [
         # Core infrastructure
         core-jvf
+        core-theme
         users
         wrappers
         repositories
@@ -90,7 +101,6 @@ in
         desktop-hyprland-gtk3
         desktop-hyprland-fastfetch
         desktop-hyprland-swappy
-        desktop-hyprland-wallust
         desktop-hyprland-wlogout
         boot-grub-theme
 
@@ -137,52 +147,48 @@ in
         ./_/hardware.nix
 
         # Host identity & overrides
-        (
-          _:
-          {
-            # Fix: sphinx 9.1.0 dropped python3.11; ceph + jaraco ecosystem need it.
-            nixpkgs.overlays = [ python311SphinxOverlay ];
-            # Core identity
-            jvf.core = {
-              username = "josevictor";
-              host = "nixos-desktop";
-              os = "nixos";
-            };
+        (_: {
+          # Fix: sphinx 9.1.0 dropped python3.11; ceph + jaraco ecosystem need it.
+          nixpkgs.overlays = [ python311SphinxOverlay ];
+          # Core identity
+          jvf.core = {
+            username = "josevictor";
+            host = "nixos-desktop";
+            os = "nixos";
+          };
 
-            # User configuration
-            jvf.users.josevictor = {
-              description = "Jose Victor Ferreira";
-              authorizedKeys = [
-                "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
-              ];
-            };
-
-            # XDG user directories (host-specific)
-            jvf.system.xdg.userDirs = {
-              DESKTOP = "$HOME/Desktop";
-              DOWNLOAD = "$HOME/Downloads";
-              DOCUMENTS = "$HOME/Documents";
-              MUSIC = "$HOME/Music";
-              PICTURES = "$HOME/Pictures";
-              VIDEOS = "$HOME/Videos";
-              TEMPLATES = "$HOME/Templates";
-              PUBLICSHARE = "$HOME/Public";
-            };
-
-            # Static IP configuration (host-specific)
-            networking.interfaces.enp4s0.ipv4.addresses = [
-              {
-                address = "10.10.10.10";
-                prefixLength = 24;
-              }
+          # User configuration
+          jvf.users.josevictor = {
+            description = "Jose Victor Ferreira";
+            authorizedKeys = [
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
             ];
-            networking.interfaces.enp4s0.useDHCP = false;
-            networking.defaultGateway = "10.10.10.1";
-            networking.nameservers = [ "10.10.10.100" ];
+          };
 
+          # XDG user directories (host-specific)
+          jvf.system.xdg.userDirs = {
+            DESKTOP = "$HOME/Desktop";
+            DOWNLOAD = "$HOME/Downloads";
+            DOCUMENTS = "$HOME/Documents";
+            MUSIC = "$HOME/Music";
+            PICTURES = "$HOME/Pictures";
+            VIDEOS = "$HOME/Videos";
+            TEMPLATES = "$HOME/Templates";
+            PUBLICSHARE = "$HOME/Public";
+          };
 
-          }
-        )
+          # Static IP configuration (host-specific)
+          networking.interfaces.enp4s0.ipv4.addresses = [
+            {
+              address = "10.10.10.10";
+              prefixLength = 24;
+            }
+          ];
+          networking.interfaces.enp4s0.useDHCP = false;
+          networking.defaultGateway = "10.10.10.1";
+          networking.nameservers = [ "10.10.10.100" ];
+
+        })
         # Secrets configuration - make secrets readable by the user
         (
           { config, ... }:

@@ -20,7 +20,10 @@ let
       tmuxpCfg = config.jvf.programs.tmuxp;
 
       # Generate tmux.conf using imported function
-      tmuxConf = mkTmuxConf { inherit lib; } { inherit (cfg) plugins; };
+      tmuxConf = mkTmuxConf { inherit lib; } {
+        inherit (cfg) plugins;
+        colors = config.jvf.theme.colors;
+      };
 
       # tmuxp sessions
       dynamicSessions = [ "valorisBackend" ];

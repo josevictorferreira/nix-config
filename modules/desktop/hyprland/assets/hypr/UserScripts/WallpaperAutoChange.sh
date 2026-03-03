@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-wallust_refresh=$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
-
 if [[ $# -lt 1 ]] || [[ ! -d $1   ]]; then
 	echo "Usage:
 	$0 <dir containing images>"
@@ -27,7 +25,7 @@ while true; do
 				swww img -o "$monitor" "$img" &
 			done
 			wait
-			$wallust_refresh
+			$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
 			sleep $INTERVAL
 			
 		done

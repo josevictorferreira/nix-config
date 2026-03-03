@@ -1,9 +1,24 @@
 # tmux.conf content generator
-# Takes plugins list and lib, returns the config string
+# Takes plugins list, colors, and lib, returns the config string
 { lib }:
-{ plugins }:
+{ plugins, colors }:
 let
   applyPlugin = p: "run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}";
+
+  # Generate style directives from theme colors
+  # Hex colors in tmux need # prefix; our palette stores them without #
+  styleDirectives = ''
+    # === Theme colors (generated from jvf.theme.colors) ===
+    set -g status-style "bg=#${colors.background},fg=#${colors.foreground}"
+    set -g status-left-style "bg=#${colors.color4},fg=#${colors.background},bold"
+    set -g status-right-style "bg=#${colors.color8},fg=#${colors.foreground}"
+    set -g window-status-style "bg=#${colors.background},fg=#${colors.color8}"
+    set -g window-status-current-style "bg=#${colors.color4},fg=#${colors.background},bold"
+    set -g pane-border-style "fg=#${colors.color8}"
+    set -g pane-active-border-style "fg=#${colors.color4}"
+    set -g message-style "bg=#${colors.background},fg=#${colors.color3}"
+    set -g mode-style "bg=#${colors.color4},fg=#${colors.background}"
+  '';
 in
 ''
   unbind C-b
@@ -89,5 +104,6 @@ in
   set -g set-clipboard on
   setw -g @shell_mode 'vi'
 
+  ${styleDirectives}
   ${lib.strings.concatStringsSep "\n" (map applyPlugin plugins)}
 ''

@@ -14,7 +14,6 @@ effect="--transition-bezier .43,1.19,1,.4 --transition-fps 30 --transition-type 
 if [ ! -f "$HOME/.initial_startup_done" ]; then
     sleep 1
 	if [ -f "$wallpaper" ]; then
-		wallust run -s $wallpaper > /dev/null 
 		swww query || swww-daemon
 		
 		# Small delay to ensure swww daemon is ready and monitors are initialized

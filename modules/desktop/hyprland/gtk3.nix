@@ -1,12 +1,13 @@
 # Aspect: desktop-hyprland-gtk3 (NixOS only)
 # GTK 3.0 settings, bookmarks, and folder icons for Hyprland.
-_:
-{
+# Theme adapter: generates settings.ini from jvf.theme.{gtk, fonts}.
+_: {
   flake.modules.nixos.desktop-hyprland-gtk3 =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.gtk3;
@@ -52,32 +53,52 @@ _:
         cfg.folderIcons
         // (lib.listToAttrs (
           lib.filter (x: x.value != null) (
-            map
-              (b: {
-                name = b.path;
-                value = b.icon;
-              })
-              cfg.bookmarks
+            map (b: {
+              name = b.path;
+              value = b.icon;
+            }) cfg.bookmarks
           )
         ));
 
       # Generate gio set commands for folder icons
       folderIconCommands = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList
-          (path: icon: ''
-            if [ -d "${path}" ]; then
-              if ${pkgs.glib}/bin/gio set "${path}" metadata::custom-icon-name "${icon}" 2>/dev/null; then
-                echo "Set icon '${icon}' for ${path}"
-              fi
+        lib.mapAttrsToList (path: icon: ''
+          if [ -d "${path}" ]; then
+            if ${pkgs.glib}/bin/gio set "${path}" metadata::custom-icon-name "${icon}" 2>/dev/null; then
+              echo "Set icon '${icon}' for ${path}"
             fi
-          '')
-          allFolderIcons
+          fi
+        '') allFolderIcons
       );
 
-      # Build the config directory with settings.ini and optional bookmarks
+      # Theme adapter: generate settings.ini from jvf.theme
+      gtk = config.jvf.theme.gtk;
+      fonts = config.jvf.theme.fonts;
+
+      generatedSettingsIni = pkgs.writeText "settings.ini" ''
+        [Settings]
+        gtk-theme-name=${gtk.theme}
+        gtk-icon-theme-name=${gtk.iconTheme}
+        gtk-font-name=${fonts.sansSerif} Semi-Bold ${toString fonts.size}
+        gtk-cursor-theme-name=${gtk.cursorTheme}
+        gtk-cursor-theme-size=${toString gtk.cursorSize}
+        gtk-toolbar-style=GTK_TOOLBAR_ICONS
+        gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+        gtk-button-images=1
+        gtk-menu-images=1
+        gtk-enable-event-sounds=1
+        gtk-enable-input-feedback-sounds=0
+        gtk-xft-antialias=1
+        gtk-xft-hinting=1
+        gtk-xft-hintstyle=hintslight
+        gtk-xft-rgba=rgb
+        gtk-application-prefer-dark-theme=1
+      '';
+
+      # Build the config directory with generated settings.ini and optional bookmarks
       configDir = pkgs.runCommand "gtk-3.0-config" { } ''
         mkdir -p $out
-        cp ${./assets/gtk3/settings.ini} $out/settings.ini
+        cp ${generatedSettingsIni} $out/settings.ini
         ${lib.optionalString (cfg.bookmarks != [ ]) ''
             cat > $out/bookmarks << 'EOF'
           ${bookmarksContent}
