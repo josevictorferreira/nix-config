@@ -20,9 +20,10 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;
@@ -48,6 +49,7 @@ in
         $color13 = rgb(${colors.color13})
         $color14 = rgb(${colors.color14})
         $color15 = rgb(${colors.color15})
+        $placeholderFg = ##${colors.foreground}99
       '';
     in
     {

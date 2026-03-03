@@ -5,16 +5,17 @@ _:
 let
   # Import default configs as pure data
   defaultSettings = import ./_/settings.nix { };
-  tokyonightSkin = import ./_/skin.nix { };
   clusters = import ./_/clusters.nix { };
 
   k9sModule =
-    { config
-    , lib
-    , ...
+    {
+      config,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.k9s;
+      themeSkin = import ./_/skin.nix config.jvf.theme.colors;
     in
     {
       imports = [ ./options.nix ];
@@ -25,7 +26,7 @@ let
           settings = lib.mkDefault defaultSettings.settings;
           aliases = lib.mkDefault defaultSettings.aliases;
           skins = lib.mkDefault {
-            tokyonight = tokyonightSkin;
+            tokyonight = themeSkin;
           };
         };
 

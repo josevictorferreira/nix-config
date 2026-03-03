@@ -1,19 +1,21 @@
-# TokyoNight skin for k9s
-# Pure data export - no module boilerplate
-_:
+# k9s skin — theme-aware adapter
+# Accepts config.jvf.theme.colors (hex, no #). Adds # prefix for k9s.
+colors:
 let
-  foreground = "#c0caf5";
-  background = "#24283b";
-  current_line = "#8c6c3e";
-  selection = "#364a82";
-  comment = "#565f89";
-  cyan = "#7dcfff";
-  green = "#9ece6a";
-  yellow = "#e0af68";
-  orange = "#ff9e64";
-  magenta = "#bb9af7";
-  blue = "#7aa2f7";
-  red = "#f7768e";
+  c = name: "#${colors.${name}}";
+
+  foreground = c "foreground";
+  background = c "background";
+  current_line = c "color3"; # yellow — closest to orange-brown highlight
+  selection = c "color8"; # bright black — dark selection bg
+  comment = c "color8"; # bright black — muted text
+  cyan = c "color6";
+  green = c "color2";
+  yellow = c "color3";
+  orange = c "color3"; # no dedicated orange in base16; use yellow
+  magenta = c "color5";
+  blue = c "color4";
+  red = c "color1";
 in
 {
   body = {
