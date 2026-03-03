@@ -5,84 +5,12 @@
 _:
 let
   mkAlacrittyOptions =
-    { config, lib, pkgs, ... }:
-    let
-      fontFamily = "IBM Plex Mono";
-
-      defaultConfig = {
-        colors = {
-          primary = {
-            background = "#1f1f28";
-            foreground = "#dcd7ba";
-          };
-          normal = {
-            black = "#090618";
-            red = "#c34043";
-            green = "#76946a";
-            yellow = "#c0a36e";
-            blue = "#7e9cd8";
-            magenta = "#957fb8";
-            cyan = "#6a9589";
-            white = "#c8c093";
-          };
-          bright = {
-            black = "#727169";
-            red = "#e82424";
-            green = "#98bb6c";
-            yellow = "#e6c384";
-            blue = "#7fb4ca";
-            magenta = "#938aa9";
-            cyan = "#7aa89f";
-            white = "#dcd7ba";
-          };
-          selection = {
-            background = "#2d4f67";
-            foreground = "#c8c093";
-          };
-        };
-        env = {
-          TERM = "tmux-256color";
-        };
-        font = {
-          size = 11.0;
-          normal = {
-            family = fontFamily;
-            style = "Regular";
-          };
-          bold = {
-            family = fontFamily;
-            style = "SemiBold";
-          };
-          italic = {
-            family = fontFamily;
-            style = "Italic";
-          };
-          bold_italic = {
-            family = fontFamily;
-            style = "Bold Italic";
-          };
-        };
-        scrolling = {
-          history = 100000;
-          multiplier = 3;
-        };
-        window = {
-          dynamic_title = true;
-          opacity = 1;
-          padding = {
-            x = 0;
-            y = 0;
-          };
-        };
-        cursor = {
-          blink_interval = 500;
-          style = {
-            shape = "Block";
-            blinking = "Always";
-          };
-        };
-      };
-    in
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     {
       options.jvf.programs.alacritty = {
         username = lib.mkOption {
@@ -95,7 +23,7 @@ let
 
         settings = lib.mkOption {
           type = lib.types.attrs;
-          default = defaultConfig;
+          default = { };
           description = lib.mdDoc "Configuration for alacritty, written to alacritty.toml.";
           example = {
             font.size = 12;
@@ -106,17 +34,97 @@ let
     };
 
   alacrittyModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.alacritty;
+      colors = config.jvf.theme.colors;
+      fonts = config.jvf.theme.fonts;
+      fontFamily = fonts.monospace;
+      themeColors = {
+        primary = {
+          background = "0x${colors.background}";
+          foreground = "0x${colors.foreground}";
+        };
+        cursor = {
+          text = "0x${colors.background}";
+          cursor = "0x${colors.cursor}";
+        };
+        normal = {
+          black = "0x${colors.color0}";
+          red = "0x${colors.color1}";
+          green = "0x${colors.color2}";
+          yellow = "0x${colors.color3}";
+          blue = "0x${colors.color4}";
+          magenta = "0x${colors.color5}";
+          cyan = "0x${colors.color6}";
+          white = "0x${colors.color7}";
+        };
+        bright = {
+          black = "0x${colors.color8}";
+          red = "0x${colors.color9}";
+          green = "0x${colors.color10}";
+          yellow = "0x${colors.color11}";
+          blue = "0x${colors.color12}";
+          magenta = "0x${colors.color13}";
+          cyan = "0x${colors.color14}";
+          white = "0x${colors.color15}";
+        };
+      };
     in
     {
       imports = [ mkAlacrittyOptions ];
 
       config = {
+        jvf.programs.alacritty.settings = lib.mkDefault {
+          colors = themeColors;
+          env = {
+            TERM = "tmux-256color";
+          };
+          font = {
+            size = fonts.size;
+            normal = {
+              family = fontFamily;
+              style = "Regular";
+            };
+            bold = {
+              family = fontFamily;
+              style = "SemiBold";
+            };
+            italic = {
+              family = fontFamily;
+              style = "Italic";
+            };
+            bold_italic = {
+              family = fontFamily;
+              style = "Bold Italic";
+            };
+          };
+          scrolling = {
+            history = 100000;
+            multiplier = 3;
+          };
+          window = {
+            dynamic_title = true;
+            opacity = 1;
+            padding = {
+              x = 0;
+              y = 0;
+            };
+          };
+          cursor = {
+            blink_interval = 500;
+            style = {
+              shape = "Block";
+              blinking = "Always";
+            };
+          };
+        };
+
         jvf.wrappers.users.${cfg.username}.programs.alacritty = {
           packages = [
             cfg.package

@@ -5,14 +5,61 @@
 _:
 let
   mkKittyOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      options.jvf.programs.kitty = {
+        username = lib.mkOption {
+          type = lib.types.str;
+          default = config.jvf.core.username;
+          description = "Username for which to install the configuration";
+        };
+
+        package = lib.mkPackageOption pkgs "kitty" { };
+
+        settings = lib.mkOption {
+          type = lib.types.attrs;
+          default = { };
+          description = lib.mdDoc "Configuration for kitty, written to kitty.conf.";
+          example = {
+            font_size = 12;
+            background_opacity = "0.9";
+          };
+        };
+      };
+    };
+
+  toConfigFormat =
+    lib: settings:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${builtins.toString value}"
+      ) settings
+    );
+
+  mkConfig =
+    { isDarwin }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
+      cfg = config.jvf.programs.kitty;
+
       defaultSettings = {
-        font_family = "JetBrainsMonoNL Nerd Font SemiBold";
         bold_font = "JetBrainsMonoNL Nerd Font Bold";
         italic_font = "JetBrainsMonoNL Nerd Font Italic";
         bold_italic_font = "JetBrainsMonoNL Nerd Font Bold Italic";
-        font_size = 14;
         disable_ligatures = "never";
         window_border_width = "0.0pt";
         window_margin_width = 0;
@@ -28,56 +75,29 @@ let
         term = "xterm-256color";
         background_opacity = "0.95";
       };
-    in
-    {
-      options.jvf.programs.kitty = {
-        username = lib.mkOption {
-          type = lib.types.str;
-          default = config.jvf.core.username;
-          description = "Username for which to install the configuration";
-        };
 
-        package = lib.mkPackageOption pkgs "kitty" { };
+      colorIndices = lib.genList lib.id 16;
 
-        settings = lib.mkOption {
-          type = lib.types.attrs;
-          default = defaultSettings;
-          description = lib.mdDoc "Configuration for kitty, written to kitty.conf.";
-          example = {
-            font_size = 12;
-            background_opacity = "0.9";
-          };
-        };
-      };
-    };
-
-  toConfigFormat =
-    lib: settings:
-    lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${builtins.toString value}"
-        )
-        settings
-    );
-
-  kittyModule =
-    { config
-    , lib
-    , pkgs
-    , ...
-    }:
-    let
-      cfg = config.jvf.programs.kitty;
+      themeOverrides = {
+        font_family = config.jvf.theme.fonts.monospace;
+        font_size = config.jvf.theme.fonts.size;
+        background = "#${config.jvf.theme.colors.background}";
+        foreground = "#${config.jvf.theme.colors.foreground}";
+        cursor = "#${config.jvf.theme.colors.cursor}";
+      }
+      // lib.listToAttrs (
+        map (
+          i:
+          lib.nameValuePair "color${toString i}" "#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) colorIndices
+      );
     in
     {
       imports = [ mkKittyOptions ];
 
       config = {
+        jvf.programs.kitty.settings = lib.mkDefault (defaultSettings // themeOverrides);
+
         jvf.wrappers.users.${cfg.username}.programs.kitty = {
           packages = [
             cfg.package
@@ -94,6 +114,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-kitty = kittyModule;
-  flake.modules.darwin.programs-kitty = kittyModule;
+  flake.modules.nixos.programs-kitty = mkConfig { isDarwin = false; };
+  flake.modules.darwin.programs-kitty = mkConfig { isDarwin = true; };
 }

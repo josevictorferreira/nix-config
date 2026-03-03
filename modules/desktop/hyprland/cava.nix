@@ -1,15 +1,16 @@
 # Aspect: desktop-hyprland-cava (NixOS only)
 # Cava - Console-based Audio Visualizer for Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-cava =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.cava;
+      colors = config.jvf.theme.colors;
 
       cavaConfig = {
         general = {
@@ -33,14 +34,14 @@ _:
         color = {
           gradient = 1;
           gradient_count = 8;
-          gradient_color_1 = "'#4B4B4C'";
-          gradient_color_2 = "'#657925'";
-          gradient_color_3 = "'#7F878F'";
-          gradient_color_4 = "'#A9A19B'";
-          gradient_color_5 = "'#ECE5AF'";
-          gradient_color_6 = "'#C8D0EC'";
-          gradient_color_7 = "'#E1D7CF'";
-          gradient_color_8 = "'#ECE5AF'";
+          gradient_color_1 = "'#${colors.color1}'";
+          gradient_color_2 = "'#${colors.color3}'";
+          gradient_color_3 = "'#${colors.color2}'";
+          gradient_color_4 = "'#${colors.color6}'";
+          gradient_color_5 = "'#${colors.color4}'";
+          gradient_color_6 = "'#${colors.color5}'";
+          gradient_color_7 = "'#${colors.color1}'";
+          gradient_color_8 = "'#${colors.color3}'";
         };
         smoothing = {
           noise_reduction = 77;
