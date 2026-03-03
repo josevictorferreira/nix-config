@@ -57,11 +57,7 @@ let
         owner = "Mirrowel";
         repo = "LLM-API-Key-Proxy";
         rev = "main";
-        hash =
-          if isDarwin then
-            "sha256-1r6d6nkycs3dli21dvbvi2gfad39gnspsjx952myw8skkav2jw2j"
-          else
-            "sha256-iGWTTCZMpAM8bHXGrq5lmNZzzzy6cAoz6Q7JXVrg/5Y=";
+        hash = "sha256-iGWTTCZMpAM8bHXGrq5lmNZzzzy6cAoz6Q7JXVrg/5Y=";
       };
 
       # State directory for writable files
@@ -154,75 +150,75 @@ let
       imports = [ mkLlmProxyOptions ];
 
       config = lib.mkMerge [
-          # Default package
-          {
-            jvf.services.llm-proxy.package = lib.mkDefault llmProxyPkg;
-          }
+        # Default package
+        {
+          jvf.services.llm-proxy.package = lib.mkDefault llmProxyPkg;
+        }
 
-          # Sops secrets declarations
-          {
-            sops.secrets = {
-              gemini_api_key = {
-                mode = "0400";
-              };
-              openrouter_api_key_code_agent = {
-                mode = "0400";
-              };
-              minimax_api_key = {
-                mode = "0400";
-              };
-              z_ai_api_key = {
-                mode = "0400";
-              };
-              antigravity_account_1_refresh_token = {
-                mode = "0400";
-              };
-              antigravity_account_1_email = {
-                mode = "0400";
-              };
-              antigravity_account_2_refresh_token = {
-                mode = "0400";
-              };
-              antigravity_account_2_email = {
-                mode = "0400";
-              };
+        # Sops secrets declarations
+        {
+          sops.secrets = {
+            gemini_api_key = {
+              mode = "0400";
             };
-          }
+            openrouter_api_key_code_agent = {
+              mode = "0400";
+            };
+            minimax_api_key = {
+              mode = "0400";
+            };
+            z_ai_api_key = {
+              mode = "0400";
+            };
+            antigravity_account_1_refresh_token = {
+              mode = "0400";
+            };
+            antigravity_account_1_email = {
+              mode = "0400";
+            };
+            antigravity_account_2_refresh_token = {
+              mode = "0400";
+            };
+            antigravity_account_2_email = {
+              mode = "0400";
+            };
+          };
+        }
 
-          # NixOS Service
-          (lib.optionalAttrs (!isDarwin) {
-            systemd.services.llm-proxy = {
-              description = "LLM API Key Proxy Service";
-              wantedBy = [ "multi-user.target" ];
-              after = [ "network.target" ];
-              wants = [ "network-online.target" ];
-              serviceConfig = {
-                ExecStart = "${lib.getExe cfg.package} --port ${toString cfg.port}";
-                Restart = "always";
-                Type = "simple";
-                StateDirectory = "llm-proxy";
-                WorkingDirectory = "/var/lib/llm-proxy";
-              };
+        # NixOS Service
+        (lib.optionalAttrs (!isDarwin) {
+          systemd.services.llm-proxy = {
+            description = "LLM API Key Proxy Service";
+            wantedBy = [ "multi-user.target" ];
+            after = [ "network.target" ];
+            wants = [ "network-online.target" ];
+            serviceConfig = {
+              ExecStart = "${lib.getExe cfg.package} --port ${toString cfg.port}";
+              Restart = "always";
+              Type = "simple";
+              StateDirectory = "llm-proxy";
+              WorkingDirectory = "/var/lib/llm-proxy";
             };
-          })
+          };
+        })
 
-          # Darwin Service
-          (lib.optionalAttrs isDarwin {
-            launchd.agents.llm-proxy = {
-              serviceConfig = {
-                ProgramArguments = [
-                  "${lib.getExe cfg.package}"
-                  "--port"
-                  (toString cfg.port)
-                ];
-                KeepAlive = true;
-                RunAtLoad = true;
-                StandardErrorPath = "/tmp/llm-proxy.err";
-                StandardOutPath = "/tmp/llm-proxy.out";
-              };
+        # Darwin Service
+        (lib.optionalAttrs isDarwin {
+          launchd.agents.llm-proxy = {
+            serviceConfig = {
+              ProgramArguments = [
+                "${lib.getExe cfg.package}"
+                "--port"
+                (toString cfg.port)
+              ];
+              KeepAlive = true;
+              RunAtLoad = true;
+              StandardErrorPath = "/tmp/llm-proxy.err";
+              StandardOutPath = "/tmp/llm-proxy.out";
             };
-          })
-        ];
+          };
+        })
+      ];
     };
 in
 {

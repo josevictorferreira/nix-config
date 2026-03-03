@@ -10,6 +10,9 @@ let
     {
       imports = [
         ./options.nix
+      ]
+      ++ lib.optionals (!isDarwin) [
+        # NixOS-only: these use shellAliases which doesn't exist in nix-darwin
         ./_/external-plugins.nix
         ./_/shell-init/environment.nix
         ./_/shell-init/history.nix
@@ -29,7 +32,7 @@ let
         ./_/functions/navigation.nix
       ];
 
-      config = {
+      config = lib.mkIf cfg.setAsDefaultShell {
         assertions = [
           {
             assertion = pkgs ? zsh;
@@ -37,8 +40,10 @@ let
           }
         ];
 
-        programs.zsh = lib.mkIf cfg.setAsDefaultShell {
+        programs.zsh = {
           enable = true;
+        }
+        // lib.optionalAttrs (!isDarwin) {
           ohMyZsh = {
             enable = true;
             theme = "agnoster";
@@ -47,9 +52,7 @@ let
         };
 
         # Set as default shell
-        users.users.${cfg.username}.shell = lib.mkIf cfg.setAsDefaultShell (
-          if isDarwin then pkgs.zsh else pkgs.zsh
-        );
+        users.users.${cfg.username}.shell = pkgs.zsh;
       };
     };
 in
