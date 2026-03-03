@@ -31,7 +31,8 @@ let
     {
       imports = [ mkAudioOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             # Disable PulseAudio when using PipeWire
             services.pulseaudio.enable = false;

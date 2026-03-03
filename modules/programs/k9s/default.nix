@@ -9,10 +9,9 @@ let
   clusters = import ./_/clusters.nix { };
 
   k9sModule =
-    {
-      config,
-      lib,
-      ...
+    { config
+    , lib
+    , ...
     }:
     let
       cfg = config.jvf.programs.k9s;

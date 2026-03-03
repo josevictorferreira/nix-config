@@ -141,7 +141,8 @@ let
     {
       imports = [ mkXdgOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           let
             home = "/home/${cfg.username}";
             # Generate user-dirs.dirs content

@@ -51,7 +51,8 @@ let
     {
       imports = [ mkLogindOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             services.logind.settings = {
               Login = {

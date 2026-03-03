@@ -17,18 +17,18 @@ let
       imports = [ mkBaseProgramsOptions ];
 
       config = {
-          programs.gnupg.agent = {
-            enable = true;
-            enableSSHSupport = true;
-          };
-        }
-        // lib.optionalAttrs (!isDarwin) {
-          programs.nm-applet.indicator = true;
-          programs.mtr.enable = true;
-          programs.dconf.enable = true;
-          programs.seahorse.enable = false;
-          programs.fuse.userAllowOther = true;
+        programs.gnupg.agent = {
+          enable = true;
+          enableSSHSupport = true;
         };
+      }
+      // lib.optionalAttrs (!isDarwin) {
+        programs.nm-applet.indicator = true;
+        programs.mtr.enable = true;
+        programs.dconf.enable = true;
+        programs.seahorse.enable = false;
+        programs.fuse.userAllowOther = true;
+      };
     };
 in
 {

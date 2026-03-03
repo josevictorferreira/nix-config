@@ -1,8 +1,7 @@
 # _/scripts.nix - Weechat script derivations and defaults
-{
-  lib,
-  pkgs,
-  ...
+{ lib
+, pkgs
+, ...
 }:
 let
   # Vimode script derivation

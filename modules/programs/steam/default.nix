@@ -19,7 +19,8 @@ let
     {
       options.jvf.programs.steam = mkOptions { inherit config; };
 
-      config = if isDarwin then
+      config =
+        if isDarwin then
           {
             # Steam is NixOS-only, no Darwin support
           }

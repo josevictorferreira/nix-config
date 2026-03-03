@@ -73,37 +73,38 @@ let
       imports = [ mkRepositoriesOption ];
 
       config = lib.mkMerge (
-        lib.optional isDarwin {
-          launchd.agents = lib.mkMerge (
-            lib.mapAttrsToList
-              (
-                userName: uCfg:
-                  if uCfg.clonedDirs == { } then
-                    { }
-                  else
-                    {
-                      "jvf-clone-repos-${userName}" = {
-                        serviceConfig = {
-                          ProgramArguments = [
-                            "${pkgs.bash}/bin/bash"
-                            "-c"
-                            ''
-                              set -euo pipefail
-                              ${mkBody uCfg userName}
-                            ''
-                          ];
-                          RunAtLoad = true;
-                          StandardOutPath = "/tmp/jvf-clone-repos-${userName}.log";
-                          StandardErrorPath = "/tmp/jvf-clone-repos-${userName}.err";
-                          UserName = userName;
-                          GroupName = "staff";
+        lib.optional isDarwin
+          {
+            launchd.agents = lib.mkMerge (
+              lib.mapAttrsToList
+                (
+                  userName: uCfg:
+                    if uCfg.clonedDirs == { } then
+                      { }
+                    else
+                      {
+                        "jvf-clone-repos-${userName}" = {
+                          serviceConfig = {
+                            ProgramArguments = [
+                              "${pkgs.bash}/bin/bash"
+                              "-c"
+                              ''
+                                set -euo pipefail
+                                ${mkBody uCfg userName}
+                              ''
+                            ];
+                            RunAtLoad = true;
+                            StandardOutPath = "/tmp/jvf-clone-repos-${userName}.log";
+                            StandardErrorPath = "/tmp/jvf-clone-repos-${userName}.err";
+                            UserName = userName;
+                            GroupName = "staff";
+                          };
                         };
-                      };
-                    }
-              )
-              cfg.users
-          );
-        }
+                      }
+                )
+                cfg.users
+            );
+          }
         ++ lib.optional (!isDarwin) {
           system.userActivationScripts = lib.mkMerge (
             lib.mapAttrsToList

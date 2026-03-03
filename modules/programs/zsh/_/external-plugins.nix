@@ -1,9 +1,8 @@
 # external-plugins.nix - External ZSH plugins from GitHub
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.zsh;

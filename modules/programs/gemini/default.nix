@@ -9,12 +9,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
 
@@ -22,24 +21,25 @@ let
 
       geminiFHS =
         if !isDarwin then
-          pkgs.buildFHSEnv {
-            name = "gemini-cli-fhs";
-            targetPkgs = pkgs: [
-              pkgs.stdenv.cc.cc.lib
-              pkgs.zlib
-              pkgs.openssl
-              pkgs.nodejs
-              pkgs.ripgrep
-              pkgs.coreutils
-            ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "gemini-cli-fhs";
+              targetPkgs = pkgs: [
+                pkgs.stdenv.cc.cc.lib
+                pkgs.zlib
+                pkgs.openssl
+                pkgs.nodejs
+                pkgs.ripgrep
+                pkgs.coreutils
+              ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/gemini-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "gemini-cli-runner" ''
               exec "$HOME/.npm-global/bin/gemini" "$@"
             ''}";
-          }
+            }
         else
           null;
 

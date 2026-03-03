@@ -25,7 +25,8 @@ let
     {
       imports = [ mkDisplayOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             services.xserver = {
               enable = true;

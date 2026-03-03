@@ -1,9 +1,8 @@
 # options.nix - OpenCode option definitions
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   json = pkgs.formats.json { };

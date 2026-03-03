@@ -199,14 +199,16 @@ in
           {
             # Declare all zsh secrets with user ownership so they can be read
             sops.secrets = builtins.listToAttrs (
-              map (key: {
-                name = key;
-                value = {
-                  owner = username;
-                  group = "users";
-                  mode = "0400";
-                };
-              }) secretKeys
+              map
+                (key: {
+                  name = key;
+                  value = {
+                    owner = username;
+                    group = "users";
+                    mode = "0400";
+                  };
+                })
+                secretKeys
             );
           }
         )

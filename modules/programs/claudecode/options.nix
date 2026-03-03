@@ -1,9 +1,8 @@
 # Claude Code options definitions
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   json = pkgs.formats.json { };

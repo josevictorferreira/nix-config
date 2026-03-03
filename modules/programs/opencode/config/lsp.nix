@@ -1,8 +1,7 @@
 # config/lsp.nix - LSP server configurations for OpenCode
-{
-  lib,
-  pkgs,
-  ...
+{ lib
+, pkgs
+, ...
 }:
 {
   config.jvf.programs.opencode.settings.lsp = {

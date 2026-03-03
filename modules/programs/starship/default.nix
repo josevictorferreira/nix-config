@@ -76,7 +76,8 @@ let
     {
       imports = [ mkStarshipOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             programs.starship = {
               enable = true;

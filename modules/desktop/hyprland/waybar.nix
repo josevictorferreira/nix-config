@@ -3,11 +3,10 @@
 # Theme adapter: generates wallust/colors-waybar.css from jvf.theme.colors.
 _: {
   flake.modules.nixos.desktop-hyprland-waybar =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.waybar;

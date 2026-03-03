@@ -34,7 +34,8 @@ let
     {
       imports = [ mkFirewallOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             networking.firewall = {
               enable = true;

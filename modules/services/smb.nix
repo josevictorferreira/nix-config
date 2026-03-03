@@ -76,7 +76,8 @@ let
     {
       imports = [ mkSmbOptions ];
 
-      config = if isDarwin then
+      config =
+        if isDarwin then
           {
             launchd.agents."${group}-smb" = smbMount { inherit (cfg) username; };
 

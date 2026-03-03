@@ -37,7 +37,8 @@ let
     {
       imports = [ mkLocaleOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             time.timeZone = cfg.timeZone;
 

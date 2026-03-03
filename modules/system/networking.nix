@@ -37,7 +37,8 @@ let
     {
       imports = [ mkNetworkingOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             networking = {
               inherit (cfg) hostName;

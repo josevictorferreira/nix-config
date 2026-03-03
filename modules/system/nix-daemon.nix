@@ -65,25 +65,25 @@ let
       imports = [ mkNixDaemonOptions ];
 
       config = {
-          nix = {
-            settings = {
-              experimental-features = cfg.experimentalFeatures;
-              inherit (cfg) substituters;
-              trusted-substituters = cfg.trustedSubstituters;
-              trusted-public-keys = cfg.trustedPublicKeys;
-            };
-            optimise = {
-              automatic = cfg.autoOptimiseStore;
-            };
-            gc = lib.mkIf cfg.garbageCollect {
-              automatic = true;
-              options = cfg.gcOptions;
-            };
+        nix = {
+          settings = {
+            experimental-features = cfg.experimentalFeatures;
+            inherit (cfg) substituters;
+            trusted-substituters = cfg.trustedSubstituters;
+            trusted-public-keys = cfg.trustedPublicKeys;
           };
-        }
-        // lib.optionalAttrs (!isDarwin) {
-          programs.nix-ld.enable = true;
+          optimise = {
+            automatic = cfg.autoOptimiseStore;
+          };
+          gc = lib.mkIf cfg.garbageCollect {
+            automatic = true;
+            options = cfg.gcOptions;
+          };
         };
+      }
+      // lib.optionalAttrs (!isDarwin) {
+        programs.nix-ld.enable = true;
+      };
     };
 in
 {

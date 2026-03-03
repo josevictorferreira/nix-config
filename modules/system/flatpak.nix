@@ -29,7 +29,8 @@ let
     {
       imports = [ mkFlatpakOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             services.flatpak.enable = true;
 

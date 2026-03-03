@@ -55,7 +55,8 @@ let
     {
       imports = [ mkBaseServicesOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             services = {
               dbus.enable = true;

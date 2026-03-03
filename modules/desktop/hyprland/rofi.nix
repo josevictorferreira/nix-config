@@ -3,11 +3,10 @@
 # Theme adapter: generates wallust/colors-rofi.rasi from jvf.theme.
 _: {
   flake.modules.nixos.desktop-hyprland-rofi =
-    {
-      lib,
-      config,
-      pkgs,
-      ...
+    { lib
+    , config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.rofi;

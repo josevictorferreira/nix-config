@@ -1,9 +1,8 @@
 # k9s options definitions
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 
 {

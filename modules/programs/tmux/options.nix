@@ -1,9 +1,8 @@
 # Tmux and tmuxp options definitions
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   defaultPlugins = [

@@ -9,11 +9,10 @@ let
   sessions = import ./_/sessions.nix;
 
   tmuxModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.tmux;

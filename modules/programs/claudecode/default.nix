@@ -9,12 +9,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.claudecode;
@@ -22,49 +21,51 @@ let
       # FHS environment for Linux (claude-code needs glibc, etc.)
       claudeCodeFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv {
-            name = "claude-fhs";
-            targetPkgs =
-              pkgs: with pkgs; [
-                stdenv.cc.cc.lib
-                zlib
-                openssl
-                curl
-                nodejs_22
-                coreutils
-              ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "claude-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "claude-fhs";
+              targetPkgs =
+                pkgs: with pkgs; [
+                  stdenv.cc.cc.lib
+                  zlib
+                  openssl
+                  curl
+                  nodejs_22
+                  coreutils
+                ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "claude-runner" ''
               exec "$HOME/.npm-global/bin/claude" "$@"
             ''}";
-          }
+            }
         else
           null;
 
       claudeRouterFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv {
-            name = "claude-router-fhs";
-            targetPkgs =
-              pkgs: with pkgs; [
-                stdenv.cc.cc.lib
-                zlib
-                openssl
-                curl
-                nodejs_22
-                coreutils
-              ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "claude-router-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "claude-router-fhs";
+              targetPkgs =
+                pkgs: with pkgs; [
+                  stdenv.cc.cc.lib
+                  zlib
+                  openssl
+                  curl
+                  nodejs_22
+                  coreutils
+                ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "claude-router-runner" ''
               exec "$HOME/.npm-global/bin/ccr" "$@"
             ''}";
-          }
+            }
         else
           null;
 
@@ -138,66 +139,66 @@ let
       imports = [ ./options.nix ];
 
       config = {
-          # Set default router settings from imported config
-          jvf.programs.claudecode.routerSettings = lib.mkDefault defaultRouterConfig;
+        # Set default router settings from imported config
+        jvf.programs.claudecode.routerSettings = lib.mkDefault defaultRouterConfig;
 
-          jvf.wrappers.users.${cfg.username}.programs = {
-            claude = {
-              preserveFiles = [
-                "transcripts"
-                "cache"
-                "debug"
-                "projects"
-                "shell-snapshots"
-                "todos"
-                "history.jsonl"
-              ];
-              packages = [
-                claudeCodeBin
-              ];
-              configPath = ".claude";
-              configs = lib.mkMerge [
-                (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
-                (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
-                (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
-              ];
-            };
-            claude-code-router = {
-              preserveFiles = [
-                "logs"
-                "plugins"
-                ".claude-code-router.pid"
-              ];
-              packages = [
-                claudeRouterBin
-              ];
-              configPath = ".claude-code-router";
-              configs = {
-                "config.json" = cfg.routerSettings;
-              };
+        jvf.wrappers.users.${cfg.username}.programs = {
+          claude = {
+            preserveFiles = [
+              "transcripts"
+              "cache"
+              "debug"
+              "projects"
+              "shell-snapshots"
+              "todos"
+              "history.jsonl"
+            ];
+            packages = [
+              claudeCodeBin
+            ];
+            configPath = ".claude";
+            configs = lib.mkMerge [
+              (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
+              (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
+              (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+            ];
+          };
+          claude-code-router = {
+            preserveFiles = [
+              "logs"
+              "plugins"
+              ".claude-code-router.pid"
+            ];
+            packages = [
+              claudeRouterBin
+            ];
+            configPath = ".claude-code-router";
+            configs = {
+              "config.json" = cfg.routerSettings;
             };
           };
-        }
-        // lib.optionalAttrs (!isDarwin) {
-          environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
-            mcpServers = cfg.mcps;
-          };
-        }
-        // lib.optionalAttrs isDarwin {
-          system.activationScripts.claudeCodeMcp.text = ''
-            targetDir="/Library/Application Support/ClaudeCode"
-            targetFile="$targetDir/managed-mcp.json"
-
-            # Define the content in the Nix store (immutable)
-            sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = cfg.mcps; })}"
-
-            echo "Configuring Claude Code Managed MCP..."
-            mkdir -p "$targetDir"
-
-            # Symlink the immutable file to the target location
-            ln -sf "$sourceFile" "$targetFile"
-          '';
         };
+      }
+      // lib.optionalAttrs (!isDarwin) {
+        environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
+          mcpServers = cfg.mcps;
+        };
+      }
+      // lib.optionalAttrs isDarwin {
+        system.activationScripts.claudeCodeMcp.text = ''
+          targetDir="/Library/Application Support/ClaudeCode"
+          targetFile="$targetDir/managed-mcp.json"
+
+          # Define the content in the Nix store (immutable)
+          sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = cfg.mcps; })}"
+
+          echo "Configuring Claude Code Managed MCP..."
+          mkdir -p "$targetDir"
+
+          # Symlink the immutable file to the target location
+          ln -sf "$sourceFile" "$targetFile"
+        '';
+      };
     };
 in
 {

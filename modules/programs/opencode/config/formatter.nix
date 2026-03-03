@@ -1,8 +1,7 @@
 # config/formatter.nix - Formatter configurations for OpenCode
-{
-  lib,
-  pkgs,
-  ...
+{ lib
+, pkgs
+, ...
 }:
 {
   config.jvf.programs.opencode.settings.formatter = {

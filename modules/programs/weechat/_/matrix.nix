@@ -1,9 +1,8 @@
 # _/matrix.nix - Matrix protocol plugin for Weechat
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;

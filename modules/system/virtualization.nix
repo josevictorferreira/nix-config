@@ -29,7 +29,8 @@ let
     {
       imports = [ mkVirtualizationOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             virtualisation.libvirtd.enable = lib.mkDefault false;
             virtualisation.podman = {

@@ -212,57 +212,57 @@ let
       imports = [ mkGitOptions ];
 
       config = {
-          assertions = [
-            {
-              assertion = cfg.name != null;
-              message = "jvf.programs.git.name must be set";
-            }
-            {
-              assertion = cfg.email != null;
-              message = "jvf.programs.git.email must be set";
-            }
-          ];
+        assertions = [
+          {
+            assertion = cfg.name != null;
+            message = "jvf.programs.git.name must be set";
+          }
+          {
+            assertion = cfg.email != null;
+            message = "jvf.programs.git.email must be set";
+          }
+        ];
 
-          environment.systemPackages = [
+        environment.systemPackages = [
+          cfg.package
+          pkgs.yq
+          pkgs.difftastic
+          pkgs.gitleaks
+        ]
+        ++ optional cfg.lfs.enable pkgs.git-lfs;
+
+        jvf.wrappers.users.${cfg.username}.programs.git = {
+          packages = [
             cfg.package
             pkgs.yq
             pkgs.difftastic
             pkgs.gitleaks
           ]
           ++ optional cfg.lfs.enable pkgs.git-lfs;
-
-          jvf.wrappers.users.${cfg.username}.programs.git = {
-            packages = [
-              cfg.package
-              pkgs.yq
-              pkgs.difftastic
-              pkgs.gitleaks
-            ]
-            ++ optional cfg.lfs.enable pkgs.git-lfs;
-            configs = {
-              "config" =
-                generators.toINI { }
-                  (
-                    (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+          configs = {
+            "config" =
+              generators.toINI { }
+                (
+                  (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
                     // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
                     // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
                     // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
                     // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
                     // cfg.extraConfig
-                  )
-                + ''
-                  [diff]
-                    external = ${pkgs.difftastic}/bin/difft
-                '';
-              "ignore" = concatStringsSep "\n" cfg.ignores;
-              "hooks/pre-commit" = toString preCommit;
-            };
+                )
+              + ''
+                [diff]
+                  external = ${pkgs.difftastic}/bin/difft
+              '';
+            "ignore" = concatStringsSep "\n" cfg.ignores;
+            "hooks/pre-commit" = toString preCommit;
           };
-        }
-        // lib.optionalAttrs (!isDarwin) {
-          programs.git.enable = true;
-          programs.git.lfs.enable = cfg.lfs.enable;
         };
+      }
+      // lib.optionalAttrs (!isDarwin) {
+        programs.git.enable = true;
+        programs.git.lfs.enable = cfg.lfs.enable;
+      };
     };
 in
 {

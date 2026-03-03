@@ -68,7 +68,8 @@ let
     {
       imports = [ mkSecurityOptions ];
 
-      config = if (!isDarwin) then
+      config =
+        if (!isDarwin) then
           {
             security = {
               sudo.extraConfig = ''
