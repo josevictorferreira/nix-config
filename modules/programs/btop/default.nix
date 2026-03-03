@@ -5,7 +5,12 @@
 _:
 let
   mkBtopOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       defaultPackage = "btop";
     in
@@ -117,14 +122,37 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.btop;
       defaultPkg = if isDarwin then pkgs.btop else pkgs.btop-rocm;
+      colors = config.jvf.theme.colors;
+
+      # Theme adapter: generate btop theme from jvf.theme.colors
+      btopTheme = ''
+        theme[main_bg]="#${colors.background}"
+        theme[main_fg]="#${colors.foreground}"
+        theme[title]="#${colors.color4}"
+        theme[hi_fg]="#${colors.color1}"
+        theme[selected_bg]="#${colors.color8}"
+        theme[selected_fg]="#${colors.foreground}"
+        theme[inactive_fg]="#${colors.color8}"
+        theme[graph_text]="#${colors.color8}"
+        theme[meter_bg]="#${colors.color8}"
+        theme[proc_misc]="#${colors.color8}"
+        theme[cpu_box]="#${colors.color2}"
+        theme[mem_box]="#${colors.color1}"
+        theme[net_box]="#${colors.color6}"
+        theme[proc_box]="#${colors.color5}"
+        theme[div_line]="#${colors.color8}"
+      '';
+
+      themeName = config.jvf.theme.active;
     in
     {
       imports = [ mkBtopOptions ];
@@ -139,13 +167,17 @@ let
               cfg.package
             ];
             configs = {
-              "btop.conf" = cfg.settings;
+              "btop.conf" = cfg.settings // {
+                color_theme = themeName;
+              };
               "vertical-compact.conf" = cfg.settings // {
+                color_theme = themeName;
                 presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille";
                 shown_boxes = "cpu mem gpu0";
                 show_disks = false;
                 show_battery = false;
               };
+              "themes/${themeName}.theme" = btopTheme;
             };
           };
         }

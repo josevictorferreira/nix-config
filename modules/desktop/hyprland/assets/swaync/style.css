@@ -5,7 +5,7 @@
 
 @define-color noti-border-color @color12;
 @define-color noti-bg rgba(0, 0, 0, 0.8);
-@define-color noti-bg-alt #111111;
+@define-color noti-bg-alt @color0;
 @define-color noti-bg-hover @color9;
 @define-color text-color @foreground;
 @define-color text-color-alt @foreground;
@@ -58,7 +58,7 @@
 
 /* Close button */
 .close-button {
-  background: #f7768e;
+  background: @color1;
   color: @noti-bg;
   text-shadow: none;
   padding: 0;
@@ -69,7 +69,7 @@
 
 .close-button:hover {
   box-shadow: none;
-  background: #f7768e;
+  background: @color1;
   transition: all .15s ease-in-out;
   border: none;
 }
@@ -232,7 +232,7 @@
 }
 
 .widget-title>button:hover {
-  background: #f7768e;
+  background: @color1;
   color: @noti-border-color;
 }
 
@@ -251,8 +251,8 @@
 }
 
 .widget-dnd>switch:checked {
-  background: #f7768e;
-  border: 1px solid #f7768e;
+  background: @color1;
+  border: 1px solid @color1;
 }
 
 .widget-dnd>switch slider {
