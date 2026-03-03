@@ -21,11 +21,6 @@ _: {
         baseURL = "https://openrouter.ai/api/v1";
         apiKey = "{env:OPENROUTER_API_KEY_CODE_AGENT}";
       };
-      models = {
-        "xiaomi/mimo-v2-flash" = {
-          name = "Xiaomi Mimo V2 Flash";
-        };
-      };
     };
 
     bailian-coding-plan = {
