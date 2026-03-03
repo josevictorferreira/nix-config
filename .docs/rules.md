@@ -229,3 +229,22 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** When stripping `mkEnableOption` from a module, check for assertions that reference the module's own `.enable` option. These become self-referencing errors since the option no longer exists.
 **Context:** `zsh/default.nix` had `assertion = config.jvf.programs.zsh.enable -> pkgs ? zsh;` — after removing the enable option, this caused an eval error. Fixed to `assertion = pkgs ? zsh;`.
 **Verify:** After removing `mkEnableOption`, grep the same file for `config.jvf.<module>.enable` references.
+
+---
+
+## Subagent Code Generation (Nix)
+
+### Subagents Create Variables But Don't Wire Them
+**Lesson:** After subagent work on Nix modules, ALWAYS verify that newly created `let` bindings are actually used in the `config` output. Subagents frequently define helper variables (`overrides`, `baseSettings`, `generatedX`) but forget to reference them.
+**Context:** Ghostty adapter: subagent created `themeOverrides`, `baseSettings`, `paletteLines` but left `settings = defaultSettings` unchanged — theme variables never used.
+**Verify:** After subagent Nix work, grep for each new `let` binding name in the `config =` section.
+
+### Embedded `\n` Strings Are Syntax Errors
+**Lesson:** Subagents often emit `\n` as literal strings instead of actual newlines in Nix code. These cause parse errors. When editing Nix, ensure multiline strings use proper `''` syntax or actual line breaks, not escaped `\n`.
+**Context:** theme.nix had `\"color${toString i}\"` with embedded `\n` chars, causing LSP errors like "unexpected text".
+**Verify:** After subagent edits to Nix files, run `lsp_diagnostics` and grep for `\\n` in string contexts.
+
+### Dynamic Attribute Access Requires `lib.getAttr`
+**Lesson:** Interpolated attrpaths like `colors.\"color${i}\"` are invalid Nix syntax. Use `lib.getAttr "color${toString i}" colors` instead for dynamic key access.
+**Context:** Ghostty palette generation tried `config.jvf.theme.colors.\"color${toString i}\"` which caused multiple LSP errors.
+**Verify:** When generating dynamic attribute access, use `lib.getAttr` or `builtins.getAttr`, not escaped quotes.
