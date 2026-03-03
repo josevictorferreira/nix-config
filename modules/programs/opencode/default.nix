@@ -6,11 +6,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -32,7 +33,7 @@ let
       config = {
         # ── Default settings ──────────────────────────────────────────────
         jvf.programs.opencode.settings = {
-          theme = lib.mkDefault "one-dark";
+          theme = lib.mkDefault "tokyonight";
           mcp = lib.mkDefault cfg.mcps;
           disabled_providers = lib.mkDefault [
             "opencode"
@@ -58,9 +59,7 @@ let
               ".ck/**"
             ];
           };
-
-          model = "openrouter/stepfun/step-3.5-flash";
-          small_model = "openrouter/qwen/qwen3.5-27b";
+          small_model = "github-copilot/grok-code-fast-1";
         };
 
         # ── Wrappers config ───────────────────────────────────────────
