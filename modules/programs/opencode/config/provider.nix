@@ -28,8 +28,8 @@ _: {
       };
     };
 
-    "bailian-coding-plan" = {
-      npm = " @ai-sdk/anthropic";
+    bailian-coding-plan = {
+      npm = "@ai-sdk/anthropic";
       name = "Model Studio Coding Plan";
       options = {
         baseURL = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1";
