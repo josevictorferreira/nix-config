@@ -3,11 +3,10 @@
 # Theme adapter: generates user/theme-colors.css from jvf.theme.colors.
 _: {
   flake.modules.nixos.desktop-hyprland-ags =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.ags;

@@ -37,6 +37,7 @@ let
         programs-cursor
         programs-droid
         programs-gemini
+        programs-hermes-agent
         services-llm-proxy
       ]);
 
@@ -80,6 +81,7 @@ let
         programs-cursor
         programs-droid
         programs-gemini
+        programs-hermes-agent
         services-llm-proxy
       ]);
 

@@ -73,11 +73,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      lib,
-      pkgs,
-      config,
-      ...
+    { lib
+    , pkgs
+    , config
+    , ...
     }:
     let
       colors = config.jvf.theme.colors;
