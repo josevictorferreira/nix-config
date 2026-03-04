@@ -94,9 +94,9 @@ _: {
         normalForeground = "c0caf5";
         urgentBackground = "f7768e";
         urgentForeground = "1a1b26";
-        selectedBackground = "bb9af7";
+        selectedBackground = "7aa2f7";
         selectedForeground = "1a1b26";
-        borderColor = "7aa2f7";
+        borderColor = "7dcfff";
       };
       backgroundAlpha = "0.25";
     };
@@ -194,9 +194,9 @@ _: {
         normalForeground = "c0caf5";
         urgentBackground = "f7768e";
         urgentForeground = "1a1b26";
-        selectedBackground = "bb9af7";
+        selectedBackground = "7aa2f7";
         selectedForeground = "1a1b26";
-        borderColor = "7aa2f7";
+        borderColor = "7dcfff";
       };
       backgroundAlpha = "0.25";
     };
