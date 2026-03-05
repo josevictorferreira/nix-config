@@ -87,7 +87,7 @@
           "matrix_server_username"
           "matrix_server_password"
           "bailian_coding_plan_api_key"
-          "inceptionlabs_api_key"
+          "inception_api_key"
         ];
         description = "List of sops secret keys to expose as env vars";
       };
