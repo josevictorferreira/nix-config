@@ -23,6 +23,21 @@ _: {
       };
     };
 
+    inception = {
+      npm = "@ai-sdk/openai-compatible";
+      name = "Inception";
+      options = {
+        baseURL = "https://api.inceptionlabs.ai/v1";
+        apiKey = "{env:INCEPTION_API_KEY}";
+      };
+      models = {
+        "mercury-2" = {
+          name = "Mercury 2";
+          max_tokens = 16384;
+        };
+      };
+    };
+
     bailian-coding-plan = {
       npm = "@ai-sdk/anthropic";
       name = "Model Studio Coding Plan";

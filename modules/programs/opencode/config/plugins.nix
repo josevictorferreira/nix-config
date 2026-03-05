@@ -36,7 +36,7 @@ _: {
           };
         };
         explore = {
-          model = "openrouter/stepfun/step-3.5-flash";
+          model = "inception/mercury-2";
           permission = {
             skill = {
               "*" = {
@@ -156,7 +156,7 @@ _: {
           model = "github-copilot/gemini-3-pro-preview";
         };
         quick = {
-          model = "openrouter/x-ai/grok-4.1-fast";
+          model = "inception/mercury-2";
         };
         most-capable = {
           model = "github-copilot/claude-opus-4.6";
