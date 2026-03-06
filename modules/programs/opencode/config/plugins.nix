@@ -3,7 +3,7 @@ _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
       "@tarquinen/opencode-dcp@2.1.8"
-      "oh-my-opencode@3.10.0"
+      "oh-my-opencode@3.10.1"
       "mcpflow-router@0.3.2"
     ];
 
