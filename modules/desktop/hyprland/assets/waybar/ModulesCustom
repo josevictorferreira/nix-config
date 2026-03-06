@@ -67,7 +67,7 @@
   "format": "  ",
   "tooltip": true,
   "tooltip-format": "Left Click: Screenshot Select",
-  "on-click": "grimblast copysave area"
+  "on-click": "$HOME/.config/hypr/scripts/ScreenShot.sh --area"
 },
 
 // Hypridle inhibitor
