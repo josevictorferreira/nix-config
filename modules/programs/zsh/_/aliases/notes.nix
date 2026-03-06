@@ -11,5 +11,8 @@ in
     "nsearch" = "rg ~/Notes";
     # Todo (homelab shared)
     "gtodo" = "nvim ~/Homelab/notetaking/01-projects/active/Todo.md";
+    # Encrypted plan file (sops)
+    "plan" =
+      "sops --config=${cfg.workspace.shared}/.sops.yaml ${cfg.workspace.shared}/notetaking/00-inbox/plan.enc.md";
   };
 }

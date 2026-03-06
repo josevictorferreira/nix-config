@@ -15,10 +15,7 @@ _: {
     };
 
     openrouter = {
-      npm = "@ai-sdk/anthropic";
-      name = "OpenRouter";
       options = {
-        baseURL = "https://openrouter.ai/api/v1";
         apiKey = "{env:OPENROUTER_API_KEY_CODE_AGENT}";
       };
     };
