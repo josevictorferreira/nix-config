@@ -5,17 +5,16 @@
 # only zai-mcp-server defaults to enabled.
 _:
 let
-  mkOptions =
-    _:
-    { };
+  mkOptions = _: { };
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
@@ -27,7 +26,7 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [
               (lib.getExe' pkgs.nodejs "npx")
               "playwriter@latest"
@@ -49,7 +48,7 @@ let
         tags = [ "documentation" ];
         mcpOptions = {
           opencode = {
-            enabled = true;
+            enabled = false;
             type = "local";
             command = [
               "npx"
@@ -91,7 +90,7 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [
               npx
               "-y"
@@ -133,7 +132,7 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [
               "${pkgs.bun}/bin/bunx"
               "--bun"
@@ -160,7 +159,7 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [
               "${lib.getExe' pkgs.nodejs "npx"}"
               "-y"
@@ -205,7 +204,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = true;
+            enabled = false;
             url = "https://api.z.ai/api/mcp/web_reader/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -235,7 +234,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = true;
+            enabled = false;
             url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -265,7 +264,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = true;
+            enabled = false;
             url = "https://api.z.ai/api/mcp/zread/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -295,7 +294,7 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [
               "${lib.getExe config.jvf.programs."ck-search".package}"
               "--serve"
@@ -329,12 +328,12 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = true;
+            enabled = false;
             command = [ (lib.getExe pkgs.mcp-nixos) ];
           };
           claudecode = {
             type = "stdio";
-            enabled = true;
+            enabled = false;
             command = lib.getExe pkgs.mcp-nixos;
           };
         };
