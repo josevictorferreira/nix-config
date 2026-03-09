@@ -3,7 +3,12 @@
 _:
 let
   mkCursorOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       json = pkgs.formats.json { };
     in
@@ -29,11 +34,6 @@ let
           default = { };
           description = "Commands to install into the configuration (string prompts or structured objects)";
         };
-        mcps = lib.mkOption {
-          type = lib.types.attrsOf json.type;
-          default = { };
-          description = "MCP tools to install into the configuration (structured objects)";
-        };
         skills = lib.mkOption {
           type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
           default = { };
@@ -48,20 +48,19 @@ let
     };
 
   cursorModule =
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.cursor;
 
-      filteredSkills = lib.filterAttrs
-        (
-          _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
-        )
-        cfg.skills;
+      filteredSkills = lib.filterAttrs (
+        _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
+      ) cfg.skills;
     in
     {
       imports = [ mkCursorOptions ];
@@ -77,9 +76,6 @@ let
             (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
             (inputs.lib.aiTools.mkSkillsConfigs filteredSkills)
             {
-              "mcp.json" = {
-                mcpServers = cfg.mcps;
-              };
               "settings.json" = cfg.settings;
             }
             (lib.optionalAttrs (cfg.baseRules != "") {

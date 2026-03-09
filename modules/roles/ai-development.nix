@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -51,7 +52,6 @@ let
           inherit (config.jvf.programs.opencode) agents;
           inherit (config.jvf.programs.opencode) commands;
           inherit (config.jvf.programs.opencode) skills;
-          inherit (config.jvf.programs.claudecode) mcps;
         };
 
         users.users."${cfg.username}".packages = [
@@ -63,9 +63,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -95,13 +96,11 @@ let
           inherit (config.jvf.programs.opencode) agents;
           inherit (config.jvf.programs.opencode) commands;
           inherit (config.jvf.programs.opencode) skills;
-          inherit (config.jvf.programs.claudecode) mcps;
         };
 
         users.users."${cfg.username}".packages = [
           pkgs.code-cursor
           pkgs.cursor-cli
-          pkgs.goose-cli
         ];
       };
     };
