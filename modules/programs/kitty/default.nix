@@ -83,6 +83,9 @@ let
         term = "xterm-256color";
         background_opacity = "0.95";
         shell = "${tmuxpInitScript}/bin/tmuxp-init";
+        cursor_trail = 1;
+        cursor_trail_decay = "0.1 0.2";
+        cursor_trail_start_threshold = 4;
       };
 
       colorIndices = lib.genList lib.id 16;
@@ -93,6 +96,7 @@ let
         background = "#${config.jvf.theme.colors.background}";
         foreground = "#${config.jvf.theme.colors.foreground}";
         cursor = "#${config.jvf.theme.colors.cursor}";
+        cursor_trail_color = "#${config.jvf.theme.colors.cursor}";
       }
       // lib.listToAttrs (
         map (
