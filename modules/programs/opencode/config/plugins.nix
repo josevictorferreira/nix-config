@@ -21,7 +21,7 @@ _: {
           };
         };
         hephaestus = {
-          model = "github-copilot/gpt-5.2-codex";
+          model = "github-copilot/gpt-5.3-codex";
           variant = "medium";
         };
         librarian = {
@@ -59,7 +59,7 @@ _: {
           };
         };
         prometheus = {
-          model = "github-copilot/gpt-5.2";
+          model = "github-copilot/gpt-5.4";
           permission = {
             skill = {
               "*" = {
@@ -70,7 +70,7 @@ _: {
           };
         };
         metis = {
-          model = "github-copilot/gemini-3-pro-preview";
+          model = "github-copilot/gemini-3.1-pro-preview";
           permission = {
             skill = {
               "*" = {
@@ -112,7 +112,7 @@ _: {
           temperature = 1.0;
         };
         multimodal-looker = {
-          model = "github-copilot/gemini-3-flash-preview";
+          model = "github-copilot/gemini-3.1-flash-lite-preview";
           permission = {
             skill = {
               "*" = {
