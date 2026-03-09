@@ -5,21 +5,20 @@
 _:
 let
   mkGhosttyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       toConfigFormat =
         settings:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (
-              key: value:
-              if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
-            )
-            settings
+          lib.mapAttrsToList (
+            key: value:
+            if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
+          ) settings
         );
     in
     {
@@ -48,27 +47,15 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , toConfigFormat
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      toConfigFormat,
+      ...
     }:
     let
       cfg = config.jvf.programs.ghostty;
-
-      tmuxpDarwinPath = ''
-        if [ -e /etc/profile ]; then source /etc/profile; fi
-
-        # Explicitly add Nix paths to the front to survive tmux/zsh resets
-        export PATH="/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
-      '';
-
-      tmuxpInitScript = pkgs.writeShellScript "tmuxp-init" ''
-        ${lib.optionalString isDarwin tmuxpDarwinPath}
-
-        exec ${lib.getExe pkgs.tmuxp} load -y main
-      '';
 
       defaultSettings = {
         gtk-titlebar = false;
@@ -85,8 +72,6 @@ let
         custom-shader-animation = true;
         confirm-close-surface = false;
         shell-integration = "zsh";
-
-        command = tmuxpInitScript;
       };
 
       themeOverrides = {
@@ -102,11 +87,9 @@ let
       paletteIndices = lib.genList lib.id 16;
 
       paletteLines = lib.concatStringsSep "\n" (
-        map
-          (
-            i: "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
-          )
-          paletteIndices
+        map (
+          i: "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) paletteIndices
       );
     in
     {

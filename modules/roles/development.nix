@@ -20,9 +20,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -32,7 +33,6 @@ let
         mkOptions
       ]
       ++ (with nixosAspects; [
-        programs-ghostty
         programs-alacritty
         programs-kitty
         programs-neovim
@@ -84,9 +84,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -96,7 +97,6 @@ let
         mkOptions
       ]
       ++ (with darwinAspects; [
-        programs-ghostty
         programs-alacritty
         programs-kitty
         programs-neovim

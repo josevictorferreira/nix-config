@@ -5,10 +5,11 @@
 _:
 let
   mkKittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.kitty = {
@@ -25,8 +26,8 @@ let
           default = { };
           description = lib.mdDoc "Configuration for kitty, written to kitty.conf.";
           example = {
-            font_size = 12;
-            background_opacity = "0.9";
+            font_size = 11;
+            background_opacity = "1.0";
           };
         };
       };
@@ -35,26 +36,33 @@ let
   toConfigFormat =
     lib: settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${builtins.toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${toString value}"
+      ) settings
     );
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.kitty;
+
+      tmuxpInitScript = pkgs.writeShellScriptBin "tmuxp-init" ''
+        ${lib.optionalString isDarwin ''
+          if [ -e /etc/profile ]; then source /etc/profile; fi
+          export PATH="/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
+        ''}
+        exec ${lib.getExe pkgs.tmuxp} load -y main
+      '';
 
       defaultSettings = {
         bold_font = "JetBrainsMonoNL Nerd Font Bold";
@@ -74,6 +82,7 @@ let
         wayland_enable_ime = false;
         term = "xterm-256color";
         background_opacity = "0.95";
+        shell = "${tmuxpInitScript}/bin/tmuxp-init";
       };
 
       colorIndices = lib.genList lib.id 16;
@@ -86,12 +95,10 @@ let
         cursor = "#${config.jvf.theme.colors.cursor}";
       }
       // lib.listToAttrs (
-        map
-          (
-            i:
-            lib.nameValuePair "color${toString i}" "#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
-          )
-          colorIndices
+        map (
+          i:
+          lib.nameValuePair "color${toString i}" "#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) colorIndices
       );
     in
     {
