@@ -23,8 +23,6 @@
       ''/filter add buflist_hide_discord_nested * * ^#Discord\..*''
       # WhatsApp: hide contacts, keep only bridge parent
       ''/filter add buflist_hide_whatsapp_nested * * ^#WhatsApp.*\..*''
-      # Slack: hide channels, keep only team
-      ''/filter add buflist_hide_slack_channels * * ^slack\.[^.]+\..*''
     ];
   };
 }

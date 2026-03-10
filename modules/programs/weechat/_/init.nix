@@ -7,11 +7,6 @@
 let
   cfg = config.jvf.programs.weechat;
 
-  # Secret paths
-  secretPaths = {
-    slack = "/run/secrets/slack_api_token";
-  };
-
   # Init script generator
   flattenSettings =
     prefix: attrs:
@@ -29,15 +24,9 @@ let
 
   flattenedSettings = flattenSettings "" cfg.settings;
 
-  # Slack setup script
-  slackSetupScript = pkgs.writeShellScript "weechat-slack-setup" ''
-    echo "/secure set slack_token $(cat ${secretPaths.slack})"
-  '';
-
   # Generate weechat init commands
   weechatInit = lib.concatStringsSep "\n" (
     [
-      "/exec -oc ${slackSetupScript}"
       "/bar hide nicklist"
     ]
     ++ cfg.autohideFilterCommands
@@ -50,10 +39,4 @@ let
 in
 {
   jvf.programs.weechat.initScript = lib.mkDefault weechatInit;
-
-  sops.secrets.slack_api_token = {
-    path = secretPaths.slack;
-    owner = cfg.username;
-    mode = "0400";
-  };
 }

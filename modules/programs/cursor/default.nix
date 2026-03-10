@@ -3,11 +3,10 @@
 _:
 let
   mkCursorOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       json = pkgs.formats.json { };
@@ -48,19 +47,20 @@ let
     };
 
   cursorModule =
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.cursor;
 
-      filteredSkills = lib.filterAttrs (
-        _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
-      ) cfg.skills;
+      filteredSkills = lib.filterAttrs
+        (
+          _: skill: !(builtins.isAttrs skill && skill ? mcp && skill.mcp != { })
+        )
+        cfg.skills;
     in
     {
       imports = [ mkCursorOptions ];

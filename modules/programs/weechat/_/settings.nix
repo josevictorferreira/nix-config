@@ -124,10 +124,6 @@
     };
     buflist = { };
     plugins.var.python = {
-      slack = {
-        autoconnect = "off";
-        slack_api_token = "\${sec.data.slack_token}";
-      };
       vimode = {
         no_warn = "on";
         search_vim = "on";

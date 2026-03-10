@@ -1,8 +1,7 @@
 # shell-init/environment.nix - Environment variable setup for ZSH
-{
-  config,
-  lib,
-  ...
+{ config
+, lib
+, ...
 }:
 let
   cfg = config.jvf.programs.zsh;

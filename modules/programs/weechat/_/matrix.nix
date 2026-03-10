@@ -15,7 +15,7 @@ let
   };
 
   # Matrix plugin (Rust-based) derivation
-  weechatMatrixRs = pkgs.rustPlatform.buildRustPackage {
+  weechatMatrixRs_base = pkgs.rustPlatform.buildRustPackage {
     pname = "weechat-matrix-rs";
     version = "0.1.0-unstable-2025-01-15";
 
@@ -46,8 +46,6 @@ let
       cp $out/lib/libmatrix.dylib $out/lib/weechat/plugins/matrix.so 2>/dev/null || true
     '';
 
-    passthru.pluginFile = "${placeholder "out"}/lib/weechat/plugins/matrix.so";
-
     meta = with lib; {
       description = "Rust Matrix plugin for Weechat";
       homepage = "https://github.com/poljar/weechat-matrix-rs";
@@ -56,12 +54,21 @@ let
     };
   };
 
+  # Override to correctly set passthru.pluginFile without using placeholder
+  weechatMatrixRs = weechatMatrixRs_base.overrideAttrs (old: {
+    passthru = (old.passthru or { }) // {
+      pluginFile = "${weechatMatrixRs_base}/lib/weechat/plugins/matrix.so";
+    };
+  });
+
   # Matrix setup script
   matrixSetupScript = pkgs.writeShellScript "weechat-matrix-setup" ''
+    echo "/plugin load matrix"
     echo "/secure set matrix_password $(cat ${secretPaths.matrixPass})"
     echo "/matrix server add homelab-matrix $(cat ${secretPaths.matrixUrl})"
     echo "/set matrix-rust.server.homelab-matrix.username $(cat ${secretPaths.matrixUser})"
     echo "/set matrix-rust.server.homelab-matrix.password $(cat ${secretPaths.matrixPass})"
+    echo "/set matrix-rust.server.homelab-matrix.autoconnect on"
     echo "/matrix connect homelab-matrix"
   '';
 in

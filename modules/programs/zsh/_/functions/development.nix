@@ -1,9 +1,8 @@
 # functions/development.nix - Development utility functions
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.zsh;

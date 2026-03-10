@@ -40,7 +40,6 @@ let
     pkgs.weechatScripts.colorize_nicks
     pkgs.weechatScripts.autosort
     pkgs.weechatScripts.weechat-go
-    pkgs.weechatScripts.wee-slack
     pkgs.weechatScripts.url_hint
     pkgs.weechatScripts.multiline
     pkgs.weechatScripts.weechat-notify-send
