@@ -73,10 +73,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { lib
-    , pkgs
-    , config
-    , ...
+    {
+      lib,
+      pkgs,
+      config,
+      ...
     }:
     let
       colors = config.jvf.theme.colors;
@@ -98,6 +99,10 @@ let
         else
           {
             environment.systemPackages = [ pkgs.starship ];
+
+            # nix-darwin sets `programs.zsh.promptInit = "... prompt suse ..."` by default,
+            # which runs AFTER interactiveShellInit and overrides starship. Clear it.
+            programs.zsh.promptInit = lib.mkForce "";
 
             programs.zsh.interactiveShellInit = lib.mkAfter ''
               export STARSHIP_CONFIG="${configFile}"

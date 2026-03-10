@@ -71,6 +71,9 @@ in
             os = "macos";
           };
 
+          # Enable tmuxp session manager (kitty launches tmuxp-init → main session)
+          jvf.programs.tmuxp.enable = true;
+
           # macOS primary user (required by nix-darwin)
           system.primaryUser = "josevictorferreira";
 
