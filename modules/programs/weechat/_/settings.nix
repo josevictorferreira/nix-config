@@ -122,7 +122,11 @@
         ban_mask_default = "*!*@\$host";
       };
     };
-    buflist = { };
+    buflist = {
+      format = {
+        indent = "";
+      };
+    };
     plugins.var.python = {
       vimode = {
         no_warn = "on";

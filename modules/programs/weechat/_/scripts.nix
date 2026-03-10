@@ -1,7 +1,8 @@
 # _/scripts.nix - Weechat script derivations and defaults
-{ lib
-, pkgs
-, ...
+{
+  lib,
+  pkgs,
+  ...
 }:
 let
   # Vimode script derivation
@@ -38,13 +39,11 @@ let
   defaultScripts = [
     pkgs.weechatScripts.highmon
     pkgs.weechatScripts.colorize_nicks
-    pkgs.weechatScripts.autosort
     pkgs.weechatScripts.weechat-go
     pkgs.weechatScripts.url_hint
     pkgs.weechatScripts.multiline
     pkgs.weechatScripts.weechat-notify-send
     pkgs.weechatScripts.buffer_autoset
-    pkgs.weechatScripts.autosort
     pkgs.weechatScripts.weechat-grep
     viModeScript
   ];
