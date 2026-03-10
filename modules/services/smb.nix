@@ -51,8 +51,6 @@ let
         "automounted"
         "nodatacache"
         "nonotification"
-        "-f=0644"
-        "-d=0775"
       ];
 
       smbMount =
@@ -126,7 +124,9 @@ let
                   chmod 2775 "${mntPoint}"
                 fi
 
-                /sbin/mount -t smbfs -o ${lib.concatStringsSep "," mntOptions} \
+                /sbin/mount | /usr/bin/grep -q " on ${mntPoint} " && exit 0
+
+                /sbin/mount_smbfs -f 0644 -d 0775 -o ${lib.concatStringsSep "," mntOptions} \
                   //${config.sops.placeholder."${group}_smb_username"}:${
                     config.sops.placeholder."${group}_smb_password"
                   }@${cfg.serverAddress}/${cfg.exportedName} \
