@@ -57,11 +57,40 @@ let
       cfg = config.jvf.programs.kitty;
 
       tmuxpInitScript = pkgs.writeShellScriptBin "tmuxp-init" ''
+        set -euo pipefail
+
+        # Ensure we have a proper PATH on Darwin
         ${lib.optionalString isDarwin ''
-          if [ -e /etc/profile ]; then source /etc/profile; fi
-          export PATH="/run/current-system/sw/bin:/etc/profiles/per-user/$USER/bin:$PATH"
+          # Additional common paths for nix-darwin
+          export PATH="/run/current-system/sw/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+          if [ -d "/etc/profiles/per-user/$USER/bin" ]; then
+            export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
+          fi
         ''}
-        exec ${lib.getExe pkgs.tmuxp} load -y main
+
+        # Set TMUXP_CONFIGDIR explicitly as it's often missing in GUI environments
+        export TMUXP_CONFIGDIR="$HOME/.config/tmuxp"
+
+        # Ensure tmux and zsh are available in PATH for tmuxp
+        export PATH="${
+          lib.makeBinPath [
+            pkgs.tmux
+            pkgs.zsh
+          ]
+        }:$PATH"
+
+        # Avoid nested tmux sessions if somehow launched from within tmux
+        if [ -n "''${TMUX-}" ]; then
+          exec ${lib.getExe pkgs.zsh}
+        fi
+
+        # Attempt to load the 'main' session.
+        # We use a fallback to zsh to ensure the terminal remains usable if tmuxp fails.
+        if ! ${lib.getExe pkgs.tmuxp} load -y main; then
+          echo "Error: tmuxp failed to load 'main' session." >&2
+          echo "Falling back to ${pkgs.zsh.name}..." >&2
+          exec ${lib.getExe pkgs.zsh}
+        fi
       '';
 
       defaultSettings = {
