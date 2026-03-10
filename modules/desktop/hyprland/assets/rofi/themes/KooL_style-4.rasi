@@ -22,12 +22,12 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    background-alt: @color1;
+    background-alt: @color8;
     selected:       @color12;
-    active:         @color11;
-    urgent:         #F7768E;
+    active:         @color12;
+    urgent:         @color1;
     
-    border-color:                @color11;
+    border-color:                @color12;
     handle-color:                @selected;
     background-color:            @background;
     foreground-color:            @foreground;
