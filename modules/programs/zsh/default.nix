@@ -10,9 +10,7 @@ let
     {
       imports = [
         ./options.nix
-      ]
-      ++ lib.optionals (!isDarwin) [
-        # NixOS-only: these use shellAliases which doesn't exist in nix-darwin
+        # Cross-platform: all supported by both NixOS and nix-darwin
         ./_/external-plugins.nix
         ./_/shell-init/environment.nix
         ./_/shell-init/history.nix
@@ -44,6 +42,7 @@ let
           enable = true;
         }
         // lib.optionalAttrs (!isDarwin) {
+          # nix-darwin doesn't have ohMyZsh option
           ohMyZsh = {
             enable = true;
             theme = "agnoster";

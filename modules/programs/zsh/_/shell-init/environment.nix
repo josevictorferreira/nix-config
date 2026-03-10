@@ -1,7 +1,8 @@
 # shell-init/environment.nix - Environment variable setup for ZSH
-{ config
-, lib
-, ...
+{
+  config,
+  lib,
+  ...
 }:
 let
   cfg = config.jvf.programs.zsh;
@@ -23,7 +24,12 @@ in
     export BAT_THEME="Dracula"
     export EDITOR="nvim"
     export VISUAL="nvim"
-    export BROWSER="chromium"
+    # BROWSER: chromium on Linux, open on macOS
+    if [[ "$(uname)" == "Darwin" ]]; then
+      export BROWSER="open"
+    else
+      export BROWSER="chromium"
+    fi
     export SOPS_AGE_KEY_FILE="/var/lib/sops-nix/keys.txt"
     export KUBECONFIG="$HOME/.kube/config"
     export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"

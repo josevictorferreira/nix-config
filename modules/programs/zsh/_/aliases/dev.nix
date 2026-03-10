@@ -4,65 +4,63 @@ let
   cfg = config.jvf.programs.zsh;
 in
 {
-  programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+  programs.zsh.interactiveShellInit = lib.mkIf cfg.setAsDefaultShell ''
     # Editor
-    "v" = "nvim";
+    alias v='nvim'
 
     # Make
-    "m" = "make";
+    alias m='make'
 
     # Git
-    "g" = "git";
-    "ga" = "git add";
-    "gaa" = "git add --all";
-    "gc" = "git commit -v";
-    "gcmsg" = "git commit -m";
-    "gco" = "git checkout";
-    "gcb" = "git checkout -b";
-    "gb" = "git branch";
-    "gba" = "git branch -a";
-    "gd" = "git diff";
-    "gf" = "git fetch";
-    "gl" = "git pull";
-    "gp" = "git push";
-    "gst" = "git status";
-    "glog" = "git log --oneline --decorate --graph";
-    "gloga" = "git log --oneline --decorate --graph --all";
+    alias g='git'
+    alias ga='git add'
+    alias gaa='git add --all'
+    alias gc='git commit -v'
+    alias gcmsg='git commit -m'
+    alias gco='git checkout'
+    alias gcb='git checkout -b'
+    alias gb='git branch'
+    alias gba='git branch -a'
+    alias gd='git diff'
+    alias gf='git fetch'
+    alias gl='git pull'
+    alias gp='git push'
+    alias gst='git status'
+    alias glog='git log --oneline --decorate --graph'
+    alias gloga='git log --oneline --decorate --graph --all'
 
     # Docker
-    "d" = "docker";
-    "dc" = "docker compose";
-    "dps" = "docker ps";
-    "dpsa" = "docker ps -a";
-    "di" = "docker images";
-    "dex" = "docker exec -it";
-    "dlogs" = "docker logs";
-    "drun" = "docker run --rm -it";
+    alias d='docker'
+    alias dc='docker compose'
+    alias dps='docker ps'
+    alias dpsa='docker ps -a'
+    alias di='docker images'
+    alias dex='docker exec -it'
+    alias dlogs='docker logs'
+    alias drun='docker run --rm -it'
 
     # Nix
-    "nx" = "nix";
-    "nxf" = "nix flake";
-    "nxu" = "nix flake update";
-    "nxr" = "sudo nixos-rebuild switch";
-    "nxh" = "home-manager switch";
-    "nxs" = "nix search nixpkgs";
-    "nxe" = "nix-shell -p";
-    "nxp" = "nix-shell -p";
-    "nd" = "nix develop -c zsh";
+    alias nx='nix'
+    alias nxf='nix flake'
+    alias nxu='nix flake update'
+    alias nxs='nix search nixpkgs'
+    alias nxe='nix-shell -p'
+    alias nxp='nix-shell -p'
+    alias nd='nix develop -c zsh'
 
     # Kubernetes
-    "k" = "kubectl";
-    "kg" = "kubectl get";
-    "kd" = "kubectl describe";
-    "kdel" = "kubectl delete";
-    "ka" = "kubectl apply -f";
-    "kaf" = "kubectl apply -f";
-    "kex" = "kubectl exec -it";
-    "klogs" = "kubectl logs";
-    "kp" = "kubectl get pods";
-    "ks" = "kubectl get svc";
-    "kns" = "kubectl config set-context --current --namespace";
-    "kctx" = "kubectl config use-context";
-    "kconf" = "kubectl config view";
-  };
+    alias k='kubectl'
+    alias kg='kubectl get'
+    alias kd='kubectl describe'
+    alias kdel='kubectl delete'
+    alias ka='kubectl apply -f'
+    alias kaf='kubectl apply -f'
+    alias kex='kubectl exec -it'
+    alias klogs='kubectl logs'
+    alias kp='kubectl get pods'
+    alias ks='kubectl get svc'
+    alias kns='kubectl config set-context --current --namespace'
+    alias kctx='kubectl config use-context'
+    alias kconf='kubectl config view'
+  '';
 }

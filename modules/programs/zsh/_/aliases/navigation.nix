@@ -4,22 +4,22 @@ let
   cfg = config.jvf.programs.zsh;
 in
 {
-  programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+  programs.zsh.interactiveShellInit = lib.mkIf cfg.setAsDefaultShell ''
     # Directory Navigation
-    "ws" = "cd ${cfg.workspace.root}";
-    "wspc" = "cd ${cfg.workspace.root}";
-    "hl" = "cd ${cfg.workspace.shared}";
-    "shared" = "cd ${cfg.workspace.shared}";
-    "dl" = "cd ~/Downloads";
-    "doc" = "cd ~/Documents";
-    "code" = "cd ~/Workspace";
-    "proj" = "cd ~/Workspace";
-    "dots" = "cd ~/.config";
-    "nixcfg" = "cd ~/.config/nix";
-    "nixc" = "cd ~/.config/nix";
+    alias ws='cd ${cfg.workspace.root}'
+    alias wspc='cd ${cfg.workspace.root}'
+    alias hl='cd ${cfg.workspace.shared}'
+    alias shared='cd ${cfg.workspace.shared}'
+    alias dl='cd ~/Downloads'
+    alias doc='cd ~/Documents'
+    alias code='cd ~/Workspace'
+    alias proj='cd ~/Workspace'
+    alias dots='cd ~/.config'
+    alias nixcfg='cd ~/.config/nix'
+    alias nixc='cd ~/.config/nix'
 
     # Zoxide Integration
-    "z" = "__zoxide_z";
-    "zi" = "__zoxide_zi";
-  };
+    alias z='__zoxide_z'
+    alias zi='__zoxide_zi'
+  '';
 }

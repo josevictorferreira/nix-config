@@ -4,27 +4,26 @@ let
   cfg = config.jvf.programs.zsh;
 in
 {
-  programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+  programs.zsh.interactiveShellInit = lib.mkIf cfg.setAsDefaultShell ''
     # Helm
-    "h" = "helm";
-    "hi" = "helm install";
-    "hu" = "helm upgrade";
-    "hd" = "helm delete";
-    "hls" = "helm list";
-    "hs" = "helm status";
-    "hg" = "helm get";
+    alias h='helm'
+    alias hi='helm install'
+    alias hu='helm upgrade'
+    alias hd='helm delete'
+    alias hls='helm list'
+    alias hs='helm status'
+    alias hg='helm get'
 
     # Flux
-    "flux" = "flux";
-    "fgs" = "flux get sources all";
-    "fgk" = "flux get kustomizations";
-    "fgh" = "flux get helmreleases";
-    "fr" = "flux reconcile";
-    "frs" = "flux reconcile source";
-    "frk" = "flux reconcile kustomization";
-    "frh" = "flux reconcile helmrelease";
+    alias fgs='flux get sources all'
+    alias fgk='flux get kustomizations'
+    alias fgh='flux get helmreleases'
+    alias fr='flux reconcile'
+    alias frs='flux reconcile source'
+    alias frk='flux reconcile kustomization'
+    alias frh='flux reconcile helmrelease'
 
     # K9s
-    "k9s" = "k9s";
-  };
+    alias k9s='k9s'
+  '';
 }

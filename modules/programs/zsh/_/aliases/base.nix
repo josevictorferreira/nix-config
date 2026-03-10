@@ -4,33 +4,32 @@ let
   cfg = config.jvf.programs.zsh;
 in
 {
-  programs.zsh.shellAliases = lib.mkIf cfg.setAsDefaultShell {
+  programs.zsh.interactiveShellInit = lib.mkIf cfg.setAsDefaultShell ''
     # Navigation Shortcuts
-    ".." = "cd ..";
-    "..." = "cd ../..";
-    "...." = "cd ../../..";
-    "~" = "cd ~";
-    "-" = "cd -";
+    alias '..'='cd ..'
+    alias '...'='cd ../..'
+    alias '....'='cd ../../..'
+    alias '~'='cd ~'
+    alias -- '-'='cd -'
 
     # File Operations
-    "cp" = "cp -i";
-    "mv" = "mv -i";
-    "rm" = "rm -i";
-    "mkdir" = "mkdir -p";
+    alias cp='cp -i'
+    alias mv='mv -i'
+    alias rm='rm -i'
+    alias mkdir='mkdir -p'
 
     # Quick Edits
-    "zshconfig" = "nvim ~/.zshrc";
-    "reload" = "source ~/.zshrc";
-    "zshenv" = "nvim ~/.zshenv";
+    alias zshconfig='nvim ~/.zshrc'
+    alias reload='source ~/.zshrc'
+    alias zshenv='nvim ~/.zshenv'
 
     # System Info
-    "df" = "df -h";
-    "du" = "du -h";
-    "free" = "free -h";
-    "psaux" = "ps aux";
+    alias df='df -h'
+    alias du='du -h'
+    alias psaux='ps aux'
 
     # Process Management
-    "killport" = "f() { lsof -ti:$1 | xargs kill -9; }; f";
-    "ports" = "netstat -tuln";
-  };
+    alias killport='f() { lsof -ti:$1 | xargs kill -9; }; f'
+    alias ports='netstat -tuln'
+  '';
 }
