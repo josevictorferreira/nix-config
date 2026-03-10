@@ -14,6 +14,12 @@
       description = "Set zsh as default shell";
     };
 
+    theme = lib.mkOption {
+      type = lib.types.str;
+      default = "agnoster";
+      description = "Oh My Zsh theme to use";
+    };
+
     plugins = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [

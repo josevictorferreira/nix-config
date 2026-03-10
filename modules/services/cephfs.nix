@@ -1,8 +1,7 @@
 # Aspect: services-cephfs (NixOS only)
 # Mounts a CephFS subvolume via native ceph + bindfs for user-friendly access.
 # Darwin does not support CephFS.
-_:
-{
+_: {
   flake.modules.nixos.services-cephfs =
     { config
     , lib
@@ -134,29 +133,34 @@ _:
             ];
           };
 
-        fileSystems."${homeDir}/${cfg.name}" = {
-          device = cfg.mountPoint;
-          fsType = "fuse.bindfs";
-          options = [
-            "force-user=2002"
-            "force-group=2002"
-            "perms=g+w:u+rwX:g+rwX:o=rD"
-            "create-for-user=2002"
-            "create-for-group=2002"
-            "create-with-perms=u=rwX:g=rwXs:o=rx"
-            "chown-ignore"
-            "chgrp-ignore"
-            "allow_other"
-            "x-systemd.automount"
-            "x-systemd.idle-timeout=60"
-            "x-systemd.requires=network-online.target"
-            "x-systemd.after=network-online.target"
-            "noauto"
-            "nofail"
-          ];
-          neededForBoot = false;
-          depends = [ cfg.mountPoint ];
-        };
+        fileSystems."${homeDir}/${cfg.name}" =
+          let
+            # Convert mountPoint path to systemd unit name (e.g. /mnt/homelabfs -> mnt-homelabfs.mount)
+            cephMountUnit = "${
+              builtins.replaceStrings [ "/" ] [ "-" ] (lib.strings.removePrefix "/" cfg.mountPoint)
+            }.mount";
+          in
+          {
+            device = cfg.mountPoint;
+            fsType = "fuse.bindfs";
+            options = [
+              "force-user=2002"
+              "force-group=2002"
+              "perms=g+w:u+rwX:g+rwX:o=rD"
+              "create-for-user=2002"
+              "create-for-group=2002"
+              "create-with-perms=u=rwX:g=rwXs:o=rx"
+              "chown-ignore"
+              "chgrp-ignore"
+              "allow_other"
+              "x-systemd.automount"
+              "x-systemd.idle-timeout=60"
+              "x-systemd.requires=${cephMountUnit}"
+              "x-systemd.after=${cephMountUnit}"
+            ];
+            neededForBoot = false;
+            depends = [ cfg.mountPoint ];
+          };
 
         systemd.tmpfiles.rules = [
           "d ${homeDir}/${cfg.name} 0755 ${cfg.username} users -"
