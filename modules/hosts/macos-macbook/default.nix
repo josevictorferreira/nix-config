@@ -28,6 +28,7 @@ in
       (with self.modules.darwin; [
         # Core infrastructure
         core-jvf
+        core-theme
         users
         wrappers
         repositories
@@ -62,29 +63,26 @@ in
         { nixpkgs.hostPlatform = system; }
 
         # Host identity & overrides
-        (
-          _:
-          {
-            # Core identity
-            jvf.core = {
-              username = "josevictorferreira";
-              host = "macos-macbook";
-              os = "macos";
-            };
+        (_: {
+          # Core identity
+          jvf.core = {
+            username = "josevictorferreira";
+            host = "macos-macbook";
+            os = "macos";
+          };
 
-            # macOS primary user (required by nix-darwin)
-            system.primaryUser = "josevictorferreira";
+          # macOS primary user (required by nix-darwin)
+          system.primaryUser = "josevictorferreira";
 
-            # User configuration
-            jvf.users.josevictorferreira = {
-              authorizedKeys = [
-                "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
-              ];
-            };
+          # User configuration
+          jvf.users.josevictorferreira = {
+            authorizedKeys = [
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPAXdWHFx9UwUOXlapiVD0mzM0KL9VsMlblMAc46D9PV josevictor@josevictor-nixos"
+            ];
+          };
 
-            system.stateVersion = 4;
-          }
-        )
+          system.stateVersion = 4;
+        })
       ];
   };
 }
