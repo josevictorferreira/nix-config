@@ -28,7 +28,8 @@ let
         ./_/functions/development.nix
         ./_/functions/kubernetes.nix
         ./_/functions/navigation.nix
-      ];
+      ]
+      ++ lib.optionals isDarwin [ ./_/shell-init/oh-my-zsh-darwin.nix ];
 
       config = lib.mkIf cfg.setAsDefaultShell {
         assertions = [
@@ -40,22 +41,9 @@ let
 
         programs.zsh = {
           enable = true;
-          interactiveShellInit = lib.mkIf isDarwin ''
-            # Manual Oh My Zsh for nix-darwin
-            export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh/"
-            ZSH_THEME="${cfg.theme}"
-            plugins=(${lib.concatStringsSep " " cfg.plugins})
-
-            # Disable oh-my-zsh auto-update (managed by Nix)
-            DISABLE_AUTO_UPDATE="true"
-
-            if [ -f $ZSH/oh-my-zsh.sh ]; then
-              source $ZSH/oh-my-zsh.sh
-            fi
-          '';
         }
         // lib.optionalAttrs (!isDarwin) {
-          # nix-darwin doesn't have ohMyZsh option
+          # nix-darwin doesn't have ohMyZsh option, handled separately for Darwin
           ohMyZsh = {
             enable = true;
             inherit (cfg) theme plugins;
