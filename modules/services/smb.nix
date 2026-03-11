@@ -127,7 +127,9 @@ let
                 /sbin/mount | /usr/bin/grep -q " on ${mntPoint} " && exit 0
 
                 /sbin/mount_smbfs -N -f 0644 -d 0775 -o ${lib.concatStringsSep "," mntOptions} \
-                  //${config.sops.placeholder."${group}_smb_username"}@${cfg.serverAddress}/${cfg.exportedName} \
+                  //${config.sops.placeholder."${group}_smb_username"}:${
+                    config.sops.placeholder."${group}_smb_password"
+                  }@${cfg.serverAddress}/${cfg.exportedName} \
                   ${mntPoint}
               '';
             };

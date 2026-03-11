@@ -62,6 +62,26 @@ in
         # Platform binding
         { nixpkgs.hostPlatform = system; }
 
+        # Sops secrets → /run/secrets/<key> (sourced as env vars by zsh)
+        (
+          { config, ... }:
+          let
+            username = config.jvf.core.username;
+            secretKeys = config.jvf.programs.zsh.secrets.keys;
+          in
+          {
+            sops.secrets = builtins.listToAttrs (
+              map (key: {
+                name = key;
+                value = {
+                  owner = username;
+                  mode = "0400";
+                };
+              }) secretKeys
+            );
+          }
+        )
+
         # Host identity & overrides
         (_: {
           # Core identity
