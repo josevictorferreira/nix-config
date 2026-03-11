@@ -153,6 +153,7 @@ _: {
               "chown-ignore"
               "chgrp-ignore"
               "allow_other"
+              "noauto"
               "x-systemd.automount"
               "x-systemd.idle-timeout=60"
               "x-systemd.requires=${cephMountUnit}"
