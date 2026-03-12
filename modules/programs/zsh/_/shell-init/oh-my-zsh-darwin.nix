@@ -1,10 +1,9 @@
 # oh-my-zsh-darwin.nix - Oh My Zsh configuration for Darwin (manual setup)
 # Uses mkAfter to ensure it runs AFTER all other interactiveShellInit content
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.zsh;

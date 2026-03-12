@@ -131,7 +131,7 @@ let
               enable = true;
               device = "nodev";
               efiSupport = true;
-              gfxmodeBios = "auto";
+              gfxmodeBios = lib.mkDefault "auto";
               memtest86.enable = true;
               inherit (cfg.grub) configurationLimit;
               inherit (cfg.grub) useOSProber;

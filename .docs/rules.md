@@ -61,6 +61,21 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** P0 switched to inclusion-based architecture — modules are active when imported, no `enable = true` toggles needed. P7 merged selector+config into single files.
 **Verify:** Host identity sections in `modules/hosts/*/default.nix` should be <30 lines. `grep -c 'enable' modules/hosts/*/default.nix` should return 0.
 
+### Python Transitive Dependency Overrides
+**Lesson:** Use `lib.composeExtensions attrs.packageOverrides myFixes` to ensure your overrides apply *after* internal package overrides (e.g., in `ceph`).
+**Context:** Ceph pins `cryptography` via `packageOverrides`; standard overlays are wiped out unless explicitly composed after Ceph's internal ones.
+**Verify:** Check if `doCheck = false` or similar attributes survive by evaluating the target package's final attributes.
+
+### Sphinx 9.1.0 Downgrade on Python 3.11
+**Lesson:** If Sphinx 9 (Python 3.12+) is forced on Python 3.11, downgrade to 8.1.3, add `psuper.roman` to `propagatedBuildInputs`, and set `dontCheckRuntimeDeps = true`.
+**Context:** Sphinx 9.1.0 uses Python 3.12 syntax (`type _PARSER_SETUP = ...`) which causes SyntaxErrors during evaluation on Python 3.11.
+**Verify:** Run `nix-build -A python311Packages.sphinx` and confirm it unpacks and evaluates without SyntaxError.
+
+### Forcibly Bypassing Documentation Generation
+**Lesson:** To stop a Python package from running `sphinx-build`, filter out `sphinxHook` AND `sphinx` from `nativeBuildInputs` and clear `postBuild`.
+**Context:** Many packages (like `typeguard`) ignore `dontBuildDocs = true` if the hook is present or if they manually invoke the binary in `postBuild`.
+**Verify:** Check the build log to ensure `sphinx-build` is never invoked and `sphinx_autodoc_typehints` is not imported.
+
 ---
 
 ## Verification
@@ -248,3 +263,12 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Interpolated attrpaths like `colors.\"color${i}\"` are invalid Nix syntax. Use `lib.getAttr "color${toString i}" colors` instead for dynamic key access.
 **Context:** Ghostty palette generation tried `config.jvf.theme.colors.\"color${toString i}\"` which caused multiple LSP errors.
 **Verify:** When generating dynamic attribute access, use `lib.getAttr` or `builtins.getAttr`, not escaped quotes.
+
+---
+
+## Virtual Machine VM Conflicts
+
+### mkDefault for VM conflicting configurations
+**Lesson:** When defining values for hardware or boot settings that might conflict with `qemu-vm.nix` overrides during `nixos-rebuild build-vm` (like `gfxmodeBios`), always wrap them in `lib.mkDefault`.
+**Context:** Standard `boot.loader.grub` settings often conflict with Nixpkgs' QEMU VM profile, preventing the VM build from evaluating.
+**Verify:** Try evaluating `.system.build.vm` for the host and ensure no "conflicting definition values" errors appear.

@@ -93,6 +93,8 @@ let
               algorithm = cfg.zramAlgorithm;
             };
 
+            systemd.services."systemd-zram-setup@zram0".restartIfChanged = false;
+
             powerManagement = {
               enable = true;
               inherit (cfg) cpuFreqGovernor;
