@@ -17,6 +17,7 @@ let
     };
 
   hyprConfigDir = ./assets/hypr;
+  pyprConfigDir = ./assets/pypr;
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
@@ -72,6 +73,7 @@ in
           ];
           configs = {
             "hypr" = hyprConfigDir;
+            "pypr" = pyprConfigDir;
           };
           postInstall = ''
             # Theme adapter: inject generated colors (replaces wallust runtime gen)

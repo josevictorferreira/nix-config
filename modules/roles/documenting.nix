@@ -32,6 +32,7 @@ let
           pkgs.obsidian
           pkgs.koreader
           pkgs.zathura
+          pkgs.libreoffice-qt-fresh
         ];
       };
     };
