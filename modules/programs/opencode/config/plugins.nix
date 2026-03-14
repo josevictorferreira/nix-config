@@ -2,7 +2,7 @@
 _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
-      "@tarquinen/opencode-dcp@3.0.0"
+      "@tarquinen/opencode-dcp@3.0.3"
       "oh-my-opencode@3.11.2"
       "mcpflow-router@0.3.3"
     ];
@@ -70,7 +70,7 @@ _: {
           };
         };
         metis = {
-          model = "github-copilot/gemini-3.1-pro-preview";
+          model = "zai-coding-plan/glm-5";
           permission = {
             skill = {
               "*" = {

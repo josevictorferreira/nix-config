@@ -35,12 +35,12 @@ let
           theme = lib.mkDefault "tokyonight";
           mcp = lib.mkDefault cfg.mcps;
           disabled_providers = lib.mkDefault [
-            "opencode"
-            "copilot"
-            "github-copilot-enterprise"
-            "copilot-enterprise"
-            "github-models"
-            "minimax-cn"
+            # "opencode"
+            # "copilot"
+            # "github-copilot-enterprise"
+            # "copilot-enterprise"
+            # "github-models"
+            # "minimax-cn"
           ];
 
           instructions = [

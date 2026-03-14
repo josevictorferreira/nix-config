@@ -21,12 +21,12 @@ done
 ags -q
 
 sleep 0.3
-waybar > /dev/null 2>&1
+waybar > /dev/null 2>&1 &
 
 sleep 0.5
 swaync > /dev/null 2>&1 &
 
-ags &
+ags > /dev/null 2>&1 &
 
 sleep 1
 if file_exists "${UserScripts}/RainbowBorders.sh"; then
