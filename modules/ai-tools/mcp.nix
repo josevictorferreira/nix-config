@@ -9,30 +9,15 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
-
-      # --- playwriter ---
-      playwriterDef = mkMcpModule {
-        name = "playwriter";
-        tags = [ ];
-        mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [
-              (lib.getExe' pkgs.nodejs "npx")
-              "playwriter@latest"
-            ];
-          };
-        };
-      };
 
       # --- context7 ---
       context7Def = mkMcpModule {
@@ -75,125 +60,6 @@ let
         };
       };
 
-      # --- shadcn ---
-      shadcnDef = mkMcpModule {
-        name = "shadcn";
-        tags = [ "frontend" ];
-        mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [
-              "${pkgs.bun}/bin/bunx"
-              "--bun"
-              "shadcn@latest"
-              "mcp"
-            ];
-          };
-        };
-      };
-
-      # --- zai-mcp-server ---
-      zaiMcpServerDef = mkMcpModule {
-        name = "zai-mcp-server";
-        tags = [ "explorer" ];
-        mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [
-              "${lib.getExe' pkgs.nodejs "npx"}"
-              "-y"
-              "@z_ai/mcp-server"
-            ];
-            environment = {
-              "Z_AI_API_KEY" = "{env:Z_AI_API_KEY}";
-              "Z_AI_MODE" = "ZAI";
-            };
-          };
-        };
-      };
-
-      # --- web-reader ---
-      webReaderDef = mkMcpModule {
-        name = "web-reader";
-        tags = [ "explorer" ];
-        mcpOptions = {
-          opencode = {
-            type = "remote";
-            enabled = true;
-            url = "https://api.z.ai/api/mcp/web_reader/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-        };
-      };
-
-      # --- web-search-prime ---
-      webSearchPrimeDef = mkMcpModule {
-        name = "web-search-prime";
-        tags = [ "explorer" ];
-        mcpOptions = {
-          opencode = {
-            type = "remote";
-            enabled = true;
-            url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-        };
-      };
-
-      # --- zread ---
-      zreadDef = mkMcpModule {
-        name = "zread";
-        tags = [ "explorer" ];
-        mcpOptions = {
-          opencode = {
-            type = "remote";
-            enabled = true;
-            url = "https://api.z.ai/api/mcp/zread/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-        };
-      };
-
-      # --- ck ---
-      ckDef = mkMcpModule {
-        name = "ck";
-        tags = [ "explorer" ];
-        mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [
-              "${lib.getExe config.jvf.programs."ck-search".package}"
-              "--serve"
-            ];
-          };
-        };
-      };
-
-      # --- mcp-nixos (NixOS-only) ---
-      mcpNixosDef = mkMcpModule {
-        name = "mcp-nixos";
-        tags = [ "nix" ];
-        mcpNames = {
-          opencode = "mcp-nixos";
-        };
-        mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [ (lib.getExe pkgs.mcp-nixos) ];
-          };
-        };
-      };
-
       cfg = config.jvf.aiTools.mcp;
     in
     {
@@ -201,54 +67,31 @@ let
 
       # Define all MCP server options
       options.jvf.aiTools.mcp = {
-        playwriter = playwriterDef.options;
         context7 = context7Def.options;
         "chrome-devtools" = chromeDevtoolsDef.options;
-        shadcn = shadcnDef.options;
-        "zai-mcp-server" = zaiMcpServerDef.options;
-        "web-reader" = webReaderDef.options;
-        "web-search-prime" = webSearchPrimeDef.options;
-        zread = zreadDef.options;
-        ck = ckDef.options;
       }
       // lib.optionalAttrs (!isDarwin) {
-        "mcp-nixos" = mcpNixosDef.options // {
-          enable = mcpNixosDef.options.enable // {
-            default = true;
-          };
-        };
       };
 
-      config = lib.mkMerge (
-        [
-          # Individual server configs
-          (lib.mkIf cfg.playwriter.enable playwriterDef.config)
-          (lib.mkIf cfg.context7.enable context7Def.config)
-          (lib.mkIf cfg."chrome-devtools".enable (
-            chromeDevtoolsDef.config
-            // {
-              jvf.aiTools.skills."browser-debug-tools".mcp = {
-                command = npx;
-                args = [
-                  "-y"
-                  "chrome-devtools-mcp@latest"
-                  "--headless=true"
-                  "--isolated=true"
-                  "--executablePath=${defaultBrowser}"
-                ];
-              };
-            }
-          ))
-          (lib.mkIf cfg.shadcn.enable shadcnDef.config)
-          (lib.mkIf cfg."zai-mcp-server".enable zaiMcpServerDef.config)
-          (lib.mkIf cfg."web-reader".enable webReaderDef.config)
-          (lib.mkIf cfg."web-search-prime".enable webSearchPrimeDef.config)
-          (lib.mkIf cfg.zread.enable zreadDef.config)
-          (lib.mkIf cfg.ck.enable ckDef.config)
-        ]
-        # mcp-nixos: NixOS-only
-        ++ lib.optional (!isDarwin) (lib.mkIf cfg."mcp-nixos".enable mcpNixosDef.config)
-      );
+      config = lib.mkMerge ([
+        # Individual server configs
+        (lib.mkIf cfg.context7.enable context7Def.config)
+        (lib.mkIf cfg."chrome-devtools".enable (
+          chromeDevtoolsDef.config
+          // {
+            jvf.aiTools.skills."browser-debug-tools".mcp = {
+              command = npx;
+              args = [
+                "-y"
+                "chrome-devtools-mcp@latest"
+                "--headless=true"
+                "--isolated=true"
+                "--executablePath=${defaultBrowser}"
+              ];
+            };
+          }
+        ))
+      ]);
     };
 in
 {
