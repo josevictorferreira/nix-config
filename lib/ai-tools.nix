@@ -242,15 +242,25 @@ let
             description = "Capability tags for ${optionName}";
             example = [ "documentation-search" ];
           };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = programs;
+            description = "Which coding agents (programs) will have this MCP installed and enabled in their config";
+          };
         };
         config = lib.mkMerge (
-          map (program: { jvf.programs.${program}.mcps.${mcpNameForProgram program} = mcpOptionsForProgram program; }) programs
+          map
+            (program: {
+              jvf.programs.${program}.mcps.${mcpNameForProgram program} = mcpOptionsForProgram program;
+            })
+            programs
         );
       }
     else
       let
         name = args.name or "MCP Server";
         tags = args.tags or [ ];
+        programs = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
         config = args.config or { };
       in
       {
@@ -263,6 +273,11 @@ let
             default = tags;
             description = "Capability tags for ${name}";
             example = [ "documentation-search" ];
+          };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = programs;
+            description = "Which coding agents (programs) will have this MCP installed and enabled in their config";
           };
         };
         inherit config;
@@ -362,7 +377,6 @@ let
         explicitTools = value.tools or [ ];
         tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
         allTools = lib.unique (explicitTools ++ tagTools);
-        toolsString = lib.concatStringsSep ", " allTools;
         headerLines = [
           "name: \"${value.name or "unknown"}\""
           "description: \"${value.description or ""}\""
@@ -374,7 +388,9 @@ let
           (
             (builtins.hasAttr "temperature" value) && value.temperature != null
           ) "temperature: ${toString value.temperature}";
-        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
+        toolsString = lib.concatStringsSep ", " allTools;
+        yamlHeader = "-----
+" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
     else
@@ -418,7 +434,8 @@ let
           (
             (builtins.hasAttr "temperature" value) && value.temperature != null
           ) "temperature: ${toString value.temperature}";
-        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
+        yamlHeader = "-----
+" + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
     else
@@ -446,7 +463,8 @@ let
           [ "globs:" ] ++ map (g: "  - \"${g}\"") value.globs
         );
 
-        yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n";
+        yamlHeader = "-----
+" + lib.concatStringsSep "\n" headerLines + "\n---\n";
 
         toolsPreamble =
           if allTools == [ ] then

@@ -11,6 +11,10 @@ let
         curl
         ripgrep
         coreutils
+        git
+        gh
+        bun
+        nodejs
       ];
     profile = ''
       export TMPDIR="''${TMPDIR:-$HOME/.cache/opencode-tmp}"
@@ -25,11 +29,12 @@ let
     set -euo pipefail
 
     INSTALL_URL="https://opencode.ai/install"
-    OPENCODE_BIN_DIR="$HOME/.opencode/bin"
+    LOCAL_BIN="$HOME/.opencode/bin"
+    OPENCODE_BIN="$LOCAL_BIN/opencode"
 
-    if [ ! -x "$OPENCODE_BIN_DIR/opencode" ]; then
-      mkdir -p "$OPENCODE_BIN_DIR"
-      PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
+    if [ ! -x "$OPENCODE_BIN" ] || [ "''${OPENCODE_UPDATE:-}" = "true" ]; then
+      mkdir -p "$LOCAL_BIN"
+      PATH="$LOCAL_BIN:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
     fi
 
     exec "${openCodeFHS}/bin/opencode-fhs" "$@"
@@ -39,12 +44,12 @@ let
     set -euo pipefail
 
     INSTALL_URL="https://opencode.ai/install"
-    OPENCODE_BIN_DIR="$HOME/.opencode/bin"
-    OPENCODE_BIN="$OPENCODE_BIN_DIR/opencode"
+    LOCAL_BIN="$HOME/.opencode/bin"
+    OPENCODE_BIN="$LOCAL_BIN/opencode"
 
-    if [ ! -x "$OPENCODE_BIN" ]; then
-      mkdir -p "$OPENCODE_BIN_DIR"
-      PATH="$OPENCODE_BIN_DIR:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
+    if [ ! -x "$OPENCODE_BIN" ] || [ "''${OPENCODE_UPDATE:-}" = "true" ]; then
+      mkdir -p "$LOCAL_BIN"
+      PATH="$LOCAL_BIN:$PATH" "${pkgs.bash}/bin/sh" -c "$(${pkgs.curl}/bin/curl -fsSL $INSTALL_URL)"
     fi
 
     exec "$OPENCODE_BIN" "$@"

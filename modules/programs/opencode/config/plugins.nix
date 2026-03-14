@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings.plugin = [
       "@tarquinen/opencode-dcp@3.0.3"
       "oh-my-opencode@3.11.2"
-      "mcpflow-router@0.3.3"
+      "mcpflow-router@0.3.2"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings = {
@@ -21,8 +21,8 @@ _: {
           };
         };
         hephaestus = {
-          model = "github-copilot/gpt-5.3-codex";
-          variant = "medium";
+          model = "zai-coding-plan/glm-5";
+          variant = "thinker";
         };
         librarian = {
           model = "minimax/MiniMax-M2.5";
@@ -59,7 +59,7 @@ _: {
           };
         };
         prometheus = {
-          model = "github-copilot/gpt-5.4";
+          model = "zai-coding-plan/glm-5";
           permission = {
             skill = {
               "*" = {
@@ -70,7 +70,7 @@ _: {
           };
         };
         metis = {
-          model = "zai-coding-plan/glm-5";
+          model = "kimi-for-coding/k2p5";
           permission = {
             skill = {
               "*" = {
@@ -93,7 +93,9 @@ _: {
           };
         };
         oracle = {
-          model = "github-copilot/gpt-5.2";
+          model = "zai-coding-plan/glm-5";
+          variant = "thinker";
+          temperature = 1.0;
         };
         frontend-ui-ux-engineer = {
           model = "minimax/MiniMax-M2.5";
@@ -112,7 +114,7 @@ _: {
           temperature = 1.0;
         };
         multimodal-looker = {
-          model = "github-copilot/gemini-3.1-flash-lite-preview";
+          model = "bailian-coding-plan/qwen3.5-plus";
           permission = {
             skill = {
               "*" = {
@@ -147,25 +149,27 @@ _: {
       google_auth = false;
       categories = {
         visual-engineering = {
-          model = "github-copilot/gemini-3-flash-preview";
+          model = "bailian-coding-plan/qwen3.5-plus";
         };
         ultrabrain = {
-          model = "github-copilot/gpt-5.2";
+          model = "kimi-for-coding/k2p5";
         };
         artistry = {
-          model = "github-copilot/gemini-3-pro-preview";
+          model = "minimax/MiniMax-M2.5";
         };
         quick = {
           model = "openrouter/openai/gpt-oss-120b";
         };
         most-capable = {
-          model = "github-copilot/claude-opus-4.6";
+          model = "zai-coding-plan/glm-5";
+          variant = "thinker";
+          temperature = 1.0;
         };
         writing = {
           model = "kimi-for-coding/kimi-k2-thinking";
         };
         business-logic = {
-          model = "github-copilot/gemini-3-flash-preview";
+          model = "bailian-coding-plan/qwen3.5-plus";
         };
         general = {
           model = "kimi-for-coding/k2p5";

@@ -25,16 +25,9 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [
               (lib.getExe' pkgs.nodejs "npx")
-              "playwriter@latest"
-            ];
-          };
-          claudecode = {
-            type = "stdio";
-            command = lib.getExe' pkgs.nodejs "npx";
-            args = [
               "playwriter@latest"
             ];
           };
@@ -47,30 +40,10 @@ let
         tags = [ "documentation" ];
         mcpOptions = {
           opencode = {
-            enabled = false;
+            enabled = true;
             type = "local";
             command = [
               "npx"
-              "-y"
-              "@upstash/context7-mcp"
-              "--api-key"
-              "{env:CONTEXT7_API_KEY}"
-            ];
-          };
-          claudecode = {
-            type = "stdio";
-            command = "npx";
-            args = [
-              "-y"
-              "@upstash/context7-mcp"
-              "--api-key"
-              "{env:CONTEXT7_API_KEY}"
-            ];
-          };
-          droid = {
-            type = "stdio";
-            command = "npx";
-            args = [
               "-y"
               "@upstash/context7-mcp"
               "--api-key"
@@ -89,31 +62,9 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [
               npx
-              "-y"
-              "chrome-devtools-mcp@latest"
-              "--headless=true"
-              "--isolated=true"
-              "--executablePath=${defaultBrowser}"
-            ];
-          };
-          claudecode = {
-            type = "stdio";
-            command = "npx";
-            args = [
-              "-y"
-              "chrome-devtools-mcp@latest"
-              "--headless=true"
-              "--isolated=true"
-              "--executablePath=${defaultBrowser}"
-            ];
-          };
-          droid = {
-            type = "stdio";
-            command = "npx";
-            args = [
               "-y"
               "chrome-devtools-mcp@latest"
               "--headless=true"
@@ -131,18 +82,9 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [
               "${pkgs.bun}/bin/bunx"
-              "--bun"
-              "shadcn@latest"
-              "mcp"
-            ];
-          };
-          claudecode = {
-            type = "stdio";
-            command = "${pkgs.bun}/bin/bunx";
-            args = [
               "--bun"
               "shadcn@latest"
               "mcp"
@@ -158,37 +100,13 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [
               "${lib.getExe' pkgs.nodejs "npx"}"
               "-y"
               "@z_ai/mcp-server"
             ];
             environment = {
-              "Z_AI_API_KEY" = "{env:Z_AI_API_KEY}";
-              "Z_AI_MODE" = "ZAI";
-            };
-          };
-          claudecode = {
-            type = "stdio";
-            command = "${lib.getExe' pkgs.nodejs "npx"}";
-            args = [
-              "-y"
-              "@z_ai/mcp-server"
-            ];
-            env = {
-              "Z_AI_API_KEY" = "{env:Z_AI_API_KEY}";
-              "Z_AI_MODE" = "ZAI";
-            };
-          };
-          droid = {
-            type = "stdio";
-            command = "${lib.getExe' pkgs.nodejs "npx"}";
-            args = [
-              "-y"
-              "@z_ai/mcp-server"
-            ];
-            env = {
               "Z_AI_API_KEY" = "{env:Z_AI_API_KEY}";
               "Z_AI_MODE" = "ZAI";
             };
@@ -203,21 +121,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = false;
-            url = "https://api.z.ai/api/mcp/web_reader/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          claudecode = {
-            type = "http";
-            url = "https://api.z.ai/api/mcp/web_reader/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          droid = {
-            type = "http";
+            enabled = true;
             url = "https://api.z.ai/api/mcp/web_reader/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -233,21 +137,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = false;
-            url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          claudecode = {
-            type = "http";
-            url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          droid = {
-            type = "http";
+            enabled = true;
             url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -263,21 +153,7 @@ let
         mcpOptions = {
           opencode = {
             type = "remote";
-            enabled = false;
-            url = "https://api.z.ai/api/mcp/zread/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          claudecode = {
-            type = "http";
-            url = "https://api.z.ai/api/mcp/zread/mcp";
-            headers = {
-              Authorization = "Bearer {env:Z_AI_API_KEY}";
-            };
-          };
-          droid = {
-            type = "http";
+            enabled = true;
             url = "https://api.z.ai/api/mcp/zread/mcp";
             headers = {
               Authorization = "Bearer {env:Z_AI_API_KEY}";
@@ -293,23 +169,9 @@ let
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [
               "${lib.getExe config.jvf.programs."ck-search".package}"
-              "--serve"
-            ];
-          };
-          claudecode = {
-            type = "stdio";
-            command = "${lib.getExe config.jvf.programs."ck-search".package}";
-            args = [
-              "--serve"
-            ];
-          };
-          droid = {
-            type = "stdio";
-            command = "${lib.getExe config.jvf.programs."ck-search".package}";
-            args = [
               "--serve"
             ];
           };
@@ -322,18 +184,12 @@ let
         tags = [ "nix" ];
         mcpNames = {
           opencode = "mcp-nixos";
-          claudecode = "nixos-mcp";
         };
         mcpOptions = {
           opencode = {
             type = "local";
-            enabled = false;
+            enabled = true;
             command = [ (lib.getExe pkgs.mcp-nixos) ];
-          };
-          claudecode = {
-            type = "stdio";
-            enabled = false;
-            command = lib.getExe pkgs.mcp-nixos;
           };
         };
       };
@@ -358,7 +214,7 @@ let
       // lib.optionalAttrs (!isDarwin) {
         "mcp-nixos" = mcpNixosDef.options // {
           enable = mcpNixosDef.options.enable // {
-            default = false;
+            default = true;
           };
         };
       };

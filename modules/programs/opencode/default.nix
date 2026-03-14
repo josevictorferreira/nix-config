@@ -68,6 +68,8 @@ let
             "dcp.jsonc"
             "package.json"
             "bun.lock"
+            "auth.json"
+            "github-copilot"
           ];
           packages = [
             pkgs.bun
