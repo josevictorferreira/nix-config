@@ -17,7 +17,7 @@ _: {
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.5";
         qwen = "bailian-coding-plan/qwen3.5-plus";
-        gpt = "github-copilot/gpt-5.4";
+        gpt = "github-copilot/gpt-5.2";
         models = {
           quick = {
             default = "openrouter/openai/gpt-oss-120b";

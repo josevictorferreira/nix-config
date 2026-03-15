@@ -6,11 +6,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -34,15 +35,6 @@ let
         jvf.programs.opencode.settings = {
           theme = lib.mkDefault "tokyonight";
           mcp = lib.mkDefault cfg.mcps;
-          disabled_providers = lib.mkDefault [
-            # "opencode"
-            # "copilot"
-            # "github-copilot-enterprise"
-            # "copilot-enterprise"
-            # "github-models"
-            # "minimax-cn"
-          ];
-
           instructions = [
             ".docs/rules.md"
           ];
@@ -56,6 +48,7 @@ let
               ".bundle/**"
               "__pycache__/**"
               ".ck/**"
+              ".bun_cache/**"
             ];
           };
           small_model = "github-copilot/grok-code-fast-1";
@@ -64,12 +57,7 @@ let
         # ── Wrappers config ───────────────────────────────────────────
         jvf.wrappers.users.${cfg.username}.programs.opencode = {
           preserveFiles = [
-            "node_modules"
             "dcp.jsonc"
-            "package.json"
-            "bun.lock"
-            "auth.json"
-            "github-copilot"
           ];
           packages = [
             pkgs.bun
