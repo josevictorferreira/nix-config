@@ -15,8 +15,17 @@ _: {
     };
 
     openrouter = {
+      npm = "@ai-sdk/openai-compatible";
+      name = "OpenRouter";
       options = {
+        baseURL = "https://openrouter.ai/api/v1";
         apiKey = "{env:OPENROUTER_API_KEY_CODE_AGENT}";
+      };
+      models = {
+        "inception/mercury-2" = {
+          name = "Inception Mercury 2 (OpenRouter)";
+          max_tokens = 16384;
+        };
       };
     };
 

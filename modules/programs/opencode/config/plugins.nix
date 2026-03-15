@@ -20,10 +20,10 @@ _: {
         gpt = "github-copilot/gpt-5.2";
         models = {
           quick = {
-            default = "openrouter/openai/gpt-oss-120b";
+            default = "openrouter/inception/mercury-2";
             cheap = minimax;
             expensive = "github-copilot/grok-code-fast-1";
-            alternative = "openrouter/inception/mercury-2";
+            alternative = "openrouter/openai/gpt-oss-120b";
           };
           coder = {
             default = kimi;

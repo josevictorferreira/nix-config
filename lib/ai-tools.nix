@@ -19,29 +19,46 @@ let
     in
     if newApi then
       let
-        programs = args.programs or [
-          "opencode"
-          "claudecode"
-          "droid"
-          "gemini"
-        ];
         inherit (args) skillOptions;
         skillName =
           skillOptions.name or (throw "mkSkillModule: skillOptions.name is required");
+        defaultPrograms = args.programs or (
+          if (skillOptions ? mcp && skillOptions.mcp != { }) || (skillOptions ? mcps && skillOptions.mcps != { }) then
+            [ "opencode" ]
+          else
+            [ "opencode" "claudecode" "droid" "gemini" ]
+        );
       in
       {
         options = {
           enable = (lib.mkEnableOption skillName) // {
             default = true;
           };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this skill in";
+          };
         };
-        config = lib.mkMerge (
-          map (program: { jvf.programs.${program}.skills.${skillName} = skillOptions; }) programs
-        );
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.skills.${skillName};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.skills.${skillName} = lib.mkIf (lib.elem program cfg.programs) skillOptions;
+                })
+                allPrograms
+            )
+          );
       }
     else
       let
         inherit (args) name;
+        # ... (lines omitted for brevity, but I'll keep the context)
         description = args.description or "";
         prompt = args.prompt or "";
         model = args.model or "";
@@ -67,6 +84,12 @@ let
             ;
           "allowed-tools" = allowed-tools;
         };
+        defaultPrograms = args.programs or (
+          if (mcp != { }) then
+            [ "opencode" ]
+          else
+            [ "opencode" "claudecode" "droid" "gemini" ]
+        );
       in
       {
         options = {
@@ -78,13 +101,26 @@ let
             default = tags;
             description = "Capability tags for ${name}";
           };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this skill in";
+          };
         };
-        config = {
-          jvf.programs.opencode.skills.${name} = skillDefinition;
-          jvf.programs.claudecode.skills.${name} = skillDefinition;
-          jvf.programs.droid.skills.${name} = skillDefinition;
-          jvf.programs.gemini.skills.${name} = skillDefinition;
-        };
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.skills.${name};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.skills.${name} = lib.mkIf (lib.elem program cfg.programs) skillDefinition;
+                })
+                allPrograms
+            )
+          );
       };
 
   formatPermissions =

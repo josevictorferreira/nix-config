@@ -5,17 +5,14 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { lib
+    { config
+    , lib
     , pkgs
+    , inputs
     , ...
     }:
     let
-      programs = [
-        "opencode"
-        "claudecode"
-        "droid"
-        "gemini"
-      ];
+      inherit (inputs.lib.aiTools) mkSkillModule;
 
       npx = lib.getExe' pkgs.nodejs "npx";
       defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
@@ -30,39 +27,40 @@ let
             (lib.toUpper first) + rest)
           (lib.splitString "-" s));
 
-      mkSkillConfig = skillName: skillOptions:
-        lib.mkMerge (
-          map (program: { jvf.programs.${program}.skills.${skillName} = skillOptions; }) programs
-        );
-
       args = { inherit lib pkgs isDarwin npx defaultBrowser kebabToHuman; };
 
-      skills = {
-        auditing-security = import ./_/skills/auditing/security.nix args;
-        creating-skills = import ./_/skills/meta/creating-skills.nix args;
-        research-tools = import ./_/skills/research/research-tools.nix args;
-        grafana = import ./_/skills/infrastructure/grafana.nix args;
-        browser-debug-tools = import ./_/skills/browser/debug-tools.nix args;
-        vision-tools = import ./_/skills/vision/vision-tools.nix args;
-        kubernetes-tools = import ./_/skills/infrastructure/kubernetes-tools.nix args;
-        developing-containers = import ./_/skills/containers/developing-containers.nix args;
-        creating-nix-modules = import ./_/skills/nix/creating-modules.nix args;
-        managing-flakes = import ./_/skills/nix/managing-flakes.nix args;
-        writing-nix-code = import ./_/skills/nix/writing-code.nix args;
-        pythonic-scraping-websites = import ./_/skills/browser/pythonic-scraping.nix args;
-        developing-rails-background-jobs = import ./_/skills/ruby/rails-background-jobs.nix args;
-        developing-rails-event-store = import ./_/skills/ruby/rails-event-store.nix args;
-        developing-rails-scrapers = import ./_/skills/ruby/rails-scrapers.nix args;
-        developing-rspec-tests = import ./_/skills/ruby/rspec-tests.nix args;
-        fixing-rubocop-offenses = import ./_/skills/ruby/fixing-rubocop.nix args;
+      # Helper to define a skill module
+      mkSkill = path: mkSkillModule {
+        skillOptions = import path args;
       };
 
+      skills = {
+        auditing-security = mkSkill ./_/skills/auditing/security.nix;
+        creating-skills = mkSkill ./_/skills/meta/creating-skills.nix;
+        research-tools = mkSkill ./_/skills/research/research-tools.nix;
+        grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
+        browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix;
+        vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
+        kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
+        developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;
+        creating-nix-modules = mkSkill ./_/skills/nix/creating-modules.nix;
+        managing-flakes = mkSkill ./_/skills/nix/managing-flakes.nix;
+        writing-nix-code = mkSkill ./_/skills/nix/writing-code.nix;
+        pythonic-scraping-websites = mkSkill ./_/skills/browser/pythonic-scraping.nix;
+        developing-rails-background-jobs = mkSkill ./_/skills/ruby/rails-background-jobs.nix;
+        developing-rails-event-store = mkSkill ./_/skills/ruby/rails-event-store.nix;
+        developing-rails-scrapers = mkSkill ./_/skills/ruby/rails-scrapers.nix;
+        developing-rspec-tests = mkSkill ./_/skills/ruby/rspec-tests.nix;
+        fixing-rubocop-offenses = mkSkill ./_/skills/ruby/fixing-rubocop.nix;
+      };
+
+      cfg = config.jvf.aiTools.skills;
     in
     {
-      options.jvf.aiTools.skills = { };
+      options.jvf.aiTools.skills = lib.mapAttrs (name: skill: skill.options) skills;
 
       config = lib.mkMerge (
-        lib.mapAttrsToList (name: options: mkSkillConfig name options) skills
+        lib.mapAttrsToList (name: skill: skill.config { inherit config; }) skills
       );
     };
 in

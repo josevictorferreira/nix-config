@@ -291,8 +291,4 @@
     Script call example:
     `python scripts/check_cops.py Capybara/NegationMatcher`
   '';
-};
-
-in
-{
 }
