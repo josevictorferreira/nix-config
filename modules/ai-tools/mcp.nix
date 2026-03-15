@@ -9,12 +9,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
@@ -70,8 +69,7 @@ let
         context7 = context7Def.options;
         "chrome-devtools" = chromeDevtoolsDef.options;
       }
-      // lib.optionalAttrs (!isDarwin) {
-      };
+      // lib.optionalAttrs (!isDarwin) { };
 
       config = lib.mkMerge ([
         # Individual server configs
