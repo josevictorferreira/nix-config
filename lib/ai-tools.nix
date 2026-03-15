@@ -144,25 +144,36 @@ let
     in
     if newApi then
       let
-        programs = args.programs or [
-          "opencode"
-          "claudecode"
-          "droid"
-          "gemini"
-        ];
         inherit (args) agentOptions;
         agentName =
           agentOptions.name or (throw "mkAgentModule: agentOptions.name is required");
+        defaultPrograms = args.programs or (agentOptions.programs or [ "opencode" "claudecode" "droid" "gemini" ]);
       in
       {
         options = {
           enable = (lib.mkEnableOption agentName) // {
             default = true;
           };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this agent in";
+          };
         };
-        config = lib.mkMerge (
-          map (program: { jvf.programs.${program}.agents.${agentName} = agentOptions; }) programs
-        );
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.agents.${agentName};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.agents.${agentName} = lib.mkIf (lib.elem program cfg.programs) agentOptions;
+                })
+                allPrograms
+            )
+          );
       }
     else
       let
@@ -176,6 +187,21 @@ let
         tags = args.tags or [ ];
         tools = args.tools or [ ];
         disabledTools = args.disabledTools or [ ];
+        defaultPrograms = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
+        agentDefinition = {
+          inherit
+            name
+            mode
+            model
+            temperature
+            permission
+            description
+            prompt
+            tags
+            tools
+            disabledTools
+            ;
+        };
       in
       {
         options = {
@@ -191,65 +217,26 @@ let
               "documentation"
             ];
           };
-        };
-        config = {
-          jvf.programs.opencode.agents.${name} = {
-            inherit
-              name
-              mode
-              model
-              temperature
-              permission
-              description
-              prompt
-              tags
-              tools
-              disabledTools
-              ;
-          };
-          jvf.programs.droid.agents.${name} = {
-            inherit
-              name
-              mode
-              model
-              temperature
-              permission
-              description
-              prompt
-              tags
-              tools
-              disabledTools
-              ;
-          };
-          jvf.programs.claudecode.agents.${name} = {
-            inherit
-              name
-              mode
-              model
-              temperature
-              permission
-              description
-              prompt
-              tags
-              tools
-              disabledTools
-              ;
-          };
-          jvf.programs.gemini.agents.${name} = {
-            inherit
-              name
-              mode
-              model
-              temperature
-              permission
-              description
-              prompt
-              tags
-              tools
-              disabledTools
-              ;
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this agent in";
           };
         };
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.agents.${name};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.agents.${name} = lib.mkIf (lib.elem program cfg.programs) agentDefinition;
+                })
+                allPrograms
+            )
+          );
       };
 
   mkMcpModule =
@@ -326,25 +313,36 @@ let
     in
     if newApi then
       let
-        programs = args.programs or [
-          "opencode"
-          "claudecode"
-          "droid"
-          "gemini"
-        ];
         inherit (args) commandOptions;
         commandName =
           args.name or (commandOptions.name or (throw "mkCommandModule: either name or commandOptions.name is required"));
+        defaultPrograms = args.programs or (commandOptions.programs or [ "opencode" "claudecode" "droid" "gemini" ]);
       in
       {
         options = {
           enable = (lib.mkEnableOption commandName) // {
             default = true;
           };
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this command in";
+          };
         };
-        config = lib.mkMerge (
-          map (program: { jvf.programs.${program}.commands.${commandName} = commandOptions; }) programs
-        );
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.commands.${commandName};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.commands.${commandName} = lib.mkIf (lib.elem program cfg.programs) commandOptions;
+                })
+                allPrograms
+            )
+          );
       }
     else
       let
@@ -352,47 +350,41 @@ let
         description = args.description or "";
         agent = args.agent or "";
         prompt = args.prompt or "";
+        defaultPrograms = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
+        commandDefinition = {
+          inherit
+            name
+            description
+            agent
+            prompt
+            ;
+        };
       in
       {
         options = {
           enable = (lib.mkEnableOption name) // {
             default = true;
           };
-        };
-        config = {
-          jvf.programs.opencode.commands.${name} = {
-            inherit
-              name
-              description
-              agent
-              prompt
-              ;
-          };
-          jvf.programs.droid.commands.${name} = {
-            inherit
-              name
-              description
-              agent
-              prompt
-              ;
-          };
-          jvf.programs.claudecode.commands.${name} = {
-            inherit
-              name
-              description
-              agent
-              prompt
-              ;
-          };
-          jvf.programs.gemini.commands.${name} = {
-            inherit
-              name
-              description
-              agent
-              prompt
-              ;
+          programs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = defaultPrograms;
+            description = "Programs to install this command in";
           };
         };
+        config = { config, ... }:
+          let
+            cfg = config.jvf.aiTools.commands.${name};
+            allPrograms = [ "opencode" "claudecode" "droid" "gemini" ];
+          in
+          lib.mkIf cfg.enable (
+            lib.mkMerge (
+              map
+                (program: {
+                  jvf.programs.${program}.commands.${name} = lib.mkIf (lib.elem program cfg.programs) commandDefinition;
+                })
+                allPrograms
+            )
+          );
       };
 
   findToolsByTags =
