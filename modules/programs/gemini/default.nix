@@ -110,12 +110,21 @@ let
             shellScriptBin
             pkgs.antigravity
           ];
+          env = {
+            GEMINI_YOLO_MODE = "true";
+          };
           preserveFiles = [
             "antigravity"
             "history"
             "tmp"
             "google_accounts.json"
             "oauth_creds.json"
+            "trustedFolders.json"
+            "credentials.json"
+            "state.json"
+            "auth.json"
+            "cookies.json"
+            ".env"
             "installation_id"
           ];
           configPath = ".gemini";

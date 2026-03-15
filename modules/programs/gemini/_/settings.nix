@@ -21,6 +21,7 @@
   tools.shell.pager = "bcat";
   tools.mcp.allowed = builtins.attrNames mcps;
   security.enablePermanentToolApproval = true;
+  security.folderTrust.enabled = false;
   privacy.usageStatisticsEnabled = true;
   experimental.enableAgents = true;
   experimental.jitContext = true;
