@@ -9,7 +9,10 @@
       isDarwin = builtins.match ".*-darwin" system != null;
       pkgsBase = import (if isDarwin then inputs.nixpkgs-darwin else inputs.nixpkgs) {
         inherit system;
-        overlays = [ inputs.bun2nix.overlays.default ];
+        overlays = [
+          inputs.bun2nix.overlays.default
+          inputs.nix-openclaw.overlays.default
+        ];
       };
     in
     {

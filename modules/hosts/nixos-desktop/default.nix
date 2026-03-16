@@ -100,6 +100,25 @@ let
     config.allowUnfree = true;
     overlays = [
       inputs.bun2nix.overlays.default
+      (final: prev: {
+        openclaw = prev.openclaw.overrideAttrs (old: rec {
+          version = "2026.3.13";
+          src = prev.fetchFromGitHub {
+            owner = "openclaw";
+            repo = "openclaw";
+            tag = "v${version}";
+            hash = "sha256-nPeOuvzx4SL6wvafnEAWGsSXuYWyNnMiFhkgGl/FHDo=";
+          };
+          pnpmDepsHash = "sha256-p6Lfpo5X9epJInKhcpRutIktnsou5TAptyI/Q/Wwqz4";
+          pnpmDeps = prev.fetchPnpmDeps {
+            inherit (old) pname;
+            inherit version src;
+            pnpm = prev.pnpm_10;
+            fetcherVersion = 3;
+            hash = pnpmDepsHash;
+          };
+        });
+      })
     ];
   };
 
@@ -152,6 +171,7 @@ in
         system-nixpkgs
         system-nix-daemon
         system-security
+        system-tailscale
 
         # Hardware
         hardware-boot
@@ -184,6 +204,7 @@ in
         ai-tools-mcp
         ai-tools-rules
         ai-tools-scripts
+        programs-openclaw
       ])
       ++ [
         # Machine-specific hardware (filesystems, UUIDs, swap)
@@ -201,6 +222,8 @@ in
             host = "nixos-desktop";
             os = "nixos";
           };
+
+          jvf.programs.openclaw.enableNode = true;
 
           # User configuration
           jvf.users.josevictor = {
