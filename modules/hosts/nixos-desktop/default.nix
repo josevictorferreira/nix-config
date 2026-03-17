@@ -256,6 +256,13 @@ in
           networking.defaultGateway = "10.10.10.1";
           networking.nameservers = [ "10.10.10.100" ];
 
+          # Open port for OpenCode Web
+          jvf.system.firewall.allowedTCPPorts = [
+            8000
+            8188
+            4096
+            5173
+          ];
         })
         # Secrets configuration - make secrets readable by the user
         (
