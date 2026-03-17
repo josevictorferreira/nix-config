@@ -163,6 +163,9 @@ _: {
         apiKey = "{env:Z_AI_API_KEY}";
       };
       models = {
+        "glm-5-turbo" = {
+          name = "GLM-5 Turbo";
+        };
         "glm-5" = {
           name = "GLM-5";
           variants = {
