@@ -9,11 +9,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
@@ -63,17 +64,34 @@ let
       grafanaDef = mkMcpModule {
         name = "grafana";
         tags = [ "infrastructure" ];
+        programs = [ "opencode" ];
         mcpOptions = {
-          opencode = {
-            command = lib.getExe pkgs.mcp-grafana;
-            args = [ ];
-            env = {
-              "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
-              "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
-              "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
-              "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
-              "GRAFANA_ORG_ID" = "1";
-            };
+          command = lib.getExe pkgs.mcp-grafana;
+          args = [ ];
+          env = {
+            "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
+            "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
+            "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
+            "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
+            "GRAFANA_ORG_ID" = "1";
+          };
+        };
+      };
+
+      # --- grafana-work ---
+      grafanaWorkDef = mkMcpModule {
+        name = "grafana-work";
+        tags = [ "infrastructure" ];
+        programs = [ "claudecode" "cursor" ];
+        mcpOptions = {
+          command = lib.getExe pkgs.mcp-grafana;
+          args = [ ];
+          env = {
+            "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
+            "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
+            "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
+            "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
+            "GRAFANA_ORG_ID" = "1";
           };
         };
       };
@@ -88,6 +106,7 @@ let
         context7 = context7Def.options;
         "chrome-devtools" = chromeDevtoolsDef.options;
         grafana = grafanaDef.options;
+        grafanaWork = grafanaWorkDef.options;
       }
       // lib.optionalAttrs (!isDarwin) { };
 
@@ -95,6 +114,7 @@ let
         # Individual server configs
         (lib.mkIf cfg.context7.enable context7Def.config)
         (lib.mkIf cfg.grafana.enable grafanaDef.config)
+        (lib.mkIf cfg.grafanaWork.enable grafanaWorkDef.config)
         (lib.mkIf cfg."chrome-devtools".enable (
           chromeDevtoolsDef.config
           // {
