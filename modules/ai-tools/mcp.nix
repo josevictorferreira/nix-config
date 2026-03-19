@@ -27,13 +27,10 @@ let
           opencode = {
             enabled = true;
             type = "local";
-            command = [
-              "npx"
-              "-y"
-              "@upstash/context7-mcp"
-              "--api-key"
-              "{env:CONTEXT7_API_KEY}"
-            ];
+            command = pkgs.writeShellScript "mcp-context7-wrapper" ''
+              exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
+            '';
+            args = [ ];
           };
         };
       };
@@ -48,8 +45,8 @@ let
           opencode = {
             type = "local";
             enabled = true;
-            command = [
-              npx
+            command = npx;
+            args = [
               "-y"
               "chrome-devtools-mcp@latest"
               "--headless=true"
@@ -66,15 +63,15 @@ let
         tags = [ "infrastructure" ];
         programs = [ "opencode" ];
         mcpOptions = {
-          command = lib.getExe pkgs.mcp-grafana;
+          command = pkgs.writeShellScript "mcp-grafana-wrapper" ''
+            export GRAFANA_URL="''${GRAFANA_WORK_URL}"
+            export GRAFANA_SERVICE_ACCOUNT_TOKEN="''${GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}"
+            export GRAFANA_USERNAME="''${GRAFANA_WORK_USERNAME}"
+            export GRAFANA_PASSWORD="''${GRAFANA_WORK_PASSWORD}"
+            export GRAFANA_ORG_ID="1"
+            exec ${lib.getExe pkgs.mcp-grafana} "$@"
+          '';
           args = [ ];
-          env = {
-            "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
-            "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
-            "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
-            "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
-            "GRAFANA_ORG_ID" = "1";
-          };
         };
       };
 
@@ -84,15 +81,15 @@ let
         tags = [ "infrastructure" ];
         programs = [ "claudecode" "cursor" ];
         mcpOptions = {
-          command = lib.getExe pkgs.mcp-grafana;
+          command = pkgs.writeShellScript "mcp-grafana-wrapper" ''
+            export GRAFANA_URL="''${GRAFANA_WORK_URL}"
+            export GRAFANA_SERVICE_ACCOUNT_TOKEN="''${GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}"
+            export GRAFANA_USERNAME="''${GRAFANA_WORK_USERNAME}"
+            export GRAFANA_PASSWORD="''${GRAFANA_WORK_PASSWORD}"
+            export GRAFANA_ORG_ID="1"
+            exec ${lib.getExe pkgs.mcp-grafana} "$@"
+          '';
           args = [ ];
-          env = {
-            "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
-            "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
-            "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
-            "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
-            "GRAFANA_ORG_ID" = "1";
-          };
         };
       };
 
