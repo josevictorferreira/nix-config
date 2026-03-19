@@ -10,6 +10,7 @@ let
     "container"
     "documentation"
     "nix"
+    "infrastructure"
   ];
 
   mkSkillModule =

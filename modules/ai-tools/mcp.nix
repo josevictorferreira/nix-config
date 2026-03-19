@@ -59,6 +59,25 @@ let
         };
       };
 
+      # --- grafana ---
+      grafanaDef = mkMcpModule {
+        name = "grafana";
+        tags = [ "infrastructure" ];
+        mcpOptions = {
+          opencode = {
+            command = lib.getExe pkgs.mcp-grafana;
+            args = [ ];
+            env = {
+              "GRAFANA_URL" = "{env:GRAFANA_WORK_URL}";
+              "GRAFANA_SERVICE_ACCOUNT_TOKEN" = "{env:GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}";
+              "GRAFANA_USERNAME" = "{env:GRAFANA_WORK_USERNAME}";
+              "GRAFANA_PASSWORD" = "{env:GRAFANA_WORK_PASSWORD}";
+              "GRAFANA_ORG_ID" = "1";
+            };
+          };
+        };
+      };
+
       cfg = config.jvf.aiTools.mcp;
     in
     {
@@ -68,12 +87,14 @@ let
       options.jvf.aiTools.mcp = {
         context7 = context7Def.options;
         "chrome-devtools" = chromeDevtoolsDef.options;
+        grafana = grafanaDef.options;
       }
       // lib.optionalAttrs (!isDarwin) { };
 
       config = lib.mkMerge ([
         # Individual server configs
         (lib.mkIf cfg.context7.enable context7Def.config)
+        (lib.mkIf cfg.grafana.enable grafanaDef.config)
         (lib.mkIf cfg."chrome-devtools".enable (
           chromeDevtoolsDef.config
           // {

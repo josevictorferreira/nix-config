@@ -33,6 +33,11 @@ let
           default = { };
           description = "Commands to install into the configuration (string prompts or structured objects)";
         };
+        mcps = lib.mkOption {
+          type = lib.types.attrsOf json.type;
+          default = { };
+          description = "MCP tools to install into the configuration (structured objects)";
+        };
         skills = lib.mkOption {
           type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
           default = { };
@@ -77,6 +82,7 @@ let
             (inputs.lib.aiTools.mkSkillsConfigs filteredSkills)
             {
               "settings.json" = cfg.settings;
+              "mcp.json" = { mcpServers = cfg.mcps; };
             }
             (lib.optionalAttrs (cfg.baseRules != "") {
               "rules/base.mdc" = ''
