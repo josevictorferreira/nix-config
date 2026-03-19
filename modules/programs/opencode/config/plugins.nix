@@ -25,8 +25,8 @@ _: {
             alternative = "openrouter/openai/gpt-oss-120b";
           };
           coder = {
-            default = kimi;
-            cheap = minimax;
+            default = minimax;
+            cheap = kimi;
             expensive = sonnet;
             alternative = glm;
           };
