@@ -3,8 +3,7 @@ _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
       "@tarquinen/opencode-dcp@3.0.4"
-      "oh-my-opencode@3.12.0"
-      "mcpflow-router@0.3.3"
+      "oh-my-opencode@3.12.3"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
@@ -15,7 +14,7 @@ _: {
         sonnet = "github-copilot/claude-sonnet-4.6";
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
-        minimax = "minimax/MiniMax-M2.5";
+        minimax = "minimax/MiniMax-M2.7";
         qwen = "bailian-coding-plan/qwen3.5-plus";
         gpt = "github-copilot/gpt-5.2";
         models = {
@@ -353,14 +352,14 @@ _: {
         hashline_edit = true;
         skills = {
           enable = [
+          ];
+          disable = [
+            "git-master"
             "playwright"
             "playwright-cli"
             "agent-browser"
             "dev-browser"
             "frontend-ui-ux"
-          ];
-          disable = [
-            "git-master"
           ];
         };
         git_master = {

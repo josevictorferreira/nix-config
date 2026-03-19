@@ -38,6 +38,7 @@ let
         auditing-security = mkSkill ./_/skills/auditing/security.nix;
         creating-skills = mkSkill ./_/skills/meta/creating-skills.nix;
         research-tools = mkSkill ./_/skills/research/research-tools.nix;
+        oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;
         grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
         browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;

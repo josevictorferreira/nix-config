@@ -32,6 +32,8 @@ let
                   curl
                   nodejs_22
                   coreutils
+                  tmux
+                  fzf
                 ];
               profile = ''
                 export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
@@ -57,6 +59,8 @@ let
                   curl
                   nodejs_22
                   coreutils
+                  tmux
+                  fzf
                 ];
               profile = ''
                 export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
@@ -134,6 +138,38 @@ let
             ''
         }
       '';
+      # Wrapper script for oh-my-claudecode (binary is named 'omc')
+      omcBin = pkgs.writeShellScriptBin "omc" ''
+        set -euo pipefail
+
+        # Suppress Node.js deprecation warnings
+        export NODE_NO_WARNINGS=1
+
+        NPM_GLOBAL_DIR="$HOME/.npm-global"
+        NPM_GLOBAL_BIN="$NPM_GLOBAL_DIR/bin"
+        OMC_BIN="$NPM_GLOBAL_BIN/omc"
+
+        # Ensure npm global directory exists and is configured
+        mkdir -p "$NPM_GLOBAL_DIR"
+        ${pkgs.nodejs_22}/bin/npm config set prefix "$NPM_GLOBAL_DIR" 2>/dev/null || true
+
+        # Install oh-my-claudecode if not present
+        if [ ! -x "$OMC_BIN" ]; then
+          echo "Installing oh-my-claudecode..."
+          PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g claudecode-omc@latest
+        fi
+
+        ${
+          if (!isDarwin) then
+            ''
+              exec "${claudeCodeFHS}/bin/claude-fhs" "$OMC_BIN" "$@"
+            ''
+          else
+            ''
+              exec "$OMC_BIN" "$@"
+            ''
+        }
+      '';
     in
     {
       imports = [ ./options.nix ];
@@ -155,6 +191,7 @@ let
             ];
             packages = [
               claudeCodeBin
+              omcBin
             ];
             configPath = ".claude";
             configs = lib.mkMerge [

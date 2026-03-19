@@ -6,11 +6,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -58,7 +59,8 @@ let
               ".bun_cache/**"
             ];
           };
-          small_model = "github-copilot/grok-code-fast-1";
+
+          small_model = "openrouter/qwen/qwen3.5-9b";
         };
 
         # ── Wrappers config ───────────────────────────────────────────

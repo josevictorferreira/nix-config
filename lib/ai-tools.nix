@@ -417,7 +417,7 @@ let
             (builtins.hasAttr "temperature" value) && value.temperature != null
           ) "temperature: ${toString value.temperature}";
         toolsString = lib.concatStringsSep ", " allTools;
-        yamlHeader = "-----
+        yamlHeader = "---
 " + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -462,7 +462,7 @@ let
           (
             (builtins.hasAttr "temperature" value) && value.temperature != null
           ) "temperature: ${toString value.temperature}";
-        yamlHeader = "-----
+        yamlHeader = "---
 " + lib.concatStringsSep "\n" headerLines + "\n---\n";
       in
       yamlHeader + value.prompt
@@ -491,7 +491,7 @@ let
           [ "globs:" ] ++ map (g: "  - \"${g}\"") value.globs
         );
 
-        yamlHeader = "-----
+        yamlHeader = "---
 " + lib.concatStringsSep "\n" headerLines + "\n---\n";
 
         toolsPreamble =

@@ -73,6 +73,7 @@
           "openrouter_api_key_commit"
           "openrouter_api_key_autocomplete"
           "openrouter_api_key_code_agent"
+          "openrouter_api_key_benchmark"
           "minimax_api_key"
           "context7_api_key"
           "github_token"
