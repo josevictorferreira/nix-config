@@ -44,12 +44,12 @@ _: {
       };
     };
 
-    bailian-coding-plan = {
+    alibaba-coding-plan = {
       npm = "@ai-sdk/anthropic";
-      name = "Model Studio Coding Plan";
+      name = "Alibaba Coding Plan";
       options = {
         baseURL = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1";
-        apiKey = "{env:BAILIAN_CODING_PLAN_API_KEY}";
+        apiKey = "{env:ALIBABA_CODING_PLAN_API_KEY}";
       };
       models = {
         "qwen3.5-plus" = {
@@ -59,51 +59,101 @@ _: {
               "text"
               "image"
             ];
-            output = [
-              "text"
-            ];
+            output = [ "text" ];
           };
           options = {
             thinking = {
               type = "enabled";
-              budgetTokens = 1024;
+              budgetTokens = 8192;
             };
+          };
+          limit = {
+            context = 1000000;
+            output = 65536;
           };
         };
         "qwen3-max-2026-01-23" = {
           name = "Qwen3 Max 2026-01-23";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
+          limit = {
+            context = 262144;
+            output = 32768;
+          };
         };
         "qwen3-coder-next" = {
           name = "Qwen3 Coder Next";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
+          limit = {
+            context = 262144;
+            output = 65536;
+          };
         };
         "qwen3-coder-plus" = {
           name = "Qwen3 Coder Plus";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
+          limit = {
+            context = 1000000;
+            output = 65536;
+          };
         };
         "MiniMax-M2.5" = {
           name = "MiniMax M2.5";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
           options = {
             thinking = {
               type = "enabled";
-              budgetTokens = 1024;
+              budgetTokens = 8192;
             };
+          };
+          limit = {
+            context = 196608;
+            output = 24576;
           };
         };
         "glm-5" = {
           name = "GLM-5";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
           options = {
             thinking = {
               type = "enabled";
-              budgetTokens = 1024;
+              budgetTokens = 8192;
             };
+          };
+          limit = {
+            context = 202752;
+            output = 16384;
           };
         };
         "glm-4.7" = {
           name = "GLM-4.7";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
           options = {
             thinking = {
               type = "enabled";
-              budgetTokens = 1024;
+              budgetTokens = 8192;
             };
+          };
+          limit = {
+            context = 202752;
+            output = 16384;
           };
         };
         "kimi-k2.5" = {
@@ -113,15 +163,17 @@ _: {
               "text"
               "image"
             ];
-            output = [
-              "text"
-            ];
+            output = [ "text" ];
           };
           options = {
             thinking = {
               type = "enabled";
-              budgetTokens = 1024;
+              budgetTokens = 8192;
             };
+          };
+          limit = {
+            context = 262144;
+            output = 32768;
           };
         };
       };
@@ -154,6 +206,28 @@ _: {
         baseURL = "https://api.moonshot.ai/anthropic";
         apiKey = "{env:KIMI_API_KEY}";
       };
+      models = {
+        "kimi-k2.5" = {
+          name = "Kimi K2.5";
+          modalities = {
+            input = [
+              "text"
+              "image"
+            ];
+            output = [ "text" ];
+          };
+          options = {
+            thinking = {
+              type = "enabled";
+              budgetTokens = 8192;
+            };
+          };
+          limit = {
+            context = 262144;
+            output = 32768;
+          };
+        };
+      };
     };
 
     zai-coding-plan = {
@@ -168,6 +242,16 @@ _: {
         };
         "glm-5" = {
           name = "GLM-5";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
+          options = {
+            thinking = {
+              type = "enabled";
+              budgetTokens = 8192;
+            };
+          };
           variants = {
             thinker = {
               name = "GLM-5 Deep Thinker";
@@ -175,7 +259,6 @@ _: {
               thinking = {
                 type = "enabled";
               };
-              max_tokens = 4096;
               temperature = 1.0;
             };
             fast = {
@@ -186,6 +269,10 @@ _: {
               temperature = 0.1;
               clear_thinking = false;
             };
+          };
+          limit = {
+            context = 202752;
+            output = 16384;
           };
         };
         "glm-4.7" = {

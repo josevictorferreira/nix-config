@@ -19,12 +19,44 @@ let
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
 
+      # Grafana MCP reads GRAFANA_*; zsh only exports GRAFANA_WORK_* from /run/secrets.
+      # Cursor MCP is spawned by the GUI — no zsh shellInit — so read secrets here too.
+      grafanaWorkSecret = key: ''"$(_grafanaSecret /run/secrets/${key})"'';
+      grafanaMcpWrapper = pkgs.writeShellScript "mcp-grafana-wrapper" ''
+        _grafanaSecret() {
+          [ -r "$1" ] && ${lib.getExe' pkgs.coreutils "cat"} "$1" || true
+        }
+        export GRAFANA_URL=''${GRAFANA_URL:-''${GRAFANA_WORK_URL:-${grafanaWorkSecret "grafana_work_url"}}}
+        export GRAFANA_SERVICE_ACCOUNT_TOKEN=''${GRAFANA_SERVICE_ACCOUNT_TOKEN:-''${GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN:-${grafanaWorkSecret "grafana_work_service_account_token"}}}
+        export GRAFANA_USERNAME=''${GRAFANA_USERNAME:-''${GRAFANA_WORK_USERNAME:-${grafanaWorkSecret "grafana_work_username"}}}
+        export GRAFANA_PASSWORD=''${GRAFANA_PASSWORD:-''${GRAFANA_WORK_PASSWORD:-${grafanaWorkSecret "grafana_work_password"}}}
+        export GRAFANA_ORG_ID=''${GRAFANA_ORG_ID:-1}
+        exec ${lib.getExe pkgs.mcp-grafana} "$@"
+      '';
+
       # --- context7 ---
       context7Def = mkMcpModule {
         name = "context7";
         tags = [ "documentation" ];
         mcpOptions = {
-          opencode = {
+          # opencode = {
+          #   enabled = true;
+          #   type = "local";
+          #   command = [
+          #     (pkgs.writeShellScript "mcp-context7-wrapper" ''
+          #       exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
+          #     '')
+          #   ];
+          # };
+          cursor = {
+            enabled = true;
+            type = "local";
+            command = pkgs.writeShellScript "mcp-context7-wrapper" ''
+              exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
+            '';
+            args = [ ];
+          };
+          claudecode = {
             enabled = true;
             type = "local";
             command = pkgs.writeShellScript "mcp-context7-wrapper" ''
@@ -42,7 +74,31 @@ let
         name = "chrome-devtools";
         tags = [ "browser" ];
         mcpOptions = {
-          opencode = {
+          # opencode = {
+          #   type = "local";
+          #   enabled = true;
+          #   command = [
+          #     npx
+          #     "-y"
+          #     "chrome-devtools-mcp@latest"
+          #     "--headless=true"
+          #     "--isolated=true"
+          #     "--executablePath=${defaultBrowser}"
+          #   ];
+          # };
+          # cursor = {
+          #   type = "local";
+          #   enabled = true;
+          #   command = npx;
+          #   args = [
+          #     "-y"
+          #     "chrome-devtools-mcp@latest"
+          #     "--headless=true"
+          #     "--isolated=true"
+          #     "--executablePath=${defaultBrowser}"
+          #   ];
+          # };
+          claudecode = {
             type = "local";
             enabled = true;
             command = npx;
@@ -61,17 +117,24 @@ let
       grafanaDef = mkMcpModule {
         name = "grafana";
         tags = [ "infrastructure" ];
-        programs = [ "opencode" ];
         mcpOptions = {
-          command = pkgs.writeShellScript "mcp-grafana-wrapper" ''
-            export GRAFANA_URL="''${GRAFANA_WORK_URL}"
-            export GRAFANA_SERVICE_ACCOUNT_TOKEN="''${GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}"
-            export GRAFANA_USERNAME="''${GRAFANA_WORK_USERNAME}"
-            export GRAFANA_PASSWORD="''${GRAFANA_WORK_PASSWORD}"
-            export GRAFANA_ORG_ID="1"
-            exec ${lib.getExe pkgs.mcp-grafana} "$@"
-          '';
-          args = [ ];
+          opencode = {
+            type = "local";
+            enabled = true;
+            command = [ grafanaMcpWrapper ];
+          };
+          # cursor = {
+          #   type = "local";
+          #   enabled = true;
+          #   command = grafanaMcpWrapper;
+          #   args = [ ];
+          # };
+          # claudecode = {
+          #   type = "local";
+          #   enabled = true;
+          #   command = grafanaMcpWrapper;
+          #   args = [ ];
+          # };
         };
       };
 
@@ -79,17 +142,15 @@ let
       grafanaWorkDef = mkMcpModule {
         name = "grafana-work";
         tags = [ "infrastructure" ];
-        programs = [ "claudecode" "cursor" ];
+        programs = [
+          "claudecode"
+          "cursor"
+        ];
         mcpOptions = {
-          command = pkgs.writeShellScript "mcp-grafana-wrapper" ''
-            export GRAFANA_URL="''${GRAFANA_WORK_URL}"
-            export GRAFANA_SERVICE_ACCOUNT_TOKEN="''${GRAFANA_WORK_SERVICE_ACCOUNT_TOKEN}"
-            export GRAFANA_USERNAME="''${GRAFANA_WORK_USERNAME}"
-            export GRAFANA_PASSWORD="''${GRAFANA_WORK_PASSWORD}"
-            export GRAFANA_ORG_ID="1"
-            exec ${lib.getExe pkgs.mcp-grafana} "$@"
-          '';
+          command = grafanaMcpWrapper;
           args = [ ];
+          type = "local";
+          enabled = true;
         };
       };
 

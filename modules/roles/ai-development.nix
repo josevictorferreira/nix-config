@@ -50,7 +50,6 @@ let
           baseRules = config.jvf.aiTools.baseRule.content;
           inherit (config.jvf.programs.opencode) agents;
           inherit (config.jvf.programs.opencode) commands;
-          inherit (config.jvf.programs.opencode) mcps;
           inherit (config.jvf.programs.opencode) skills;
         };
 
@@ -94,7 +93,6 @@ let
           baseRules = config.jvf.aiTools.baseRule.content;
           inherit (config.jvf.programs.opencode) agents;
           inherit (config.jvf.programs.opencode) commands;
-          inherit (config.jvf.programs.opencode) mcps;
           inherit (config.jvf.programs.opencode) skills;
         };
 
