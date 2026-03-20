@@ -13,6 +13,31 @@ let
     "infrastructure"
   ];
 
+  transformMcpOptions = program: base:
+    if builtins.isAttrs base then
+      if program == "opencode" then
+      # OpenCode prefers command as a list including args, and NO args attribute
+        let
+          baseCommand = base.command or [ ];
+          command = if builtins.isList baseCommand then baseCommand else [ baseCommand ];
+          baseArgs = base.args or [ ];
+          args = if builtins.isList baseArgs then baseArgs else [ baseArgs ];
+          # Combine and filter out empty strings if command was missing
+          fullCommand = lib.filter (x: x != "") (command ++ args);
+        in
+        (builtins.removeAttrs base [ "args" ]) // {
+          command = fullCommand;
+        }
+      else
+      # Others (claudecode, cursor, etc.) prefer command as string and args as list
+        if base ? command && builtins.isList base.command then
+          base // {
+            command = builtins.head base.command;
+            args = (builtins.tail base.command) ++ (base.args or [ ]);
+          }
+        else base
+    else base;
+
   mkSkillModule =
     args:
     let
@@ -249,10 +274,13 @@ let
       let
         optionName = args.name or "MCP Server";
         inherit (args) mcpOptions;
-        programs = args.programs or (builtins.attrNames mcpOptions);
+
+        programs = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
+
         mcpNames = args.mcpNames or { };
         mcpNameForProgram = program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
-        mcpOptionsForProgram = program: if builtins.hasAttr program mcpOptions then mcpOptions.${program} else mcpOptions;
+
+        mcpOptionsForProgram = program: transformMcpOptions program mcpOptions;
         tags = args.tags or [ ];
       in
       {
@@ -529,12 +557,15 @@ let
           formatValue =
             name: cfg:
             let
-              commandStr = if cfg ? command then "command: \"${cfg.command}\"" else "";
-              argsStr =
-                if cfg ? args && cfg.args != [ ] then
-                  "args: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") cfg.args)} ]"
-                else
-                  "";
+              # opencode prefers command as an array including args, and NO args attribute
+              cfgCommand = cfg.command or [ ];
+              command = if builtins.isList cfgCommand then cfgCommand else [ cfgCommand ];
+              cfgArgs = cfg.args or [ ];
+              args = if builtins.isList cfgArgs then cfgArgs else [ cfgArgs ];
+              fullCommand = lib.filter (x: x != "") (command ++ args);
+
+              commandLine = "command: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") fullCommand)} ]";
+
               envStr =
                 if cfg ? env && cfg.env != { } then
                   "\n${indent}  env:\n"
@@ -542,14 +573,7 @@ let
                 else
                   "";
             in
-            "${indent}${name}:\n${indent}  ${commandStr}${
-              if commandStr != "" && argsStr != "" then
-                "\n${indent}  ${argsStr}"
-              else if argsStr != "" then
-                "${indent}  ${argsStr}"
-              else
-                ""
-            }${envStr}";
+            "${indent}${name}:\n${indent}  ${commandLine}${envStr}";
         in
         "mcp:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg: formatValue name cfg) mcp));
 
@@ -777,6 +801,7 @@ in
     mkCommandModule
     mkSkillModule
     findToolsByTags
+    transformMcpOptions
     mkGeminiMdConfigs
     toGeminiToml
     mkGeminiTomlConfigs

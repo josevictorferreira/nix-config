@@ -9,12 +9,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
@@ -38,32 +37,14 @@ let
       context7Def = mkMcpModule {
         name = "context7";
         tags = [ "documentation" ];
+        programs = [ "cursor" "claudecode" ];
         mcpOptions = {
-          # opencode = {
-          #   enabled = true;
-          #   type = "local";
-          #   command = [
-          #     (pkgs.writeShellScript "mcp-context7-wrapper" ''
-          #       exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
-          #     '')
-          #   ];
-          # };
-          cursor = {
-            enabled = true;
-            type = "local";
-            command = pkgs.writeShellScript "mcp-context7-wrapper" ''
-              exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
-            '';
-            args = [ ];
-          };
-          claudecode = {
-            enabled = true;
-            type = "local";
-            command = pkgs.writeShellScript "mcp-context7-wrapper" ''
-              exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
-            '';
-            args = [ ];
-          };
+          enabled = true;
+          type = "local";
+          command = pkgs.writeShellScript "mcp-context7-wrapper" ''
+            exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
+          '';
+          args = [ ];
         };
       };
 
@@ -73,43 +54,18 @@ let
       chromeDevtoolsDef = mkMcpModule {
         name = "chrome-devtools";
         tags = [ "browser" ];
+        programs = [ "claudecode" ];
         mcpOptions = {
-          # opencode = {
-          #   type = "local";
-          #   enabled = true;
-          #   command = [
-          #     npx
-          #     "-y"
-          #     "chrome-devtools-mcp@latest"
-          #     "--headless=true"
-          #     "--isolated=true"
-          #     "--executablePath=${defaultBrowser}"
-          #   ];
-          # };
-          # cursor = {
-          #   type = "local";
-          #   enabled = true;
-          #   command = npx;
-          #   args = [
-          #     "-y"
-          #     "chrome-devtools-mcp@latest"
-          #     "--headless=true"
-          #     "--isolated=true"
-          #     "--executablePath=${defaultBrowser}"
-          #   ];
-          # };
-          claudecode = {
-            type = "local";
-            enabled = true;
-            command = npx;
-            args = [
-              "-y"
-              "chrome-devtools-mcp@latest"
-              "--headless=true"
-              "--isolated=true"
-              "--executablePath=${defaultBrowser}"
-            ];
-          };
+          type = "local";
+          enabled = true;
+          command = npx;
+          args = [
+            "-y"
+            "chrome-devtools-mcp@latest"
+            "--headless=true"
+            "--isolated=true"
+            "--executablePath=${defaultBrowser}"
+          ];
         };
       };
 
@@ -117,24 +73,12 @@ let
       grafanaDef = mkMcpModule {
         name = "grafana";
         tags = [ "infrastructure" ];
+        programs = [ "opencode" ];
         mcpOptions = {
-          opencode = {
-            type = "local";
-            enabled = true;
-            command = [ grafanaMcpWrapper ];
-          };
-          # cursor = {
-          #   type = "local";
-          #   enabled = true;
-          #   command = grafanaMcpWrapper;
-          #   args = [ ];
-          # };
-          # claudecode = {
-          #   type = "local";
-          #   enabled = true;
-          #   command = grafanaMcpWrapper;
-          #   args = [ ];
-          # };
+          type = "local";
+          enabled = true;
+          command = grafanaMcpWrapper;
+          args = [ ];
         };
       };
 
