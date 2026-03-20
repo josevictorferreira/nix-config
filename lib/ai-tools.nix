@@ -3,15 +3,6 @@
 }:
 
 let
-  toolTags = [
-    "frontend"
-    "browser"
-    "explorer"
-    "container"
-    "documentation"
-    "nix"
-    "infrastructure"
-  ];
 
   transformMcpOptions = program: base:
     if builtins.isAttrs base then
@@ -88,7 +79,6 @@ let
         description = args.description or "";
         prompt = args.prompt or "";
         model = args.model or "";
-        tags = args.tags or [ ];
         allowed-tools = args.allowed-tools or [ ];
         mcp = args.mcp or { };
         references = args.references or { };
@@ -102,7 +92,6 @@ let
             model
             prompt
             mcp
-            tags
             references
             scripts
             licence
@@ -121,11 +110,6 @@ let
         options = {
           enable = (lib.mkEnableOption name) // {
             default = true;
-          };
-          tags = lib.mkOption {
-            type = lib.types.listOf (lib.types.enum toolTags);
-            default = tags;
-            description = "Capability tags for ${name}";
           };
           programs = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -210,7 +194,6 @@ let
         permission = args.permission or { };
         description = args.description or "";
         prompt = args.prompt or "";
-        tags = args.tags or [ ];
         tools = args.tools or [ ];
         disabledTools = args.disabledTools or [ ];
         defaultPrograms = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
@@ -223,7 +206,6 @@ let
             permission
             description
             prompt
-            tags
             tools
             disabledTools
             ;
@@ -233,15 +215,6 @@ let
         options = {
           enable = (lib.mkEnableOption name) // {
             default = true;
-          };
-          tags = lib.mkOption {
-            type = lib.types.listOf (lib.types.enum toolTags);
-            default = tags;
-            description = "Capability tags for ${name}";
-            example = [
-              "explorer"
-              "documentation"
-            ];
           };
           programs = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -281,18 +254,11 @@ let
         mcpNameForProgram = program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
 
         mcpOptionsForProgram = program: transformMcpOptions program mcpOptions;
-        tags = args.tags or [ ];
       in
       {
         options = {
           enable = (lib.mkEnableOption optionName) // {
             default = true;
-          };
-          tags = lib.mkOption {
-            type = lib.types.listOf (lib.types.enum toolTags);
-            default = tags;
-            description = "Capability tags for ${optionName}";
-            example = [ "documentation-search" ];
           };
           programs = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -311,7 +277,6 @@ let
     else
       let
         name = args.name or "MCP Server";
-        tags = args.tags or [ ];
         programs = args.programs or [ "opencode" "claudecode" "droid" "gemini" ];
         config = args.config or { };
       in
@@ -319,12 +284,6 @@ let
         options = {
           enable = (lib.mkEnableOption name) // {
             default = true;
-          };
-          tags = lib.mkOption {
-            type = lib.types.listOf (lib.types.enum toolTags);
-            default = tags;
-            description = "Capability tags for ${name}";
-            example = [ "documentation-search" ];
           };
           programs = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -416,24 +375,14 @@ let
           );
       };
 
-  findToolsByTags =
-    mcpConfigs: tags:
-    let
-      matchingMcps = lib.filterAttrs
-        (
-          _: cfg: (cfg.enable or false) && (lib.any (tag: lib.elem tag tags) (cfg.tags or [ ]))
-        )
-        mcpConfigs;
-    in
-    builtins.attrNames matchingMcps;
 
   toClaudeMarkdownPrompt =
-    mcpConfigs: value:
+    value:
     if builtins.isAttrs value && value ? prompt then
       let
         explicitTools = value.tools or [ ];
-        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
-        allTools = lib.unique (explicitTools ++ tagTools);
+
+        allTools = lib.unique explicitTools;
         headerLines = [
           "name: \"${value.name or "unknown"}\""
           "description: \"${value.description or ""}\""
@@ -454,13 +403,13 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
   toOpencodeMarkdownPrompt =
-    mcpConfigs: value:
+    value:
     if builtins.isAttrs value && value ? prompt then
       let
         explicitTools = value.tools or [ ];
         disabledTools = value.disabledTools or [ ];
-        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
-        allTools = lib.unique (explicitTools ++ tagTools);
+
+        allTools = lib.unique explicitTools;
         headerLines = [
           "name: \"${value.name or "unknown"}\""
           "description: \"${value.description or ""}\""
@@ -499,12 +448,12 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
   toCursorMarkdownPrompt =
-    mcpConfigs: value:
+    value:
     if builtins.isAttrs value && value ? prompt then
       let
         explicitTools = value.tools or [ ];
-        tagTools = if value ? tags then (findToolsByTags mcpConfigs value.tags) else [ ];
-        allTools = lib.unique (explicitTools ++ tagTools);
+
+        allTools = lib.unique explicitTools;
 
         fmtTool = tool: if lib.hasPrefix "@" tool then tool else "@${tool}";
 
@@ -534,11 +483,11 @@ let
       builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
 
   mkCursorMdcConfigs =
-    mcpConfigs: prefix: attrset:
+    prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = toCursorMarkdownPrompt mcpConfigs value;
+        value = toCursorMarkdownPrompt value;
       })
       attrset;
 
@@ -691,20 +640,20 @@ let
     );
 
   mkOpencodeMdConfigs =
-    mcpConfigs: prefix: attrset:
+    prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = toOpencodeMarkdownPrompt mcpConfigs value;
+        value = toOpencodeMarkdownPrompt value;
       })
       attrset;
 
   mkGeminiMdConfigs =
-    mcpConfigs: prefix: attrset:
+    prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = toOpencodeMarkdownPrompt mcpConfigs value;
+        value = toOpencodeMarkdownPrompt value;
       })
       attrset;
 
@@ -777,11 +726,11 @@ let
       attrset;
 
   mkClaudecodeMdConfigs =
-    mcpConfigs: prefix: attrset:
+    prefix: attrset:
     lib.mapAttrs'
       (name: value: {
         name = "${prefix}/${name}.md";
-        value = toClaudeMarkdownPrompt mcpConfigs value;
+        value = toClaudeMarkdownPrompt value;
       })
       attrset;
 in
@@ -800,7 +749,6 @@ in
     mkAgentModule
     mkCommandModule
     mkSkillModule
-    findToolsByTags
     transformMcpOptions
     mkGeminiMdConfigs
     toGeminiToml

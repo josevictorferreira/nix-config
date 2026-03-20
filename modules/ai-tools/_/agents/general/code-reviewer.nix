@@ -6,10 +6,6 @@
   temperature = null;
   permission = { };
   description = "Specialized code review agent for development tasks";
-  tags = [
-    "explorer"
-    "documentation"
-  ];
   tools = [
     "Read"
     "Glob"

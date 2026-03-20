@@ -7,10 +7,6 @@
   ];
   name = "auditing-security";
   description = "Security analysis and vulnerability assessment specialist";
-  tags = [
-    "explorer"
-    "documentation"
-  ];
   prompt = ''
     # ${kebabToHuman "auditing-security"}
 

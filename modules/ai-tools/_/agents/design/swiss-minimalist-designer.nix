@@ -6,11 +6,6 @@
   temperature = null;
   permission = { };
   description = "A rigorous implementation of the International Typographic Style (1950s). Characterized by objective typography, sans-serif fonts (Inter), mathematical grids with subtle texture patterns, and a strict black/white/red palette. Prioritizes readability, precision, asymmetrical organization, and visual depth through layered patterns.";
-  tags = [
-    "documentation"
-    "explorer"
-    "browser"
-  ];
   tools = [
     "Read"
     "Write"

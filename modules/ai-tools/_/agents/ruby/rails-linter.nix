@@ -34,7 +34,6 @@
       "*" = "deny";
     };
   };
-  tags = [ ];
   mode = "subagent";
   prompt = ''
     # rails-linter

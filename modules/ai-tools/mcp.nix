@@ -36,7 +36,6 @@ let
       # --- context7 ---
       context7Def = mkMcpModule {
         name = "context7";
-        tags = [ "documentation" ];
         programs = [ "cursor" "claudecode" ];
         mcpOptions = {
           enabled = true;
@@ -53,7 +52,6 @@ let
       defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
       chromeDevtoolsDef = mkMcpModule {
         name = "chrome-devtools";
-        tags = [ "browser" ];
         programs = [ "claudecode" ];
         mcpOptions = {
           type = "local";
@@ -72,7 +70,6 @@ let
       # --- grafana ---
       grafanaDef = mkMcpModule {
         name = "grafana";
-        tags = [ "infrastructure" ];
         programs = [ "opencode" ];
         mcpOptions = {
           type = "local";
@@ -85,7 +82,6 @@ let
       # --- grafana-work ---
       grafanaWorkDef = mkMcpModule {
         name = "grafana-work";
-        tags = [ "infrastructure" ];
         programs = [
           "claudecode"
           "cursor"

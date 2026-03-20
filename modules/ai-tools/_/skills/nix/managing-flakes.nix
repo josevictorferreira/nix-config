@@ -3,11 +3,6 @@
   allowed-tools = [ "Read" "Grep" "Glob" "Bash" "BashOutput" ];
   name = "managing-flakes";
   description = "Nix flake management, inputs, and dependency specialist";
-  tags = [
-    "nix"
-    "documentation"
-    "explorer"
-  ];
   prompt = ''
     # ${kebabToHuman "managing-flakes"}
 

@@ -9,11 +9,6 @@
   ];
   name = "developing-containers";
   description = "Container development with Docker, Podman, Dockerfiles, Containerfiles, 12factor principles, multi-stage builds, and Skaffold workflows. Automatically assists with containerization, orchestration, and secure image";
-  tags = [
-    "explorer"
-    "documentation"
-    "container"
-  ];
   prompt = ''
     # ${kebabToHuman "developing-containers"}
 

@@ -22,7 +22,6 @@
       };
     };
   };
-  tags = [ "infrastructure" ];
   prompt = ''
     # Grafana MCP
 

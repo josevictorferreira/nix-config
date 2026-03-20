@@ -3,7 +3,6 @@
   allowed-tools = [ "Read" "Grep" "Glob" "Write" ];
   name = "creating-nix-modules";
   description = "NixOS module creation, organization, and options design specialist";
-  tags = [ "nix" "documentation" "explorer" ];
   prompt = ''
     # ${kebabToHuman "creating-nix-modules"}
 

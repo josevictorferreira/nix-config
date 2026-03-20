@@ -37,7 +37,6 @@
       "*" = "deny";
     };
   };
-  tags = [ ];
   mode = "subagent";
   prompt = ''
     # rails-builder

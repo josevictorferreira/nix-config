@@ -32,7 +32,6 @@ ai-tools/
 skillOptions_<name> = {
   name = "skill-name";
   description = "Short desc";
-  tags = [ "explorer" "documentation" ];
   allowed-tools = [ "Read" "Grep" "Glob" ];
   prompt = ''<skill prompt>'';
 };
@@ -63,7 +62,6 @@ Applied via `mkAgentConfig` to all 4 programs.
 - **Kebab-case** names throughout
 - **Prompt first line** = title (`# Title Case`)
 - **All 4 programs** receive same config (opencode, claudecode, droid, gemini)
-- **Tags**: `explorer`, `documentation`, `browser` for categorization
 - **Tool allowlisting**: explicit `allowed-tools` / `tools` arrays
 
 ## ANTI-PATTERNS

@@ -93,8 +93,8 @@ let
             "auth.json"
           ];
           configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "droids" cfg.agents)
-            (inputs.lib.aiTools.mkClaudecodeMdConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs "droids" cfg.agents)
+            (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
             (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
             { "settings.json" = cfg.settings; }
           ];

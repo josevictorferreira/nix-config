@@ -77,8 +77,8 @@ let
           ];
           configPath = ".cursor";
           configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "agents" cfg.agents)
-            (inputs.lib.aiTools.mkCursorMdcConfigs config.jvf.aiTools.mcp "commands" cfg.commands)
+            (inputs.lib.aiTools.mkCursorMdcConfigs "agents" cfg.agents)
+            (inputs.lib.aiTools.mkCursorMdcConfigs "commands" cfg.commands)
             (inputs.lib.aiTools.mkSkillsConfigs filteredSkills)
             {
               "settings.json" = cfg.settings;

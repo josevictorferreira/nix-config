@@ -3,11 +3,6 @@
   allowed-tools = [ "Read" "Write" "Bash" "WebFetch" ];
   name = "pythonic-scraping-websites";
   description = "Ethical and effective python web scraping techniques, anti-bot evasion, legal compliance, and data extraction strategies";
-  tags = [
-    "browser"
-    "documentation"
-    "explorer"
-  ];
   prompt = ''
     # ${kebabToHuman "pythonic-scraping-websites"}
 

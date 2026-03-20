@@ -8,11 +8,6 @@
     "Bash"
     "WebFetch"
   ];
-  tags = [
-    "explorer"
-    "documentation"
-    "browser"
-  ];
   references = {
     "workflows" = ''
       # Workflow Patterns

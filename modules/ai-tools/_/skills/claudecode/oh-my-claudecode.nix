@@ -7,10 +7,6 @@
     "Read"
     "Write"
   ];
-  tags = [
-    "explorer"
-    "documentation"
-  ];
   prompt = ''
     # Oh My Claudecode (OMC)
 

@@ -6,7 +6,6 @@
   temperature = null;
   permission = { };
   description = "Technical documentation and README writer";
-  tags = [ "explorer" ];
   tools = [
     "Read"
     "Glob"

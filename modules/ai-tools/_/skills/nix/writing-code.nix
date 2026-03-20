@@ -2,11 +2,6 @@
 {
   allowed-tools = [ "Read" "Grep" "Glob" "Write" "Edit" ];
   name = "writing-nix-code";
-  tags = [
-    "nix"
-    "documentation"
-    "explorer"
-  ];
   description = "Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code";
   prompt = ''
     # ${kebabToHuman "writing-nix-code"}
