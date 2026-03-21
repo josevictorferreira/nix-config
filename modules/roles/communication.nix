@@ -40,6 +40,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.discord
           pkgs.brave
+          pkgs.iamb
         ];
       };
     };
@@ -66,6 +67,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.discord
           pkgs.brave
+          pkgs.iamb
         ];
       };
     };

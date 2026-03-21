@@ -1,6 +1,6 @@
 # Aspect: roles-development
 # Bundles core development programs and CLI tools.
-# Imports program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git),
+# Imports program aspects (ghostty, alacritty, kitty, neovim, zsh, starship, tmux, git, iamb),
 # virtualization (podman, libvirtd), and installs user-level dev packages.
 { self, ... }:
 let
@@ -39,6 +39,7 @@ let
         programs-starship
         programs-tmux
         programs-git
+        programs-iamb
         system-virtualization
       ]);
 
@@ -77,6 +78,7 @@ let
           pkgs.yq
           pkgs.bat
           pkgs.brave
+          pkgs.iamb
           pkgs.p7zip
         ];
       };
@@ -102,6 +104,7 @@ let
         programs-starship
         programs-tmux
         programs-git
+        programs-iamb
         system-virtualization
       ]);
 
@@ -140,6 +143,7 @@ let
           pkgs.yq
           pkgs.bat
           pkgs.brave
+          pkgs.iamb
           pkgs.p7zip
         ];
       };
