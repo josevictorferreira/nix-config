@@ -4,10 +4,11 @@
 { lib, ... }:
 let
   mkIambOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.iamb = {
@@ -21,7 +22,7 @@ let
 
         userId = lib.mkOption {
           type = lib.types.str;
-          default = "@zeh:matrix.josevictor.me";
+          default = "@zeh:josevictor.me";
           description = "Matrix user ID (e.g. @user:matrix.example.org).";
         };
 
@@ -30,15 +31,22 @@ let
           default = "https://matrix.josevictor.me";
           description = "Matrix homeserver URL.";
         };
+
+        requestTimeout = lib.mkOption {
+          type = lib.types.int;
+          default = 300;
+          description = "Request timeout in seconds.";
+        };
       };
     };
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.iamb;
@@ -53,6 +61,7 @@ let
 
         [settings]
         log_level = "warn"
+        request_timeout = ${toString cfg.requestTimeout}
         username_display = "username"
         reaction_display = true
         typing_notice_display = true
