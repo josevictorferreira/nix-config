@@ -1,9 +1,13 @@
 # _/scripts.nix - Weechat script derivations and defaults
-{ lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
+  cfg = config.jvf.programs.weechat;
+
   # Vimode script derivation
   viModeScript = pkgs.stdenv.mkDerivation {
     pname = "vimode";
@@ -34,6 +38,33 @@ let
     };
   };
 
+  # Bufcat script derivation (buflist categorization)
+  bufcatScript = pkgs.stdenv.mkDerivation {
+    pname = "bufcat";
+    version = "0.1";
+
+    srcs = [
+      ./bufcat/bufcat.py
+      ./bufcat/bufcat.json
+    ];
+
+    sourceRoot = ".";
+
+    passthru.scripts = [ "bufcat.py" ];
+
+    installPhase = ''
+      runHook preInstall
+      install -D bufcat/bufcat.py $out/share/bufcat.py
+      install -D bufcat/bufcat.json $out/share/bufcat.json
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "WeeChat buflist categorization script";
+      license = lib.licenses.gpl3Plus;
+    };
+  };
+
   # Default scripts that are always included
   defaultScripts = [
     pkgs.weechatScripts.highmon
@@ -48,6 +79,8 @@ let
   ];
 in
 {
-  # Merge user scripts with defaults
-  jvf.programs.weechat.plugins.scripts = lib.mkDefault defaultScripts;
+  # Merge user scripts with defaults, plus bufcat if enabled
+  jvf.programs.weechat.plugins.scripts = lib.mkDefault (
+    defaultScripts ++ lib.optional cfg.bufcat.enable bufcatScript
+  );
 }

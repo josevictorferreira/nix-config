@@ -74,5 +74,14 @@
     matrix = {
       enable = lib.mkEnableOption "Matrix protocol support via weechat-matrix-rs";
     };
+
+    bufcat = {
+      enable = lib.mkEnableOption "buflist categorization via bufcat script";
+      configPath = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Path to bufcat.json config (default: ~/.local/share/weechat/bufcat.json)";
+      };
+    };
   };
 }

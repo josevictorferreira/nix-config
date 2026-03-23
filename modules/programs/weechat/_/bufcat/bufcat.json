@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "case_insensitive": false,
+  "categories": [
+    {
+      "name": "core",
+      "order": 10,
+      "prefix": "",
+      "patterns": ["core."]
+    },
+    {
+      "name": "irc",
+      "order": 20,
+      "prefix": "  ",
+      "patterns": ["irc.", "server."]
+    },
+    {
+      "name": "matrix",
+      "order": 30,
+      "prefix": "  ",
+      "patterns": ["matrix."]
+    },
+    {
+      "name": "whatsapp",
+      "order": 40,
+      "prefix": "  ",
+      "patterns": ["(WA)", "whatsapp."]
+    },
+    {
+      "name": "discord",
+      "order": 50,
+      "prefix": "  ",
+      "patterns": ["discord.", "(DC)"]
+    },
+    {
+      "name": "relay",
+      "order": 60,
+      "prefix": "  ",
+      "patterns": ["relay."]
+    },
+    {
+      "name": "scripts",
+      "order": 70,
+      "prefix": "  ",
+      "patterns": ["python.", "perl.", "lua.", "ruby."]
+    }
+  ],
+  "default_category": {
+    "name": "other",
+    "order": 99,
+    "prefix": ""
+  }
+}
