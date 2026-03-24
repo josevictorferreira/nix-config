@@ -16,3 +16,5 @@ result
 # Nix config with secrets
 nix.conf
 *.qcow2
+
+__pycache__/
