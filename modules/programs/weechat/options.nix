@@ -51,6 +51,12 @@
       description = "Additional init commands from submodules (e.g., matrix setup).";
     };
 
+    prependInitCommands = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Run before all other init lines (e.g. /python load with store path).";
+    };
+
     autohideFilterCommands = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
@@ -80,7 +86,10 @@
       configPath = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
-        description = "Path to bufcat.json config (default: ~/.local/share/weechat/bufcat.json)";
+        description = ''
+          Path to bufcat.json. When null, BUFCAT_CONFIG_PATH is the bufcat derivation in the store (flake
+          edits apply after rebuild). When set, that path is used (e.g. a writable file under $HOME).
+        '';
       };
     };
   };

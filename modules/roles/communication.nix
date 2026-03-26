@@ -36,7 +36,7 @@ let
 
       config = {
         jvf.programs.weechat.matrix.enable = true;
-
+        jvf.programs.weechat.bufcat.enable = true;
         users.users."${cfg.username}".packages = [
           pkgs.discord
           pkgs.brave

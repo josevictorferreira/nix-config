@@ -31,10 +31,10 @@ let
     {
       imports = [
         ./options.nix
+        ./_/scripts.nix
         ./_/settings.nix
         ./_/commands.nix
         ./_/matrix.nix
-        ./_/bufcat.nix
         ./_/init.nix
       ];
 

@@ -26,7 +26,8 @@ let
 
   # Generate weechat init commands
   weechatInit = lib.concatStringsSep "\n" (
-    [
+    cfg.prependInitCommands
+    ++ [
       "/bar hide nicklist"
     ]
     ++ cfg.autohideFilterCommands

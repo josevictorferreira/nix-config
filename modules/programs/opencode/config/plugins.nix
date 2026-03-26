@@ -2,8 +2,8 @@
 _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
-      "@tarquinen/opencode-dcp@3.0.4"
-      "oh-my-opencode@3.12.3"
+      "@tarquinen/opencode-dcp@3.1.2"
+      "oh-my-opencode@3.14.0"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings =

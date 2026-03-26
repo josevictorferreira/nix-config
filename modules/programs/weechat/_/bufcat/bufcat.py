@@ -21,7 +21,8 @@ Default category object:
   prefix: string (optional, default "") - Prefix for unmatched buffers
 
 Matching rules:
-- Target: buffer `name` field (falls back to `full_name` if unavailable)
+- Target: substring search on `name`, then `short_name`, then `full_name` (each distinct
+  non-empty value is tried; plugin tags like ``(DC)`` often live only in ``short_name``)
 - Type: literal substring search (no regex/glob)
 - Precedence: first match wins (iterate categories top-to-bottom)
 - Case: case-sensitive by default unless case_insensitive=true
@@ -36,7 +37,7 @@ Example config:
   "case_insensitive": false,
   "categories": [
     {"name": "core", "order": 10, "prefix": "", "patterns": ["core."]},
-    {"name": "irc", "order": 20, "prefix": "  ", "patterns": ["irc."]},
+    {"name": "irc", "order": 20, "prefix": "", "patterns": ["irc."]},
     {"name": "whatsapp", "order": 30, "prefix": "  ", "patterns": ["(WA)"]}
   ],
   "default_category": {"name": "other", "order": 99, "prefix": ""}
@@ -48,19 +49,23 @@ Usage:
   /bufcat list   - List all buffers with their categories
 
 Config file location:
-  ${weechat_data_dir}/bufcat.json (default)
-  Or: plugins.var.python.bufcat.config_path (if set)
+  plugins.var.python.bufcat.config_path, else BUFCAT_CONFIG_PATH (Nix wrapper sets the store
+  bufcat.json by default), else ${weechat_data_dir}/bufcat.json. If that data-dir file is
+  missing, bufcat copies the default from the script directory. Load via
+  /python load …/share/bufcat.py.
 
 Requires: WeeChat >= 4.1.0
 """
 
+from __future__ import annotations
+
 import json
 import os
-from typing import Any, Dict, List, Optional, Tuple
+import shutil
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 # Global state
 _last_good_config: Optional[Dict[str, Any]] = None
-_config_path: Optional[str] = None
 
 # Schema constants
 SCHEMA_VERSION = 1
@@ -163,10 +168,36 @@ def _validate_config(config: Any) -> Tuple[bool, str]:
     return True, ""
 
 
-def load_config(path: str, print_error: callable = print) -> Optional[Dict[str, Any]]:
+def _bundled_config_path() -> str:
+    """Path to bufcat.json installed next to this script (e.g. nix store …/share/)."""
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "bufcat.json")
+
+
+def _resolve_config_file(path: str, print_error: Callable[[str], None]) -> str:
+    """If ``path`` is missing, copy bundled default or fall back to reading the bundle."""
+    if os.path.isfile(path):
+        return path
+    bundled = _bundled_config_path()
+    if not os.path.isfile(bundled):
+        return path
+    parent = os.path.dirname(path)
+    try:
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        shutil.copy2(bundled, path)
+        return path
+    except OSError as e:
+        print_error(f"bufcat: cannot write {path} ({e}); using bundled defaults")
+        return bundled
+
+
+def load_config(path: str, print_error: Callable[[str], None] = print) -> Optional[Dict[str, Any]]:
     """Load and validate config from JSON file.
 
     On parse/validation error, keeps last-good config in memory and returns None.
+
+    If ``path`` does not exist but a ``bufcat.json`` exists next to this script (Nix
+    installs both under ``share/``), copies the bundle to ``path`` when writable.
 
     Args:
         path: Path to bufcat.json
@@ -176,6 +207,8 @@ def load_config(path: str, print_error: callable = print) -> Optional[Dict[str, 
         Validated config dict, or None on error
     """
     global _last_good_config
+
+    path = _resolve_config_file(path, print_error)
 
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -199,54 +232,74 @@ def load_config(path: str, print_error: callable = print) -> Optional[Dict[str, 
     return config
 
 
-def get_config_path(weechat_data_dir: str) -> str:
+def get_config_path(adapter: WeeChatAdapter, weechat_data_dir: str) -> str:
     """Determine config file path.
 
-    Args:
-        weechat_data_dir: WeeChat data directory path
-
-    Returns:
-        Path to bufcat.json
+    Precedence: plugins.var.python.bufcat.config_path, BUFCAT_CONFIG_PATH,
+    ${weechat_data_dir}/bufcat.json.
     """
-    # Check for custom path via plugin var (would be passed from Nix config)
-    custom_path = os.environ.get("BUFCAT_CONFIG_PATH", "")
-    if custom_path and os.path.isfile(custom_path):
-        return custom_path
+    plugin_path = adapter.config_get_plugin("config_path").strip()
+    if plugin_path:
+        return plugin_path
 
-    # Default: ${weechat_data_dir}/bufcat.json
+    env_path = os.environ.get("BUFCAT_CONFIG_PATH", "").strip()
+    if env_path:
+        return env_path
+
     return os.path.join(weechat_data_dir, "bufcat.json")
 
 
+def _buffer_match_fields(
+    buffer_name: str,
+    buffer_short_name: Optional[str],
+    buffer_full_name: Optional[str],
+) -> List[str]:
+    """Distinct non-empty strings to match against, in WeeChat field order."""
+    seen: set[str] = set()
+    out: List[str] = []
+    for s in (buffer_name or "", buffer_short_name or "", buffer_full_name or ""):
+        if not s or s in seen:
+            continue
+        seen.add(s)
+        out.append(s)
+    return out
+
+
 def choose_category(
-    buffer_name: str, config: Dict[str, Any], buffer_full_name: Optional[str] = None
+    buffer_name: str,
+    config: Dict[str, Any],
+    buffer_full_name: Optional[str] = None,
+    buffer_short_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Choose category for a buffer using first-match-wins substring search.
 
+    Each pattern is tested against ``name``, then ``short_name``, then ``full_name``
+    (when distinct). This catches plugin-specific tags such as ``(DC)`` on short names.
+
     Args:
-        buffer_name: Buffer name field to match against
+        buffer_name: Buffer ``name`` field
         config: Validated config dict
-        buffer_full_name: Fallback if buffer_name unavailable
+        buffer_full_name: Buffer ``full_name`` field
+        buffer_short_name: Buffer ``short_name`` (often what the buflist displays)
 
     Returns:
         Matching category dict (or default_category if no match)
     """
-    # Determine match target
-    target = buffer_name or buffer_full_name or ""
+    fields = _buffer_match_fields(buffer_name, buffer_short_name, buffer_full_name)
+    if not fields:
+        return config.get("default_category", {"name": "other", "order": 99, "prefix": ""})
 
-    # Get case sensitivity setting
     case_insensitive = config.get("case_insensitive", DEFAULT_CASE_INSENSITIVE)
-    if case_insensitive:
-        target = target.lower()
 
-    # Iterate categories in order (first match wins)
     for cat in config.get("categories", []):
         patterns = cat.get("patterns", [])
         for pattern in patterns:
             search_pattern = pattern.lower() if case_insensitive else pattern
-            if search_pattern in target:
-                return cat
+            for field in fields:
+                target = field.lower() if case_insensitive else field
+                if search_pattern in target:
+                    return cat
 
-    # No match: return default category
     return config.get("default_category", {"name": "other", "order": 99, "prefix": ""})
 
 
@@ -285,12 +338,24 @@ class WeeChatAdapter:
         """Set config option value."""
         raise NotImplementedError
 
+    def config_get_plugin(self, option: str) -> str:
+        """Script plugin option (e.g. plugins.var.python.bufcat.<option>)."""
+        return ""
+
     def buffer_get_string(self, buffer: str, property: str) -> str:
         """Get buffer string property."""
         raise NotImplementedError
 
     def buffer_set(self, buffer: str, property: str, value: str) -> bool:
         """Set buffer property (e.g., localvar_set_*)."""
+        raise NotImplementedError
+
+    def buffer_search(self, plugin: str, name: str) -> str:
+        """Search for a buffer."""
+        raise NotImplementedError
+
+    def buffer_new(self, name: str) -> str:
+        """Create a new buffer."""
         raise NotImplementedError
 
     def infolist_get(self, name: str, pointer: str, arguments: str) -> Any:
@@ -369,12 +434,22 @@ class RealWeeChatAdapter(WeeChatAdapter):
             return weechat.config_option_set(ptr, value, 1) == 1
         return False
 
+    def config_get_plugin(self, option: str) -> str:
+        ptr = weechat.config_get_plugin(option)
+        return weechat.config_string(ptr) if ptr else ""
+
     def buffer_get_string(self, buffer: str, property: str) -> str:
         return weechat.buffer_get_string(buffer, property) or ""
 
     def buffer_set(self, buffer: str, property: str, value: str) -> bool:
         weechat.buffer_set(buffer, property, value)
         return True
+
+    def buffer_search(self, plugin: str, name: str) -> str:
+        return weechat.buffer_search(plugin, name) or ""
+
+    def buffer_new(self, name: str) -> str:
+        return weechat.buffer_new(name, "", "", "", "") or ""
 
     def infolist_get(self, name: str, pointer: str, arguments: str) -> Any:
         return weechat.infolist_get(name, pointer, arguments)
@@ -460,19 +535,46 @@ def categorize_buffer(buffer_ptr: str, config: Dict[str, Any]) -> None:
     """
     adapter = get_adapter()
 
+    if adapter.buffer_get_string(buffer_ptr, "local_variables.bufcat_header") == "1":
+        return
+
     # Get buffer name (fallback to full_name)
     buffer_name = adapter.buffer_get_string(buffer_ptr, "name")
+    buffer_short_name = adapter.buffer_get_string(buffer_ptr, "short_name")
     buffer_full_name = adapter.buffer_get_string(buffer_ptr, "full_name")
 
     # Choose category
-    cat = choose_category(buffer_name, config, buffer_full_name)
+    cat = choose_category(buffer_name, config, buffer_full_name, buffer_short_name)
 
     # Set localvars
-    order_str = zero_pad_order(cat.get("order", 99))
+    order_str = f"{zero_pad_order(cat.get('order', 99))}_1"
     prefix = cat.get("prefix", "")
 
     adapter.buffer_set(buffer_ptr, "localvar_set_bufcat_order", order_str)
     adapter.buffer_set(buffer_ptr, "localvar_set_bufcat_prefix", prefix)
+
+
+def manage_headers(config: Dict[str, Any]) -> None:
+    """Ensure dummy buffers exist for categories that define a 'header'."""
+    adapter = get_adapter()
+    for cat in config.get("categories", []):
+        header = cat.get("header")
+        if not header or not isinstance(header, str):
+            continue
+
+        # Search for existing dummy buffer
+        ptr = adapter.buffer_search("core", header) or adapter.buffer_search("python", header) or adapter.buffer_search("", header)
+        if not ptr:
+            ptr = adapter.buffer_new(header)
+            if ptr:
+                adapter.buffer_set(ptr, "title", f"{header} category")
+                adapter.buffer_set(ptr, "notify", "0")
+                adapter.buffer_set(ptr, "type", "formatted")
+
+        if ptr:
+            adapter.buffer_set(ptr, "localvar_set_bufcat_header", "1")
+            adapter.buffer_set(ptr, "localvar_set_bufcat_order", f"{zero_pad_order(cat.get('order', 99))}_0")
+            adapter.buffer_set(ptr, "localvar_set_bufcat_prefix", "")
 
 
 def categorize_all_buffers(config: Dict[str, Any]) -> None:
@@ -481,6 +583,8 @@ def categorize_all_buffers(config: Dict[str, Any]) -> None:
     Args:
         config: Validated config dict
     """
+    manage_headers(config)
+
     adapter = get_adapter()
 
     infolist = adapter.infolist_get("buffer", "", "")
@@ -503,6 +607,10 @@ def save_buflist_config() -> None:
     global _saved_buflist
     adapter = get_adapter()
 
+    # Don't overwrite if already saved (e.g. from previous call in same execution)
+    if _saved_buflist:
+        return
+
     _saved_buflist = {
         "buflist.look.sort": adapter.config_get("buflist.look.sort"),
         "buflist.format.buffer": adapter.config_get("buflist.format.buffer"),
@@ -522,23 +630,30 @@ def apply_buflist_config() -> None:
     # Save originals first
     save_buflist_config()
 
-    # Set sort order
-    adapter.config_set("buflist.look.sort", "local_variables.bufcat_order,number")
+    # Set sort order (category -> number -> name)
+    adapter.config_set("buflist.look.sort", "local_variables.bufcat_order,number,name")
 
-    # Patch format to include prefix
+    # Patch format to include prefix (idempotent)
     original_format = _saved_buflist.get("buflist.format.buffer", "${format_buffer}")
     original_format_current = _saved_buflist.get(
         "buflist.format.buffer_current", "${format_buffer}"
     )
 
     prefix_expr = "${if:${buffer.local_variables.bufcat_prefix}?${buffer.local_variables.bufcat_prefix}:}"
-    adapter.config_set("buflist.format.buffer", prefix_expr + original_format)
-    adapter.config_set(
-        "buflist.format.buffer_current", prefix_expr + original_format_current
-    )
+    
+    # Only patch if not already patched
+    current_format = adapter.config_get("buflist.format.buffer")
+    if prefix_expr not in current_format:
+        adapter.config_set("buflist.format.buffer", prefix_expr + original_format)
+    
+    current_format_current = adapter.config_get("buflist.format.buffer_current")
+    if prefix_expr not in current_format_current:
+        adapter.config_set(
+            "buflist.format.buffer_current", prefix_expr + original_format_current
+        )
 
     # Add bufcat signal to refresh triggers
-    signals = _saved_buflist.get("buflist.look.signals_refresh", "")
+    signals = adapter.config_get("buflist.look.signals_refresh")
     if "bufcat_categorized" not in signals:
         if signals:
             signals = f"{signals},bufcat_categorized"
@@ -571,6 +686,7 @@ def clear_buffer_localvars() -> None:
             buffer_ptr = adapter.infolist_pointer(infolist, "pointer")
             adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_order", "")
             adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_prefix", "")
+            adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_header", "")
     finally:
         adapter.infolist_free(infolist)
 
@@ -580,14 +696,14 @@ def clear_buffer_localvars() -> None:
 
 def cmd_reload(data: str, buffer: str, args: str) -> int:
     """Handle /bufcat reload."""
-    global _config_path
-
     adapter = get_adapter()
     weechat_data_dir = adapter.info_get("weechat_data_dir", "")
-    config_path = get_config_path(weechat_data_dir)
+    config_path = get_config_path(adapter, weechat_data_dir)
 
     config = load_config(config_path, _print_to_core)
     if config:
+        if not _saved_buflist:
+            apply_buflist_config()
         categorize_all_buffers(config)
         _print_to_core("config reloaded")
 
@@ -631,9 +747,15 @@ def cmd_list(data: str, buffer: str, args: str) -> int:
         while adapter.infolist_next(infolist):
             buffer_ptr = adapter.infolist_pointer(infolist, "pointer")
             buffer_name = adapter.buffer_get_string(buffer_ptr, "name")
+            buffer_short_name = adapter.buffer_get_string(buffer_ptr, "short_name")
             buffer_full_name = adapter.buffer_get_string(buffer_ptr, "full_name")
 
-            cat = choose_category(buffer_name or buffer_full_name, _last_good_config)
+            cat = choose_category(
+                buffer_name,
+                _last_good_config,
+                buffer_full_name,
+                buffer_short_name,
+            )
             prefix = cat.get("prefix", "")
             order = cat.get("order", 99)
             cat_name = cat.get("name", "unknown")
@@ -668,6 +790,7 @@ def on_buffer_opened(data: str, signal: str, signal_data: str) -> int:
     """Handle buffer_opened signal."""
     if _last_good_config:
         categorize_buffer(signal_data, _last_good_config)
+        get_adapter().signal_send("bufcat_categorized", "string", "")
     return 0
 
 
@@ -675,6 +798,7 @@ def on_buffer_renamed(data: str, signal: str, signal_data: str) -> int:
     """Handle buffer_renamed signal."""
     if _last_good_config:
         categorize_buffer(signal_data, _last_good_config)
+        get_adapter().signal_send("bufcat_categorized", "string", "")
     return 0
 
 
@@ -699,9 +823,14 @@ def weechat_register() -> bool:
     if rc != 1:
         return False
 
-    # Check WeeChat version
-    version = weechat.info_get("version_number", "") or "0"
-    if int(version) < 0x04100000:  # 4.1.0
+    # version_number is hex like 0x04080100 for 4.8.1 (see /help weechat version_number).
+    # Do NOT use 0x04100000 — that is 4.16.x, not 4.1.0; it rejects every real 4.8.x build.
+    raw = (weechat.info_get("version_number", "") or "").strip()
+    try:
+        num = int(raw, 0) if raw else 0
+    except ValueError:
+        num = 0
+    if num > 0 and num < 0x04010000:  # 4.1.0
         weechat.prnt("", "bufcat: requires WeeChat >= 4.1.0")
         return False
 
@@ -719,22 +848,10 @@ def bufcat_init() -> bool:
     """Initialize bufcat after registration."""
     adapter = get_adapter()
 
-    # Load config
     weechat_data_dir = adapter.info_get("weechat_data_dir", "")
-    config_path = get_config_path(weechat_data_dir)
+    config_path = get_config_path(adapter, weechat_data_dir)
     config = load_config(config_path, _print_to_core)
 
-    if not config:
-        _print_to_core("no valid config - using defaults")
-        return False
-
-    # Apply buflist config changes
-    apply_buflist_config()
-
-    # Categorize all buffers
-    categorize_all_buffers(config)
-
-    # Register command
     adapter.hook_command(
         "bufcat",
         "Manage buflist categorization",
@@ -747,11 +864,18 @@ def bufcat_init() -> bool:
         "",
     )
 
-    # Register signal hooks
     adapter.hook_signal("buffer_opened", "on_buffer_opened", "")
     adapter.hook_signal("buffer_renamed", "on_buffer_renamed", "")
 
-    _print_to_core("initialized")
+    if config:
+        apply_buflist_config()
+        categorize_all_buffers(config)
+        _print_to_core("initialized")
+    else:
+        _print_to_core(
+            "no valid config — add bufcat.json or /set plugins.var.python.bufcat.config_path, then /bufcat reload"
+        )
+
     return True
 
 

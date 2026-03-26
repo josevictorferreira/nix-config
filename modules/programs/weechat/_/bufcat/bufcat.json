@@ -9,40 +9,42 @@
       "patterns": ["core."]
     },
     {
-      "name": "irc",
-      "order": 20,
-      "prefix": "  ",
-      "patterns": ["irc.", "server."]
-    },
-    {
-      "name": "matrix",
-      "order": 30,
-      "prefix": "  ",
-      "patterns": ["matrix."]
-    },
-    {
       "name": "whatsapp",
       "order": 40,
       "prefix": "  ",
-      "patterns": ["(WA)", "whatsapp."]
+      "patterns": ["(WA)", "whatsapp."],
+      "header": "WhatsApp"
     },
     {
       "name": "discord",
       "order": 50,
       "prefix": "  ",
-      "patterns": ["discord.", "(DC)"]
-    },
-    {
-      "name": "relay",
-      "order": 60,
-      "prefix": "  ",
-      "patterns": ["relay."]
+      "patterns": ["discord.", "(DC)"],
+      "header": "Discord"
     },
     {
       "name": "scripts",
       "order": 70,
-      "prefix": "  ",
+      "prefix": "",
       "patterns": ["python.", "perl.", "lua.", "ruby."]
+    },
+    {
+      "name": "irc",
+      "order": 20,
+      "prefix": "",
+      "patterns": ["irc.", "server."]
+    },
+    {
+      "name": "matrix",
+      "order": 30,
+      "prefix": "",
+      "patterns": ["matrix."]
+    },
+    {
+      "name": "relay",
+      "order": 60,
+      "prefix": "",
+      "patterns": ["relay."]
     }
   ],
   "default_category": {

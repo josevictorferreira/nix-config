@@ -1,9 +1,8 @@
 # _/scripts.nix - Weechat script derivations and defaults
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -43,19 +42,12 @@ let
     pname = "bufcat";
     version = "0.1";
 
-    srcs = [
-      ./bufcat/bufcat.py
-      ./bufcat/bufcat.json
-    ];
-
-    sourceRoot = ".";
-
-    passthru.scripts = [ "bufcat.py" ];
+    src = ./bufcat;
 
     installPhase = ''
       runHook preInstall
-      install -D bufcat/bufcat.py $out/share/bufcat.py
-      install -D bufcat/bufcat.json $out/share/bufcat.json
+      install -D bufcat.py $out/share/bufcat.py
+      install -D bufcat.json $out/share/bufcat.json
       runHook postInstall
     '';
 
@@ -79,8 +71,25 @@ let
   ];
 in
 {
-  # Merge user scripts with defaults, plus bufcat if enabled
-  jvf.programs.weechat.plugins.scripts = lib.mkDefault (
-    defaultScripts ++ lib.optional cfg.bufcat.enable bufcatScript
-  );
+  config = lib.mkMerge [
+    {
+      # Bufcat is not in plugins.scripts: nixpkgs prepends many /script load …; long run-commands can
+      # drop or fail late loads. Load via absolute /python load in prependInitCommands (init.nix).
+      jvf.programs.weechat.plugins.scripts = defaultScripts;
+    }
+    (lib.mkIf cfg.bufcat.enable {
+      jvf.programs.weechat.prependInitCommands = [
+        "/python load ${bufcatScript}/share/bufcat.py"
+      ];
+      jvf.wrappers.users.${cfg.username}.programs.weechat = {
+        packages = lib.mkAfter [ bufcatScript ];
+        # Always read JSON from the derivation so flake changes apply (a one-time copy to
+        # ~/.local/share/weechat/bufcat.json would never update). Override with bufcat.configPath.
+        env = {
+          BUFCAT_CONFIG_PATH =
+            if cfg.bufcat.configPath != null then cfg.bufcat.configPath else "${bufcatScript}/share/bufcat.json";
+        };
+      };
+    })
+  ];
 }

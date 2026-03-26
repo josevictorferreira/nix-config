@@ -6,6 +6,7 @@ import os
 import tempfile
 import unittest
 from typing import Any, Dict, List, Tuple
+from unittest import mock
 
 import bufcat
 
@@ -38,12 +39,26 @@ class FakeWeeChatAdapter(bufcat.WeeChatAdapter):
         self.config_values[option] = value
         return True
 
+    def config_get_plugin(self, option: str) -> str:
+        return self.config_values.get(f"plugin.{option}", "")
+
     def buffer_get_string(self, buffer: str, prop: str) -> str:
         return self.buffers.get(buffer, {}).get(prop, "")
 
     def buffer_set(self, buffer: str, prop: str, value: str) -> bool:
         self.buffers.setdefault(buffer, {})[prop] = value
         return True
+
+    def buffer_search(self, plugin: str, name: str) -> str:
+        for ptr, localvars in self.buffers.items():
+            if localvars.get("name") == name:
+                return ptr
+        return ""
+
+    def buffer_new(self, name: str) -> str:
+        ptr = f"ptr_{name}"
+        self.buffers[ptr] = {"name": name}
+        return ptr
 
     def infolist_get(self, name: str, pointer: str, arguments: str) -> Any:
         self._infolist_items = list(self.buffers.keys())
@@ -170,13 +185,33 @@ class TestChooseCategory(unittest.TestCase):
         self.assertEqual(result["name"], "other")
 
     def test_fallback_to_full_name(self):
-        """Empty buffer_name falls back to buffer_full_name."""
+        """Empty buffer_name still matches via buffer_full_name."""
         config = _make_config()
         result = bufcat.choose_category("", config, buffer_full_name="irc.libera.#nix")
         self.assertEqual(result["name"], "irc")
 
+    def test_short_name_discord_tag(self):
+        """Tags like (DC) often appear only on short_name (buflist display)."""
+        config = _make_config(
+            categories=[
+                {
+                    "name": "discord",
+                    "order": 50,
+                    "prefix": "  ",
+                    "patterns": ["(DC)"],
+                },
+            ],
+        )
+        result = bufcat.choose_category(
+            "#introductions",
+            config,
+            buffer_full_name="discord.server.#introductions",
+            buffer_short_name="#introductions (DC)",
+        )
+        self.assertEqual(result["name"], "discord")
+
     def test_empty_name_and_full_name(self):
-        """Both names empty → default category."""
+        """All name fields empty → default category."""
         config = _make_config()
         result = bufcat.choose_category("", config, buffer_full_name="")
         self.assertEqual(result["name"], "other")
@@ -310,10 +345,25 @@ class TestLoadConfig(unittest.TestCase):
 
     def test_file_not_found_returns_last_good(self):
         path = os.path.join(self._tmpdir, "nonexistent.json")
-        result = bufcat.load_config(path, self._error_sink)
+        with mock.patch.object(
+            bufcat,
+            "_bundled_config_path",
+            return_value=os.path.join(self._tmpdir, "no-bundle-here.json"),
+        ):
+            result = bufcat.load_config(path, self._error_sink)
         # No last-good → None
         self.assertIsNone(result)
         self.assertTrue(any("not found" in e for e in self._errors))
+
+    def test_seeds_from_bundled_when_target_missing(self):
+        """Missing path + real bundle beside bufcat.py → copy then load."""
+        path = os.path.join(self._tmpdir, "bufcat.json")
+        self.assertFalse(os.path.isfile(path))
+        result = bufcat.load_config(path, self._error_sink)
+        self.assertIsNotNone(result)
+        self.assertEqual(result["version"], 1)
+        self.assertTrue(os.path.isfile(path))
+        self.assertEqual(len(self._errors), 0)
 
     def test_validation_error_keeps_last_good(self):
         """Schema-invalid config → returns last-good."""
@@ -362,7 +412,7 @@ class TestBuflistPatchAndRestore(unittest.TestCase):
         # Sort should be overridden
         self.assertEqual(
             self.adapter.config_values["buflist.look.sort"],
-            "local_variables.bufcat_order,number",
+            "local_variables.bufcat_order,number,name",
         )
         # Format should be prefixed
         fmt = self.adapter.config_values["buflist.format.buffer"]
@@ -413,7 +463,7 @@ class TestCategorizeBuffer(unittest.TestCase):
         config = _make_config()
         bufcat.categorize_buffer("buf_1", config)
         localvars = self.adapter.buffers["buf_1"]
-        self.assertEqual(localvars["localvar_set_bufcat_order"], "020")
+        self.assertEqual(localvars["localvar_set_bufcat_order"], "020_1")
         self.assertEqual(localvars["localvar_set_bufcat_prefix"], "  ")
 
 
@@ -437,13 +487,13 @@ class TestCategorizeAllBuffers(unittest.TestCase):
         bufcat.categorize_all_buffers(config)
 
         self.assertEqual(
-            self.adapter.buffers["buf_core"]["localvar_set_bufcat_order"], "010"
+            self.adapter.buffers["buf_core"]["localvar_set_bufcat_order"], "010_1"
         )
         self.assertEqual(
-            self.adapter.buffers["buf_irc"]["localvar_set_bufcat_order"], "020"
+            self.adapter.buffers["buf_irc"]["localvar_set_bufcat_order"], "020_1"
         )
         self.assertEqual(
-            self.adapter.buffers["buf_other"]["localvar_set_bufcat_order"], "099"
+            self.adapter.buffers["buf_other"]["localvar_set_bufcat_order"], "099_1"
         )
 
     def test_sends_signal_after_categorize(self):
