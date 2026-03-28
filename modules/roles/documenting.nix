@@ -1,5 +1,5 @@
 # Aspect: roles-documenting
-# Bundles document viewing and editing tools (obsidian, zathura, etc).
+# Bundles document viewing and editing tools (obsidian, zathura, typst, etc).
 _:
 let
 
@@ -33,6 +33,7 @@ let
           pkgs.koreader
           pkgs.zathura
           pkgs.libreoffice-qt-fresh
+          pkgs.typst
         ];
       };
     };
@@ -54,6 +55,7 @@ let
           pkgs.obsidian
           pkgs.koreader
           pkgs.zathura
+          pkgs.typst
         ];
       };
     };

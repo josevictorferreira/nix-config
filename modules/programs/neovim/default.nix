@@ -48,6 +48,7 @@ let
         pkgs.nixd
         pkgs.helm-ls
         pkgs.gopls
+        pkgs.tinymist
         pkgs.autotools-language-server
       ];
 
