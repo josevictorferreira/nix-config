@@ -37,8 +37,6 @@ let
         programs-cursor
         programs-droid
         programs-gemini
-        programs-hermes-agent
-        services-llm-proxy
       ]);
 
       config = {
@@ -80,8 +78,6 @@ let
         programs-cursor
         programs-droid
         programs-gemini
-        programs-hermes-agent
-        services-llm-proxy
       ]);
 
       config = {

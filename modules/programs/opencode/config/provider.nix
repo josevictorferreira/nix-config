@@ -162,6 +162,7 @@ _: {
             input = [
               "text"
               "image"
+              "video"
             ];
             output = [ "text" ];
           };
@@ -213,6 +214,7 @@ _: {
             input = [
               "text"
               "image"
+              "video"
             ];
             output = [ "text" ];
           };
