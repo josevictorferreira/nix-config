@@ -14,50 +14,11 @@ let
     matrixPass = "/run/secrets/matrix_server_password";
   };
 
-  # Matrix plugin (Rust-based) derivation
-  weechatMatrixRs_base = pkgs.rustPlatform.buildRustPackage {
-    pname = "weechat-matrix-rs";
-    version = "0.1.0-unstable-2025-01-15";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "poljar";
-      repo = "weechat-matrix-rs";
-      rev = "4cc5777b630ba4d6a9c964248531f283178a4717";
-      hash = "sha256-CF4xDoRYey9F8/XSW/euNb8IjZXyP6k0Nj61shsmyEo=";
-    };
-
-    cargoHash = "sha256-jAlBCmLJfWWAUHd3ySB930iqAVXMh6ueba7xS///Rt0=";
-
-    nativeBuildInputs = with pkgs; [
-      pkg-config
-      cmake
-      rustPlatform.bindgenHook
-    ];
-
-    buildInputs = with pkgs; [
-      openssl
-      pkgs.weechat
-      sqlite
-    ];
-
-    postInstall = ''
-      mkdir -p $out/lib/weechat/plugins
-      cp $out/lib/libmatrix.so $out/lib/weechat/plugins/matrix.so 2>/dev/null || true
-      cp $out/lib/libmatrix.dylib $out/lib/weechat/plugins/matrix.so 2>/dev/null || true
-    '';
-
-    meta = with lib; {
-      description = "Rust Matrix plugin for Weechat";
-      homepage = "https://github.com/poljar/weechat-matrix-rs";
-      license = licenses.isc;
-      platforms = platforms.unix;
-    };
-  };
-
-  # Override to correctly set passthru.pluginFile without using placeholder
-  weechatMatrixRs = weechatMatrixRs_base.overrideAttrs (old: {
+  # Use weechat-matrix-rs from nixpkgs as it's better maintained
+  # and the manual derivation was failing to build.
+  weechatMatrixRs = pkgs.weechat-matrix-rs.overrideAttrs (old: {
     passthru = (old.passthru or { }) // {
-      pluginFile = "${weechatMatrixRs_base}/lib/weechat/plugins/matrix.so";
+      pluginFile = "${pkgs.weechat-matrix-rs}/lib/weechat/plugins/matrix.so";
     };
   });
 

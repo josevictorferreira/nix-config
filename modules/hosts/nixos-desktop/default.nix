@@ -47,6 +47,14 @@ let
     };
     sphinx-basic-ng = psuper.sphinx-basic-ng.overridePythonAttrs { doCheck = false; dontBuildDocs = true; pythonImportsCheck = [ ]; };
     myst-parser = psuper.myst-parser.overridePythonAttrs { doCheck = false; dontBuildDocs = true; pythonImportsCheck = [ ]; };
+    tornado = psuper.tornado.overridePythonAttrs { doCheck = false; };
+    cherrypy = psuper.cherrypy.overridePythonAttrs { doCheck = false; };
+    paramiko = psuper.paramiko.overridePythonAttrs (old: {
+      doCheck = false;
+      doInstallCheck = false;
+      dontCheckRuntimeDeps = true;
+    });
+    ipython = psuper.ipython.overridePythonAttrs { doCheck = false; };
     cryptography = psuper.cryptography.overridePythonAttrs (old: {
       doCheck = false;
       doInstallCheck = false;

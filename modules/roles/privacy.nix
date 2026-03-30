@@ -70,7 +70,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.proton-pass
           pkgs.proton-authenticator
-          pkgs.protonvpn-gui
+          pkgs.proton-vpn
           protonmailWrapped
         ];
       };

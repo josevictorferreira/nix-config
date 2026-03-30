@@ -35,12 +35,11 @@ let
       ]);
 
       config = {
-        jvf.programs.weechat.matrix.enable = true;
+        jvf.programs.weechat.matrix.enable = false;
         jvf.programs.weechat.bufcat.enable = true;
         users.users."${cfg.username}".packages = [
           pkgs.discord
           pkgs.brave
-          pkgs.iamb
         ];
       };
     };
@@ -62,12 +61,11 @@ let
       ]);
 
       config = {
-        jvf.programs.weechat.matrix.enable = true;
+        jvf.programs.weechat.matrix.enable = false;
 
         users.users."${cfg.username}".packages = [
           pkgs.discord
           pkgs.brave
-          pkgs.iamb
         ];
       };
     };
