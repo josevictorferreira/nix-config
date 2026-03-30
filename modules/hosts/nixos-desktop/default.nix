@@ -180,6 +180,7 @@ in
         system-nix-daemon
         system-security
         system-tailscale
+        system-lights-off
 
         # Hardware
         hardware-boot

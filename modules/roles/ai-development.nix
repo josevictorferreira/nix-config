@@ -43,27 +43,10 @@ let
         # Sub-feature enables
         jvf.programs.gemini.antigravity.enable = true;
 
-        # Claude Code settings (permissions, default mode)
+        # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {
           permissions = {
-            allow = [
-              "Bash(cat:*)"
-              "Bash(echo:*)"
-              "Bash(ldd:*)"
-              "Bash(bash:*)"
-              "Bash(readlink:*)"
-              "Bash(zsh:*)"
-              "Bash(hash:*)"
-              "Bash(set:*)"
-              "Bash(git log:*)"
-              "Bash(sudo nixos-rebuild switch:*)"
-              "Bash(nix-instantiate:*)"
-              "Bash(nix flake:*)"
-              "Bash(nix --extra-experimental-features 'nix-command flakes' flake check)"
-            ];
-            deny = [ ];
-            ask = [ ];
-            defaultMode = "dontAsk";
+            defaultMode = "bypassPermissions";
           };
         };
 
@@ -107,27 +90,10 @@ let
         # Sub-feature enables
         jvf.programs.gemini.antigravity.enable = true;
 
-        # Claude Code settings (permissions, default mode)
+        # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {
           permissions = {
-            allow = [
-              "Bash(cat:*)"
-              "Bash(echo:*)"
-              "Bash(ldd:*)"
-              "Bash(bash:*)"
-              "Bash(readlink:*)"
-              "Bash(zsh:*)"
-              "Bash(hash:*)"
-              "Bash(set:*)"
-              "Bash(git log:*)"
-              "Bash(sudo nixos-rebuild switch:*)"
-              "Bash(nix-instantiate:*)"
-              "Bash(nix flake:*)"
-              "Bash(nix --extra-experimental-features 'nix-command flakes' flake check)"
-            ];
-            deny = [ ];
-            ask = [ ];
-            defaultMode = "dontAsk";
+            defaultMode = "bypassPermissions";
           };
         };
 
