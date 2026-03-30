@@ -99,7 +99,7 @@ in
             # Make all scripts executable
             find "$TARGET_PATH/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
             echo "Reloading Hyprland..."
-            ${config.programs.hyprland.package}/bin/hyprctl reload || true
+            ${config.programs.hyprland.package}/bin/hyprctl reload 2>/dev/null || true
           '';
         };
 

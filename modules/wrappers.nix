@@ -293,7 +293,9 @@ let
         let
           home = if isDarwin then "/Users/${userName}" else "/home/${userName}";
         in
-        lib.concatStringsSep "\n" (
+        ''
+          set -e
+        '' + lib.concatStringsSep "\n" (
           lib.mapAttrsToList
             (
               programName: programCfg:
@@ -350,8 +352,8 @@ let
                         ${if isDarwin then darwinCopyDir else linuxCopyDir}
                         chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_DIR"
                         chmod -R u+rw "$TARGET_DIR"
-                        find "$TARGET_DIR" -type d -exec chmod 755 {} \;
-                        find "$TARGET_DIR" -type f -exec chmod 644 {} \;
+                        find "$TARGET_DIR" -type d -exec chmod 755 {} \; 2>/dev/null || true
+                        find "$TARGET_DIR" -type f -exec chmod 644 {} \; 2>/dev/null || true
                       fi
 
                       # Check for changes
@@ -367,11 +369,11 @@ let
 
                           BACKUP_TIMESTAMP=$(date +%s)
                           BACKUP_DIR="$TARGET_PATH.backup.$BACKUP_TIMESTAMP"
-                          mv "$TARGET_PATH" "$BACKUP_DIR"
+                          mv -f "$TARGET_PATH" "$BACKUP_DIR"
                         fi
 
                         rm -rf "$TARGET_PATH"
-                        mv "$TARGET_DIR" "$TARGET_PATH"
+                        mv -f "$TARGET_DIR" "$TARGET_PATH"
 
                         ${lib.optionalString (programCfg.preserveFiles != [ ]) ''
                           if [ -n "$BACKUP_DIR" ]; then
@@ -398,7 +400,9 @@ let
               ''
             )
             (uCfg.programs or { })
-        );
+        ) + ''
+          true
+        '';
 
       # Packages for users whose programs have no wrapper command (command == null)
       userPackagesConfig = {

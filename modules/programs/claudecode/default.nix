@@ -9,11 +9,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.claudecode;
@@ -21,55 +22,53 @@ let
       # FHS environment for Linux (claude-code needs glibc, etc.)
       claudeCodeFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv
-            {
-              name = "claude-fhs";
-              targetPkgs =
-                pkgs: with pkgs; [
-                  stdenv.cc.cc.lib
-                  zlib
-                  openssl
-                  curl
-                  nodejs_22
-                  coreutils
-                  tmux
-                  fzf
-                ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "claude-runner" ''
+          pkgs.buildFHSEnv {
+            name = "claude-fhs";
+            targetPkgs =
+              pkgs: with pkgs; [
+                stdenv.cc.cc.lib
+                zlib
+                openssl
+                curl
+                nodejs_22
+                coreutils
+                tmux
+                fzf
+              ];
+            profile = ''
+              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+              mkdir -p "$TMPDIR"
+            '';
+            runScript = "${pkgs.writeShellScript "claude-runner" ''
               exec "$HOME/.npm-global/bin/claude" "$@"
             ''}";
-            }
+          }
         else
           null;
 
       claudeRouterFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv
-            {
-              name = "claude-router-fhs";
-              targetPkgs =
-                pkgs: with pkgs; [
-                  stdenv.cc.cc.lib
-                  zlib
-                  openssl
-                  curl
-                  nodejs_22
-                  coreutils
-                  tmux
-                  fzf
-                ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "claude-router-runner" ''
+          pkgs.buildFHSEnv {
+            name = "claude-router-fhs";
+            targetPkgs =
+              pkgs: with pkgs; [
+                stdenv.cc.cc.lib
+                zlib
+                openssl
+                curl
+                nodejs_22
+                coreutils
+                tmux
+                fzf
+              ];
+            profile = ''
+              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+              mkdir -p "$TMPDIR"
+            '';
+            runScript = "${pkgs.writeShellScript "claude-router-runner" ''
               exec "$HOME/.npm-global/bin/ccr" "$@"
             ''}";
-            }
+          }
         else
           null;
 
@@ -188,6 +187,13 @@ let
               "shell-snapshots"
               "todos"
               "history.jsonl"
+              ".credentials.json"
+              "mcp-needs-auth-cache.json"
+              "sessions"
+              "backups"
+              "plans"
+              "session-env"
+              "plugins"
             ];
             packages = [
               claudeCodeBin
@@ -198,12 +204,20 @@ let
               (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
               (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
               (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+              (lib.mkIf (cfg.settings != { }) {
+                "settings.json" = cfg.settings;
+              })
             ];
           };
           claude-code-router = {
             preserveFiles = [
               "logs"
               "plugins"
+              ".credentials.json"
+              "mcp-needs-auth-cache.json"
+              "sessions"
+              "plans"
+              "session-env"
               ".claude-code-router.pid"
             ];
             packages = [
