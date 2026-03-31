@@ -42,7 +42,7 @@ let
       cfg = config.jvf.programs.alacritty;
       colors = config.jvf.theme.colors;
       fonts = config.jvf.theme.fonts;
-      fontFamily = fonts.monospace;
+      fontFamily = "Inconsolata Nerd Font";
       themeColors = {
         primary = {
           background = "0x${colors.background}";
@@ -91,7 +91,7 @@ let
             };
             bold = {
               family = fontFamily;
-              style = "SemiBold";
+              style = "Bold";
             };
             italic = {
               family = fontFamily;
@@ -136,6 +136,7 @@ let
           pkgs.ibm-plex
           pkgs.nerd-fonts.zed-mono
           pkgs.nerd-fonts.jetbrains-mono
+          pkgs.nerd-fonts.inconsolata
         ];
       };
     };

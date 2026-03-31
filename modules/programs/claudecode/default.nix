@@ -9,12 +9,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.claudecode;
@@ -22,53 +21,55 @@ let
       # FHS environment for Linux (claude-code needs glibc, etc.)
       claudeCodeFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv {
-            name = "claude-fhs";
-            targetPkgs =
-              pkgs: with pkgs; [
-                stdenv.cc.cc.lib
-                zlib
-                openssl
-                curl
-                nodejs_22
-                coreutils
-                tmux
-                fzf
-              ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "claude-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "claude-fhs";
+              targetPkgs =
+                pkgs: with pkgs; [
+                  stdenv.cc.cc.lib
+                  zlib
+                  openssl
+                  curl
+                  nodejs_22
+                  coreutils
+                  tmux
+                  fzf
+                ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "claude-runner" ''
               exec "$HOME/.npm-global/bin/claude" "$@"
             ''}";
-          }
+            }
         else
           null;
 
       claudeRouterFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv {
-            name = "claude-router-fhs";
-            targetPkgs =
-              pkgs: with pkgs; [
-                stdenv.cc.cc.lib
-                zlib
-                openssl
-                curl
-                nodejs_22
-                coreutils
-                tmux
-                fzf
-              ];
-            profile = ''
-              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-              mkdir -p "$TMPDIR"
-            '';
-            runScript = "${pkgs.writeShellScript "claude-router-runner" ''
+          pkgs.buildFHSEnv
+            {
+              name = "claude-router-fhs";
+              targetPkgs =
+                pkgs: with pkgs; [
+                  stdenv.cc.cc.lib
+                  zlib
+                  openssl
+                  curl
+                  nodejs_22
+                  coreutils
+                  tmux
+                  fzf
+                ];
+              profile = ''
+                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+                mkdir -p "$TMPDIR"
+              '';
+              runScript = "${pkgs.writeShellScript "claude-router-runner" ''
               exec "$HOME/.npm-global/bin/ccr" "$@"
             ''}";
-          }
+            }
         else
           null;
 
