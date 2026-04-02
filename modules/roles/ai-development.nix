@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -37,6 +38,7 @@ let
         programs-cursor
         programs-droid
         programs-gemini
+        programs-hermes-agent
       ]);
 
       config = {
@@ -66,9 +68,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -84,6 +87,7 @@ let
         programs-cursor
         programs-droid
         programs-gemini
+        programs-hermes-agent
       ]);
 
       config = {

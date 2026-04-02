@@ -5,10 +5,11 @@
 _:
 let
   mkAlacrittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.alacritty = {
@@ -33,16 +34,17 @@ let
     };
 
   alacrittyModule =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.alacritty;
       colors = config.jvf.theme.colors;
       fonts = config.jvf.theme.fonts;
-      fontFamily = "Inconsolata Nerd Font";
+      fontFamily = "TamzenForPowerline";
       themeColors = {
         primary = {
           background = "0x${colors.background}";
@@ -87,7 +89,8 @@ let
             size = fonts.size;
             normal = {
               family = fontFamily;
-              style = "Regular";
+              style = "Medium";
+              # style = "Regular";
             };
             bold = {
               family = fontFamily;
@@ -95,11 +98,13 @@ let
             };
             italic = {
               family = fontFamily;
-              style = "Italic";
+              style = "Medium";
+              # style = "Italic";
             };
             bold_italic = {
               family = fontFamily;
-              style = "Bold Italic";
+              style = "Medium";
+              # style = "Bold Italic";
             };
           };
           scrolling = {
@@ -137,6 +142,7 @@ let
           pkgs.nerd-fonts.zed-mono
           pkgs.nerd-fonts.jetbrains-mono
           pkgs.nerd-fonts.inconsolata
+          pkgs.tamzen
         ];
       };
     };
