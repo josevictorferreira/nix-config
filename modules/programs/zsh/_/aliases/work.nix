@@ -11,5 +11,10 @@ in
     alias infra='cd ${cfg.workspace.shared}/infrastructure 2>/dev/null || cd ~/Homelab/infrastructure'
     alias k8s='cd ${cfg.workspace.shared}/kubernetes 2>/dev/null || cd ~/Homelab/kubernetes'
     alias monitoring='cd ${cfg.workspace.shared}/monitoring 2>/dev/null || cd ~/Homelab/monitoring'
+
+    # Homelab Projects
+    alias valb='cd ${cfg.workspace.shared}/backend 2>/dev/null || cd ~/Homelab/backend'
+    alias valf='cd ${cfg.workspace.shared}/frontend 2>/dev/null || cd ~/Homelab/frontend'
+    alias occ='v ${cfg.workspace.shared}/openclaw/openclaw.json 2>/dev/null || v ~/Homelab/openclaw/openclaw.json'
   '';
 }

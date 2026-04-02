@@ -39,6 +39,10 @@ in
     alias dlogs='docker logs'
     alias drun='docker run --rm -it'
 
+    # Ruby
+    alias be='bundle exec '
+    alias ber='bundle exec rspec'
+
     # Nix
     alias nx='nix'
     alias nxf='nix flake'
