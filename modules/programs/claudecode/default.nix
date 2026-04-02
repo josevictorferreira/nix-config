@@ -74,6 +74,17 @@ let
           null;
 
       # Wrapper script for claude-code
+      # Transform raw mcps into Claude Code's expected schema (strip enabled, map type)
+      managedMcpServers = lib.mapAttrs (name: mcp: {
+        command = mcp.command;
+        args = mcp.args or [];
+        env = mcp.env or {};
+      } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+        type = "stdio";
+      } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+        type = mcp.type;
+      }) cfg.mcps;
+
       claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
         set -euo pipefail
 
@@ -178,6 +189,19 @@ let
         # Set default router settings from imported config
         jvf.programs.claudecode.routerSettings = lib.mkDefault defaultRouterConfig;
 
+        # Inject MCP servers into settings automatically
+        jvf.programs.claudecode.settings = {
+          mcpServers = lib.mkDefault (lib.mapAttrs (name: mcp: {
+            command = mcp.command;
+            args = mcp.args or [];
+            env = mcp.env or {};
+          } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+            type = "stdio";
+          } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+            type = mcp.type;
+          }) cfg.mcps);
+        };
+
         jvf.wrappers.users.${cfg.username}.programs = {
           claude = {
             preserveFiles = [
@@ -209,6 +233,19 @@ let
                 "settings.json" = cfg.settings;
               })
             ];
+            postInstall = ''
+              CLAUDE_JSON="${if isDarwin then "/Users" else "/home"}/${cfg.username}/.claude.json"
+              SETTINGS_JSON="${if isDarwin then "/Users" else "/home"}/${cfg.username}/.claude/settings.json"
+              if [ -f "$SETTINGS_JSON" ]; then
+                if [ ! -f "$CLAUDE_JSON" ]; then
+                  echo "{}" > "$CLAUDE_JSON"
+                fi
+                # Overwrite .mcpServers in ~/.claude.json with the one from our generated settings.json
+                ${lib.getExe pkgs.jq} --argjson newMcp "$(${lib.getExe pkgs.jq} '.mcpServers // {}' "$SETTINGS_JSON")" '.mcpServers = $newMcp' "$CLAUDE_JSON" > "$CLAUDE_JSON.tmp"
+                mv -f "$CLAUDE_JSON.tmp" "$CLAUDE_JSON"
+                chown ${cfg.username}:${if isDarwin then "staff" else "users"} "$CLAUDE_JSON"
+              fi
+            '';
           };
           claude-code-router = {
             preserveFiles = [
@@ -233,7 +270,7 @@ let
       }
       // lib.optionalAttrs (!isDarwin) {
         environment.etc."claude-code/managed-mcp.json".text = builtins.toJSON {
-          mcpServers = cfg.mcps;
+          mcpServers = managedMcpServers;
         };
       }
       // lib.optionalAttrs isDarwin {
@@ -242,7 +279,7 @@ let
           targetFile="$targetDir/managed-mcp.json"
 
           # Define the content in the Nix store (immutable)
-          sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = cfg.mcps; })}"
+          sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = managedMcpServers; })}"
 
           echo "Configuring Claude Code Managed MCP..."
           mkdir -p "$targetDir"

@@ -44,6 +44,11 @@ let
         # Sub-feature enables
         jvf.programs.gemini.antigravity.enable = true;
 
+        # AI Tools enables
+        jvf.aiTools.mcp.chrome-devtools.enable = true;
+        jvf.aiTools.mcp.playwriter.enable = true;
+        jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
+
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {
           permissions = {
@@ -62,6 +67,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.code-cursor
           pkgs.cursor-cli
+          pkgs.chromium
         ];
       };
     };
@@ -92,6 +98,11 @@ let
         # Sub-feature enables
         jvf.programs.gemini.antigravity.enable = true;
 
+        # AI Tools enables
+        jvf.aiTools.mcp.chrome-devtools.enable = true;
+        jvf.aiTools.mcp.playwriter.enable = true;
+        jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
+
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {
           permissions = {
@@ -110,6 +121,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.code-cursor
           pkgs.cursor-cli
+          pkgs.chromium
         ];
       };
     };

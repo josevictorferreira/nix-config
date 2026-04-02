@@ -21,6 +21,10 @@ let
             "steam-original"
             "steam-unwrapped"
             "steam-run"
+            "google-chrome"
+            "chromium"
+            "code-cursor"
+            "cursor-cli"
           ];
           description = "List of unfree packages to allow by name.";
         };

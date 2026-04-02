@@ -34,6 +34,12 @@ let
       '';
 
       # --- context7 ---
+      # All npx-based MCPs use wrapper scripts that pin PATH to their own Node,
+      # preventing nix develop shells from injecting a different Node version.
+      npx = lib.getExe' pkgs.nodejs "npx";
+      nodeBin = lib.getBin pkgs.nodejs + "/bin";
+      defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
+
       context7Def = mkMcpModule {
         name = "context7";
         programs = [ "cursor" "claudecode" ];
@@ -41,29 +47,44 @@ let
           enabled = true;
           type = "local";
           command = pkgs.writeShellScript "mcp-context7-wrapper" ''
-            exec npx -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
+            export PATH="${nodeBin}:$PATH"
+            exec ${npx} -y @upstash/context7-mcp --api-key "''${CONTEXT7_API_KEY}" "$@"
           '';
           args = [ ];
         };
       };
 
       # --- chrome-devtools ---
-      npx = lib.getExe' pkgs.nodejs "npx";
-      defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
       chromeDevtoolsDef = mkMcpModule {
         name = "chrome-devtools";
         programs = [ "claudecode" ];
         mcpOptions = {
           type = "local";
           enabled = true;
-          command = npx;
-          args = [
-            "-y"
-            "chrome-devtools-mcp@latest"
-            "--headless=true"
-            "--isolated=true"
-            "--executablePath=${defaultBrowser}"
-          ];
+          command = pkgs.writeShellScript "mcp-chrome-devtools-wrapper" ''
+            export PATH="${nodeBin}:$PATH"
+            exec ${npx} -y chrome-devtools-mcp@latest \
+              --headless=true \
+              --isolated=true \
+              --executablePath=${defaultBrowser} \
+              "$@"
+          '';
+          args = [ ];
+        };
+      };
+
+      # --- playwriter ---
+      playwriterDef = mkMcpModule {
+        name = "playwriter";
+        programs = [ "claudecode" ];
+        mcpOptions = {
+          type = "local";
+          enabled = true;
+          command = pkgs.writeShellScript "mcp-playwriter-wrapper" ''
+            export PATH="${nodeBin}:$PATH"
+            exec ${npx} -y playwriter@latest "$@"
+          '';
+          args = [ ];
         };
       };
 
@@ -103,6 +124,7 @@ let
       options.jvf.aiTools.mcp = {
         context7 = context7Def.options;
         "chrome-devtools" = chromeDevtoolsDef.options;
+        playwriter = playwriterDef.options;
         grafana = grafanaDef.options;
         grafanaWork = grafanaWorkDef.options;
       }
@@ -113,21 +135,8 @@ let
         (lib.mkIf cfg.context7.enable context7Def.config)
         (lib.mkIf cfg.grafana.enable grafanaDef.config)
         (lib.mkIf cfg.grafanaWork.enable grafanaWorkDef.config)
-        (lib.mkIf cfg."chrome-devtools".enable (
-          chromeDevtoolsDef.config
-          // {
-            jvf.aiTools.skills."browser-debug-tools".mcp = {
-              command = npx;
-              args = [
-                "-y"
-                "chrome-devtools-mcp@latest"
-                "--headless=true"
-                "--isolated=true"
-                "--executablePath=${defaultBrowser}"
-              ];
-            };
-          }
-        ))
+        (lib.mkIf cfg.playwriter.enable playwriterDef.config)
+        (lib.mkIf cfg."chrome-devtools".enable chromeDevtoolsDef.config)
       ]);
     };
 in
