@@ -16,14 +16,7 @@ let
         ./_/shell-init/history.nix
         ./_/shell-init/completion.nix
         ./_/shell-init/keybindings.nix
-        ./_/aliases/base.nix
-        ./_/aliases/navigation.nix
-        ./_/aliases/ls.nix
-        ./_/aliases/dev.nix
-        ./_/aliases/k8s.nix
-        ./_/aliases/notes.nix
-        ./_/aliases/projects.nix
-        ./_/aliases/work.nix
+        ./_/aliases.nix
         ./_/functions/git-ai.nix
         ./_/functions/development.nix
         ./_/functions/kubernetes.nix
