@@ -115,7 +115,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
 
 ## TODOs
 
-- [ ] 1. Add new `home` aspect skeleton + option schema (`jvf.home.*`)
+- [x] 1. Add new `home` aspect skeleton + option schema (`jvf.home.*`)
 
   **What to do**:
   - Create `modules/home/default.nix` exporting both platforms via `mkConfig { isDarwin }` (match pattern in `modules/wrappers.nix`).
@@ -175,7 +175,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `refactor(home): add jvf.home option schema scaffold` | Files: `modules/home/default.nix`
 
 
-- [ ] 2. Implement `jvf.home` activation (materialize file/dir + preserve + postInstall)
+- [x] 2. Implement `jvf.home` activation (materialize file/dir + preserve + postInstall)
 
   **What to do**:
   - In `modules/home/default.nix`, implement per-user activation scripts:
@@ -241,7 +241,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `feat(home): materialize home files via activation scripts` | Files: `modules/home/default.nix`
 
 
-- [ ] 3. Add flake checks: eval guard + NixOS VM integration test for `jvf.home`
+- [x] 3. Add flake checks: eval guard + NixOS VM integration test for `jvf.home`
 
   **What to do**:
   - Add new flake-parts module: `modules/checks/home.nix` (any path under `modules/` is fine; MUST export `perSystem` only).

@@ -30,7 +30,9 @@ let
     typeguard = psuper.typeguard.overridePythonAttrs (old: {
       doCheck = false;
       outputs = [ "out" ];
-      nativeBuildInputs = builtins.filter (p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx") (old.nativeBuildInputs or [ ]);
+      nativeBuildInputs = builtins.filter (
+        p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx"
+      ) (old.nativeBuildInputs or [ ]);
       postBuild = "";
     });
     sphinx-autodoc-typehints = psuper.buildPythonPackage {
@@ -45,8 +47,16 @@ let
         touch $out/lib/python3.11/site-packages/sphinx_autodoc_typehints/__init__.py
       '';
     };
-    sphinx-basic-ng = psuper.sphinx-basic-ng.overridePythonAttrs { doCheck = false; dontBuildDocs = true; pythonImportsCheck = [ ]; };
-    myst-parser = psuper.myst-parser.overridePythonAttrs { doCheck = false; dontBuildDocs = true; pythonImportsCheck = [ ]; };
+    sphinx-basic-ng = psuper.sphinx-basic-ng.overridePythonAttrs {
+      doCheck = false;
+      dontBuildDocs = true;
+      pythonImportsCheck = [ ];
+    };
+    myst-parser = psuper.myst-parser.overridePythonAttrs {
+      doCheck = false;
+      dontBuildDocs = true;
+      pythonImportsCheck = [ ];
+    };
     tornado = psuper.tornado.overridePythonAttrs { doCheck = false; };
     cherrypy = psuper.cherrypy.overridePythonAttrs { doCheck = false; };
     paramiko = psuper.paramiko.overridePythonAttrs (old: {
@@ -154,6 +164,7 @@ in
         wrappers
         repositories
         secrets-sops
+        home
 
         # Desktop environment
         desktop-hyprland
@@ -283,16 +294,14 @@ in
           {
             # Declare all zsh secrets with user ownership so they can be read
             sops.secrets = builtins.listToAttrs (
-              map
-                (key: {
-                  name = key;
-                  value = {
-                    owner = username;
-                    group = "users";
-                    mode = "0400";
-                  };
-                })
-                secretKeys
+              map (key: {
+                name = key;
+                value = {
+                  owner = username;
+                  group = "users";
+                  mode = "0400";
+                };
+              }) secretKeys
             );
           }
         )
