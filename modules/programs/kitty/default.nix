@@ -1,7 +1,7 @@
 # Aspect: programs-kitty
 # Defines jvf.programs.kitty options and platform-specific kitty terminal config.
-# NixOS: kitty package + config via wrappers + nerd-fonts.
-# Darwin: kitty package + config via wrappers + nerd-fonts.
+# NixOS: kitty package via wrappers + config via jvf.home + nerd-fonts.
+# Darwin: kitty package via wrappers + config via jvf.home + nerd-fonts.
 _:
 let
   mkKittyOptions =
@@ -146,9 +146,12 @@ let
           packages = [
             cfg.package
           ];
-          configs = {
-            "kitty.conf" = toConfigFormat lib cfg.settings;
-          };
+        };
+
+        jvf.home.users.${cfg.username}.items.".config/kitty/kitty.conf" = {
+          kind = "file";
+          mode = "copy";
+          text = toConfigFormat lib cfg.settings;
         };
 
         fonts.packages = [
