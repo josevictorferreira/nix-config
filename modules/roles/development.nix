@@ -40,6 +40,7 @@ let
         programs-tmux
         programs-git
         system-virtualization
+        programs-brave
       ]);
 
       config = {
@@ -76,7 +77,6 @@ let
           pkgs.jq
           pkgs.yq
           pkgs.bat
-          pkgs.brave
           pkgs.p7zip
         ];
       };
@@ -103,6 +103,7 @@ let
         programs-tmux
         programs-git
         system-virtualization
+        programs-brave
       ]);
 
       config = {
@@ -139,7 +140,6 @@ let
           pkgs.jq
           pkgs.yq
           pkgs.bat
-          pkgs.brave
           pkgs.p7zip
         ];
       };

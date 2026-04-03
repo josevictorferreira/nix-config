@@ -32,6 +32,7 @@ let
       ]
       ++ (with nixosAspects; [
         programs-weechat
+        programs-brave
       ]);
 
       config = {
@@ -39,7 +40,6 @@ let
         jvf.programs.weechat.bufcat.enable = true;
         users.users."${cfg.username}".packages = [
           pkgs.discord
-          pkgs.brave
         ];
       };
     };
@@ -58,6 +58,7 @@ let
       ]
       ++ (with darwinAspects; [
         programs-weechat
+        programs-brave
       ]);
 
       config = {
@@ -65,7 +66,6 @@ let
 
         users.users."${cfg.username}".packages = [
           pkgs.discord
-          pkgs.brave
         ];
       };
     };
