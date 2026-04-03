@@ -272,3 +272,26 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** When defining values for hardware or boot settings that might conflict with `qemu-vm.nix` overrides during `nixos-rebuild build-vm` (like `gfxmodeBios`), always wrap them in `lib.mkDefault`.
 **Context:** Standard `boot.loader.grub` settings often conflict with Nixpkgs' QEMU VM profile, preventing the VM build from evaluating.
 **Verify:** Try evaluating `.system.build.vm` for the host and ensure no "conflicting definition values" errors appear.
+
+---
+
+## Dendritic Module Imports
+
+### Leaf Modules Must Not Import Other Leaf Modules
+**Lesson:** In the dendritic pattern, leaf aspect modules must NEVER import other leaf modules via `imports = [ self.modules.nixos.other-leaf ];`. Only **roles** should compose leaf modules transitively. If leaf A imports leaf B, and a host imports both A and B (directly or via roles), the NixOS module system throws "option is already declared" because B's options get registered twice.
+**Context:** `wrappers.nix` initially imported `self.modules.nixos.home` to access `jvf.home` options. Since hosts already imported both `home` and `wrappers`, home's options were declared twice. Fix: remove the import from wrappers, rely on the host importing both — the module system merges config from all modules sharing the same option namespace.
+**Verify:** `grep -rn 'self\.modules\.\(nixos\|darwin\)\.' modules/programs/ modules/system/ modules/services/ modules/hardware/` — leaf modules should NEVER reference `self.modules.*` in their `imports` list. Only `modules/roles/*.nix` should.
+
+### Conflict Detection Cannot Use Config Self-Reference
+**Lesson:** When a translation layer sets `jvf.home.users.<u>.items` via `mkMerge`, you cannot detect conflicts by inspecting `config.jvf.home.users.<u>.items` from the same module — the translated items are already merged in, so you'd be checking against yourself. Use `builtins.tryEval` in a separate NixOS test evaluation instead.
+**Context:** The wrappers→jvf.home translation layer needed to detect when a directly-migrated module and the legacy translation both write to the same path. Self-referencing `config.jvf.home` saw the translated items, making conflict detection impossible inline. Solution: conflict assertions deferred to test-time `tryEval`.
+**Verify:** If adding translation/adapter layers between module systems, always test conflict detection in a separate eval context (e.g., `pkgs.runCommand` with `nix eval`), not inline assertions.
+
+---
+
+## Shell Safety in NixOS Activation Scripts
+
+### Always Shell-Escape Nix Values in Bash Activation Scripts
+**Lesson:** Any Nix string interpolated into bash activation scripts (especially file paths, user-provided values) must be wrapped with `lib.escapeShellArg`. Unescaped values with spaces, quotes, or special characters cause silent failures or security issues in activation scripts.
+**Context:** `jvf.home` activation scripts interpolated `preserve` subpaths directly into bash `find` and `cp` commands. Paths with spaces would break. Fixed by wrapping all interpolated paths with `lib.escapeShellArg`.
+**Verify:** After writing NixOS activation scripts, grep for `${}` interpolations inside bash strings and ensure each is wrapped with `lib.escapeShellArg` or equivalent quoting.
