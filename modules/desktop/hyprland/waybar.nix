@@ -1,5 +1,5 @@
 # Aspect: desktop-hyprland-waybar (NixOS only)
-# Waybar status bar for Hyprland. Packages + wrapper configs + fonts.
+# Waybar status bar for Hyprland. Packages + jvf.home config + fonts.
 # Theme adapter: generates wallust/colors-waybar.css from jvf.theme.colors.
 _: {
   flake.modules.nixos.desktop-hyprland-waybar =
@@ -94,11 +94,14 @@ _: {
           packages = [
             pkgs.waybar
           ];
-          configs = {
-            "waybar" = ./assets/waybar/.;
-          };
+        };
+
+        # Config via jvf.home — dir copy + wallust color injection
+        jvf.home.users.${cfg.username}.items.".config/waybar" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/waybar/.;
           postInstall = ''
-            # Theme adapter: inject generated colors (replaces wallust runtime gen)
             mkdir -p "$TARGET_PATH/wallust"
             cp ${waybarColorsCss} "$TARGET_PATH/wallust/colors-waybar.css"
           '';
