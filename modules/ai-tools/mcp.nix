@@ -38,7 +38,7 @@ let
       # preventing nix develop shells from injecting a different Node version.
       npx = lib.getExe' pkgs.nodejs "npx";
       nodeBin = lib.getBin pkgs.nodejs + "/bin";
-      defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
+      defaultBrowser = lib.getExe pkgs.brave;
 
       context7Def = mkMcpModule {
         name = "context7";

@@ -3,18 +3,6 @@
 # Fixes clipboard issues by forcing the Wayland backend.
 _:
 let
-  mkBraveOptions =
-    { config, lib, ... }:
-    {
-      options.jvf.programs.brave = {
-        username = lib.mkOption {
-          type = lib.types.str;
-          default = config.jvf.core.username;
-          description = "Username for which to install Brave";
-        };
-      };
-    };
-
   mkConfig =
     { isDarwin }:
     { config
@@ -37,7 +25,7 @@ let
           };
     in
     {
-      imports = [ mkBraveOptions ];
+      imports = [ ./options.nix ];
 
       config = {
         users.users."${cfg.username}".packages = [ braveWrapped ];

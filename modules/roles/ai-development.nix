@@ -67,7 +67,6 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.code-cursor
           pkgs.cursor-cli
-          pkgs.chromium
         ];
       };
     };
@@ -121,7 +120,6 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.code-cursor
           pkgs.cursor-cli
-          pkgs.chromium
         ];
       };
     };

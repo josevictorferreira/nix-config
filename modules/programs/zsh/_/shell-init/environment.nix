@@ -23,11 +23,11 @@ in
     export BAT_THEME="Dracula"
     export EDITOR="nvim"
     export VISUAL="nvim"
-    # BROWSER: chromium on Linux, open on macOS
+    # BROWSER: brave on Linux, open on macOS
     if [[ "$(uname)" == "Darwin" ]]; then
       export BROWSER="open"
     else
-      export BROWSER="chromium"
+      export BROWSER="brave"
     fi
     export SOPS_AGE_KEY_FILE="/var/lib/sops-nix/keys.txt"
     export KUBECONFIG="$HOME/.kube/config"

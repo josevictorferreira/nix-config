@@ -75,15 +75,17 @@ let
 
       # Wrapper script for claude-code
       # Transform raw mcps into Claude Code's expected schema (strip enabled, map type)
-      managedMcpServers = lib.mapAttrs (name: mcp: {
-        command = mcp.command;
-        args = mcp.args or [];
-        env = mcp.env or {};
-      } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-        type = "stdio";
-      } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-        type = mcp.type;
-      }) cfg.mcps;
+      managedMcpServers = lib.mapAttrs
+        (name: mcp: {
+          command = mcp.command;
+          args = mcp.args or [ ];
+          env = mcp.env or { };
+        } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+          type = "stdio";
+        } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+          type = mcp.type;
+        })
+        cfg.mcps;
 
       claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
         set -euo pipefail
@@ -191,15 +193,17 @@ let
 
         # Inject MCP servers into settings automatically
         jvf.programs.claudecode.settings = {
-          mcpServers = lib.mkDefault (lib.mapAttrs (name: mcp: {
-            command = mcp.command;
-            args = mcp.args or [];
-            env = mcp.env or {};
-          } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-            type = "stdio";
-          } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-            type = mcp.type;
-          }) cfg.mcps);
+          mcpServers = lib.mkDefault (lib.mapAttrs
+            (name: mcp: {
+              command = mcp.command;
+              args = mcp.args or [ ];
+              env = mcp.env or { };
+            } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+              type = "stdio";
+            } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+              type = mcp.type;
+            })
+            cfg.mcps);
         };
 
         jvf.wrappers.users.${cfg.username}.programs = {

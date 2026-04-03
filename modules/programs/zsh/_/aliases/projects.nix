@@ -11,11 +11,13 @@ in
     # Valoris
     alias val='cd ${cfg.workspace.root}/valoris 2>/dev/null || cd ~/Workspace/valoris'
     alias valb='cd ${cfg.workspace.root}/valoris/backend 2>/dev/null || cd ~/Workspace/valoris/backend'
-    alias valf='cd ${cfg.workspace.root}/valoris/valoris-frontend 2>/dev/null || cd ~/Workspace/valoris/valoris-frontend'
+    alias valf='cd ${cfg.workspace.root}/valoris/valoris-frontend 2>/dev/null || cd ~/Workspace/valoris/frontend'
 
     # Personal Projects
     alias nixcfg='cd ~/.config/nix'
+    alias nixc='cd ~/.config/nix'
     alias dotfiles='cd ~/.config'
+    alias oc='nvim ~/Homelab/openclaw/openclaw.json'
 
     # Legacy workspace projects
     alias exer='cd ${cfg.workspace.root}/exercism'

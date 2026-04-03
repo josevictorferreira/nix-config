@@ -15,7 +15,7 @@ let
       inherit (inputs.lib.aiTools) mkSkillModule;
 
       npx = lib.getExe' pkgs.nodejs "npx";
-      defaultBrowser = if isDarwin then lib.getExe pkgs.google-chrome else lib.getExe pkgs.chromium;
+      defaultBrowser = lib.getExe pkgs.brave;
 
       kebabToHuman = s:
         lib.concatStringsSep " " (map

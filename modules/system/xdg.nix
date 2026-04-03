@@ -29,8 +29,8 @@ let
             "x-scheme-handler/https" = "brave-browser.desktop";
             "x-scheme-handler/about" = "brave-browser.desktop";
             "x-scheme-handler/unknown" = "brave-browser.desktop";
-            "application/x-chrome-extension" = "org.chromium.Chromium.desktop";
-            "application/x-xpinstall" = "org.chromium.Chromium.desktop";
+            "application/x-chrome-extension" = "brave-browser.desktop";
+            "application/x-xpinstall" = "brave-browser.desktop";
 
             # --- Text Editor (Custom Alacritty+Nvim) ---
             "text/plain" = "nvim-wrapper.desktop";
