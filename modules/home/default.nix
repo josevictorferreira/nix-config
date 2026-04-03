@@ -355,14 +355,20 @@ let
               target = lib.escapeShellArg item.targetAbs;
               src = lib.escapeShellArg (toString item.sourcePath);
               preserveScript = lib.concatMapStringsSep "\n"
-                (sub: ''
-                  if [ -n "$BACKUP_DIR" ] && [ -e "$BACKUP_DIR/${sub}" ]; then
-                    echo "[jvf.home] Restoring preserved: ${sub}"
-                    rm -rf ${lib.escapeShellArg item.targetAbs}/${sub}
-                    cp -r "$BACKUP_DIR/${sub}" ${lib.escapeShellArg item.targetAbs}/${sub}
-                    chown -R "$USER_NAME:$GROUP_NAME" ${lib.escapeShellArg item.targetAbs}/${sub}
-                  fi
-                '')
+                (
+                  sub:
+                  let
+                    escapedSub = lib.escapeShellArg sub;
+                  in
+                  ''
+                    if [ -n "$BACKUP_DIR" ] && [ -e "$BACKUP_DIR/"${escapedSub} ]; then
+                      echo "[jvf.home] Restoring preserved: ${sub}"
+                      rm -rf ${lib.escapeShellArg item.targetAbs}/${escapedSub}
+                      cp -r "$BACKUP_DIR/"${escapedSub} ${lib.escapeShellArg item.targetAbs}/${escapedSub}
+                      chown -R "$USER_NAME:$GROUP_NAME" ${lib.escapeShellArg item.targetAbs}/${escapedSub}
+                    fi
+                  ''
+                )
                 item.preserve;
               postInstallScript = lib.optionalString (item.postInstall != "") ''
                 TARGET_PATH=${target}

@@ -9,9 +9,9 @@
     let
       # ── Minimal module stack shared by both checks ─────────────────────────
       # Provides: jvf.core.*, jvf.home.*
-      coreModules = with self.modules.nixos; [
-        core-jvf
-        home
+      coreModules = [
+        self.modules.nixos.core-jvf
+        self.modules.nixos.home
       ];
 
       # A minimal NixOS stub that satisfies jvf.home's dependencies.
