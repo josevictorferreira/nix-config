@@ -358,7 +358,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `refactor(wrappers): delegate config materialization to jvf.home` | Files: `modules/wrappers.nix`
 
 
-- [ ] 5. Migrate `programs/kitty` to `jvf.home` (simple tier)
+- [x] 5. Migrate `programs/kitty` to `jvf.home` (simple tier)
 
   **What to do**:
   - In `modules/programs/kitty/default.nix`:
@@ -401,7 +401,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `refactor(kitty): migrate config to jvf.home` | Files: `modules/programs/kitty/default.nix`
 
 
-- [ ] 6. Migrate `desktop/hyprland/waybar` to `jvf.home` (postInstall tier)
+- [x] 6. Migrate `desktop/hyprland/waybar` to `jvf.home` (postInstall tier)
 
   **What to do**:
   - In `modules/desktop/hyprland/waybar.nix`:
@@ -441,7 +441,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `refactor(waybar): migrate assets+postInstall to jvf.home` | Files: `modules/desktop/hyprland/waybar.nix`
 
 
-- [ ] 7. Migrate `programs/claudecode` to `jvf.home` (preserve + custom path + postInstall)
+- [x] 7. Migrate `programs/claudecode` to `jvf.home` (preserve + custom path + postInstall)
 
   **What to do**:
   - In `modules/programs/claudecode/default.nix`:

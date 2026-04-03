@@ -1,8 +1,12 @@
 # Aspect: wrappers
-# Wrapper script generation, config file materialization to $HOME/.config, and
-# per-user program environment management.
+# Wrapper scripts + PATH/env management for per-user programs.
 # NixOS: per-user activation scripts with supportsDryActivation.
 # Darwin: postActivation script for all users.
+#
+# MIGRATION CONTRACT:
+#   packages/wrappers → stay here (wrapper scripts, env vars, PATH symlinks)
+#   config files/dirs → move to jvf.home (materialization, preserve, postInstall)
+#   Legacy wrappers.configs auto-translate to jvf.home items via translation layer.
 _:
 let
   # Shared option definition — identical for both platforms

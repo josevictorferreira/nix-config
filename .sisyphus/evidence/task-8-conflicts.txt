@@ -1,0 +1,8 @@
+T8: Conflict tests + migration docs
+---
+Eval check: nix build .#checks.x86_64-linux.jvf-home-eval --show-trace PASSED
+VM test: nix build .#checks.x86_64-linux.jvf-home-vm --show-trace PASSED
+make check: pre-existing statix warnings only (smb.nix, security.nix, ai-tools)
+---
+Conflict test: conflictResult.success == false verified
+Migration contract comment added to wrappers.nix lines 6-9
