@@ -298,7 +298,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `test(home): add eval + nixosTest checks` | Files: `modules/checks/home.nix`
 
 
-- [ ] 4. Split `wrappers.nix`: remove config materialization; translate legacy configs into `jvf.home`
+- [x] 4. Split `wrappers.nix`: remove config materialization; translate legacy configs into `jvf.home`
 
   **What to do**:
   - In `modules/wrappers.nix`:

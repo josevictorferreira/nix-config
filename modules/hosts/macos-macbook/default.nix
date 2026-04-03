@@ -72,13 +72,15 @@ in
           in
           {
             sops.secrets = builtins.listToAttrs (
-              map (key: {
-                name = key;
-                value = {
-                  owner = username;
-                  mode = "0400";
-                };
-              }) secretKeys
+              map
+                (key: {
+                  name = key;
+                  value = {
+                    owner = username;
+                    mode = "0400";
+                  };
+                })
+                secretKeys
             );
           }
         )

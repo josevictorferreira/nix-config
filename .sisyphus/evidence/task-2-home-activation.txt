@@ -1,0 +1,30 @@
+Task 2: jvf.home activation scripts
+Date: 2026-04-03
+
+OUTCOME: PASS
+
+Build command:
+  nix build .#nixosConfigurations.nixos-desktop.config.system.build.toplevel --no-link
+
+Result: SUCCESS (built activate.drv + dry-activate.drv + toplevel.drv without errors)
+
+Changes made:
+  modules/home/default.nix (+143 lines net):
+  - Line 3: Updated comment to "Activation scripts (T2) are included here."
+  - compileUserItems: uses config.users.users.${userName}.home or platform fallback
+  - mkUserActivation function added (lines ~332-450):
+    * Generates bash for all 3 modes (seed/copy/link) x 2 kinds (file/dir)
+    * seed: no-op if exists, else install
+    * copy/file: atomic swap via .tmp + diff, chown/chmod 644
+    * copy/dir: stage to .tmp, diff -r -q, backup on change, restore preserve, chown/chmod
+    * link: ln -sfn, ensure parent dirs
+    * postInstall runs only on change, with TARGET_PATH/BACKUP_DIR env vars
+    * Env: USER_NAME, GROUP_NAME, HOME_DIR, IS_DARWIN set at top
+  - hasItems + compiledUsers helpers
+  - NixOS: system.activationScripts."jvf-home-${user}" per user with supportsDryActivation=true
+  - Darwin: system.activationScripts.postActivation.text concatenated per user
+  - config block restructured to lib.mkMerge([base] ++ optional isDarwin ... ++ optional (!isDarwin) ...)
+
+Activation script registration:
+  NixOS path: system.activationScripts."jvf-home-${userName}".{supportsDryActivation=true, text=...}
+  Darwin path: system.activationScripts.postActivation.text (appended)

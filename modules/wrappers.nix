@@ -247,7 +247,9 @@ let
         ,
         }:
         let
-          home = if isDarwin then "/Users/${userName}" else "/home/${userName}";
+          home =
+            config.users.users.${userName}.home
+              or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
 
           processedConfigs = processConfigs { inherit configs programName; };
 
@@ -291,11 +293,14 @@ let
       mkUserActivation =
         userName: uCfg:
         let
-          home = if isDarwin then "/Users/${userName}" else "/home/${userName}";
+          home =
+            config.users.users.${userName}.home
+              or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
         in
         ''
           set -e
-        '' + lib.concatStringsSep "\n" (
+        ''
+        + lib.concatStringsSep "\n" (
           lib.mapAttrsToList
             (
               programName: programCfg:
@@ -321,86 +326,14 @@ let
                       mkdir -p ${home}/.local/bin
                       ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
                     '';
-
-                setupConfig =
-                  if wrapper.configDir == null || (programCfg.useDerivationConfig or false) then
-                    ""
-                  else
-                    let
-                      targetDir = wrapper.configTargetDir;
-                      darwinCopyDir = ''
-                        find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
-                      '';
-                      linuxCopyDir = ''
-                        if [ -d "${wrapper.configDir}/${programName}" ]; then
-                          cp -rL "${wrapper.configDir}/${programName}/"* "$TARGET_DIR/" 2>/dev/null || true
-                        fi
-                        # Copy any other files/directories (excluding the program-named subdirectory), dereferencing symlinks
-                        find "${wrapper.configDir}" -mindepth 1 -maxdepth 1 ! -name "${programName}" -exec cp -rL {} "$TARGET_DIR/" \; 2>/dev/null || true
-                      '';
-                    in
-                    ''
-                      echo "Setting up config for ${programName}..."
-                      TARGET_PATH="${targetDir}"
-                      TARGET_DIR="${targetDir}.tmp"
-
-                      rm -rf "$TARGET_DIR"
-                      mkdir -p "$TARGET_DIR"
-
-                      # Copy all files from config directory, dereferencing symlinks
-                      if [ -d "${wrapper.configDir}" ]; then
-                        ${if isDarwin then darwinCopyDir else linuxCopyDir}
-                        chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_DIR"
-                        chmod -R u+rw "$TARGET_DIR"
-                        find "$TARGET_DIR" -type d -exec chmod 755 {} \; 2>/dev/null || true
-                        find "$TARGET_DIR" -type f -exec chmod 644 {} \; 2>/dev/null || true
-                      fi
-
-                      # Check for changes
-                      if [ -d "$TARGET_PATH" ] && diff -r -q "$TARGET_DIR" "$TARGET_PATH" >/dev/null 2>&1; then
-                        echo "Config for ${programName} unchanged."
-                        rm -rf "$TARGET_DIR"
-                      else
-                        # Atomic swap
-                        BACKUP_DIR=""
-                        if [ -e "$TARGET_PATH" ] && [ ! -L "$TARGET_PATH" ]; then
-                          echo "Backing up existing ${programName} config..."
-                          rm -rf "$TARGET_PATH".backup.*
-
-                          BACKUP_TIMESTAMP=$(date +%s)
-                          BACKUP_DIR="$TARGET_PATH.backup.$BACKUP_TIMESTAMP"
-                          mv -f "$TARGET_PATH" "$BACKUP_DIR"
-                        fi
-
-                        rm -rf "$TARGET_PATH"
-                        mv -f "$TARGET_DIR" "$TARGET_PATH"
-
-                        ${lib.optionalString (programCfg.preserveFiles != [ ]) ''
-                          if [ -n "$BACKUP_DIR" ]; then
-                            # Restore preserved files
-                            ${lib.concatMapStringsSep "\n" (file: ''
-                              if [ -e "$BACKUP_DIR/${file}" ]; then
-                                echo "Restoring preserved file: ${file}..."
-                                rm -rf "$TARGET_PATH/${file}"
-                                cp -r "$BACKUP_DIR/${file}" "$TARGET_PATH/${file}"
-                                # Fix ownership since activation scripts run as root
-                                chown -R ${userName}:${if isDarwin then "staff" else "users"} "$TARGET_PATH/${file}"
-                              fi
-                            '') programCfg.preserveFiles}
-                          fi
-                        ''}
-
-                        ${programCfg.postInstall}
-                      fi
-                    '';
               in
               ''
                 ${installWrapper}
-                ${setupConfig}
               ''
             )
             (uCfg.programs or { })
-        ) + ''
+        )
+        + ''
           true
         '';
 
@@ -432,12 +365,73 @@ let
             cfg.users
         );
       };
+
+      # ── Translation layer: jvf.wrappers → jvf.home ────────────────────────────
+      # For each program with configs and useDerivationConfig == false,
+      # generate jvf.home.users.<u>.items entries.
+      translatedHomeItems =
+        let
+          # Filter programs that need translation (configs != {} && !useDerivationConfig)
+          programsNeedingTranslation =
+            userName: uCfg:
+            lib.filterAttrs (_: pCfg: pCfg.configs != { } && !(pCfg.useDerivationConfig or false)) (
+              uCfg.programs or { }
+            );
+        in
+        lib.mapAttrs
+          (
+            userName: uCfg:
+              let
+                entries = programsNeedingTranslation userName uCfg;
+              in
+              {
+                items = lib.mapAttrs'
+                  (
+                    programName: pCfg:
+                      let
+                        wrapper = mkProgramWrapper {
+                          inherit userName programName;
+                          inherit (pCfg)
+                            packages
+                            command
+                            env
+                            configs
+                            useDerivationConfig
+                            configPath
+                            ;
+                        };
+                        relPath = if pCfg.configPath != null then pCfg.configPath else ".config/${programName}";
+                      in
+                      lib.nameValuePair relPath {
+                        kind = "dir";
+                        mode = "copy";
+                        source = wrapper.configDir;
+                        preserve = pCfg.preserveFiles;
+                        postInstall = pCfg.postInstall;
+                      }
+                  )
+                  entries;
+              }
+          )
+          cfg.users;
+
+      # ── Conflict detection: translated items vs direct jvf.home items ────────
+      # Check that no OTHER module has set the same path we're translating.
+      # Conflict assertions deferred to T8 (self-reference issue with NixOS module merge)
+      conflictAssertions = [ ];
     in
     {
       imports = [ mkWrappersOption ];
 
       config = lib.mkMerge (
-        [ userPackagesConfig ]
+        [
+          userPackagesConfig
+          {
+            # Wire translated items into jvf.home.users
+            jvf.home.users = lib.mapAttrs (_: v: { items = v.items; }) translatedHomeItems;
+            assertions = conflictAssertions;
+          }
+        ]
         ++ lib.optional isDarwin {
           system.activationScripts.postActivation.text = lib.concatStringsSep "\n" (
             lib.flatten (

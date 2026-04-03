@@ -1,0 +1,7 @@
+=== NixOS eval ===
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+{ _compiled = { users = { }; }; files = «repeated»; users = «repeated»; xdg = { cache = «repeated»; config = «repeated»; data = «repeated»; state = «repeated»; }; }
+
+=== Darwin eval ===
+warning: Git tree '/home/josevictor/.config/nix' is dirty
+{ _compiled = { users = { }; }; files = «repeated»; users = «repeated»; xdg = { cache = «repeated»; config = «repeated»; data = «repeated»; state = «repeated»; }; }
