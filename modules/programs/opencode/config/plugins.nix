@@ -9,7 +9,7 @@ _: {
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
         kimi = "kimi-for-coding/k2p5";
-        glm = "zai-coding-plan/glm-5";
+        glm = "zai-coding-plan/glm-5.1";
         opus = "github-copilot/claude-opus-4.6";
         sonnet = "github-copilot/claude-sonnet-4.6";
         geminiPro = "github-copilot/gemini-3.1-pro-preview";

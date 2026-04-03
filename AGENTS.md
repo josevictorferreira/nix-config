@@ -102,6 +102,15 @@ Based on: KooL's NixOS-Hyprland.
 - **Platform**: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`.
 - **Formatting**: `nixpkgs-fmt` (via `make format`).
 
+** START IMPORTANT SECTION **
+ Prioritize readability, API ergonomics, and maintainability.
+- Prefer simple and elegant solutions over clever or complex ones.
+- Optimize for code that is easy to understand and modify.
+- Design APIs that are intuitive, consistent, and hard to misuse.
+- Avoid unnecessary abstractions or premature optimization.
+- When in doubt, choose clarity over brevity or performance.
+** END IMPORTANT SECTION **
+
 ## DENDRITIC MODULE PATTERN
 
 This project uses **flake-parts** with **dendritic** (branch-like) module organization:
