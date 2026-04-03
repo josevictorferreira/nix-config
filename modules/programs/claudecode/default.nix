@@ -1,5 +1,6 @@
 # Aspect: programs-claudecode
 # Defines jvf.programs.claudecode options for Claude Code and Claude Code Router.
+# Config materialization via jvf.home; wrappers provide packages only.
 # Linux: uses FHS environment for glibc compatibility.
 # Darwin: direct npm global installation.
 _:
@@ -76,15 +77,20 @@ let
       # Wrapper script for claude-code
       # Transform raw mcps into Claude Code's expected schema (strip enabled, map type)
       managedMcpServers = lib.mapAttrs
-        (name: mcp: {
-          command = mcp.command;
-          args = mcp.args or [ ];
-          env = mcp.env or { };
-        } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-          type = "stdio";
-        } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-          type = mcp.type;
-        })
+        (
+          name: mcp:
+            {
+              command = mcp.command;
+              args = mcp.args or [ ];
+              env = mcp.env or { };
+            }
+            // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+              type = "stdio";
+            }
+            // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+              type = mcp.type;
+            }
+        )
         cfg.mcps;
 
       claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
@@ -183,6 +189,47 @@ let
             ''
         }
       '';
+
+      # Build .claude config directory as a derivation for jvf.home
+      claudeConfigs =
+        (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
+        // (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
+        // (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+        // (lib.optionalAttrs (cfg.settings != { }) {
+          "settings.json" = cfg.settings;
+        });
+
+      claudeConfigDir = pkgs.linkFarm "claude-config" (
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if builtins.isString fileValue then
+                    pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else if builtins.isAttrs fileValue then
+                    pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
+                      (
+                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                      )
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          claudeConfigs
+      );
+
+      # Build .claude-code-router config directory
+      routerConfigDir = pkgs.linkFarm "claude-router-config" [
+        {
+          name = "config.json";
+          path = pkgs.writeText "claude-router-config.json" (builtins.toJSON cfg.routerSettings);
+        }
+      ];
     in
     {
       imports = [ ./options.nix ];
@@ -193,22 +240,43 @@ let
 
         # Inject MCP servers into settings automatically
         jvf.programs.claudecode.settings = {
-          mcpServers = lib.mkDefault (lib.mapAttrs
-            (name: mcp: {
-              command = mcp.command;
-              args = mcp.args or [ ];
-              env = mcp.env or { };
-            } // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-              type = "stdio";
-            } // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-              type = mcp.type;
-            })
-            cfg.mcps);
+          mcpServers = lib.mkDefault (
+            lib.mapAttrs
+              (
+                name: mcp:
+                  {
+                    command = mcp.command;
+                    args = mcp.args or [ ];
+                    env = mcp.env or { };
+                  }
+                  // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+                    type = "stdio";
+                  }
+                  // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+                    type = mcp.type;
+                  }
+              )
+              cfg.mcps
+          );
         };
 
         jvf.wrappers.users.${cfg.username}.programs = {
-          claude = {
-            preserveFiles = [
+          claude.packages = [
+            claudeCodeBin
+            omcBin
+          ];
+          claude-code-router.packages = [
+            claudeRouterBin
+          ];
+        };
+
+        # Config materialization via jvf.home
+        jvf.home.users.${cfg.username}.items = {
+          ".claude" = {
+            kind = "dir";
+            mode = "copy";
+            source = claudeConfigDir;
+            preserve = [
               "transcripts"
               "cache"
               "debug"
@@ -224,22 +292,9 @@ let
               "session-env"
               "plugins"
             ];
-            packages = [
-              claudeCodeBin
-              omcBin
-            ];
-            configPath = ".claude";
-            configs = lib.mkMerge [
-              (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
-              (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
-              (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
-              (lib.mkIf (cfg.settings != { }) {
-                "settings.json" = cfg.settings;
-              })
-            ];
             postInstall = ''
-              CLAUDE_JSON="${if isDarwin then "/Users" else "/home"}/${cfg.username}/.claude.json"
-              SETTINGS_JSON="${if isDarwin then "/Users" else "/home"}/${cfg.username}/.claude/settings.json"
+              CLAUDE_JSON="$HOME_DIR/.claude.json"
+              SETTINGS_JSON="$TARGET_PATH/settings.json"
               if [ -f "$SETTINGS_JSON" ]; then
                 if [ ! -f "$CLAUDE_JSON" ]; then
                   echo "{}" > "$CLAUDE_JSON"
@@ -251,8 +306,11 @@ let
               fi
             '';
           };
-          claude-code-router = {
-            preserveFiles = [
+          ".claude-code-router" = {
+            kind = "dir";
+            mode = "copy";
+            source = routerConfigDir;
+            preserve = [
               "logs"
               "plugins"
               ".credentials.json"
@@ -262,13 +320,6 @@ let
               "session-env"
               ".claude-code-router.pid"
             ];
-            packages = [
-              claudeRouterBin
-            ];
-            configPath = ".claude-code-router";
-            configs = {
-              "config.json" = cfg.routerSettings;
-            };
           };
         };
       }
@@ -283,7 +334,9 @@ let
           targetFile="$targetDir/managed-mcp.json"
 
           # Define the content in the Nix store (immutable)
-          sourceFile="${pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = managedMcpServers; })}"
+          sourceFile="${
+            pkgs.writeText "managed-mcp.json" (builtins.toJSON { mcpServers = managedMcpServers; })
+          }"
 
           echo "Configuring Claude Code Managed MCP..."
           mkdir -p "$targetDir"
