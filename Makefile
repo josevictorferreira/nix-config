@@ -41,6 +41,9 @@ rebuild: ## Rebuild NixOS configuration.
       (notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  " 2>/dev/null || echo "✅ Rebuild completed"); \
 	fi
 
+rollback: ## Rollback NixOS configuration.
+	sudo nixos-rebuild switch --rollback --flake .#nixos-desktop
+
 rebuildd: ## Rebuild only Nix Darwin config
 	nix build .#darwinConfigurations.macos-macbook.system
 

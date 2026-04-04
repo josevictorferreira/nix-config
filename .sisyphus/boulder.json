@@ -6,7 +6,8 @@
     "ses_2ab9098a1ffe4STwVKCA0DVCKq",
     "ses_2ab87696cffeuM80SASz80kGmV",
     "ses_2ab5a9084ffelRJ1AukU7KXQOZ",
-    "ses_2ab48af37ffeLt0FLzWIdqkBmN"
+    "ses_2ab48af37ffeLt0FLzWIdqkBmN",
+    "ses_2aa1e43e6ffevbFL7AaTiZACj3"
   ],
   "plan_name": "jvf-home-materialization-refactor",
   "task_sessions": {
@@ -45,6 +46,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-03T19:03:14.961Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "Tighten regressions: add explicit conflict tests + document migration pattern",
+      "session_id": "ses_2aa1e43e6ffevbFL7AaTiZACj3",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-04T00:36:46.443Z"
     }
   }
 }

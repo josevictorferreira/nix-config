@@ -99,11 +99,12 @@ let
   # Shared implementation logic, parameterized by platform
   mkWrappersConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.wrappers;
@@ -129,26 +130,24 @@ let
                 fullPath = baseDir + "/" + subPath;
                 entries = builtins.readDir fullPath;
                 results = lib.flatten (
-                  lib.mapAttrsToList
-                    (
-                      entryName: entryType:
-                        let
-                          fullEntryPath = fullPath + "/" + entryName;
-                          relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
-                        in
-                        if entryType == "directory" then
-                          collectFilesRecursive baseDir relativePath
-                        else if entryType == "regular" && !(lib.hasSuffix ".nix" entryName) then
-                          [
-                            {
-                              name = relativePath;
-                              path = fullEntryPath;
-                            }
-                          ]
-                        else
-                          [ ]
-                    )
-                    entries
+                  lib.mapAttrsToList (
+                    entryName: entryType:
+                    let
+                      fullEntryPath = fullPath + "/" + entryName;
+                      relativePath = if subPath == "" then entryName else subPath + "/" + entryName;
+                    in
+                    if entryType == "directory" then
+                      collectFilesRecursive baseDir relativePath
+                    else if entryType == "regular" && !(lib.hasSuffix ".nix" entryName) then
+                      [
+                        {
+                          name = relativePath;
+                          path = fullEntryPath;
+                        }
+                      ]
+                    else
+                      [ ]
+                  ) entries
                 );
               in
               results;
@@ -178,16 +177,15 @@ let
                   # Check if path is a directory by trying to read it
                   isDir =
                     if shouldCheckIfDir then
-                      builtins.tryEval
-                        (
-                          if builtins.pathExists fileValue then
-                            let
-                              dirContents = builtins.readDir fileValue;
-                            in
-                            dirContents != { }
-                          else
-                            false
-                        )
+                      builtins.tryEval (
+                        if builtins.pathExists fileValue then
+                          let
+                            dirContents = builtins.readDir fileValue;
+                          in
+                          dirContents != { }
+                        else
+                          false
+                      )
                     else
                       {
                         success = true;
@@ -240,15 +238,15 @@ let
           lib.mapAttrs createStructuredConfig configs;
 
       mkProgramWrapper =
-        { userName
-        , programName
-        , packages
-        , command ? null
-        , env ? { }
-        , configs ? { }
-        , useDerivationConfig ? false
-        , configPath ? null
-        ,
+        {
+          userName,
+          programName,
+          packages,
+          command ? null,
+          env ? { },
+          configs ? { },
+          useDerivationConfig ? false,
+          configPath ? null,
         }:
         let
           home =
@@ -261,7 +259,31 @@ let
             if processedConfigs == { } then
               null
             else
-              pkgs.linkFarm "${programName}-config" (lib.mapAttrsToList (_: v: v) processedConfigs);
+              let
+                entries = lib.mapAttrsToList (_: v: v) processedConfigs;
+                prefix = programName + "/";
+                # Case 1: single entry named exactly programName (directory-based configs like hypr)
+                programEntry = lib.findFirst (e: e.name == programName) null entries;
+                otherEntries = lib.filter (e: e.name != programName) entries;
+                # Case 2: all entries prefixed with programName/ (file-based configs like swaync)
+                allPrefixed = lib.all (e: lib.hasPrefix prefix e.name) entries;
+                strippedEntries = map (e: e // { name = lib.removePrefix prefix e.name; }) entries;
+              in
+              if programEntry != null then
+                let
+                  otherDirs = pkgs.linkFarm "${programName}-others" otherEntries;
+                in
+                pkgs.symlinkJoin {
+                  name = "${programName}-config";
+                  paths = [
+                    programEntry.path
+                    otherDirs
+                  ];
+                }
+              else if allPrefixed then
+                pkgs.linkFarm "${programName}-config" strippedEntries
+              else
+                pkgs.linkFarm "${programName}-config" entries;
 
           wrapperScript =
             if command == null || command == "" then
@@ -301,72 +323,68 @@ let
             config.users.users.${userName}.home
               or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
         in
-        ''
+        "(\n"
+        + ''
           set -e
         ''
         + lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (
-              programName: programCfg:
-              let
-                wrapper = mkProgramWrapper {
-                  inherit userName programName;
-                  inherit (programCfg)
-                    packages
-                    command
-                    env
-                    configs
-                    useDerivationConfig
-                    configPath
-                    ;
-                };
+          lib.mapAttrsToList (
+            programName: programCfg:
+            let
+              wrapper = mkProgramWrapper {
+                inherit userName programName;
+                inherit (programCfg)
+                  packages
+                  command
+                  env
+                  configs
+                  useDerivationConfig
+                  configPath
+                  ;
+              };
 
-                installWrapper =
-                  if wrapper.wrapperEnv == null then
-                    ""
-                  else
-                    ''
-                      echo "Installing wrapper for ${programName}..."
-                      mkdir -p ${home}/.local/bin
-                      ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
-                    '';
-              in
-              ''
-                ${installWrapper}
-              ''
-            )
-            (uCfg.programs or { })
+              installWrapper =
+                if wrapper.wrapperEnv == null then
+                  ""
+                else
+                  ''
+                    echo "Installing wrapper for ${programName}..."
+                    mkdir -p ${home}/.local/bin
+                    ln -sf ${wrapper.wrapperEnv}/bin/${programName} ${home}/.local/bin/
+                  '';
+            in
+            ''
+              ${installWrapper}
+            ''
+          ) (uCfg.programs or { })
         )
         + ''
-          true
+            true
+          )
         '';
 
       # Packages for users whose programs have no wrapper command (command == null)
       userPackagesConfig = {
         users.users = lib.mkMerge (
-          lib.mapAttrsToList
-            (
-              userName: uCfg:
-                let
-                  userPackages = lib.flatten (
-                    lib.mapAttrsToList
-                      (
-                        _: programCfg:
-                          if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
-                      )
-                      (uCfg.programs or { })
-                  );
-                in
-                if userPackages == [ ] then
-                  { }
-                else
-                  {
-                    "${userName}" = {
-                      packages = userPackages;
-                    };
-                  }
-            )
-            cfg.users
+          lib.mapAttrsToList (
+            userName: uCfg:
+            let
+              userPackages = lib.flatten (
+                lib.mapAttrsToList (
+                  _: programCfg:
+                  if programCfg.command == null || programCfg.command == "" then programCfg.packages or [ ] else [ ]
+                ) (uCfg.programs or { })
+              );
+            in
+            if userPackages == [ ] then
+              { }
+            else
+              {
+                "${userName}" = {
+                  packages = userPackages;
+                };
+              }
+          ) cfg.users
         );
       };
 
@@ -382,42 +400,38 @@ let
               uCfg.programs or { }
             );
         in
-        lib.mapAttrs
-          (
-            userName: uCfg:
+        lib.mapAttrs (
+          userName: uCfg:
+          let
+            entries = programsNeedingTranslation userName uCfg;
+          in
+          {
+            items = lib.mapAttrs' (
+              programName: pCfg:
               let
-                entries = programsNeedingTranslation userName uCfg;
+                wrapper = mkProgramWrapper {
+                  inherit userName programName;
+                  inherit (pCfg)
+                    packages
+                    command
+                    env
+                    configs
+                    useDerivationConfig
+                    configPath
+                    ;
+                };
+                relPath = if pCfg.configPath != null then pCfg.configPath else ".config/${programName}";
               in
-              {
-                items = lib.mapAttrs'
-                  (
-                    programName: pCfg:
-                      let
-                        wrapper = mkProgramWrapper {
-                          inherit userName programName;
-                          inherit (pCfg)
-                            packages
-                            command
-                            env
-                            configs
-                            useDerivationConfig
-                            configPath
-                            ;
-                        };
-                        relPath = if pCfg.configPath != null then pCfg.configPath else ".config/${programName}";
-                      in
-                      lib.nameValuePair relPath {
-                        kind = "dir";
-                        mode = "copy";
-                        source = wrapper.configDir;
-                        preserve = pCfg.preserveFiles;
-                        postInstall = pCfg.postInstall;
-                      }
-                  )
-                  entries;
+              lib.nameValuePair relPath {
+                kind = "dir";
+                mode = "copy";
+                source = wrapper.configDir;
+                preserve = pCfg.preserveFiles;
+                postInstall = pCfg.postInstall;
               }
-          )
-          cfg.users;
+            ) entries;
+          }
+        ) cfg.users;
 
       # ── Conflict detection: translated items vs direct jvf.home items ────────
       # Check that no OTHER module has set the same path we're translating.
@@ -439,30 +453,26 @@ let
         ++ lib.optional isDarwin {
           system.activationScripts.postActivation.text = lib.concatStringsSep "\n" (
             lib.flatten (
-              lib.mapAttrsToList
-                (
-                  userName: uCfg: if (uCfg.programs or { }) == { } then [ ] else [ (mkUserActivation userName uCfg) ]
-                )
-                cfg.users
+              lib.mapAttrsToList (
+                userName: uCfg: if (uCfg.programs or { }) == { } then [ ] else [ (mkUserActivation userName uCfg) ]
+              ) cfg.users
             )
           );
         }
         ++ lib.optional (!isDarwin) {
           system.activationScripts = lib.mkMerge (
-            lib.mapAttrsToList
-              (
-                userName: uCfg:
-                  if (uCfg.programs or { }) == { } then
-                    { }
-                  else
-                    {
-                      "jvf-wrappers-${userName}" = {
-                        supportsDryActivation = true;
-                        text = mkUserActivation userName uCfg;
-                      };
-                    }
-              )
-              cfg.users
+            lib.mapAttrsToList (
+              userName: uCfg:
+              if (uCfg.programs or { }) == { } then
+                { }
+              else
+                {
+                  "jvf-wrappers-${userName}" = {
+                    supportsDryActivation = true;
+                    text = mkUserActivation userName uCfg;
+                  };
+                }
+            ) cfg.users
           );
         }
       );

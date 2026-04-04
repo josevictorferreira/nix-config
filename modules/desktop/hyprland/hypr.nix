@@ -21,9 +21,10 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;
@@ -81,6 +82,7 @@ in
             cp ${hyprlandColorsConf} "$TARGET_PATH/wallust/wallust-hyprland.conf"
 
             # Create Battery.sh script for hyprlock
+            mkdir -p "$TARGET_PATH/scripts"
             cat > "$TARGET_PATH/scripts/Battery.sh" << 'BATTERY_EOF'
             #!/usr/bin/env bash
             # Battery status script for hyprlock
