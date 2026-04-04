@@ -2,11 +2,10 @@
 # Qt6ct settings for Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-qt6ct =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.qt6ct;

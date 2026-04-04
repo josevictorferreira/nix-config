@@ -4,11 +4,10 @@
 # Darwin: btop default, full config with wrappers.
 let
   mkBtopOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       defaultPackage = "btop";
@@ -121,11 +120,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.btop;
@@ -158,9 +156,11 @@ let
       toIni =
         attrs:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
-          ) attrs
+          lib.mapAttrsToList
+            (
+              n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
+            )
+            attrs
         );
       btopConfigDir = pkgs.symlinkJoin {
         name = "btop-config";

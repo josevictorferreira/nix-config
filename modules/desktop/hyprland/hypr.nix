@@ -1,6 +1,6 @@
 # Aspect: desktop-hyprland-hypr (NixOS only)
 # Hyprland compositor configuration with hypridle, hyprlock, pyprland.
-# Configures jvf.wrappers.users for config file management.
+# Config files managed via jvf.home.
 # Theme adapter: generates wallust/wallust-hyprland.conf from jvf.theme.colors.
 _:
 let
@@ -16,15 +16,12 @@ let
       };
     };
 
-  hyprConfigDir = ./assets/hypr;
-  pyprConfigDir = ./assets/pypr;
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;
@@ -72,37 +69,46 @@ in
             pkgs.hyprlock
             pkgs.pyprland
           ];
-          configs = {
-            "hypr" = hyprConfigDir;
-            "pypr" = pyprConfigDir;
+        };
+
+        jvf.home.users.${cfg.username}.items = {
+          ".config/hypr" = {
+            kind = "dir";
+            mode = "copy";
+            source = ./assets/hypr/.;
+            postInstall = ''
+              # Theme adapter: inject generated colors (replaces wallust runtime gen)
+              mkdir -p "$TARGET_PATH/wallust"
+              cp ${hyprlandColorsConf} "$TARGET_PATH/wallust/wallust-hyprland.conf"
+
+              # Create Battery.sh script for hyprlock
+              mkdir -p "$TARGET_PATH/scripts"
+              cat > "$TARGET_PATH/scripts/Battery.sh" << 'BATTERY_EOF'
+              #!/usr/bin/env bash
+              # Battery status script for hyprlock
+
+              if command -v acpi &> /dev/null; then
+                  acpi -b | grep -P -o '[0-9]+(?=%)'
+              elif [ -f /sys/class/power_supply/BAT0/capacity ]; then
+                  cat /sys/class/power_supply/BAT0/capacity
+              elif [ -f /sys/class/power_supply/BAT1/capacity ]; then
+                  cat /sys/class/power_supply/BAT1/capacity
+              else
+                  echo "N/A"
+              fi
+              BATTERY_EOF
+
+              # Make all scripts executable
+              find "$TARGET_PATH/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+              echo "Reloading Hyprland..."
+              ${config.programs.hyprland.package}/bin/hyprctl reload 2>/dev/null || true
+            '';
           };
-          postInstall = ''
-            # Theme adapter: inject generated colors (replaces wallust runtime gen)
-            mkdir -p "$TARGET_PATH/wallust"
-            cp ${hyprlandColorsConf} "$TARGET_PATH/wallust/wallust-hyprland.conf"
-
-            # Create Battery.sh script for hyprlock
-            mkdir -p "$TARGET_PATH/scripts"
-            cat > "$TARGET_PATH/scripts/Battery.sh" << 'BATTERY_EOF'
-            #!/usr/bin/env bash
-            # Battery status script for hyprlock
-
-            if command -v acpi &> /dev/null; then
-                acpi -b | grep -P -o '[0-9]+(?=%)'
-            elif [ -f /sys/class/power_supply/BAT0/capacity ]; then
-                cat /sys/class/power_supply/BAT0/capacity
-            elif [ -f /sys/class/power_supply/BAT1/capacity ]; then
-                cat /sys/class/power_supply/BAT1/capacity
-            else
-                echo "N/A"
-            fi
-            BATTERY_EOF
-
-            # Make all scripts executable
-            find "$TARGET_PATH/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
-            echo "Reloading Hyprland..."
-            ${config.programs.hyprland.package}/bin/hyprctl reload 2>/dev/null || true
-          '';
+          ".config/pypr" = {
+            kind = "dir";
+            mode = "copy";
+            source = ./assets/pypr/.;
+          };
         };
 
         fonts.packages = [

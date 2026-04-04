@@ -2,7 +2,11 @@
 # Fastfetch settings for Hyprland. Configs generated from theme colors.
 _: {
   flake.modules.nixos.desktop-hyprland-fastfetch =
-    { config, lib, ... }:
+    { config
+    , lib
+    , pkgs
+    , ...
+    }:
     let
       cfg = config.jvf.desktop.hyprland.fastfetch;
       c = config.jvf.theme.colors;
@@ -327,6 +331,25 @@ _: {
             ]
         }
       '';
+
+      fastfetchConfigDir = pkgs.linkFarm "fastfetch-config" [
+        {
+          name = "nixos.png";
+          path = ./assets/fastfetch/nixos.png;
+        }
+        {
+          name = "config.jsonc";
+          path = pkgs.writeText "config.jsonc" configJsonc;
+        }
+        {
+          name = "config-v2.jsonc";
+          path = pkgs.writeText "config-v2.jsonc" configV2Jsonc;
+        }
+        {
+          name = "config-compact.jsonc";
+          path = pkgs.writeText "config-compact.jsonc" configCompactJsonc;
+        }
+      ];
     in
     {
       options.jvf.desktop.hyprland.fastfetch = {
@@ -338,14 +361,10 @@ _: {
       };
 
       config = {
-        jvf.wrappers.users.${cfg.username}.programs.fastfetch = {
-          packages = [ ];
-          configs = {
-            "nixos.png" = ./assets/fastfetch/nixos.png;
-            "config.jsonc" = configJsonc;
-            "config-v2.jsonc" = configV2Jsonc;
-            "config-compact.jsonc" = configCompactJsonc;
-          };
+        jvf.home.users.${cfg.username}.items.".config/fastfetch" = {
+          kind = "dir";
+          mode = "copy";
+          source = fastfetchConfigDir;
         };
       };
     };

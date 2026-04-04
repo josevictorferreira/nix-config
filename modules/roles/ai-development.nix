@@ -34,8 +34,6 @@ let
         programs-ck-search
         programs-opencode
         programs-claudecode
-        programs-cursor
-        programs-droid
         programs-gemini
         programs-hermes-agent
       ]);
@@ -56,18 +54,7 @@ let
           };
         };
 
-        # Cursor integration with shared configs
-        jvf.programs.cursor = {
-          baseRules = config.jvf.aiTools.baseRule.content;
-          inherit (config.jvf.programs.opencode) agents;
-          inherit (config.jvf.programs.opencode) commands;
-          inherit (config.jvf.programs.opencode) skills;
-        };
-
-        users.users."${cfg.username}".packages = [
-          pkgs.code-cursor
-          pkgs.cursor-cli
-        ];
+        users.users."${cfg.username}".packages = [ ];
       };
     };
 
@@ -87,8 +74,6 @@ let
         programs-ck-search
         programs-opencode
         programs-claudecode
-        programs-cursor
-        programs-droid
         programs-gemini
         programs-hermes-agent
       ]);
@@ -109,18 +94,7 @@ let
           };
         };
 
-        # Cursor integration with shared configs
-        jvf.programs.cursor = {
-          baseRules = config.jvf.aiTools.baseRule.content;
-          inherit (config.jvf.programs.opencode) agents;
-          inherit (config.jvf.programs.opencode) commands;
-          inherit (config.jvf.programs.opencode) skills;
-        };
-
-        users.users."${cfg.username}".packages = [
-          pkgs.code-cursor
-          pkgs.cursor-cli
-        ];
+        users.users."${cfg.username}".packages = [ ];
       };
     };
 in

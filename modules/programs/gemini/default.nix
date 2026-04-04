@@ -1,6 +1,6 @@
 # Aspect: programs-gemini
 # Installs Gemini CLI with auto-update wrapper and per-user config.
-# Uses jvf.wrappers for config management.
+# Uses jvf.home for config materialization.
 # Depends on inputs.lib.aiTools for TOML/skill config generation.
 _:
 let
@@ -95,6 +95,40 @@ let
             ''
         }
       '';
+      # Build .gemini config directory as a derivation for jvf.home
+      geminiConfigs =
+        (inputs.lib.aiTools.mkGeminiTomlConfigs (cfg.commands // cfg.agents))
+        // (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
+        // (lib.optionalAttrs (cfg.settings != { }) {
+          "settings.json" = cfg.settings;
+        })
+        // {
+          "GEMINI.md" = cfg.baseRules;
+        };
+
+      geminiConfigDir = pkgs.linkFarm "gemini-config" (
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if builtins.isString fileValue then
+                    pkgs.writeText "gemini-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else if builtins.isAttrs fileValue then
+                    pkgs.writeText "gemini-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
+                      (
+                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                      )
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          geminiConfigs
+      );
     in
     {
       imports = [ ./options.nix ];
@@ -113,7 +147,13 @@ let
           env = {
             GEMINI_YOLO_MODE = "true";
           };
-          preserveFiles = [
+        };
+
+        jvf.home.users.${cfg.username}.items.".gemini" = {
+          kind = "dir";
+          mode = "copy";
+          source = geminiConfigDir;
+          preserve = [
             "antigravity"
             "history"
             "tmp"
@@ -126,15 +166,6 @@ let
             "cookies.json"
             ".env"
             "installation_id"
-          ];
-          configPath = ".gemini";
-          configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkGeminiTomlConfigs (cfg.commands // cfg.agents))
-            (inputs.lib.aiTools.mkSkillConfigs cfg.skills)
-            {
-              "settings.json" = cfg.settings;
-              "GEMINI.md" = cfg.baseRules;
-            }
           ];
         };
       };

@@ -1,7 +1,6 @@
 # Aspect: desktop-hyprland-thunar (NixOS only)
 # Thunar file manager for Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-thunar =
     { config
     , lib
@@ -32,10 +31,10 @@ _:
           ];
         };
 
-        jvf.wrappers.users.${cfg.username}.programs.Thunar = {
-          configs = {
-            "Thunar" = ./assets/thunar;
-          };
+        jvf.home.users.${cfg.username}.items.".config/Thunar" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/thunar;
         };
       };
     };

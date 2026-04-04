@@ -2,11 +2,10 @@
 # Qt5ct settings for Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-qt5ct =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.qt5ct;

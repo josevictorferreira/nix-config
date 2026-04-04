@@ -2,11 +2,10 @@
 # Kvantum theme engine for Qt apps in Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-kvantum =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.kvantum;

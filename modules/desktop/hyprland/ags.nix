@@ -55,9 +55,12 @@ _: {
           packages = [
             pkgs.ags
           ];
-          configs = {
-            "ags" = ./assets/ags;
-          };
+        };
+
+        jvf.home.users.${cfg.username}.items.".config/ags" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/ags;
           postInstall = ''
             # Theme adapter: inject generated CSS custom properties
             mkdir -p "$TARGET_PATH/user"

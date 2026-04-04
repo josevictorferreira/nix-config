@@ -2,16 +2,14 @@
 # Defines jvf.programs.opencode options for OpenCode AI coding tool.
 # NixOS: FHS environment wrapper for glibc compatibility + config via wrappers.
 # Darwin: direct execution + config via wrappers.
-_:
 let
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -19,6 +17,41 @@ let
       # Import wrapper definitions
       wrapperDefs = import ./_/wrapper.nix { inherit pkgs; };
       inherit (wrapperDefs) shellScriptBinLinux shellScriptBinDarwin;
+
+      # Build config directory as a derivation for jvf.home
+      opencodeConfigs =
+        (inputs.lib.aiTools.mkOpencodeMdConfigs "agent" cfg.agents)
+        // (inputs.lib.aiTools.mkOpencodeMdConfigs "command" cfg.commands)
+        // (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+        // {
+          "AGENTS.md" = cfg.baseRules;
+          "opencode.json" = cfg.settings;
+          "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
+        };
+
+      opencodeConfigDir = pkgs.linkFarm "opencode-config" (
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if builtins.isString fileValue then
+                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else if builtins.isAttrs fileValue then
+                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
+                      (
+                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                      )
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          opencodeConfigs
+      );
     in
     {
       imports = [
@@ -31,7 +64,7 @@ let
       ];
 
       config = {
-        # ── Default settings ──────────────────────────────────────────────
+        # Default settings
         jvf.programs.opencode.settings = {
           theme = lib.mkDefault "tokyonight";
           mcp = lib.mkDefault (
@@ -65,26 +98,23 @@ let
           small_model = "alibaba-coding-plan/qwen3-coder-next";
         };
 
-        # ── Wrappers config ───────────────────────────────────────────
-        jvf.wrappers.users.${cfg.username}.programs.opencode = {
-          preserveFiles = [
+        # Config materialization via jvf.home
+        jvf.home.users.${cfg.username}.items.".config/opencode" = {
+          kind = "dir";
+          mode = "copy";
+          source = opencodeConfigDir;
+          preserve = [
             "dcp.jsonc"
           ];
+        };
+
+        # Wrappers config (packages only)
+        jvf.wrappers.users.${cfg.username}.programs.opencode = {
           packages = [
             pkgs.bun
           ]
           ++ lib.optional isDarwin shellScriptBinDarwin
           ++ lib.optional (!isDarwin) shellScriptBinLinux;
-          configs = lib.mkMerge [
-            (inputs.lib.aiTools.mkOpencodeMdConfigs "agent" cfg.agents)
-            (inputs.lib.aiTools.mkOpencodeMdConfigs "command" cfg.commands)
-            (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
-            {
-              "AGENTS.md" = cfg.baseRules;
-              "opencode.json" = cfg.settings;
-              "oh-my-opencode.json" = cfg.ohMyOpenCodeSettings;
-            }
-          ];
         };
       };
     };

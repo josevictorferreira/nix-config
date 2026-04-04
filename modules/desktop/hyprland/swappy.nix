@@ -2,11 +2,10 @@
 # Wayland native screenshot tool for Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-swappy =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.swappy;

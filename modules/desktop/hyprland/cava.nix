@@ -46,6 +46,13 @@ _: {
           noise_reduction = 77;
         };
       };
+      cavaConfigDir = pkgs.symlinkJoin {
+        name = "cava-config";
+        paths = [
+          (pkgs.writeText "cava.conf" (lib.generators.toINI { } cavaConfig))
+          ./assets/cava/shaders
+        ];
+      };
     in
     {
       options.jvf.desktop.hyprland.cava = {
@@ -62,10 +69,12 @@ _: {
           packages = [
             pkgs.cava
           ];
-          configs = {
-            "cava.conf" = cavaConfig;
-            "shaders" = ./assets/cava/shaders;
-          };
+        };
+
+        jvf.home.users.${cfg.username}.items.".config/cava" = {
+          kind = "dir";
+          mode = "copy";
+          source = cavaConfigDir;
         };
       };
     };

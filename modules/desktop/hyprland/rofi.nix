@@ -116,9 +116,12 @@ _: {
           packages = [
             pkgs.rofi
           ];
-          configs = {
-            "rofi" = ./assets/rofi/.;
-          };
+        };
+
+        jvf.home.users.${cfg.username}.items.".config/rofi" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/rofi/.;
           postInstall = ''
             # Theme adapter: inject generated colors (replaces wallust runtime gen)
             mkdir -p "$TARGET_PATH/wallust"

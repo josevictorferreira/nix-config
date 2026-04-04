@@ -42,7 +42,7 @@ let
 
       context7Def = mkMcpModule {
         name = "context7";
-        programs = [ "cursor" "claudecode" ];
+        programs = [ "claudecode" ];
         mcpOptions = {
           enabled = true;
           type = "local";
@@ -103,10 +103,7 @@ let
       # --- grafana-work ---
       grafanaWorkDef = mkMcpModule {
         name = "grafana-work";
-        programs = [
-          "claudecode"
-          "cursor"
-        ];
+        programs = [ "claudecode" ];
         mcpOptions = {
           command = grafanaMcpWrapper;
           args = [ ];

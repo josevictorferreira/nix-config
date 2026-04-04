@@ -89,6 +89,26 @@ let
         # Load session (tmuxp will attach or switch automatically when inside tmux)
         exec ${lib.getExe tmuxpCfg.package} load -y "$selected"
       '';
+
+      yamlFmt = pkgs.formats.yaml { };
+      tmuxpConfigDir = pkgs.linkFarm "tmuxp-sessions" (
+        lib.mapAttrsToList
+          (name: session: {
+            inherit name;
+            path = yamlFmt.generate name session;
+          })
+          {
+            "chat.yaml" = sessions.chat;
+            "main.yaml" = sessions.main;
+            "monitoring.yaml" = sessions.monitoring;
+            "homelab.yaml" = sessions.homelab;
+            "valoris.yaml" = sessions.valoris;
+            "valoris-backend.yaml" = sessions.valorisBackend;
+            "valoris-frontend.yaml" = sessions.valorisFrontend;
+            "ai-workspace.yaml" = sessions.aiWorkspace;
+            "work.yaml" = sessions.work;
+          }
+      );
     in
     {
       imports = [ ./options.nix ];
@@ -96,15 +116,16 @@ let
       config = lib.mkMerge [
         # tmux config
         {
-          jvf.wrappers.users.${cfg.username}.programs.tmux = {
-            packages = [
-              cfg.package
-            ];
-            configs = {
-              "tmux.conf" = tmuxConf;
+          jvf = {
+            wrappers.users.${cfg.username}.programs.tmux = {
+              packages = [ cfg.package ];
+            };
+            home.users.${cfg.username}.items.".config/tmux/tmux.conf" = {
+              kind = "file";
+              mode = "copy";
+              text = tmuxConf;
             };
           };
-
         }
 
         # tmuxp picker (available whenever tmux is enabled)
@@ -120,23 +141,19 @@ let
             };
           };
 
-          jvf.wrappers.users.${tmuxpCfg.username}.programs.tmuxp = {
-            packages = [
-              pkgs.tmux
-              pkgs.fastfetch
-              pkgs.fzf
-              tmuxpCfg.package
-            ];
-            configs = {
-              "chat.yaml" = sessions.chat;
-              "main.yaml" = sessions.main;
-              "monitoring.yaml" = sessions.monitoring;
-              "homelab.yaml" = sessions.homelab;
-              "valoris.yaml" = sessions.valoris;
-              "valoris-backend.yaml" = sessions.valorisBackend;
-              "valoris-frontend.yaml" = sessions.valorisFrontend;
-              "ai-workspace.yaml" = sessions.aiWorkspace;
-              "work.yaml" = sessions.work;
+          jvf = {
+            wrappers.users.${tmuxpCfg.username}.programs.tmuxp = {
+              packages = [
+                pkgs.tmux
+                pkgs.fastfetch
+                pkgs.fzf
+                tmuxpCfg.package
+              ];
+            };
+            home.users.${tmuxpCfg.username}.items.".config/tmuxp" = {
+              kind = "dir";
+              mode = "copy";
+              source = tmuxpConfigDir;
             };
           };
         })

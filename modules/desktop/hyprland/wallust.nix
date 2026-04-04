@@ -1,7 +1,6 @@
 # Aspect: desktop-hyprland-wallust (NixOS only)
 # Wallust - Generate a 16 color schema based on an image.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-wallust =
     { config
     , lib
@@ -26,9 +25,11 @@ _:
             pkgs.wallust
             pkgs.swww
           ];
-          configs = {
-            "wallust" = ./assets/wallust;
-          };
+        };
+        jvf.home.users.${cfg.username}.items.".config/wallust" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/wallust;
         };
       };
     };

@@ -530,6 +530,21 @@ Critical lessons from past sessions to avoid repeated friction.
 **Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop` — should return derivation path.
 
 
+
+### Use Python Instead of Edit/Write Tool for Full Rewrites
+**Lesson:** When rewriting a Nix file entirely (not just editing a few lines), use Python to write the file directly: `python3 -c "open(f, 'w').write(content)"`. The edit/write tools corrupt content with hash-ID prefixes on this system.
+**Context:** Edit and write tools repeatedly produced files with content like `#PH|#Aspect: programs-opencode` instead of proper nix syntax. Required 4+ restore-from-git cycles to recover.
+**Verify:** After write, run `nix-instantiate --parse <file>` to confirm syntax is valid before eval.
+
+### Check git status for Unrelated File Corruption
+**Lesson:** When debugging VM test failures, always run `git status --short` first. Unrelated files may have been corrupted in a previous session, blocking builds.
+**Context:** hermes-agent/default.nix was pre-corrupted. VM test failed with syntax error on that file, wasting time debugging my changes before discovering the real cause.
+**Verify:** `git diff <suspect-file>` shows unexpected changes → `git checkout HEAD -- <suspect-file>` to restore.
+
+### Read Tool Shows Hash IDs, Not Actual Content
+**Lesson:** The `read` tool prefix characters (like `#PH|#`, `#PJ|#`) are for navigation only — they don't appear in actual files. When `read` output looks corrupted but bash shows correct content, trust bash.
+**Context:** `read` showed hash prefixes on every line making content look corrupted, but `head file` showed proper nix code. Tool output metadata confused debugging.
+**Verify:** `head -5 <file>` shows actual content. `nix-instantiate --parse <file>` confirms valid syntax.
 ---
 
 ## Config Layout Migration Patterns
@@ -548,7 +563,26 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Batch 1A migration pattern for 6 modules (xfce4, wlogout, wallust, thunar, etc). Trivial — single source path, no generation.
 **Verify:** After migration, `grep 'configs' <file>` returns 0. `grep 'jvf.home' <file>` shows the new item.
 
-### Mixed source + generated configs → symlinkJoin
-**Lesson:** When configs mix static assets with generated files (e.g., INI from nix attrs + shader dir), use `pkgs.symlinkJoin { name = "<prog>-config"; paths = [ (pkgs.writeTextDir "file" content) ./assets/<prog>/shaders ]; }` as the `source` of a jvf.home dir item. Requires `pkgs` in module function args.
-**Context:** cava (INI config + shaders dir) and fastfetch (multiple JSONC + optional PNG) needed this pattern. Agents must add `pkgs` to function signature if not present.
-**Verify:** `grep 'pkgs' <file>` on line 1-10 should show `pkgs` in function args. `grep 'symlinkJoin' <file>` shows the merge.
+### Re-Read After Structural Edits
+**Lesson:** After range replacements that change brace/bracket structure, re-read the file immediately to verify correctness before running any Nix evaluation.
+**Context:** Replacing lines 115-128 in rofi.nix (removing `configs` + adding `jvf.home`) caused a missing closing brace. The edit tool reported success but the file was malformed.
+**Verify:** After any edit that adds/removes `{`, `}`, `(`, `)`, check `grep -c '{'` vs `grep -c '}'` — counts must match.
+
+### Note Pre-Existing Failures, Don't Investigate
+**Lesson:** When `make check` shows failures that are unrelated to your changes (statix warnings in untouched files, VM test failures from stale eval cache), note them as pre-existing and move on.
+**Context:** Session spent 10+ min verifying statix warnings in `ai-tools/_/commands/implementation/do.nix` were pre-existing. The error message itself says "pre-existing" yet still pulled attention.
+**Verify:** Check `git diff` — if file wasn't touched in this session, its check failures are pre-existing. If error doesn't match file content, re-run `make check` before investigating (stale eval cache can produce false errors).
+
+### Pre-check Batch Migration Status to Avoid Wasted Delegation
+**Lesson:** Before delegating or implementing a batch migration (2+ modules), do a quick grep to check which modules are already migrated. Modules with `configs` still present in wrappers block need migration; modules without are already done.
+**Context:** In Phase 2, 2 of 5 modules (ags, rofi) were already migrated. Agents correctly detected this but delegation was wasted overhead. A single `grep -l 'configs.*=' modules/desktop/hyprland/{ags,rofi,hypr,swaync,gtk3}.nix` would have identified the already-done modules upfront.
+
+### Nix Migration Delegation Has High Failure Rate
+**Lesson:** For batch Nix module migrations following a known recipe (configs → linkFarm → jvf.home items), prefer direct implementation with Python write over delegation. Agents corrupt/delete files at ~75% rate for this task type.
+**Context:** Phase 3 delegated 4 modules; 3/4 agents corrupted files (1 deleted entire directory). Recovery took ~45 min — exceeding estimated ~40 min for manual implementation of all 4.
+**Verify:** If 2+ agents fail during batch Nix migration, switch to manual implementation for remaining modules.
+
+### Check Module Import Chain Before Debugging Missing Output
+**Lesson:** When a jvf.home item doesn't appear in `_compiled` output, verify the module is actually imported by a host/role before investigating the module code itself.
+**Context:** Droid's `.factory` item was absent from `_compiled` — spent time debugging before realizing droid isn't imported by any host/role (pre-existing orphan module).
+**Verify:** `grep -r '<module-name>' modules/roles/ modules/hosts/` — if no hits, the module is orphaned and its items won't appear in compiled output.

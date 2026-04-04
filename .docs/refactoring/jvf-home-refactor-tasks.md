@@ -108,7 +108,7 @@ These have `postInstall` scripts that run after config deployment (typically the
 | 2.2 | ags | `hyprland/ags.nix` | ags dir | Inject theme-colors.css into user/ | `.config/ags` (dir) |
 | 2.3 | rofi | `hyprland/rofi.nix` | rofi themes + configs | Inject wallust colors | `.config/rofi` (dir) |
 | 2.4 | gtk3 | `hyprland/gtk3.nix` | settings.ini + folder icons | Copy folder icons to icons/ | `.config/gtk-3.0` (dir) |
-| 2.5 | swaync | `hyprland/swaync.nix` | swaync configs | Inject wallust colors | `.config/swaync` (dir) |
+| 2.5 | swaync | `hyprland/swaync.nix` | swaync configs | Make scripts executable | `.config/swaync` (dir) | ✅
 
 **Migration Pattern:**
 ```nix

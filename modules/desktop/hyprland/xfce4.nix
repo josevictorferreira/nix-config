@@ -1,7 +1,6 @@
 # Aspect: desktop-hyprland-xfce4 (NixOS only)
 # XFCE4 settings for Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-xfce4 =
     { config, lib, ... }:
     let
@@ -17,10 +16,10 @@ _:
       };
 
       config = {
-        jvf.wrappers.users.${cfg.username}.programs.xfce4 = {
-          configs = {
-            "xfce4" = ./assets/xfce4;
-          };
+        jvf.home.users.${cfg.username}.items.".config/xfce4" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/xfce4;
         };
       };
     };

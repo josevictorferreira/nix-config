@@ -5,11 +5,10 @@
 _:
 let
   mkGitOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       inherit (lib)
@@ -176,11 +175,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       inherit (lib)
@@ -242,14 +240,15 @@ let
             kind = "file";
             mode = "copy";
             text =
-              generators.toINI { } (
-                (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
-                // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
-                // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-                // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-                // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-                // cfg.extraConfig
-              )
+              generators.toINI { }
+                (
+                  (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+                    // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
+                    // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+                    // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+                    // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+                    // cfg.extraConfig
+                )
               + ''
                 [diff]
                   external = ${pkgs.difftastic}/bin/difft
@@ -266,8 +265,7 @@ let
             text = toString preCommit;
           };
         }
-        // lib.optionalAttrs (!isDarwin) {
-        };
+        // lib.optionalAttrs (!isDarwin) { };
       }
       // lib.optionalAttrs (!isDarwin) {
         programs.git.enable = true;

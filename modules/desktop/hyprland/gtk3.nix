@@ -155,9 +155,12 @@ _: {
       config = {
         jvf.wrappers.users.${cfg.username}.programs."gtk-3.0" = {
           packages = [ ];
-          configs = {
-            "gtk-3.0" = configDir;
-          };
+        };
+
+        jvf.home.users.${cfg.username}.items.".config/gtk-3.0" = {
+          kind = "dir";
+          mode = "copy";
+          source = configDir;
           postInstall = lib.mkIf (allFolderIcons != { }) folderIconCommands;
         };
       };

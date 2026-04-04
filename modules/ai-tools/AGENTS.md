@@ -3,7 +3,7 @@
 **Parent:** [../../AGENTS.md](../../AGENTS.md)
 
 ## OVERVIEW
-AI coding assistant configuration DSL. Skills, commands, agents, MCP servers for opencode/claudecode/droid/gemini.
+AI coding assistant configuration DSL. Skills, commands, agents, MCP servers for opencode/claudecode/gemini.
 
 ## STRUCTURE
 ```
@@ -36,7 +36,7 @@ skillOptions_<name> = {
   prompt = ''<skill prompt>'';
 };
 ```
-Applied via `mkSkillConfig` to all 4 programs.
+Applied via `mkSkillConfig` to all 3 programs.
 
 ### Commands (commands.nix)
 ```nix
@@ -56,12 +56,12 @@ oldApiAgents.<name> = { ... };
 # New API (different structure)
 newApiAgents.<name> = { ... };
 ```
-Applied via `mkAgentConfig` to all 4 programs.
+Applied via `mkAgentConfig` to all 3 programs.
 
 ## CONVENTIONS
 - **Kebab-case** names throughout
 - **Prompt first line** = title (`# Title Case`)
-- **All 4 programs** receive same config (opencode, claudecode, droid, gemini)
+- **All 3 programs** receive same config (opencode, claudecode, gemini)
 - **Tool allowlisting**: explicit `allowed-tools` / `tools` arrays
 
 ## ANTI-PATTERNS
