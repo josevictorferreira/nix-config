@@ -1,7 +1,7 @@
 { ... }:
 {
   name = "session-retrospective";
-  description = "Analyze session friction points, distill learnings into .docs/rules.md, and ensure AGENTS.md references it.";
+  description = "Analyze session friction points, distill learnings into AGENTS.md OR CLAUDE.md.";
   agent = "";
   prompt = ''
     # Session Retrospective
@@ -24,9 +24,9 @@
 
     For each friction point, ask: "If I encounter this again, what should I do differently?"
 
-    ## B) Update `.docs/rules.md`
+    ## B) Update `AGENTS.md or CLAUDE.md`
 
-    Write lessons to `.docs/rules.md` (single file, create if needed).
+    Write lessons to `AGENTS.md or CLAUDE.md` (single file, create if needed).
 
     **What belongs here:**
     - Knowledge that would have saved you significant time (>15-20 min)
@@ -46,7 +46,7 @@
     - If no significant friction occurred: write "No significant learnings to record." and skip
 
     **De-dupe (mandatory):**
-    - Before adding, read existing `.docs/rules.md`
+    - Before adding, read existing `AGENTS.md or CLAUDE.md`
     - If equivalent lesson exists: update/clarify it instead of duplicating
     - Consolidate related lessons into one if they overlap
 
@@ -60,14 +60,14 @@
 
     ## C) Update `AGENTS.md` (only if missing)
 
-    Ensure `AGENTS.md` contains an instruction to read `.docs/rules.md` before implementing.
+    Ensure `AGENTS.md` contains an instruction to read `AGENTS.md or CLAUDE.md` before implementing.
     - If already present: do nothing
-    - If missing: add near the top: "Before starting any implementation, read `.docs/rules.md` for project-specific lessons and gotchas."
+    - If missing: add near the top: "Before starting any implementation, read `AGENTS.md or CLAUDE.md` for project-specific lessons and gotchas."
 
     ## Output
 
     1. Summary of friction points identified (1-2 sentences each)
-    2. Lessons added/updated in `.docs/rules.md` (verbatim)
+    2. Lessons added/updated in `AGENTS.md or CLAUDE.md` (verbatim)
     3. Whether `AGENTS.md` was updated (yes/no + text if yes)
     4. Confirmation: de-duped against existing content
   '';
