@@ -2,10 +2,11 @@
 # Cava - Console-based Audio Visualizer for Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-cava =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.cava;
@@ -46,13 +47,16 @@ _: {
           noise_reduction = 77;
         };
       };
-      cavaConfigDir = pkgs.symlinkJoin {
-        name = "cava-config";
-        paths = [
-          (pkgs.writeText "cava.conf" (lib.generators.toINI { } cavaConfig))
-          ./assets/cava/shaders
-        ];
-      };
+      cavaConfigDir = pkgs.linkFarm "cava-config" [
+        {
+          name = "cava.conf";
+          path = pkgs.writeText "cava.conf" (lib.generators.toINI { } cavaConfig);
+        }
+        {
+          name = "shaders";
+          path = ./assets/cava/shaders;
+        }
+      ];
     in
     {
       options.jvf.desktop.hyprland.cava = {
