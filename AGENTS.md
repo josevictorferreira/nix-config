@@ -106,7 +106,7 @@ Based on: KooL's NixOS-Hyprland.
 - **Imports**: Group top-level. Specific imports only (no `import ./dir`).
 - **Platform**: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`.
 - **Formatting**: `nixpkgs-fmt` (via `make format`).
-- **Config Materialization**: Config files/dirs go to `jvf.home`, NOT wrappers. Wrappers only handles wrapper scripts, env vars, PATH symlinks. Legacy wrappers configs auto-translate via translation layer.
+- **Config Materialization**: Config files/dirs go to `jvf.home`, NOT wrappers. Wrappers only handles wrapper scripts, env vars, PATH symlinks.
 
 ** START IMPORTANT SECTION **
  Prioritize readability, API ergonomics, and maintainability.
@@ -176,7 +176,6 @@ config = {
   };
 };
 ```
-Legacy modules using `jvf.wrappers.*.programs.*.configs` are auto-translated to `jvf.home` items.
 
 ## ANTI-PATTERNS (THIS PROJECT)
 - **Home Manager**: BANNED. Use native NixOS/Darwin modules + `users.users`.
@@ -185,7 +184,7 @@ Legacy modules using `jvf.wrappers.*.programs.*.configs` are auto-translated to 
 - **Implicit Enable**: Modules activate by inclusion (import). No enable toggles on leaf modules.
 - **Relative ../ imports**: Use absolute path from root for cross-module.
 - **Old Module Style**: Don't create `modules/{programs,system,roles}/default.nix` aggregators
-- **Config in wrappers**: BANNED for new modules. Use `jvf.home.users.<u>.xdg.config."<prog>/<file>"` for new config file management. Only legacy untouched modules still use the wrappers translation layer.
+- **Config in wrappers**: BANNED. All modules use `jvf.home.users.<u>.xdg.config."<prog>/<file>"` for config file management. Wrappers only handles packages, wrapper scripts, and env vars.
 
 ## COMMANDS
 ```bash
@@ -200,7 +199,7 @@ make clean        # GC
 - `modules/ai-tools/` is a complex module with its own DSL.
 - `roles` are import closures that pull in program/service/system aspects transitively.
 - Hosts import roles; roles import leaf aspects. No enable toggles.
-- `modules/home/default.nix` owns all home file/dir materialization. `modules/wrappers.nix` only handles wrapper scripts + packages. Legacy wrappers configs auto-translate via a translation layer in wrappers.nix.
+- `modules/home/default.nix` owns all home file/dir materialization. `modules/wrappers.nix` only handles wrapper scripts + packages.
 - `modules/checks/home.nix` provides `jvf-home-eval` (pure eval) and `jvf-home-vm` (NixOS VM integration test covering copy, preserve, postInstall, and A→B config switch).
 
 ## HIERARCHY
@@ -468,19 +467,19 @@ Critical lessons from past sessions to avoid repeated friction.
 ## jvf.home Subsystem
 
 ### Config Materialization Goes to jvf.home, Not Wrappers
-**Lesson:** New modules MUST use `jvf.home.users.<u>.xdg.config.*` or `jvf.home.users.<u>.items.*` for config file/dir deployment. Wrappers only handles wrapper scripts, packages, and PATH symlinks.
-**Context:** The jvf-home refactor split materialization from wrappers. Legacy wrappers configs auto-translate via a translation layer, but new modules should use jvf.home directly.
-**Verify:** New modules should NOT set `jvf.wrappers.*.programs.*.configs`. grep for `wrappers.*configs` in new modules.
+**Lesson:** ALL modules MUST use `jvf.home.users.<u>.xdg.config.*` or `jvf.home.users.<u>.items.*` for config file/dir deployment. Wrappers only handles wrapper scripts, packages, and PATH symlinks.
+**Context:** The jvf-home refactor (completed) moved all config materialization from wrappers to jvf.home. No translation layer exists — wrappers no longer accepts `configs`, `configPath`, `preserveFiles`, or `postInstall` options.
+**Verify:** `grep -rn 'configs.*=' modules/programs/ modules/desktop/` should show only jvf.home patterns, not wrappers patterns.
 
 ### jvf.home Item API
 **Lesson:** Items require `kind` ("file"/"dir"), optional `mode` ("copy"/"link"/"seed", default "copy"). Content: use `source` (path/derivation), `text` (string), or structured (`json`/`yaml`/`toml`/`ini` attrs). Dir items support `preserve` (list of subpaths) and `postInstall` (bash script with env vars: `TARGET_PATH`, `HOME_DIR`, `USER_NAME`, `GROUP_NAME`, `IS_DARWIN`, `BACKUP_DIR`).
 **Context:** The API is defined in `modules/home/default.nix`. Sugar shortcuts: `jvf.home.files.*` → `~/*`, `jvf.home.xdg.config.*` → `~/.config/*`.
 **Verify:** `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled --show-trace` to inspect compiled items.
 
-### Wrappers Translation Layer (Legacy Compat)
-**Lesson:** Modules NOT yet migrated to jvf.home still work — wrappers.nix has a translation layer that auto-converts `jvf.wrappers.*.programs.*.configs` into `jvf.home.users.*.items.*`. This is backward compat only; new modules must NOT rely on it.
-**Context:** ~29 modules still use legacy wrappers configs. Migration pattern: keep packages/wrappers in wrappers, move configs/postInstall/preserve to jvf.home.
-**Verify:** After migrating a module, ensure it no longer sets `configs`, `configPath`, `preserveFiles`, or `postInstall` in its wrappers block.
+### Migration Complete — No Translation Layer
+**Lesson:** All 27 modules have been migrated from wrappers configs to jvf.home. The wrappers translation layer has been removed. Wrappers options are now: `packages`, `command`, `env` only.
+**Context:** Migration completed across 5 phases. wrappers.nix is now 219 lines (down from ~400+), handling only wrapper scripts and packages.
+**Verify:** `grep -rn 'jvf.wrappers.*configs' modules/` should return 0 results. `wc -l modules/wrappers.nix` should be ~219.
 
 ---
 

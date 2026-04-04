@@ -74,48 +74,7 @@
           check = builtins.any (i: i.targetRel == ".config/test.conf") aliceItems;
           message = ".config/test.conf must appear in alice's compiled items";
         }
-        {
-          name = "conflict-detected";
-          check = !conflictResult.success;
-          message = "Setting same path via wrappers AND direct jvf.home must fail, but eval succeeded";
-        }
       ];
-
-      # ── Conflict detection test ──────────────────────────────────────────
-      # Verifies that setting the same path via both wrappers (auto-translated)
-      # and direct jvf.home produces an eval error (source defined twice).
-      conflictTestDir = pkgs.runCommand "conflict-test-dir" { } ''
-        mkdir -p $out
-        echo "direct" > $out/test.conf
-      '';
-
-      conflictSystem = inputs.nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = coreModules ++ [
-          self.modules.nixos.wrappers
-          minimalStub
-          (
-            { ... }:
-            {
-              # Route 1: wrappers auto-translates to jvf.home.users.alice.items.".config/testprog"
-              jvf.wrappers.users.alice.programs.testprog = {
-                configs."test.conf" = "hello from wrappers";
-              };
-              # Route 2: direct jvf.home for same path — SHOULD CONFLICT
-              jvf.home.users.alice.items.".config/testprog" = {
-                kind = "dir";
-                mode = "copy";
-                source = conflictTestDir;
-              };
-            }
-          )
-        ];
-      };
-
-      # Eval must fail: source defined twice on same submodule path
-      conflictResult = builtins.tryEval (
-        builtins.deepSeq conflictSystem.config.jvf.home._compiled.users null
-      );
 
       failedAssertions = builtins.filter (a: !a.check) evalAssertions;
 

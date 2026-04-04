@@ -488,7 +488,7 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
   **Commit**: YES | Message: `refactor(claudecode): migrate config+preserve+postInstall to jvf.home` | Files: `modules/programs/claudecode/default.nix`
 
 
-- [ ] 8. Tighten regressions: add explicit conflict tests + document migration pattern
+- [x] 8. Tighten regressions: add explicit conflict tests + document migration pattern
 
   **What to do**:
   - Extend `modules/checks/home.nix`:
@@ -526,10 +526,10 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
 
 
 ## Final Verification Wave (MANDATORY)
-- [ ] F1. Plan Compliance Audit — oracle
-- [ ] F2. Code Quality Review — unspecified-high
-- [ ] F3. Real Manual QA — unspecified-high
-- [ ] F4. Scope Fidelity Check — deep
+- [x] F1. Plan Compliance Audit — oracle
+- [x] F2. Code Quality Review — unspecified-high
+- [x] F3. Real Manual QA — unspecified-high
+- [x] F4. Scope Fidelity Check — deep
 
 ## Commit Strategy
 - Keep commits small + bisectable (roughly one TODO per commit).
@@ -538,5 +538,5 @@ Wave 3 (adoption): migrate kitty → waybar → claudecode + expand VM test asse
 ## Success Criteria
 - Ergonomic `jvf.home` API available for both OS.
 - wrappers no longer does config writes; only wrappers/packages.
-- Legacy wrappers configs still work via translation.
+- ~~Legacy wrappers configs still work via translation.~~ Translation layer removed — all 27 modules migrated directly.
 - VM test covers: file materialization, dir materialization, postInstall, preserve across A→B switch.

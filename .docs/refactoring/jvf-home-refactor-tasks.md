@@ -58,7 +58,7 @@ jvf.home.users.${u}.items."<path>" = {
 All have `configs = { ... }` with no `postInstall`, `preserveFiles`, or `configPath`.
 Keep `packages` in wrappers, move configs to jvf.home.
 
-### Batch 1A: Desktop Hyprland — Static Files (6)
+### Batch 1A: Desktop Hyprland — Static Files (6) ✅ COMPLETE
 
 | # | Module | File | Config Content | Target Path | Kind |
 |---|--------|------|---------------|-------------|------|
@@ -82,7 +82,7 @@ Keep `packages` in wrappers, move configs to jvf.home.
 | 1.9 | qt5ct | `hyprland/qt5ct.nix` | qt5ct.conf | `.config/qt5ct/qt5ct.conf` | file |
 | 1.10 | kvantum | `hyprland/kvantum.nix` | kvantum theme | `.config/Kvantum` | dir |
 
-### Batch 1C: Programs — Simple (5)
+### Batch 1C: Programs — Simple (5) ✅ COMPLETE
 
 | # | Module | File | Config Content | Target Path | Kind |
 |---|--------|------|---------------|-------------|------|
@@ -98,7 +98,7 @@ Keep `packages` in wrappers, move configs to jvf.home.
 
 ---
 
-## Phase 2: Configs + postInstall (5 modules)
+## Phase 2: Configs + postInstall (5 modules) ✅ COMPLETE
 
 These have `postInstall` scripts that run after config deployment (typically theme color injection).
 
@@ -125,7 +125,7 @@ jvf.home.users.${u}.items.".config/<prog>" = {
 
 ---
 
-## Phase 3: configPath + preserveFiles (4 modules)
+## Phase 3: configPath + preserveFiles (4 modules) ✅ COMPLETE (droid removed — dir doesn't exist)
 
 These use `configPath` (non-standard target dir like `~/.gemini/`) and `preserveFiles` (files to keep across rebuilds).
 
@@ -153,7 +153,7 @@ jvf.home.users.${u}.items.".gemini" = {
 
 ---
 
-## Phase 4: Complex / Special Cases (2 modules)
+## Phase 4: Complex / Special Cases (2 modules) ✅ COMPLETE (cursor removed — dir doesn't exist)
 
 | # | Module | File | Complexity |
 |---|--------|------|-----------|
@@ -166,7 +166,7 @@ jvf.home.users.${u}.items.".gemini" = {
 
 ---
 
-## Phase 5: Cleanup
+## Phase 5: Cleanup ✅ COMPLETE
 
 | # | Task | Description |
 |---|------|-------------|
