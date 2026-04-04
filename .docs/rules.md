@@ -61,21 +61,6 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** P0 switched to inclusion-based architecture — modules are active when imported, no `enable = true` toggles needed. P7 merged selector+config into single files.
 **Verify:** Host identity sections in `modules/hosts/*/default.nix` should be <30 lines. `grep -c 'enable' modules/hosts/*/default.nix` should return 0.
 
-### Python Transitive Dependency Overrides
-**Lesson:** Use `lib.composeExtensions attrs.packageOverrides myFixes` to ensure your overrides apply *after* internal package overrides (e.g., in `ceph`).
-**Context:** Ceph pins `cryptography` via `packageOverrides`; standard overlays are wiped out unless explicitly composed after Ceph's internal ones.
-**Verify:** Check if `doCheck = false` or similar attributes survive by evaluating the target package's final attributes.
-
-### Sphinx 9.1.0 Downgrade on Python 3.11
-**Lesson:** If Sphinx 9 (Python 3.12+) is forced on Python 3.11, downgrade to 8.1.3, add `psuper.roman` to `propagatedBuildInputs`, and set `dontCheckRuntimeDeps = true`.
-**Context:** Sphinx 9.1.0 uses Python 3.12 syntax (`type _PARSER_SETUP = ...`) which causes SyntaxErrors during evaluation on Python 3.11.
-**Verify:** Run `nix-build -A python311Packages.sphinx` and confirm it unpacks and evaluates without SyntaxError.
-
-### Forcibly Bypassing Documentation Generation
-**Lesson:** To stop a Python package from running `sphinx-build`, filter out `sphinxHook` AND `sphinx` from `nativeBuildInputs` and clear `postBuild`.
-**Context:** Many packages (like `typeguard`) ignore `dontBuildDocs = true` if the hook is present or if they manually invoke the binary in `postBuild`.
-**Verify:** Check the build log to ensure `sphinx-build` is never invoked and `sphinx_autodoc_typehints` is not imported.
-
 ---
 
 ## Verification
@@ -106,45 +91,14 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ---
 
-## Context Management
-
-### Prune Aggressively During Refactors
-**Lesson:** Large refactoring generates many tool outputs. Prune context after each wave/phase to avoid hitting limits.
-**Context:** Nix evaluation outputs, file reads, and bash commands accumulate quickly during multi-wave refactors.
-**Verify:** Use `distill` for key findings and `prune` for noise every 3-4 tasks.
+### Nix String Indentation
+**Lesson:** When generating config files (YAML, JSON) in Nix, use `pkgs.formats.*` instead of multi-line strings with `''`. Nix's `''` strings strip minimum indentation, breaking YAML structure.
+**Context:** Wasted 30+ minutes debugging YAML parsing errors caused by Nix string indentation stripping.
+**Verify:** If generating structured config, verify output with `cat` after first test run.
 
 ---
-
-## Nix String Indentation
-
-- **Rule:** When generating config files (YAML, JSON) in Nix, use `pkgs.formats.*` instead of multi-line strings with `''`. Nix's `''` strings strip minimum indentation, breaking YAML structure.
-- **Why:** Wasted 30+ minutes debugging YAML parsing errors caused by Nix string indentation stripping.
-- **Check:** If generating structured config, verify output with `cat` after first test run.
-
 ---
-
-## Runtime Path Resolution
-
-- **Rule:** For flake templates needing runtime paths (like `$PWD`), use placeholder substitution (`@@PLACEHOLDER@@` + `sed`) at runtime rather than relying on `projectRoot` which resolves to Nix store paths.
-- **Why:** `projectRoot = ./.` in flakes resolves to store path at eval time, not the actual working directory.
-- **Check:** Test with `nix develop --impure --command bash -c 'echo $SANDBOX_STATE'` and verify paths point to working directory.
-
 ---
-
-## Process-Compose Commands
-
-- **Rule:** `process-compose up` uses `-f` for config file; `process-compose down/ps` use `-U -u <socket>` for Unix socket connection. Use `-D` (not `-d`) for detached mode.
-- **Why:** Wrong flags cause "unknown shorthand flag" errors or connection failures.
-- **Check:** Run `process-compose <cmd> --help` to verify correct flags before implementing.
-
----
-
-## Nix Flake with Sockets
-
-- **Rule:** When running `nix develop` multiple times in a directory with Unix sockets (`.sock` files) or special files, Nix will fail with "unsupported type". Clean state directory before re-evaluating flake.
-- **Why:** Nix cannot handle socket files in flake source tree during evaluation.
-- **Check:** If seeing "unsupported type" errors, run `rm -rf .sandbox-state` before `nix develop`.
-
 ---
 
 ## Nixpkgs Lib Functions
@@ -279,7 +233,7 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ### Leaf Modules Must Not Import Other Leaf Modules
 **Lesson:** In the dendritic pattern, leaf aspect modules must NEVER import other leaf modules via `imports = [ self.modules.nixos.other-leaf ];`. Only **roles** should compose leaf modules transitively. If leaf A imports leaf B, and a host imports both A and B (directly or via roles), the NixOS module system throws "option is already declared" because B's options get registered twice.
-**Context:** `wrappers.nix` initially imported `self.modules.nixos.home` to access `jvf.home` options. Since hosts already imported both `home` and `wrappers`, home's options were declared twice. Fix: remove the import from wrappers, rely on the host importing both — the module system merges config from all modules sharing the same option namespace.
+**Context:** Note: `wrappers.nix` and `home.nix` both define `jvf.home` options, but this is handled at the flake-parts level where both modules are imported by hosts. The key point: leaf modules should NOT import other leaf modules in their NixOS module `imports` list — let the host or roles handle transitive imports.
 **Verify:** `grep -rn 'self\.modules\.\(nixos\|darwin\)\.' modules/programs/ modules/system/ modules/services/ modules/hardware/` — leaf modules should NEVER reference `self.modules.*` in their `imports` list. Only `modules/roles/*.nix` should.
 
 ### Conflict Detection Cannot Use Config Self-Reference
@@ -295,6 +249,27 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Any Nix string interpolated into bash activation scripts (especially file paths, user-provided values) must be wrapped with `lib.escapeShellArg`. Unescaped values with spaces, quotes, or special characters cause silent failures or security issues in activation scripts.
 **Context:** `jvf.home` activation scripts interpolated `preserve` subpaths directly into bash `find` and `cp` commands. Paths with spaces would break. Fixed by wrapping all interpolated paths with `lib.escapeShellArg`.
 **Verify:** After writing NixOS activation scripts, grep for `${}` interpolations inside bash strings and ensure each is wrapped with `lib.escapeShellArg` or equivalent quoting.
+
+---
+
+---
+
+## jvf.home Subsystem
+
+### Config Materialization Goes to jvf.home, Not Wrappers
+**Lesson:** New modules MUST use `jvf.home.users.<u>.xdg.config.*` or `jvf.home.users.<u>.items.*` for config file/dir deployment. Wrappers only handles wrapper scripts, packages, and PATH symlinks.
+**Context:** The jvf-home refactor split materialization from wrappers. Legacy wrappers configs auto-translate via a translation layer, but new modules should use jvf.home directly.
+**Verify:** New modules should NOT set `jvf.wrappers.*.programs.*.configs`. grep for `wrappers.*configs` in new modules.
+
+### jvf.home Item API
+**Lesson:** Items require `kind` ("file"/"dir"), optional `mode` ("copy"/"link"/"seed", default "copy"). Content: use `source` (path/derivation), `text` (string), or structured (`json`/`yaml`/`toml`/`ini` attrs). Dir items support `preserve` (list of subpaths) and `postInstall` (bash script with env vars: `TARGET_PATH`, `HOME_DIR`, `USER_NAME`, `GROUP_NAME`, `IS_DARWIN`, `BACKUP_DIR`).
+**Context:** The API is defined in `modules/home/default.nix`. Sugar shortcuts: `jvf.home.files.*` → `~/*`, `jvf.home.xdg.config.*` → `~/.config/*`.
+**Verify:** `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled --show-trace` to inspect compiled items.
+
+### Wrappers Translation Layer (Legacy Compat)
+**Lesson:** Modules NOT yet migrated to jvf.home still work — wrappers.nix has a translation layer that auto-converts `jvf.wrappers.*.programs.*.configs` into `jvf.home.users.*.items.*`. This is backward compat only; new modules must NOT rely on it.
+**Context:** ~29 modules still use legacy wrappers configs. Migration pattern: keep packages/wrappers in wrappers, move configs/postInstall/preserve to jvf.home.
+**Verify:** After migrating a module, ensure it no longer sets `configs`, `configPath`, `preserveFiles`, or `postInstall` in its wrappers block.
 
 ---
 

@@ -50,10 +50,16 @@ hyprland/
 ## CONVENTIONS
 - **Co-located assets**: Config files live in `assets/<subsystem>/`
 - **Dendritic exports**: Each module exports `flake.modules.nixos.*`
-- **Enable pattern**: `jvf.desktop.hyprland.<submodule>.enable`
+- **Enable pattern**: `jvf.desktop.hyprland.<submodule>.enable` (waybar uses `jvf.home` for config, not wrappers)
 - **Asset reference**: Use relative path from module file
+- **Config migration**: waybar is migrated to jvf.home for config. Other hyprland sub-modules still use wrappers translation layer.
 
 ## ANTI-PATTERNS
 - **Inlining configs** - use `writeTextFile` + assets/ files
 - **Hardcoded paths** - reference via `${./assets/...}`
 - **Enabling by default** - all modules require explicit enable
+
+## CONFIG NESTING GOTCHAS
+- **hypr**: Uses directory-style configs (`{"hypr" = derivation;}`). The configDir flattening in wrappers.nix uses `symlinkJoin` to merge the hypr entry at root level while keeping `pypr` as subdirectory.
+- **swaync**: Uses prefix-style configs (`{"swaync/config.json" = file;}`). The configDir flattening strips the `programName/` prefix to avoid double-nesting.
+- Always check which pattern a module uses before modifying its config structure.

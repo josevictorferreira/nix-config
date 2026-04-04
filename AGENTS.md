@@ -26,7 +26,7 @@ Based on: KooL's NixOS-Hyprland.
 │   │   │   └── default.nix  # Dendritic module (future: + assets, secrets)
 │   │   ├── neovim/
 │   │   ├── git/
-│   │   └── ... (20 programs)
+│   │   └── ... (24 programs)
 │   ├── system/              # System-level config modules
 │   │   ├── networking.nix
 │   │   ├── audio.nix
@@ -48,6 +48,10 @@ Based on: KooL's NixOS-Hyprland.
 │   │           ├── rofi/    # Rofi configs + themes
 │   │           ├── waybar/  # Waybar configs + styles
 │   │           └── ...
+│   ├── home/                # Home file materialization (jvf.home)
+│   │   └── default.nix     # jvf.home option schema + activation scripts
+│   ├── checks/              # Flake checks (eval + VM tests)
+│   │   └── home.nix        # jvf.home eval guard + NixOS VM test
 │   ├── hardware/            # Hardware-specific modules
 │   │   ├── amd-gpu.nix
 │   │   ├── bluetooth.nix
@@ -71,7 +75,7 @@ Based on: KooL's NixOS-Hyprland.
 │   ├── overlays.nix         # Custom package overlays
 │   ├── repositories.nix     # Nix repository config
 │   ├── users.nix            # User definitions
-│   └── wrappers.nix         # Security wrappers
+│   └── wrappers.nix         # Wrapper scripts + PATH/env (config → jvf.home)
 ├── pkgs/                    # Custom packages overlay
 ├── secrets/                 # SOPS encrypted secrets
 ├── templates/               # Project scaffolds
@@ -89,7 +93,9 @@ Based on: KooL's NixOS-Hyprland.
 | **Desktop Configs** | `modules/desktop/hyprland/assets/` | Co-located static configs |
 | **Hardware/Boot** | `modules/hardware/boot.nix` | Kernel, grub, plymouth, binfmt |
 | **AI Agents** | `modules/ai-tools/*.nix` | 7 dendritic modules |
-| **Secrets** | `secrets/secrets.yaml` | Edit via `sops` |
+| **Home File Config** | `modules/home/default.nix` | `jvf.home.users.<u>.items`, `jvf.home.xdg.config.*` |
+| **Home Checks** | `modules/checks/home.nix` | eval + VM integration tests |
+| **Migrate Config to jvf.home** | See wrappers migration pattern | packages stay in wrappers; configs → jvf.home |
 | **Overlays** | `modules/overlays.nix` | Custom packages |
 | **New Machine** | `modules/hosts/<hostname>/default.nix` | Selector + identity + config merged |
 
@@ -101,6 +107,7 @@ Based on: KooL's NixOS-Hyprland.
 - **Imports**: Group top-level. Specific imports only (no `import ./dir`).
 - **Platform**: Use `mkConfig { isDarwin }` pattern, not `pkgs.stdenv.isDarwin`.
 - **Formatting**: `nixpkgs-fmt` (via `make format`).
+- **Config Materialization**: Config files/dirs go to `jvf.home`, NOT wrappers. Wrappers only handles wrapper scripts, env vars, PATH symlinks. Legacy wrappers configs auto-translate via translation layer.
 
 ** START IMPORTANT SECTION **
  Prioritize readability, API ergonomics, and maintainability.
@@ -153,6 +160,25 @@ Or directly to host selector if not role-appropriate:
 (with self.modules.nixos; [ ... programs-my-new ... ])
 ```
 
+### Managing Config Files (jvf.home)
+New modules should use `jvf.home` for config file deployment:
+```nix
+# In your module's config section:
+config = {
+  # Simple file
+  jvf.home.users.${cfg.username}.xdg.config."kitty/kitty.conf" = {
+    kind = "file"; mode = "copy"; text = generatedConfig;
+  };
+  # Directory with preserve + postInstall
+  jvf.home.users.${cfg.username}.items.".claude" = {
+    kind = "dir"; mode = "copy"; source = configPkg;
+    preserve = [ "transcripts" "history.jsonl" ];
+    postInstall = ''cp "$TARGET_PATH/settings.json" "$HOME_DIR/.claude.json"'';
+  };
+};
+```
+Legacy modules using `jvf.wrappers.*.programs.*.configs` are auto-translated to `jvf.home` items.
+
 ## ANTI-PATTERNS (THIS PROJECT)
 - **Home Manager**: BANNED. Use native NixOS/Darwin modules + `users.users`.
 - **specialArgs for identity**: BANNED. Only `inputs` via specialArgs. Use `config.jvf.core.*` for username/host/os.
@@ -160,6 +186,7 @@ Or directly to host selector if not role-appropriate:
 - **Implicit Enable**: Modules activate by inclusion (import). No enable toggles on leaf modules.
 - **Relative ../ imports**: Use absolute path from root for cross-module.
 - **Old Module Style**: Don't create `modules/{programs,system,roles}/default.nix` aggregators
+- **Config in wrappers**: BANNED for new modules. Use `jvf.home.users.<u>.xdg.config."<prog>/<file>"` for new config file management. Only legacy untouched modules still use the wrappers translation layer.
 
 ## COMMANDS
 ```bash
@@ -174,8 +201,11 @@ make clean        # GC
 - `modules/ai-tools/` is a complex module with its own DSL.
 - `roles` are import closures that pull in program/service/system aspects transitively.
 - Hosts import roles; roles import leaf aspects. No enable toggles.
+- `modules/home/default.nix` owns all home file/dir materialization. `modules/wrappers.nix` only handles wrapper scripts + packages. Legacy wrappers configs auto-translate via a translation layer in wrappers.nix.
+- `modules/checks/home.nix` provides `jvf-home-eval` (pure eval) and `jvf-home-vm` (NixOS VM integration test covering copy, preserve, postInstall, and A→B config switch).
 
 ## HIERARCHY
 Subdirectory AGENTS.md for complex modules:
 - [modules/ai-tools/AGENTS.md](modules/ai-tools/AGENTS.md) — AI tools DSL
 - [modules/desktop/hyprland/AGENTS.md](modules/desktop/hyprland/AGENTS.md) — Hyprland desktop
+- No sub-AGENTS.md needed for home/ or checks/ (they're single files, not complex multi-module dirs)
