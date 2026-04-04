@@ -1,0 +1,10 @@
+Batch 1C Migration - Sat Apr  4 10:59:54 AM -03 2026
+
+Migrated modules:
+- alacritty: .config/alacritty/alacritty.toml (TOML via pkgs.formats.toml)
+- btop: .config/btop (dir with 3 INI configs via custom generator)
+- git: .gitconfig, .gitignore, .git/hooks/pre-commit (3 separate files)
+- k9s: .config/k9s (dir with 5 YAML files via symlinkJoin)
+- ghostty: .config/ghostty/config (custom format)
+
+All modules now use jvf.home.users.*.items instead of jvf.wrappers.*.configs

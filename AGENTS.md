@@ -494,7 +494,22 @@ Critical lessons from past sessions to avoid repeated friction.
 ### pkgs.runCommand Requires Exactly 3 Arguments
 **Lesson:** `pkgs.runCommand` signature is `name: attrset: script:`. Passing only 2 args (`name: script:`) returns a partially applied function, NOT a derivation. The empty attrset `{}` is mandatory.
 **Context:** Subagent omitted the `{}` — eval produced cryptic type errors ("is not of type 'null or absolute path or package'") far from the actual bug.
-**Verify:** Always check `runCommand` calls have 3 arguments. Pattern: `pkgs.runCommand "name" {} ''script''`.
+### pkgs.formats.ini Doesn't Support Booleans
+**Lesson:** `pkgs.formats.ini` fails on Boolean values. Use custom generator: `toIni = attrs: lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}") attrs);`
+**Context:** btop config has `theme_background = true` which caused `expected a set but found a Boolean` error. INI format serializer doesn't handle Bool type.
+**Verify:** Test with `nix-instantiate --eval` before using in production. Check config attrs for Booleans with `lib.filterAttrs (n: v: lib.isBool v) attrs`.
+
+### Check for Partial Migrations Before Starting Work
+**Lesson:** Before migrating a module to jvf.home, check if other modules in the same directory have partial migrations that might cause "dynamic attribute already defined" errors. Restore corrupted files immediately via `git checkout HEAD -- <file>`.
+**Context:** qt5ct.nix and qt6ct.nix had BOTH old `configs` AND new `jvf.home` items from previous failed migrations, causing repeated build failures. Had to restore multiple times.
+**Verify:** `git diff modules/<category>/` before starting. Look for files with both `configs =` and `jvf.home` in same module.
+
+### Verify Incrementally During Batch Migrations
+**Lesson:** After completing each module migration in a batch, run targeted `nix eval` on that module's config before proceeding to the next. Don't wait until all 5 modules are done to verify.
+**Context:** Batch 1C built all 5 modules before verifying. When btop failed, had to debug in isolation while other modules were already correct. Incremental verification catches errors faster.
+**Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled.users.<user>.items` and check for errors.
+
+---
 
 ## Config Layout Migration Patterns
 
@@ -502,3 +517,17 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** When flattening config directories, programs use two patterns: (1) **directory entries** where `name == programName` (e.g., hypr's `{"hypr" = derivation;}`), and (2) **prefixed file entries** where `name` starts with `programName/` (e.g., swaync's `{"swaync/config.json" = file;}`). Both need different flattening logic.
 **Context:** Initial fix handled only directory-style nesting. swaync's prefix-style entries silently double-nested because they fell through to the default `linkFarm` case.
 **Verify:** When migrating config layouts, `grep` for config key patterns: both exact `programName` matches and `programName/` prefixed keys.
+
+---
+
+## wrappers → jvf.home Migration Recipes
+
+### Simple configs (static dir) → jvf.home dir item
+**Lesson:** When `configs = { "name" = ./assets/name; }`, replace with `jvf.home.users.<u>.items.".config/name" = { kind = "dir"; mode = "copy"; source = ./assets/name/.; };`. Remove `configs` from wrappers. Keep `packages` in wrappers if present. If no packages, remove wrappers block entirely.
+**Context:** Batch 1A migration pattern for 6 modules (xfce4, wlogout, wallust, thunar, etc). Trivial — single source path, no generation.
+**Verify:** After migration, `grep 'configs' <file>` returns 0. `grep 'jvf.home' <file>` shows the new item.
+
+### Mixed source + generated configs → symlinkJoin
+**Lesson:** When configs mix static assets with generated files (e.g., INI from nix attrs + shader dir), use `pkgs.symlinkJoin { name = "<prog>-config"; paths = [ (pkgs.writeTextDir "file" content) ./assets/<prog>/shaders ]; }` as the `source` of a jvf.home dir item. Requires `pkgs` in module function args.
+**Context:** cava (INI config + shaders dir) and fastfetch (multiple JSONC + optional PNG) needed this pattern. Agents must add `pkgs` to function signature if not present.
+**Verify:** `grep 'pkgs' <file>` on line 1-10 should show `pkgs` in function args. `grep 'symlinkJoin' <file>` shows the merge.

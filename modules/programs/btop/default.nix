@@ -2,13 +2,13 @@
 # Defines jvf.programs.btop options for btop resource monitor.
 # NixOS: btop-rocm default, full config with wrappers.
 # Darwin: btop default, full config with wrappers.
-_:
 let
   mkBtopOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       defaultPackage = "btop";
@@ -121,10 +121,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.btop;
@@ -151,35 +152,53 @@ let
       '';
 
       themeName = config.jvf.theme.active;
-    in
-    {
-      imports = [ mkBtopOptions ];
 
-      config = lib.mkMerge [
-        {
-          jvf.programs.btop.package = lib.mkDefault defaultPkg;
-        }
-        {
-          jvf.wrappers.users.${cfg.username}.programs.btop = {
-            packages = [
-              cfg.package
-            ];
-            configs = {
-              "btop.conf" = cfg.settings // {
-                color_theme = themeName;
-              };
-              "vertical-compact.conf" = cfg.settings // {
+      # Build merged btop config directory via symlinkJoin
+      # Custom INI generator that handles Booleans (pkgs.formats.ini doesn't support them)
+      toIni =
+        attrs:
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (
+            n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
+          ) attrs
+        );
+      btopConfigDir = pkgs.symlinkJoin {
+        name = "btop-config";
+        paths = [
+          (pkgs.writeTextFile {
+            name = "btop.conf";
+            text = toIni (cfg.settings // { color_theme = themeName; });
+          })
+          (pkgs.writeTextFile {
+            name = "vertical-compact.conf";
+            text = toIni (
+              cfg.settings
+              // {
                 color_theme = themeName;
                 presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille";
                 shown_boxes = "cpu mem gpu0";
                 show_disks = false;
                 show_battery = false;
-              };
-              "themes/${themeName}.theme" = btopTheme;
-            };
+              }
+            );
+          })
+          (pkgs.writeTextDir "themes/${themeName}.theme" btopTheme)
+        ];
+      };
+    in
+    {
+      imports = [ mkBtopOptions ];
+
+      config = {
+        jvf.programs.btop.package = lib.mkDefault defaultPkg;
+        jvf.home.users.${cfg.username}.items = {
+          ".config/btop" = {
+            kind = "dir";
+            mode = "copy";
+            source = btopConfigDir;
           };
-        }
-      ];
+        };
+      };
     };
 in
 {

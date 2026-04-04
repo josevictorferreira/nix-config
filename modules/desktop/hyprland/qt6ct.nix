@@ -1,12 +1,12 @@
 # Aspect: desktop-hyprland-qt6ct (NixOS only)
 # Qt6ct settings for Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-qt6ct =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.qt6ct;
@@ -62,7 +62,6 @@ _:
     in
     {
       options.jvf.desktop.hyprland.qt6ct = {
-
         username = lib.mkOption {
           type = lib.types.str;
           default = config.jvf.core.username;
@@ -70,19 +69,35 @@ _:
         };
       };
 
-      config = {
-        jvf.wrappers.users.${cfg.username}.programs.qt6ct = {
-          packages = [
+      config = lib.mkMerge [
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt6ct/qt6ct.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = qt6ctConf;
+          };
+        }
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt6ct/colors/Catppuccin-Mocha.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = catpuccinMocha;
+          };
+        }
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt6ct/colors/Catppuccin-Latte.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = catpuccinLatte;
+          };
+        }
+        {
+          jvf.wrappers.users.${cfg.username}.programs.qt6ct.packages = [
             pkgs.qt6Packages.qt6ct
             pkgs.qt6.qtwayland
             pkgs.qt6Packages.qtstyleplugin-kvantum
           ];
-          configs = {
-            "qt6ct.conf" = qt6ctConf;
-            "colors/Catppuccin-Mocha.conf" = catpuccinMocha;
-            "colors/Catppuccin-Latte.conf" = catpuccinLatte;
-          };
-        };
-      };
+        }
+      ];
     };
 }

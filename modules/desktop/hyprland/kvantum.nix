@@ -1,12 +1,12 @@
 # Aspect: desktop-hyprland-kvantum (NixOS only)
 # Kvantum theme engine for Qt apps in Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-kvantum =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.kvantum;
@@ -21,14 +21,14 @@ _:
       };
 
       config = {
-        jvf.wrappers.users.${cfg.username}.programs.Kvantum = {
-          packages = [
-            pkgs.libsForQt5.qtstyleplugin-kvantum
-            pkgs.qt6Packages.qtstyleplugin-kvantum
-          ];
-          configs = {
-            "Kvantum" = ./assets/kvantum;
-          };
+        jvf.wrappers.users.${cfg.username}.programs.Kvantum.packages = [
+          pkgs.libsForQt5.qtstyleplugin-kvantum
+          pkgs.qt6Packages.qtstyleplugin-kvantum
+        ];
+        jvf.home.users.${cfg.username}.items.".config/Kvantum" = {
+          kind = "dir";
+          mode = "copy";
+          source = ./assets/kvantum;
         };
       };
     };

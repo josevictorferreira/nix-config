@@ -1,12 +1,12 @@
 # Aspect: desktop-hyprland-qt5ct (NixOS only)
 # Qt5ct settings for Hyprland.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland-qt5ct =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.qt5ct;
@@ -64,23 +64,39 @@ _:
       options.jvf.desktop.hyprland.qt5ct = {
         username = lib.mkOption {
           type = lib.types.str;
-          description = "Username for which qt5ct settings will be applied.";
           default = config.jvf.core.username;
+          description = "Username for which qt5ct settings will be applied.";
         };
       };
 
-      config = {
-        jvf.wrappers.users.${cfg.username}.programs.qt5ct = {
-          packages = [
+      config = lib.mkMerge [
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt5ct/qt5ct.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = qt5ctConf;
+          };
+        }
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt5ct/colors/Catppuccin-Mocha.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = catpuccinMocha;
+          };
+        }
+        {
+          jvf.home.users.${cfg.username}.items.".config/qt5ct/colors/Catppuccin-Latte.conf" = {
+            kind = "file";
+            mode = "copy";
+            ini = catpuccinLatte;
+          };
+        }
+        {
+          jvf.wrappers.users.${cfg.username}.programs.qt5ct.packages = [
             pkgs.libsForQt5.qt5ct
             pkgs.libsForQt5.qtstyleplugin-kvantum
           ];
-          configs = {
-            "qt5ct.conf" = qt5ctConf;
-            "colors/Catppuccin-Mocha.conf" = catpuccinMocha;
-            "colors/Catppuccin-Latte.conf" = catpuccinLatte;
-          };
-        };
-      };
+        }
+      ];
     };
 }
