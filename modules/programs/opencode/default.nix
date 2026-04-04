@@ -6,11 +6,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -33,7 +34,9 @@ let
         # ── Default settings ──────────────────────────────────────────────
         jvf.programs.opencode.settings = {
           theme = lib.mkDefault "tokyonight";
-          mcp = lib.mkDefault (lib.mapAttrs (name: mcpCfg: inputs.lib.aiTools.transformMcpOptions "opencode" mcpCfg) cfg.mcps);
+          mcp = lib.mkDefault (
+            lib.mapAttrs (name: mcpCfg: inputs.lib.aiTools.transformMcpOptions "opencode" mcpCfg) cfg.mcps
+          );
           disabled_providers = lib.mkDefault [
             "opencode"
             "copilot"
@@ -59,7 +62,7 @@ let
             ];
           };
 
-          small_model = "openrouter/qwen/qwen3.5-27b";
+          small_model = "alibaba-coding-plan/qwen3-coder-next";
         };
 
         # ── Wrappers config ───────────────────────────────────────────

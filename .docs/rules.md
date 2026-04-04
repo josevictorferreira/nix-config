@@ -295,3 +295,24 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** Any Nix string interpolated into bash activation scripts (especially file paths, user-provided values) must be wrapped with `lib.escapeShellArg`. Unescaped values with spaces, quotes, or special characters cause silent failures or security issues in activation scripts.
 **Context:** `jvf.home` activation scripts interpolated `preserve` subpaths directly into bash `find` and `cp` commands. Paths with spaces would break. Fixed by wrapping all interpolated paths with `lib.escapeShellArg`.
 **Verify:** After writing NixOS activation scripts, grep for `${}` interpolations inside bash strings and ensure each is wrapped with `lib.escapeShellArg` or equivalent quoting.
+
+---
+
+## Nix Derivation Merging
+
+### symlinkJoin Over runCommand for Merging Symlink Trees
+**Lesson:** When merging multiple derivations that contain symlinks (e.g., `linkFarm` outputs), use `pkgs.symlinkJoin` instead of `pkgs.runCommand` with `cp -rL`. The latter fails in the sandbox because symlink targets aren't declared as build dependencies.
+**Context:** `cp -rL` inside `runCommand` can't follow symlinks to store paths not in the derivation's direct inputs. `symlinkJoin` properly declares all paths as dependencies.
+**Verify:** If merging config derivations, prefer `symlinkJoin { name = ...; paths = [ a b ]; }` over `runCommand` with `cp`.
+
+### pkgs.runCommand Requires Exactly 3 Arguments
+**Lesson:** `pkgs.runCommand` signature is `name: attrset: script:`. Passing only 2 args (`name: script:`) returns a partially applied function, NOT a derivation. The empty attrset `{}` is mandatory.
+**Context:** Subagent omitted the `{}` — eval produced cryptic type errors ("is not of type 'null or absolute path or package'") far from the actual bug.
+**Verify:** Always check `runCommand` calls have 3 arguments. Pattern: `pkgs.runCommand "name" {} ''script''`.
+
+## Config Layout Migration Patterns
+
+### Check Both Directory and Prefix Nesting Patterns
+**Lesson:** When flattening config directories, programs use two patterns: (1) **directory entries** where `name == programName` (e.g., hypr's `{"hypr" = derivation;}`), and (2) **prefixed file entries** where `name` starts with `programName/` (e.g., swaync's `{"swaync/config.json" = file;}`). Both need different flattening logic.
+**Context:** Initial fix handled only directory-style nesting. swaync's prefix-style entries silently double-nested because they fell through to the default `linkFarm` case.
+**Verify:** When migrating config layouts, `grep` for config key patterns: both exact `programName` matches and `programName/` prefixed keys.
