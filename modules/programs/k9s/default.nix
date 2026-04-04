@@ -21,38 +21,33 @@ let
       configDir = pkgs.symlinkJoin {
         name = "k9s-config";
         paths = [
-          (pkgs.writeTextFile {
-            name = "config.yaml";
-            text = (pkgs.formats.yaml { }).generate "config.yaml" { k9s = cfg.settings; };
-          })
-          (pkgs.writeTextFile {
-            name = "aliases.yaml";
-            text = (pkgs.formats.yaml { }).generate "aliases.yaml" { aliases = cfg.aliases; };
-          })
+          (pkgs.writeTextDir "config.yaml" (
+            (pkgs.formats.yaml { }).generate "config.yaml" { k9s = cfg.settings; }
+          ))
+          (pkgs.writeTextDir "aliases.yaml" (
+            (pkgs.formats.yaml { }).generate "aliases.yaml" { aliases = cfg.aliases; }
+          ))
           (pkgs.runCommand "k9s-skins" { } ''
             mkdir -p $out/skins
             cp ${
-              pkgs.writeTextFile {
-                name = "tokyonight.yaml";
-                text = (pkgs.formats.yaml { }).generate "tokyonight.yaml" { k9s = cfg.skins.tokyonight; };
-              }
-            } $out/skins/tokyonight.yaml
+              pkgs.writeTextDir "tokyonight.yaml" (
+                (pkgs.formats.yaml { }).generate "tokyonight.yaml" { k9s = cfg.skins.tokyonight; }
+              )
+            }/tokyonight.yaml $out/skins/tokyonight.yaml
           '')
           (pkgs.runCommand "k9s-clusters" { } ''
             mkdir -p $out/clusters/ze-homelab/ze-homelab
             mkdir -p $out/clusters/agrosmart-eks/agrosmart-eks
             cp ${
-              pkgs.writeTextFile {
-                name = "homelab-config.yaml";
-                text = (pkgs.formats.yaml { }).generate "config.yaml" { k9s = clusters.homelab; };
-              }
-            } $out/clusters/ze-homelab/ze-homelab/config.yaml
+              pkgs.writeTextDir "homelab-config.yaml" (
+                (pkgs.formats.yaml { }).generate "config.yaml" { k9s = clusters.homelab; }
+              )
+            }/homelab-config.yaml $out/clusters/ze-homelab/ze-homelab/config.yaml
             cp ${
-              pkgs.writeTextFile {
-                name = "eks-config.yaml";
-                text = (pkgs.formats.yaml { }).generate "config.yaml" { k9s = clusters.agrosmartEks; };
-              }
-            } $out/clusters/agrosmart-eks/agrosmart-eks/config.yaml
+              pkgs.writeTextDir "eks-config.yaml" (
+                (pkgs.formats.yaml { }).generate "config.yaml" { k9s = clusters.agrosmartEks; }
+              )
+            }/eks-config.yaml $out/clusters/agrosmart-eks/agrosmart-eks/config.yaml
           '')
         ];
       };

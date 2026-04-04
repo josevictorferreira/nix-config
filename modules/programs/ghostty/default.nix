@@ -5,21 +5,20 @@
 _:
 let
   mkGhosttyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       toConfigFormat =
         settings:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (
-              key: value:
-              if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
-            )
-            settings
+          lib.mapAttrsToList (
+            key: value:
+            if builtins.isBool value then "${key} = ${builtins.toJSON value}" else "${key} = ${toString value}"
+          ) settings
         );
     in
     {
@@ -48,11 +47,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , toConfigFormat
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      toConfigFormat,
+      ...
     }:
     let
       cfg = config.jvf.programs.ghostty;
@@ -87,11 +87,9 @@ let
       paletteIndices = lib.genList lib.id 16;
 
       paletteLines = lib.concatStringsSep "\n" (
-        map
-          (
-            i: "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
-          )
-          paletteIndices
+        map (
+          i: "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) paletteIndices
       );
     in
     {
@@ -100,13 +98,11 @@ let
       config = {
         jvf.programs.ghostty.settings = lib.mkDefault (baseSettings // themeOverrides);
 
-        jvf.wrappers.users.${cfg.username}.programs.ghostty = {
-          packages = lib.optional (!isDarwin) cfg.package;
-          configs = {
-            "config" = toConfigFormat cfg.settings + "\n" + paletteLines;
-          };
+        jvf.home.users.${cfg.username}.items.".config/ghostty/config" = {
+          kind = "file";
+          mode = "copy";
+          text = toConfigFormat cfg.settings + "\n" + paletteLines;
         };
-
         fonts.packages = [
           pkgs.nerd-fonts.jetbrains-mono
         ];

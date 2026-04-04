@@ -5,7 +5,12 @@
 _:
 let
   mkGitOptions =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       inherit (lib)
         mkOption
@@ -171,10 +176,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       inherit (lib)
@@ -231,32 +237,36 @@ let
         ]
         ++ optional cfg.lfs.enable pkgs.git-lfs;
 
-        jvf.wrappers.users.${cfg.username}.programs.git = {
-          packages = [
-            cfg.package
-            pkgs.yq
-            pkgs.difftastic
-            pkgs.gitleaks
-          ]
-          ++ optional cfg.lfs.enable pkgs.git-lfs;
-          configs = {
-            "config" =
-              generators.toINI { }
-                (
-                  (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
-                    // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
-                    // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
-                    // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
-                    // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
-                    // cfg.extraConfig
-                )
+        jvf.home.users.${cfg.username} = {
+          items.".config/git/config" = {
+            kind = "file";
+            mode = "copy";
+            text =
+              generators.toINI { } (
+                (optionalAttrs (cfg.name != null) { user.name = cfg.name; })
+                // (optionalAttrs (cfg.email != null) { user.email = cfg.email; })
+                // (optionalAttrs (cfg.signing.key != null) { user.signingkey = cfg.signing.key; })
+                // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
+                // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
+                // cfg.extraConfig
+              )
               + ''
                 [diff]
                   external = ${pkgs.difftastic}/bin/difft
               '';
-            "ignore" = concatStringsSep "\n" cfg.ignores;
-            "hooks/pre-commit" = toString preCommit;
           };
+          items.".gitignore" = {
+            kind = "file";
+            mode = "copy";
+            text = concatStringsSep "\n" cfg.ignores;
+          };
+          items.".git/hooks/pre-commit" = {
+            kind = "file";
+            mode = "copy";
+            text = toString preCommit;
+          };
+        }
+        // lib.optionalAttrs (!isDarwin) {
         };
       }
       // lib.optionalAttrs (!isDarwin) {

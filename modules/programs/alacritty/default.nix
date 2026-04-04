@@ -5,10 +5,11 @@
 _:
 let
   mkAlacrittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.alacritty = {
@@ -33,16 +34,18 @@ let
     };
 
   alacrittyModule =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.alacritty;
       colors = config.jvf.theme.colors;
       fonts = config.jvf.theme.fonts;
       fontFamily = "TamzenForPowerline";
+      tomlFormat = pkgs.formats.toml { };
       themeColors = {
         primary = {
           background = "0x${colors.background}";
@@ -126,15 +129,11 @@ let
           };
         };
 
-        jvf.wrappers.users.${cfg.username}.programs.alacritty = {
-          packages = [
-            cfg.package
-          ];
-          configs = {
-            "alacritty.toml" = cfg.settings;
-          };
+        jvf.home.users.${cfg.username}.items.".config/alacritty/alacritty.toml" = {
+          kind = "file";
+          mode = "copy";
+          text = builtins.readFile ((pkgs.formats.toml { }).generate "alacritty.toml" cfg.settings);
         };
-
         fonts.packages = [
           pkgs.ibm-plex
           pkgs.nerd-fonts.zed-mono

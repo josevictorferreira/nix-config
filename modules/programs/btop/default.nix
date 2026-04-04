@@ -165,13 +165,9 @@ let
       btopConfigDir = pkgs.symlinkJoin {
         name = "btop-config";
         paths = [
-          (pkgs.writeTextFile {
-            name = "btop.conf";
-            text = toIni (cfg.settings // { color_theme = themeName; });
-          })
-          (pkgs.writeTextFile {
-            name = "vertical-compact.conf";
-            text = toIni (
+          (pkgs.writeTextDir "btop.conf" (toIni (cfg.settings // { color_theme = themeName; })))
+          (pkgs.writeTextDir "vertical-compact.conf" (
+            toIni (
               cfg.settings
               // {
                 color_theme = themeName;
@@ -180,8 +176,8 @@ let
                 show_disks = false;
                 show_battery = false;
               }
-            );
-          })
+            )
+          ))
           (pkgs.writeTextDir "themes/${themeName}.theme" btopTheme)
         ];
       };

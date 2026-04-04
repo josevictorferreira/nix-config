@@ -1,0 +1,68 @@
+# Batch 1C Migration - FINAL COMPLETION
+
+**Date**: 2026-04-04
+**Modules Migrated**: alacritty, btop, git, k9s, ghostty
+
+## Migration Summary
+
+All 5 modules successfully migrated from `jvf.wrappers.*.configs` to `jvf.home.*.items`:
+
+### 1. alacritty
+- **File**: `.config/alacritty/alacritty.toml`
+- **Pattern**: Single TOML file via `pkgs.formats.toml`
+- **Location**: `items.".config/alacritty/alacritty.toml"`
+
+### 2. btop  
+- **Files**: `.config/btop/` directory with 3 files (btop.conf, vertical-compact.conf, theme)
+- **Pattern**: `symlinkJoin` with `writeTextDir` for each file
+- **Custom**: Boolean-aware INI generator
+- **Location**: `items.".config/btop"` (dir)
+
+### 3. git
+- **Files**: 3 separate items
+  - `.config/git/config` (INI format)
+  - `.gitignore` (plain text)
+  - `.git/hooks/pre-commit` (shell script)
+- **Location**: All under `items`
+
+### 4. k9s
+- **Files**: `.config/k9s/` directory with 5 YAML files
+- **Pattern**: `symlinkJoin` with `writeTextDir`
+- **Location**: `items.".config/k9s"` (dir)
+
+### 5. ghostty
+- **File**: `.config/ghostty/config`
+- **Pattern**: Custom `toConfigFormat` serializer + palette lines
+- **Location**: `items.".config/ghostty/config"`
+
+## Verification
+
+```bash
+# Build evaluation
+nix build .#nixosConfigurations.nixos-desktop.config.system.build.toplevel --dry-run
+# ✅ SUCCESS
+
+# Home checks  
+nix build .#checks.x86_64-linux.jvf-home-eval --dry-run
+# ✅ SUCCESS (implicit - no errors)
+
+nix build .#checks.x86_64-linux.jvf-home-vm --dry-run
+# ✅ SUCCESS
+```
+
+## Lessons Learned
+
+1. **pkgs.writeTextDir vs pkgs.writeTextFile**: `symlinkJoin` requires directories, not files
+2. **pkgs.formats.ini limitation**: Doesn't support Booleans - need custom generator
+3. **Text field type**: Must be string, not derivation - use `builtins.readFile` for format generators
+4. **items path format**: Use full path including `.config/` prefix, not `xdg.config` shortcut
+
+## Tasks Completed
+
+- [x] T-2a49d456: Migrate alacritty
+- [x] T-1d528d06: Migrate btop
+- [x] T-c75b045e: Migrate git
+- [x] T-7ca4a2d8: Migrate k9s
+- [x] T-76d8b9b4: Migrate ghostty
+
+**Batch 1C: COMPLETE**
