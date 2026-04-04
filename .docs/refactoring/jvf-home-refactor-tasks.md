@@ -73,7 +73,7 @@ Keep `packages` in wrappers, move configs to jvf.home.
 - fastfetch: 3 inline text configs + 1 binary png. Use `dir` with `source` containing all files, OR separate file items. Binary png requires `source` not `text`.
 - cava: structured attrset (`cavaConfig`) + asset dir (`./assets/cava/shaders`). May need two items or a merged derivation.
 
-### Batch 1B: Desktop Hyprland — Theme/Qt (5)
+### Batch 1B: Desktop Hyprland — Theme/Qt (4) ✅ COMPLETE (commit 579dc56)
 
 | # | Module | File | Config Content | Target Path | Kind |
 |---|--------|------|---------------|-------------|------|
