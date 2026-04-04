@@ -509,6 +509,27 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Batch 1C built all 5 modules before verifying. When btop failed, had to debug in isolation while other modules were already correct. Incremental verification catches errors faster.
 **Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled.users.<user>.items` and check for errors.
 
+### Use lib.mkMerge for Multiple jvf.home.items Paths
+**Lesson:** When setting multiple `jvf.home.users.${cfg.username}.items."path"` in same module, wrap each in `lib.mkMerge [{ items."path1" = ...; } { items."path2" = ...; }]`. Direct assignments cause "dynamic attribute already defined" errors.
+**Context:** qt5ct/qt6ct needed 3 INI files each. Single `config = { items."a" = ...; items."b" = ...; }` fails. lib.mkMerge solves it.
+**Verify:** `nix eval .#nixosConfigurations.<host>` — if "dynamic attribute already defined" appears, switch to mkMerge.
+
+### Use Bash/Cat for Complex Nix Rewrites
+**Lesson:** After 2+ failed `edit` tool attempts on Nix files, switch to `bash/cat` full rewrite. Incremental edits often corrupt brace structure.
+**Context:** kvantum.nix took 6 edit iterations, each corrupting braces. Full rewrite via bash/cat fixed immediately.
+**Verify:** If file has syntax errors after edit, check brace count matches (`grep -c '{'` vs `grep -c '}'`).
+
+### Group jvf.* Attributes for Statix
+**Lesson:** When a module sets multiple `jvf.programs.*`, `jvf.wrappers.*`, `jvf.home.*`, group under single `jvf = { ... }` block. Statix flags split assignments.
+**Context:** k9s had 3 separate jvf.* blocks. Statix warning: "The key jvf is first assigned here ... repeated here".
+**Verify:** Run `nix build .#checks.x86_64-linux.statix` — if W10/W11 warnings about repeated jvf, consolidate.
+
+### Verify with nix eval Early
+**Lesson:** Run `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel` after each module migration, not just at end. Catches dynamic attribute conflicts immediately.
+**Context:** Assumed `nix flake check` would catch all errors. Dynamic attribute conflicts only appear during NixOS module eval.
+**Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop` — should return derivation path.
+
+
 ---
 
 ## Config Layout Migration Patterns
