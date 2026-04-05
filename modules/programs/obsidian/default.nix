@@ -10,11 +10,24 @@ let
     let
       cfg = config.jvf.programs.obsidian;
 
-      # Desktop entry for the wrapper so it appears in Rofi
+      # Wrapper environment (symlinkJoin of wrapper script + packages)
+      obsidianWrapperEnv = pkgs.symlinkJoin {
+        name = "obsidian-env";
+        paths = [
+          (pkgs.writeShellScriptBin "obsidian" ''
+            export DICPATH="${pkgs.hunspellDicts.en_US}/lib/hunspell:${pkgs.hunspellDicts.pt_BR}/lib/hunspell"
+            exec ${lib.getExe pkgs.obsidian} "$@"
+          '')
+          pkgs.hunspellDicts.en_US
+          pkgs.hunspellDicts.pt_BR
+        ];
+      };
+
+      # Desktop entry with full path to wrapper
       obsidianDesktopItem = pkgs.makeDesktopItem {
         name = "obsidian";
         desktopName = "Obsidian";
-        exec = "obsidian %u";
+        exec = "${obsidianWrapperEnv}/bin/obsidian %u";
         icon = "obsidian";
         terminal = false;
         type = "Application";
@@ -29,17 +42,8 @@ let
       };
 
       config = {
-        jvf.wrappers.users.${cfg.username}.programs.obsidian = {
-          packages = [
-            pkgs.hunspellDicts.en_US
-            pkgs.hunspellDicts.pt_BR
-            obsidianDesktopItem
-          ];
-          command = lib.getExe pkgs.obsidian;
-          env = {
-            DICPATH = "${pkgs.hunspellDicts.en_US}/lib/hunspell:${pkgs.hunspellDicts.pt_BR}/lib/hunspell";
-          };
-        };
+        # Install both desktop item and wrapper to user profile
+        users.users."${cfg.username}".packages = [ obsidianDesktopItem obsidianWrapperEnv ];
       };
     };
 in
