@@ -1,7 +1,0 @@
-Batch 1B (swappy, kvantum, qt5ct, qt6ct) - COMPLETE
-Migrated:
-- swappy.nix: dir config → jvf.home.items..config/swappy
-- kvantum.nix: dir config → jvf.home.items..config/Kvantum
-- qt5ct.nix: 3 INI files via lib.mkMerge
-- qt6ct.nix: 3 INI files via lib.mkMerge
-Commit: 579dc56

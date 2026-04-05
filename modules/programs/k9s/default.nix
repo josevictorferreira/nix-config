@@ -1,6 +1,6 @@
 # Aspect: programs-k9s
 # Defines jvf.programs.k9s options and platform-specific k9s terminal UI for Kubernetes.
-# NixOS/Darwin: k9s package + config via wrappers + tokyonight skin + homelab config.
+# NixOS/Darwin: k9s package + config via jvf.home + tokyonight skin + homelab config.
 let
   # Import default configs as pure data
   defaultSettings = import ./_/settings.nix { };

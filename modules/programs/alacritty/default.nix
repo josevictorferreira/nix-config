@@ -1,14 +1,15 @@
 # Aspect: programs-alacritty
 # Defines jvf.programs.alacritty options and platform-specific alacritty terminal config.
-# NixOS: alacritty package + config via wrappers + IBM Plex Mono + nerd-fonts.
-# Darwin: alacritty package + config via wrappers + IBM Plex Mono + nerd-fonts.
+# NixOS: alacritty package + config via jvf.home + IBM Plex Mono + nerd-fonts.
+# Darwin: alacritty package + config via jvf.home + IBM Plex Mono + nerd-fonts.
 _:
 let
   mkAlacrittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.alacritty = {
@@ -33,10 +34,11 @@ let
     };
 
   alacrittyModule =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.alacritty;

@@ -1,8 +1,0 @@
-=== T3: Flake checks evidence ===
-Date: 2026-04-03T15:52:11-03:00
-
---- jvf-home-eval ---
-EXIT: 0
-
---- jvf-home-vm ---
-EXIT: 0

@@ -1,2 +1,0 @@
-- system-security aspect migration: legacy `security` still enabled via `jvf.system.modules` in host configs; add `legacyEnabled = builtins.elem "security" config.jvf.system.modules` and gate config with `enableEffective = cfg.enable || legacyEnabled` to avoid breaking existing hosts.
-- For sops-nix secret file path, prefer `inputs.self.outPath + "/secrets/secrets.enc.yaml"` (pure flake eval friendly) instead of `${self}`.

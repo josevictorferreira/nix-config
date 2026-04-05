@@ -1,1 +1,0 @@
-- nix flake check failed after removing legacy `security` module due to sops assertion (no key source configured) because security module also carried sops config; resolved by moving sops config into system-security aspect + auto-enable bridge from legacy module list.
