@@ -1,8 +1,7 @@
 # Aspect: roles-documenting
 # Bundles document viewing and editing tools (obsidian, zathura, typst, etc).
-_:
+{ self, lib, ... }:
 let
-
   mkOptions =
     { config, lib, ... }:
     {
@@ -24,12 +23,12 @@ let
       cfg = config.jvf.roles.documenting;
     in
     {
-      imports = [ mkOptions ];
+      imports = [ mkOptions ] ++ (with self.modules.nixos; [ programs-obsidian ]);
 
       config = {
         users.users."${cfg.username}".packages = [
           pkgs.font-manager
-          pkgs.obsidian
+          # obsidian provided via programs-obsidian module with hunspell dicts
           pkgs.koreader
           pkgs.zathura
           pkgs.libreoffice-qt-fresh
@@ -47,12 +46,12 @@ let
       cfg = config.jvf.roles.documenting;
     in
     {
-      imports = [ mkOptions ];
+      imports = [ mkOptions ] ++ (with self.modules.darwin; [ programs-obsidian ]);
 
       config = {
         users.users."${cfg.username}".packages = [
           pkgs.font-manager
-          pkgs.obsidian
+          # obsidian provided via programs-obsidian module with hunspell dicts
           pkgs.koreader
           pkgs.zathura
           pkgs.typst
