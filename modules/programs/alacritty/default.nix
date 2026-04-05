@@ -129,6 +129,8 @@ let
           };
         };
 
+        users.users.${cfg.username}.packages = [ cfg.package ];
+
         jvf.home.users.${cfg.username}.items.".config/alacritty/alacritty.toml" = {
           kind = "file";
           mode = "copy";
