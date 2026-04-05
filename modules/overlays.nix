@@ -11,7 +11,6 @@
         inherit system;
         overlays = [
           inputs.bun2nix.overlays.default
-          inputs.nix-openclaw.overlays.default
         ];
       };
     in

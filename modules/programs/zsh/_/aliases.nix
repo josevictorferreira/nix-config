@@ -169,10 +169,6 @@ in
     alias k8s_homelab='cd ''${cfg.workspace.shared}/kubernetes 2>/dev/null || cd ~/Homelab/kubernetes'
     alias monitoring='cd ''${cfg.workspace.shared}/monitoring 2>/dev/null || cd ~/Homelab/monitoring'
 
-    alias valb_homelab='cd ''${cfg.workspace.shared}/backend 2>/dev/null || cd ~/Homelab/backend'
-    alias valf_homelab='cd ''${cfg.workspace.shared}/frontend 2>/dev/null || cd ~/Homelab/frontend'
-    alias occ='v ''${cfg.workspace.shared}/openclaw/openclaw.json 2>/dev/null || v ~/Homelab/openclaw/openclaw.json'
-
     # ==========================================
     # Specific Projects
     # ==========================================
@@ -183,11 +179,6 @@ in
     alias val='cd ''${cfg.workspace.root}/valoris 2>/dev/null || cd ~/Workspace/valoris'
     alias valb='cd ''${cfg.workspace.root}/valoris/backend 2>/dev/null || cd ~/Workspace/valoris/backend'
     alias valf='cd ''${cfg.workspace.root}/valoris/valoris-frontend 2>/dev/null || cd ~/Workspace/valoris/frontend'
-
-    # Personal Projects
-    alias dotfiles='cd ~/.config'
-    alias oc='nvim ~/Homelab/openclaw/openclaw.json'
-
     # Legacy workspace projects
     alias exer='cd ''${cfg.workspace.root}/exercism'
     alias readm='cd ''${cfg.workspace.root}/readmore-project'

@@ -15,8 +15,8 @@ _: {
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
-        qwen = "bailian-coding-plan/qwen3.5-plus";
-        gpt = "github-copilot/gpt-5.2";
+        qwen = "alibaba-coding-plan/qwen3.5-plus";
+        gpt = "openai/gpt-5.4";
         models = {
           quick = {
             default = "openrouter/inception/mercury-2";
@@ -323,7 +323,7 @@ _: {
             openrouter = 3;
             kimi-for-coding = 2;
             zai-coding-plan = 3;
-            bailian-coding-plan = 2;
+            alibaba-coding-plan = 2;
             minimax = 3;
           };
         };
@@ -357,9 +357,7 @@ _: {
             "git-master"
             "playwright"
             "playwright-cli"
-            "agent-browser"
             "dev-browser"
-            "frontend-ui-ux"
           ];
         };
         git_master = {
