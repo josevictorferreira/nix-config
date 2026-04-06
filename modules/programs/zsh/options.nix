@@ -96,7 +96,7 @@
           "valoris_secret_key"
           "matrix_server_url"
           "matrix_server_username"
-          "matrix_server_password"
+          "matrix_server_access_token"
           "alibaba_coding_plan_api_key"
           "inception_api_key"
         ];

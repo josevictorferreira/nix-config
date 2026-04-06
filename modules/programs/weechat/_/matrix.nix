@@ -1,8 +1,9 @@
 # _/matrix.nix - Matrix protocol plugin for Weechat
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -11,7 +12,7 @@ let
   secretPaths = {
     matrixUrl = "/run/secrets/matrix_server_url";
     matrixUser = "/run/secrets/matrix_server_username";
-    matrixPass = "/run/secrets/matrix_server_password";
+    matrixAccessToken = "/run/secrets/matrix_server_access_token";
   };
 
   # Use weechat-matrix-rs from nixpkgs as it's better maintained
@@ -25,10 +26,9 @@ let
   # Matrix setup script
   matrixSetupScript = pkgs.writeShellScript "weechat-matrix-setup" ''
     echo "/plugin load matrix"
-    echo "/secure set matrix_password $(cat ${secretPaths.matrixPass})"
     echo "/matrix server add homelab-matrix $(cat ${secretPaths.matrixUrl})"
     echo "/set matrix-rust.server.homelab-matrix.username $(cat ${secretPaths.matrixUser})"
-    echo "/set matrix-rust.server.homelab-matrix.password $(cat ${secretPaths.matrixPass})"
+    echo "/set matrix-rust.server.homelab-matrix.access-token $(cat ${secretPaths.matrixAccessToken})"
     echo "/set matrix-rust.server.homelab-matrix.autoconnect on"
     echo "/matrix connect homelab-matrix"
   '';
@@ -50,8 +50,8 @@ in
         owner = cfg.username;
         mode = "0400";
       };
-      matrix_server_password = {
-        path = secretPaths.matrixPass;
+      matrix_server_access_token = {
+        path = secretPaths.matrixAccessToken;
         owner = cfg.username;
         mode = "0400";
       };

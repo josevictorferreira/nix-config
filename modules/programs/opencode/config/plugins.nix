@@ -19,7 +19,7 @@ _: {
         gpt = "openai/gpt-5.4";
         models = {
           quick = {
-            default = "openrouter/inception/mercury-2";
+            default = "openrouter/qwen/qwen3.5-35b-a3b";
             cheap = minimax;
             expensive = "github-copilot/grok-code-fast-1";
             alternative = "openrouter/openai/gpt-oss-120b";
