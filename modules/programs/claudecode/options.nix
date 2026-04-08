@@ -49,5 +49,15 @@ in
       default = { };
       description = "Settings written to ~/.claude-code-router/config.json";
     };
+    theme = lib.mkOption {
+      type = lib.types.enum [ "default" "tokyonight" ];
+      default = "default";
+      description = "Preset theme for the Claude Code statusline.";
+    };
+    statusline = lib.mkOption {
+      type = (pkgs.formats.toml { }).type;
+      default = { };
+      description = "Custom statusline configuration for Claude Code (TOML). Merged with preset if theme is not 'default'.";
+    };
   };
 }

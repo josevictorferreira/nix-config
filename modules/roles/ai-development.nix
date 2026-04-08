@@ -48,6 +48,7 @@ let
         jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
+        jvf.programs.claudecode.theme = "tokyonight";
         jvf.programs.claudecode.settings = {
           permissions = {
             defaultMode = "bypassPermissions";
@@ -88,6 +89,7 @@ let
         jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
+        jvf.programs.claudecode.theme = "tokyonight";
         jvf.programs.claudecode.settings = {
           permissions = {
             defaultMode = "bypassPermissions";

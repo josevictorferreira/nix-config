@@ -19,6 +19,37 @@ let
     let
       cfg = config.jvf.programs.claudecode;
 
+      presets = {
+        tokyonight = {
+          format = "[░▒▓](#a3aed2)[ ](bg:#769ff0 fg:#a3aed2)$directory[ ](fg:#769ff0 bg:#394260)$git_branch$git_status[ ](fg:#394260 bg:#212736)$claude_model[ ](fg:#212736)";
+          directory = {
+            style = "fg:#e3e5e5 bg:#769ff0";
+            format = "[ $path ]($style)";
+            truncation_length = 3;
+            truncation_symbol = "…/";
+          };
+          git_branch = {
+            style = "bg:#394260";
+            symbol = "";
+            format = "[$symbol $branch]($style)";
+          };
+          git_status = {
+            style = "bg:#394260";
+            format = "[$all_status$ahead_behind ]($style)";
+          };
+          claude_model = {
+            style = "bg:#212736";
+            format = "[$model]($style)";
+          };
+        };
+      };
+
+      statuslineConfig =
+        if (cfg.theme == "default") then
+          cfg.statusline
+        else
+          lib.recursiveUpdate (presets.${cfg.theme} or { }) cfg.statusline;
+
       # FHS environment for Linux (claude-code needs glibc, etc.)
       claudeCodeFHS =
         if (!isDarwin) then
@@ -320,6 +351,13 @@ let
               "session-env"
               ".claude-code-router.pid"
             ];
+          };
+        }
+        // lib.optionalAttrs (statuslineConfig != { }) {
+          ".config/claude-code-statusline.toml" = {
+            kind = "file";
+            mode = "copy";
+            toml = statuslineConfig;
           };
         };
       }

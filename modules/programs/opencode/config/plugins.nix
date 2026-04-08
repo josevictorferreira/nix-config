@@ -3,7 +3,7 @@ _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
       "@tarquinen/opencode-dcp@3.1.9"
-      "oh-my-opencode@3.15.3"
+      "oh-my-opencode@3.16.0"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
@@ -19,7 +19,7 @@ _: {
         gpt = "openai/gpt-5.4";
         models = {
           quick = {
-            default = "openrouter/qwen/qwen3.5-35b-a3b";
+            default = "inception/mercury-2";
             cheap = minimax;
             expensive = "github-copilot/grok-code-fast-1";
             alternative = "openrouter/openai/gpt-oss-120b";

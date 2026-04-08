@@ -2,11 +2,10 @@
 # Cava - Console-based Audio Visualizer for Hyprland.
 _: {
   flake.modules.nixos.desktop-hyprland-cava =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.cava;

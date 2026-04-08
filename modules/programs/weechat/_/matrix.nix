@@ -1,9 +1,8 @@
 # _/matrix.nix - Matrix protocol plugin for Weechat
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.jvf.programs.weechat;
@@ -12,23 +11,68 @@ let
   secretPaths = {
     matrixUrl = "/run/secrets/matrix_server_url";
     matrixUser = "/run/secrets/matrix_server_username";
-    matrixAccessToken = "/run/secrets/matrix_server_access_token";
+    matrixPassword = "/run/secrets/matrix_server_password";
   };
 
-  # Use weechat-matrix-rs from nixpkgs as it's better maintained
-  # and the manual derivation was failing to build.
-  weechatMatrixRs = pkgs.weechat-matrix-rs.overrideAttrs (old: {
-    passthru = (old.passthru or { }) // {
-      pluginFile = "${pkgs.weechat-matrix-rs}/lib/weechat/plugins/matrix.so";
+  matrixSecureUsernameName = "homelab-matrix-username";
+  matrixSecurePasswordName = "homelab-matrix-password";
+
+  # Use a locally pinned build because the newer nixpkgs revision fails
+  # with an upstream Rust/matrix-sdk regression.
+  weechatMatrixRs = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
+    pname = "weechat-matrix-rs";
+    version = "0-unstable-2025-06-11";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "poljar";
+      repo = "weechat-matrix-rs";
+      rev = "b3512393350f119c12830f3da347b92a0f3136f8";
+      hash = "sha256-QFfN1/L3tzvLZNGrjF0zcowwtHpRL2GAdu7lRpNhULk=";
+    };
+
+    cargoHash = "sha256-cbF4ytAyyMhTfChCyxRg+jxwCAEpRd+bFTIqD6PCH6Y=";
+
+    nativeBuildInputs = [
+      pkgs.pkg-config
+      pkgs.rustPlatform.bindgenHook
+    ];
+
+    buildInputs = [
+      pkgs.weechat
+      pkgs.openssl
+      pkgs.sqlite
+    ];
+
+    postInstall = ''
+      mkdir -p $out/lib/weechat/plugins
+      mv $out/lib/libmatrix${pkgs.stdenv.hostPlatform.extensions.sharedLibrary} $out/lib/weechat/plugins/matrix${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}
+    '';
+
+    passthru = {
+      pluginFile = "${finalAttrs.finalPackage}/lib/weechat/plugins/matrix${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}";
+    };
+
+    meta = {
+      description = "Rust plugin for WeeChat to communicate over Matrix";
+      homepage = "https://github.com/poljar/weechat-matrix-rs";
+      license = lib.licenses.isc;
+      platforms = lib.platforms.unix;
     };
   });
 
   # Matrix setup script
   matrixSetupScript = pkgs.writeShellScript "weechat-matrix-setup" ''
-    echo "/plugin load matrix"
-    echo "/matrix server add homelab-matrix $(cat ${secretPaths.matrixUrl})"
-    echo "/set matrix-rust.server.homelab-matrix.username $(cat ${secretPaths.matrixUser})"
-    echo "/set matrix-rust.server.homelab-matrix.access-token $(cat ${secretPaths.matrixAccessToken})"
+    matrixUrl=$(tr -d '\n' < ${secretPaths.matrixUrl})
+
+    matrixUser=$(tr -d '\n' < ${secretPaths.matrixUser})
+    matrixPassword=$(tr -d '\n' < ${secretPaths.matrixPassword})
+
+    echo "/mute /secure set ${matrixSecureUsernameName} $matrixUser"
+    echo "/mute /secure set ${matrixSecurePasswordName} $matrixPassword"
+
+    echo "/matrix server add homelab-matrix $matrixUrl"
+    echo "/set matrix-rust.server.homelab-matrix.username \\\''${sec.data.${matrixSecureUsernameName}}"
+    echo "/set matrix-rust.server.homelab-matrix.password \\\''${sec.data.${matrixSecurePasswordName}}"
     echo "/set matrix-rust.server.homelab-matrix.autoconnect on"
     echo "/matrix connect homelab-matrix"
   '';
@@ -50,8 +94,8 @@ in
         owner = cfg.username;
         mode = "0400";
       };
-      matrix_server_access_token = {
-        path = secretPaths.matrixAccessToken;
+      matrix_server_password = {
+        path = secretPaths.matrixPassword;
         owner = cfg.username;
         mode = "0400";
       };
