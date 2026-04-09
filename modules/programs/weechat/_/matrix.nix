@@ -71,8 +71,8 @@ let
     echo "/mute /secure set ${matrixSecurePasswordName} $matrixPassword"
 
     echo "/matrix server add homelab-matrix $matrixUrl"
-    echo "/set matrix-rust.server.homelab-matrix.username \\\''${sec.data.${matrixSecureUsernameName}}"
-    echo "/set matrix-rust.server.homelab-matrix.password \\\''${sec.data.${matrixSecurePasswordName}}"
+    echo '/set matrix-rust.server.homelab-matrix.username \''${sec.data.${matrixSecureUsernameName}}'
+    echo '/set matrix-rust.server.homelab-matrix.password \''${sec.data.${matrixSecurePasswordName}}'
     echo "/set matrix-rust.server.homelab-matrix.autoconnect on"
     echo "/matrix connect homelab-matrix"
   '';
