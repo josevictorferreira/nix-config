@@ -72,6 +72,26 @@ _: {
             output = 65536;
           };
         };
+        "qwen3.6-plus" = {
+          name = "Qwen3.6 Plus";
+          modalities = {
+            input = [
+              "text"
+              "image"
+            ];
+            output = [ "text" ];
+          };
+          options = {
+            thinking = {
+              type = "enabled";
+              budgetTokens = 8192;
+            };
+          };
+          limit = {
+            context = 1000000;
+            output = 65536;
+          };
+        };
         "qwen3-max-2026-01-23" = {
           name = "Qwen3 Max 2026-01-23";
           modalities = {

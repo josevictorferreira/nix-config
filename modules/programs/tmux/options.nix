@@ -7,6 +7,7 @@
 let
   defaultPlugins = [
     pkgs.tmuxPlugins.yank
+    pkgs.tmuxPlugins.fingers
   ];
 in
 {
