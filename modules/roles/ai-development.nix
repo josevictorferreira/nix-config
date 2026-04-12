@@ -53,6 +53,10 @@ let
           permissions = {
             defaultMode = "bypassPermissions";
           };
+          attribution = {
+            commit = "";
+            pr = "";
+          };
         };
 
         users.users."${cfg.username}".packages = [ ];
@@ -93,6 +97,10 @@ let
         jvf.programs.claudecode.settings = {
           permissions = {
             defaultMode = "bypassPermissions";
+          };
+          attribution = {
+            commit = "";
+            pr = "";
           };
         };
 
