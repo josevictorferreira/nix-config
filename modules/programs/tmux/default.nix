@@ -92,11 +92,15 @@ let
       '';
       yamlFmt = pkgs.formats.yaml { };
       tmuxpConfigDir = pkgs.linkFarm "tmuxp-sessions" (
-        lib.mapAttrs (
+        lib.mapAttrsToList (
           name: session:
           let
             # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
-            yamlName = lib.concatMapStrings (c: if lib.isUpper c then "-${lib.toLower c}" else c) name;
+            yamlName = lib.removePrefix "-" (
+              lib.concatMapStrings (c: if c >= "A" && c <= "Z" then "-${lib.toLower c}" else c) (
+                lib.stringToCharacters name
+              )
+            );
           in
           {
             name = "${yamlName}.yaml";
