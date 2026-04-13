@@ -131,6 +131,54 @@
     ];
   };
 
+  projects = {
+    session_name = "projects";
+    start_directory = "$HOME/Workspace";
+    windows = [
+      {
+        window_name = "Projects";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  serve-analyzer = {
+    session_name = "serve-analyzer";
+    start_directory = "$HOME/Workspace/serve-analyzer";
+    windows = [
+      {
+        window_name = "Serve Analyzer";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  local-researcher = {
+    session_name = "local-researcher";
+    start_directory = "$HOME/Workspace/local-researcher";
+    windows = [
+      {
+        window_name = "Local Researcher";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
   work = {
     session_name = "work";
     start_directory = "$HOME/Workspace/agrosmart/";
