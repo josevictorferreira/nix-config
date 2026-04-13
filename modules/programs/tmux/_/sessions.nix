@@ -147,6 +147,22 @@
     ];
   };
 
+  personal-finance = {
+    session_name = "personal-finance";
+    start_directory = "$HOME/Workspace/personal-finance/dashboard";
+    windows = [
+      {
+        window_name = "Personal Finance";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
   serve-analyzer = {
     session_name = "serve-analyzer";
     start_directory = "$HOME/Workspace/serve-analyzer";
