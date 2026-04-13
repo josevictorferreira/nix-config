@@ -1,8 +1,9 @@
 # options.nix - OpenCode option definitions
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -48,7 +49,7 @@ in
     ohMyOpenCodeSettings = lib.mkOption {
       inherit (json) type;
       default = { };
-      description = "Settings written to ~/.config/opencode/oh-my-opencode.json";
+      description = "Settings written to ~/.config/opencode/oh-my-openagent.json";
     };
 
     settings = lib.mkOption {
