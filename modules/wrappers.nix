@@ -97,9 +97,7 @@ let
       mkUserActivation =
         userName: uCfg:
         let
-          home =
-            config.users.users.${userName}.home
-              or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+          home = if config.users.users.${userName}.home != null then config.users.users.${userName}.home else if isDarwin then "/Users/${userName}" else "/home/${userName}";
         in
         "(
           "

@@ -190,9 +190,7 @@ let
       compileUserItems =
         userName: userCfg:
         let
-          home =
-            config.users.users.${userName}.home
-              or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+          home = if config.users.users.${userName}.home != null then config.users.users.${userName}.home else if isDarwin then "/Users/${userName}" else "/home/${userName}";
         in
         {
           items = lib.mapAttrsToList
@@ -334,9 +332,7 @@ let
       mkUserActivation =
         userName: compiledUserCfg:
         let
-          home =
-            config.users.users.${userName}.home
-              or (if isDarwin then "/Users/${userName}" else "/home/${userName}");
+          home = if config.users.users.${userName}.home != null then config.users.users.${userName}.home else if isDarwin then "/Users/${userName}" else "/home/${userName}";
           group = config.users.users.${userName}.group or (if isDarwin then "staff" else "users");
           isDarwinStr = if isDarwin then "1" else "0";
         in
@@ -346,7 +342,6 @@ let
           USER_NAME=${lib.escapeShellArg userName}
           GROUP_NAME=${lib.escapeShellArg group}
           HOME_DIR=${lib.escapeShellArg home}
-          IS_DARWIN=${isDarwinStr}
         ''
         + lib.concatMapStringsSep "\n"
           (
