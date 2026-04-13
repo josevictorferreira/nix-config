@@ -9,10 +9,11 @@ let
   sessions = import ./_/sessions.nix;
 
   tmuxModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.tmux;
@@ -89,25 +90,19 @@ let
         # Load session (tmuxp will attach or switch automatically when inside tmux)
         exec ${lib.getExe tmuxpCfg.package} load -y "$selected"
       '';
-
       yamlFmt = pkgs.formats.yaml { };
       tmuxpConfigDir = pkgs.linkFarm "tmuxp-sessions" (
-        lib.mapAttrsToList
-          (name: session: {
-            inherit name;
-            path = yamlFmt.generate name session;
-          })
+        lib.mapAttrs (
+          name: session:
+          let
+            # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
+            yamlName = lib.concatMapStrings (c: if lib.isUpper c then "-${lib.toLower c}" else c) name;
+          in
           {
-            "chat.yaml" = sessions.chat;
-            "main.yaml" = sessions.main;
-            "monitoring.yaml" = sessions.monitoring;
-            "homelab.yaml" = sessions.homelab;
-            "valoris.yaml" = sessions.valoris;
-            "valoris-backend.yaml" = sessions.valorisBackend;
-            "valoris-frontend.yaml" = sessions.valorisFrontend;
-            "ai-workspace.yaml" = sessions.aiWorkspace;
-            "work.yaml" = sessions.work;
+            name = "${yamlName}.yaml";
+            path = yamlFmt.generate yamlName session;
           }
+        ) sessions
       );
     in
     {
