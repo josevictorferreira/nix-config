@@ -1,5 +1,5 @@
 # Aspect: roles-designing
-# Bundles design and creative tools (inkscape).
+# Bundles design and creative tools (inkscape, blender).
 _:
 let
 
@@ -16,9 +16,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
@@ -29,14 +30,16 @@ let
       config = {
         users.users."${cfg.username}".packages = [
           pkgs.inkscape-with-extensions
+          pkgs.blender
         ];
       };
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
