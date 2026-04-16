@@ -3,20 +3,19 @@ _: {
   config = {
     jvf.programs.opencode.settings.plugin = [
       "@tarquinen/opencode-dcp@3.1.9"
-      "oh-my-openagent@3.17.2"
+      "oh-my-openagent@3.17.4"
     ];
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
         kimi = "kimi-for-coding/k2p5";
         glm = "zai-coding-plan/glm-5.1";
-        opus = "github-copilot/claude-opus-4.6";
-        sonnet = "github-copilot/claude-sonnet-4.6";
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
         qwen = "alibaba-coding-plan/qwen3.5-plus";
         gpt = "openai/gpt-5.4";
+        codex = "openai/gpt-5.3-codex";
         models = {
           quick = {
             default = "inception/mercury-2";
@@ -27,14 +26,14 @@ _: {
           coder = {
             default = glm;
             cheap = kimi;
-            expensive = sonnet;
+            expensive = codex;
             alternative = minimax;
           };
           intelligent = {
             default = gpt;
-            cheap = glm;
-            expensive = opus;
-            alternative = geminiPro;
+            cheap = kimi;
+            expensive = geminiPro;
+            alternative = glm;
           };
           looker = {
             default = geminiFlash;

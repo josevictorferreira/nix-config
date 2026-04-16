@@ -1,5 +1,5 @@
 # Aspect: roles-designing
-# Bundles design and creative tools (inkscape, blender).
+# Bundles design and creative tools (inkscape, blender, orca-slicer).
 _:
 let
 
@@ -31,6 +31,7 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.inkscape-with-extensions
           pkgs.blender
+          pkgs.orca-slicer
         ];
       };
     };

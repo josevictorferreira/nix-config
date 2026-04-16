@@ -5,7 +5,7 @@ window {
   font-size: 16pt;
   color: @foreground;
   /* text */
-  background-color: color-mix(in srgb, @background 60%, transparent);
+  background-color: @background;
 }
 
 button {

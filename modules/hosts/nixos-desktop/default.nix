@@ -164,6 +164,7 @@ in
         desktop-hyprland-fastfetch
         desktop-hyprland-swappy
         desktop-hyprland-wlogout
+        desktop-hyprland-wallust
         boot-grub-theme
 
         # System infra (not pulled by roles)
