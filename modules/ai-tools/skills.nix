@@ -17,22 +17,38 @@ let
       npx = lib.getExe' pkgs.nodejs "npx";
       defaultBrowser = lib.getExe pkgs.brave;
 
-      kebabToHuman = s:
-        lib.concatStringsSep " " (map
-          (w:
-            let
-              first = builtins.substring 0 1 w;
-              rest = builtins.substring 1 (-1) w;
-            in
-            (lib.toUpper first) + rest)
-          (lib.splitString "-" s));
+      kebabToHuman =
+        s:
+        lib.concatStringsSep " " (
+          map
+            (
+              w:
+              let
+                first = builtins.substring 0 1 w;
+                rest = builtins.substring 1 (-1) w;
+              in
+              (lib.toUpper first) + rest
+            )
+            (lib.splitString "-" s)
+        );
 
-      args = { inherit lib pkgs isDarwin npx defaultBrowser kebabToHuman; };
+      args = {
+        inherit
+          lib
+          pkgs
+          isDarwin
+          npx
+          defaultBrowser
+          kebabToHuman
+          ;
+      };
 
       # Helper to define a skill module
-      mkSkill = path: mkSkillModule {
-        skillOptions = import path args;
-      };
+      mkSkill =
+        path:
+        mkSkillModule {
+          skillOptions = import path args;
+        };
 
       skills = {
         auditing-security = mkSkill ./_/skills/auditing/security.nix;
@@ -53,6 +69,14 @@ let
         developing-rails-scrapers = mkSkill ./_/skills/ruby/rails-scrapers.nix;
         developing-rspec-tests = mkSkill ./_/skills/ruby/rspec-tests.nix;
         fixing-rubocop-offenses = mkSkill ./_/skills/ruby/fixing-rubocop.nix;
+        gleam-deployment = mkSkill ./_/skills/gleam/deployment.nix;
+        gleam-erlang-interop = mkSkill ./_/skills/gleam/erlang-interop.nix;
+        gleam-javascript-interop = mkSkill ./_/skills/gleam/javascript-interop.nix;
+        gleam-lustre-development = mkSkill ./_/skills/gleam/lustre-development.nix;
+        gleam-otp-development = mkSkill ./_/skills/gleam/otp-development.nix;
+        gleam-package-development = mkSkill ./_/skills/gleam/package-development.nix;
+        gleam-testing = mkSkill ./_/skills/gleam/testing.nix;
+        gleam-web-development = mkSkill ./_/skills/gleam/web-development.nix;
       };
 
       cfg = config.jvf.aiTools.skills;
@@ -60,9 +84,7 @@ let
     {
       options.jvf.aiTools.skills = lib.mapAttrs (name: skill: skill.options) skills;
 
-      config = lib.mkMerge (
-        lib.mapAttrsToList (name: skill: skill.config { inherit config; }) skills
-      );
+      config = lib.mkMerge (lib.mapAttrsToList (name: skill: skill.config { inherit config; }) skills);
     };
 in
 {

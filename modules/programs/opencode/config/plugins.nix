@@ -1,10 +1,14 @@
 # config/plugins.nix - Plugin, agent, and command configurations for OpenCode
 _: {
   config = {
-    jvf.programs.opencode.settings.plugin = [
-      "@tarquinen/opencode-dcp@3.1.9"
-      "oh-my-openagent@3.17.4"
-    ];
+    jvf.programs.opencode.settings = {
+      plugin = [
+        "mcpflow-router@0.3.4"
+        "@tarquinen/opencode-dcp@3.1.9"
+        "oh-my-openagent@3.17.4"
+      ];
+      default_agent = "my-sisyphus";
+    };
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
@@ -18,7 +22,7 @@ _: {
         codex = "openai/gpt-5.3-codex";
         models = {
           quick = {
-            default = "inception/mercury-2";
+            default = "openrouter/inception/mercury-2";
             cheap = minimax;
             expensive = "github-copilot/grok-code-fast-1";
             alternative = "openrouter/openai/gpt-oss-120b";
@@ -52,7 +56,7 @@ _: {
       {
         disabled_commands = [ ];
         agents = {
-          sisyphus = {
+          "my-sisyphus" = {
             model = models.coder.default;
             model_fallback = true;
             fallback_models = [
@@ -85,7 +89,7 @@ _: {
             ultrawork = { };
             compaction = { };
           };
-          hephaestus = {
+          "my-hephaestus" = {
             model = models.coder.expensive;
             model_fallback = true;
             fallback_models = [
@@ -628,7 +632,7 @@ _: {
           git_env_prefix = "GIT_";
         };
         runtime_fallback = {
-          enabled = true;
+          enabled = false;
           retry_on_errors = [
             400
             429
@@ -651,24 +655,18 @@ _: {
         };
         google_auth = false;
         new_task_system_enabled = true;
-        default_run_agent = "sisyphus";
+        default_agent = "my-sisyphus";
+        default_run_agent = "my-sisyphus";
         disabled_mcps = [ ];
-        disabled_agents = [ ];
+        disabled_agents = [
+          (builtins.fromJSON "\"\\u200bSisyphus - Ultraworker\"")
+          (builtins.fromJSON "\"\\u200b\\u200bHephaestus - Deep Agent\"")
+          "Sisyphus - Ultraworker"
+          "Hephaestus - Deep Agent"
+        ];
         disabled_tools = [ ];
         mcp_env_allowlist = [ ];
-        model_fallback = {
-          enabled = true;
-          retry_on_errors = [
-            400
-            429
-            503
-            529
-          ];
-          max_fallback_attempts = 3;
-          cooldown_seconds = 60;
-          timeout_seconds = 25;
-          notify_on_fallback = true;
-        };
+        model_fallback = false;
         notification = {
           enabled = true;
           sound = true;
@@ -697,7 +695,7 @@ _: {
           enabled = true;
           session_prefix = "omo-";
         };
-        sisyphus = {
+        "my-sisyphus" = {
           tasks = {
             enabled = true;
             auto_create = true;

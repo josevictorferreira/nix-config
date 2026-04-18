@@ -227,6 +227,10 @@ let
           }
         ];
 
+        jvf.secrets.environment.keys = {
+          "github_token" = true;
+        };
+
         environment.systemPackages = [
           cfg.package
           pkgs.yq

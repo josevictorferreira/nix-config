@@ -30,9 +30,11 @@ let
     typeguard = psuper.typeguard.overridePythonAttrs (old: {
       doCheck = false;
       outputs = [ "out" ];
-      nativeBuildInputs = builtins.filter (
-        p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx"
-      ) (old.nativeBuildInputs or [ ]);
+      nativeBuildInputs = builtins.filter
+        (
+          p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx"
+        )
+        (old.nativeBuildInputs or [ ]);
       postBuild = "";
     });
     sphinx-autodoc-typehints = psuper.buildPythonPackage {
@@ -145,6 +147,7 @@ in
         wrappers
         repositories
         secrets-sops
+        secrets-environment
         home
 
         # Desktop environment
@@ -264,27 +267,6 @@ in
             5173
           ];
         })
-        # Secrets configuration - make secrets readable by the user
-        (
-          { config, ... }:
-          let
-            inherit (config.jvf.core) username;
-            secretKeys = config.jvf.programs.zsh.secrets.keys;
-          in
-          {
-            # Declare all zsh secrets with user ownership so they can be read
-            sops.secrets = builtins.listToAttrs (
-              map (key: {
-                name = key;
-                value = {
-                  owner = username;
-                  group = "users";
-                  mode = "0400";
-                };
-              }) secretKeys
-            );
-          }
-        )
       ];
   };
 }

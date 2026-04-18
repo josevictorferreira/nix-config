@@ -9,11 +9,10 @@ let
   sessions = import ./_/sessions.nix;
 
   tmuxModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.tmux;
@@ -92,21 +91,23 @@ let
       '';
       yamlFmt = pkgs.formats.yaml { };
       tmuxpConfigDir = pkgs.linkFarm "tmuxp-sessions" (
-        lib.mapAttrsToList (
-          name: session:
-          let
-            # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
-            yamlName = lib.removePrefix "-" (
-              lib.concatMapStrings (c: if c >= "A" && c <= "Z" then "-${lib.toLower c}" else c) (
-                lib.stringToCharacters name
-              )
-            );
-          in
-          {
-            name = "${yamlName}.yaml";
-            path = yamlFmt.generate yamlName session;
-          }
-        ) sessions
+        lib.mapAttrsToList
+          (
+            name: session:
+              let
+                # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
+                yamlName = lib.removePrefix "-" (
+                  lib.concatMapStrings (c: if c >= "A" && c <= "Z" then "-${lib.toLower c}" else c) (
+                    lib.stringToCharacters name
+                  )
+                );
+              in
+              {
+                name = "${yamlName}.yaml";
+                path = yamlFmt.generate yamlName session;
+              }
+          )
+          sessions
       );
     in
     {

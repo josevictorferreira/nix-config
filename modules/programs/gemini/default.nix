@@ -148,6 +148,9 @@ let
             GEMINI_YOLO_MODE = "true";
           };
         };
+        jvf.secrets.environment.keys = {
+          "gemini_api_key" = true;
+        };
 
         jvf.home.users.${cfg.username}.items.".gemini" = {
           kind = "dir";

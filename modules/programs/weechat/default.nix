@@ -50,6 +50,12 @@ let
           ++ allScripts;
           command = "${lib.getExe finalPackage}";
         };
+
+        jvf.secrets.environment.keys = {
+          "matrix_server_url" = true;
+          "matrix_server_username" = true;
+          "matrix_server_password" = true;
+        };
       };
     };
 in

@@ -37,7 +37,7 @@ rebuild: ## Rebuild NixOS configuration.
 		sudo -H darwin-rebuild switch --flake .#macos-macbook --show-trace; \
 	else \
 		sudo -H nixos-rebuild switch --flake .#nixos-desktop --show-trace && \
-      hyprctl reload && \
+      (hyprctl reload 2>/dev/null || echo "ℹ️  Skipping hyprctl reload (Hyprland not reachable from this shell)") && \
       (notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  " 2>/dev/null || echo "✅ Rebuild completed"); \
 	fi
 

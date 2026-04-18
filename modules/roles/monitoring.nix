@@ -54,6 +54,16 @@ let
 
       config = {
         users.users."${cfg.username}".packages = (commonPackages pkgs) ++ [ pkgs.gparted ];
+        jvf.secrets.environment.keys = {
+          "grafana_url" = true;
+          "grafana_username" = true;
+          "grafana_password" = true;
+          "grafana_service_account_token" = true;
+          "grafana_work_url" = true;
+          "grafana_work_username" = true;
+          "grafana_work_password" = true;
+          "grafana_work_service_account_token" = true;
+        };
       };
     };
 
@@ -75,6 +85,16 @@ let
 
       config = {
         users.users."${cfg.username}".packages = commonPackages pkgs;
+        jvf.secrets.environment.keys = {
+          "grafana_url" = true;
+          "grafana_username" = true;
+          "grafana_password" = true;
+          "grafana_service_account_token" = true;
+          "grafana_work_url" = true;
+          "grafana_work_username" = true;
+          "grafana_work_password" = true;
+          "grafana_work_service_account_token" = true;
+        };
       };
     };
 in

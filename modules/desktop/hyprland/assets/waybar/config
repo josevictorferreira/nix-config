@@ -45,6 +45,7 @@
 	"mpris", 
 	"group/audio",
 	"custom/separator#dot-line",
+	"custom/cctv",
 	"group/status",
 	],
 }

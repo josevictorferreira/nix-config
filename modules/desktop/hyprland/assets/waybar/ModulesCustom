@@ -203,4 +203,11 @@
 	"interval": "once",
 	"tooltip": false
 },
+
+"custom/cctv": {
+	"format": " ",
+	"on-click": "mpv $HOME/Homelab/images/cctv/camera_stream.m3u",
+	"tooltip": true,
+	"tooltip-format": "Open CCTV Stream",
+},
 }

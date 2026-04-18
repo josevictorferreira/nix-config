@@ -260,6 +260,41 @@ _: {
         "glm-5-turbo" = {
           name = "GLM-5 Turbo";
         };
+        "glm-5.1" = {
+          name = "GLM-5.1";
+          modalities = {
+            input = [ "text" ];
+            output = [ "text" ];
+          };
+          options = {
+            thinking = {
+              type = "enabled";
+              budgetTokens = 8192;
+            };
+          };
+          variants = {
+            thinker = {
+              name = "GLM-5.1 Deep Thinker";
+              reasoningEffort = "high";
+              thinking = {
+                type = "enabled";
+              };
+              temperature = 1.0;
+            };
+            fast = {
+              name = "GLM-5.1 Fast";
+              reasoningEffort = "low";
+              textVerbosity = "low";
+              thinking.type = "disabled";
+              temperature = 0.1;
+              clear_thinking = false;
+            };
+          };
+          limit = {
+            context = 202752;
+            output = 16384;
+          };
+        };
         "glm-5" = {
           name = "GLM-5";
           modalities = {
