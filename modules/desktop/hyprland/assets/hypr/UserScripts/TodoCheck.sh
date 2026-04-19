@@ -14,8 +14,8 @@ if [ ! -f "$TODO_FILE" ]; then
     exit 1
 fi
 
-# Extract unchecked items with their line numbers
-mapfile -t items < <(grep -n "^- \[ \]" "$TODO_FILE")
+# Extract unchecked items (with any leading whitespace) with line numbers
+mapfile -t items < <(grep -nE "^[[:space:]]*- \[ \]" "$TODO_FILE")
 
 # Exit if no unchecked items
 if [ ${#items[@]} -eq 0 ]; then
@@ -23,10 +23,10 @@ if [ ${#items[@]} -eq 0 ]; then
     exit 0
 fi
 
-# Build display list (strip line number prefix for rofi display)
+# Build display list (strip line number, leading whitespace, and "- [ ] " prefix)
 display_items=()
 for item in "${items[@]}"; do
-    display_items+=("$(echo "$item" | cut -d: -f2- | sed 's/^- \[ \] //')")
+    display_items+=("$(echo "$item" | cut -d: -f2- | sed -E 's/^[[:space:]]*- \[ \] //')")
 done
 
 # Show rofi menu with unchecked items
@@ -43,10 +43,10 @@ tmp=$(mktemp)
 
 while IFS= read -r line; do
     line_num=$(echo "$line" | cut -d: -f1)
-    content=$(echo "$line" | cut -d: -f2- | sed 's/^- \[ \] //')
+    content=$(echo "$line" | cut -d: -f2- | sed -E 's/^[[:space:]]*- \[ \] //')
     if [ "$content" = "$selected" ]; then
         sed "${line_num}s/- \[ \]/- [x]/;${line_num}s/$/${timestamp}/" "$TODO_FILE" > "$tmp" && mv "$tmp" "$TODO_FILE"
         notify-send "Todo" "Completed: $selected"
         exit 0
     fi
-done < <(grep -n "^- \[ \]" "$TODO_FILE")
+done < <(grep -nE "^[[:space:]]*- \[ \]" "$TODO_FILE")
