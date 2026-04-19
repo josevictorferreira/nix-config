@@ -235,7 +235,7 @@ _: {
               };
             };
           };
-          task_system = false;
+          task_system = true;
           auto_resume = true;
           aggressive_truncation = true;
           truncate_all_tool_outputs = true;
@@ -301,7 +301,7 @@ _: {
           plugins_override = { };
         };
         google_auth = false;
-        new_task_system_enabled = false;
+        new_task_system_enabled = true;
         disabled_mcps = [ ];
         disabled_tools = [ ];
         mcp_env_allowlist = [ ];
