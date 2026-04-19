@@ -29,27 +29,12 @@ _: {
       };
     };
 
-    inception = {
-      npm = "@ai-sdk/openai-compatible";
-      name = "Inception";
-      options = {
-        baseURL = "https://api.inceptionlabs.ai/v1";
-        apiKey = "{env:INCEPTION_API_KEY}";
-      };
-      models = {
-        "mercury-2" = {
-          name = "Mercury 2";
-          max_tokens = 16384;
-        };
-      };
-    };
-
-    alibaba-coding-plan = {
+    bailian-coding-plan = {
       npm = "@ai-sdk/anthropic";
-      name = "Alibaba Coding Plan";
+      name = "Model Studio Coding Plan";
       options = {
         baseURL = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1";
-        apiKey = "{env:ALIBABA_CODING_PLAN_API_KEY}";
+        apiKey = "{env:BAILIAN_CODING_PLAN_API_KEY}";
       };
       models = {
         "qwen3.5-plus" = {

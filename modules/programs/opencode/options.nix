@@ -15,6 +15,17 @@ in
       description = "Username for which to install the configuration";
     };
 
+    version = lib.mkOption {
+      type = lib.types.str;
+      default = "1.4.11";
+      example = "1.4.11";
+      description = ''
+        Pinned opencode release tag (from the anomalyco/opencode fork).
+        Bumping this and rebuilding re-installs into ~/.opencode.
+        No auto-update check is performed at launch.
+      '';
+    };
+
     baseRules = lib.mkOption {
       type = lib.types.str;
       default = "";

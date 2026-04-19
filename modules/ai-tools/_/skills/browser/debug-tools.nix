@@ -1,7 +1,7 @@
 { lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
   name = "browser-debug-tools";
-  description = "Browser automation and debugging via Chrome DevTools Protocol and Playwright. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
+  description = "Browser automation and debugging via Chrome DevTools Protocol. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
   licence = "MIT";
   metadata = {
     triggers = "browser, debug, inspect, element, console, devtools, screenshot, navigate, click, fill, form, hover, drag, network, request, response, performance, emulate, device, mobile, geolocation, CPU throttling, JavaScript, execute, snapshot, accessibility, a11y, DOM, CSS, HTML, troubleshoot, webpage, automation, testing, E2E, interaction, keyboard, press key, page, tab, reload, refresh";
@@ -17,12 +17,6 @@
         "--executablePath=${defaultBrowser}"
       ];
     };
-    playwriter = {
-      command = lib.getExe' pkgs.nodejs "npx";
-      args = [
-        "playwriter@latest"
-      ];
-    };
   };
   prompt = ''
     # Browser Debug Tools
@@ -33,7 +27,7 @@
     skill_mcp(mcp_name="<MCP_SERVER>", tool_name="<TOOL>", arguments='<JSON>')
     ```
 
-    - `mcp_name` = MCP server (`playwriter`, `chrome-devtools`) — NOT `"browser-debug-tools"`
+    - `mcp_name` = MCP server (`chrome-devtools`) — NOT `"browser-debug-tools"`
     - `tool_name` = Tool name without prefix — NOT `chrome-devtools_click`
 
     ## Tools
@@ -56,8 +50,6 @@
     | `chrome-devtools` | `select_page` | Select a page as context for future calls |
     | `chrome-devtools` | `take_screenshot` | Take screenshots (page or element) |
     | `chrome-devtools` | `take_snapshot` | Take accessibility tree snapshot |
-    | `playwriter` | `execute` | Control browser via Playwright code snippets |
-    | `playwriter` | `reset` | Reset CDP connection and browser/page/context |
 
     ## Examples
 
@@ -141,16 +133,6 @@
     skill_mcp(mcp_name="chrome-devtools", tool_name="take_snapshot", arguments='{"verbose": false}')
     ```
 
-    **Execute Playwright code**:
-    ```
-    skill_mcp(mcp_name="playwriter", tool_name="execute", arguments='{"code": "await page.click(\\'button\\'); console.log(\\'Clicked!\\');", "timeout": 10000}')
-    ```
-
-    **Reset connection**:
-    ```
-    skill_mcp(mcp_name="playwriter", tool_name="reset", arguments='{}')
-    ```
-
     ## Tool Details
 
     ### chrome-devtools Tools
@@ -221,21 +203,11 @@
     - `verbose` (boolean, optional): Include all a11y tree info (default: false)
     - `filePath` (string, optional): Save to file path instead of attaching to response
 
-    ### playwriter Tools
-
-    **execute** - Run Playwright code snippets
-    - `code` (string, required): JavaScript code with {page, state, context} in scope
-    - `timeout` (number, optional): Timeout in ms (default: 5000)
-
-    **reset** - Reset CDP connection
-    - No parameters required
-
     ## Common Mistakes
 
     | ❌ Wrong | ✅ Correct |
     |----------|-----------|
-    | `mcp_name="browser-debug-tools"` | `mcp_name="chrome-devtools"` or `mcp_name="playwriter"` |
+    | `mcp_name="browser-debug-tools"` | `mcp_name="chrome-devtools"` |
     | `tool_name="chrome-devtools_click"` | `tool_name="click"` |
-    | `tool_name="playwriter_execute"` | `tool_name="execute"` |
   '';
 }

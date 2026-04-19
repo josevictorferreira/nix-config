@@ -40,7 +40,7 @@ let
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
             kimi_api_key = true;
-            alibaba_coding_plan_api_key = true;
+            bailian_coding_plan_api_key = true;
             inception_api_key = true;
             roboflow_api_key = true;
             # Homelab / infra
@@ -69,7 +69,7 @@ let
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
             kimi_api_key = true;
-            alibaba_coding_plan_api_key = true;
+            bailian_coding_plan_api_key = true;
             inception_api_key = true;
             roboflow_api_key = true;
             # Homelab / infra

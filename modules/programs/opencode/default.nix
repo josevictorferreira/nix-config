@@ -15,7 +15,10 @@ let
       cfg = config.jvf.programs.opencode;
 
       # Import wrapper definitions
-      wrapperDefs = import ./_/wrapper.nix { inherit pkgs; };
+      wrapperDefs = import ./_/wrapper.nix {
+        inherit pkgs;
+        inherit (cfg) version;
+      };
       inherit (wrapperDefs) shellScriptBinLinux shellScriptBinDarwin;
 
       # Build config directory as a derivation for jvf.home
@@ -96,17 +99,48 @@ let
             ];
           };
 
-          small_model = "alibaba-coding-plan/qwen3-coder-next";
+          small_model = "bailian-coding-plan/qwen3-coder-next";
         };
 
         # Config materialization via jvf.home
-        jvf.home.users.${cfg.username}.items.".config/opencode" = {
-          kind = "dir";
-          mode = "copy";
-          source = opencodeConfigDir;
-          preserve = [
-            "dcp.jsonc"
-          ];
+        jvf.home.users.${cfg.username}.items = {
+          ".config/opencode" = {
+            kind = "dir";
+            mode = "copy";
+            source = opencodeConfigDir;
+            preserve = [
+              "dcp.jsonc"
+            ];
+          };
+
+          # Plugin-state sentinel: runs ONLY when the declared plugin list changes.
+          # Performs a surgical cleanup of opencode's plugin runtime (node_modules,
+          # lockfiles, plugin-wrapper binaries like `opencode.mcpflow-real`) while
+          # preserving the main opencode binary so rebuilds don't force a 142 MB
+          # re-download. Version bumps are handled separately by the wrapper,
+          # which compares the declared version against ~/.opencode/.installed-version.
+          ".cache/opencode-nix-state/plugins.json" = {
+            kind = "file";
+            mode = "copy";
+            text = builtins.toJSON (cfg.settings.plugin or [ ]);
+            postInstall = ''
+              OPENCODE_HOME="$HOME_DIR/.opencode"
+              if [ -d "$OPENCODE_HOME" ]; then
+                echo "[opencode] Plugin list changed; clearing plugin state (keeping opencode binary)."
+                rm -rf "$OPENCODE_HOME/node_modules" \
+                       "$OPENCODE_HOME/package.json" \
+                       "$OPENCODE_HOME/package-lock.json"
+                # Remove plugin-installed wrapper binaries (e.g. opencode.mcpflow-real,
+                # opencode.bak) but leave the main `opencode` binary in place.
+                if [ -d "$OPENCODE_HOME/bin" ]; then
+                  find "$OPENCODE_HOME/bin" -maxdepth 1 -type f \
+                    -name 'opencode.*' -delete 2>/dev/null || true
+                fi
+              fi
+              # Remove the obsolete combined sentinel from earlier iterations.
+              rm -f "$HOME_DIR/.cache/opencode-nix-state/install.json"
+            '';
+          };
         };
 
         # Wrappers config (packages only)

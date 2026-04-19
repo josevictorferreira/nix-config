@@ -44,7 +44,9 @@ let
 
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
-        jvf.aiTools.mcp.playwriter.enable = true;
+        jvf.aiTools.mcp.grafana.enable = false;
+
+        jvf.aiTools.mcp.grafanaWork.enable = false;
         jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
@@ -59,7 +61,7 @@ let
           };
         };
 
-        users.users."${cfg.username}".packages = [ ];
+        users.users."${cfg.username}".packages = [ pkgs.crush ];
       };
     };
 
@@ -89,7 +91,9 @@ let
 
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
-        jvf.aiTools.mcp.playwriter.enable = true;
+        jvf.aiTools.mcp.grafana.enable = false;
+
+        jvf.aiTools.mcp.grafanaWork.enable = false;
         jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
@@ -104,7 +108,7 @@ let
           };
         };
 
-        users.users."${cfg.username}".packages = [ ];
+        users.users."${cfg.username}".packages = [ pkgs.crush ];
       };
     };
 in
