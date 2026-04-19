@@ -19,9 +19,10 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;
@@ -99,7 +100,7 @@ in
               BATTERY_EOF
 
               # Make all scripts executable
-              find "$TARGET_PATH/scripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+              find "$TARGET_PATH/scripts" "$TARGET_PATH/UserScripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
               echo "Reloading Hyprland..."
               ${config.programs.hyprland.package}/bin/hyprctl reload 2>/dev/null || true
             '';

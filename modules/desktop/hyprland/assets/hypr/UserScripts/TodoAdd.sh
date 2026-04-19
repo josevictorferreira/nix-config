@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TODO_FILE="$HOME/Homelab/notetaking/01-projects/activbe/Todo.md"
+TODO_FILE="$HOME/Homelab/notetaking/01-projects/active/Todo.md"
 
 # Kill Rofi if already running before execution
 if pgrep -x "rofi" >/dev/null; then
@@ -9,7 +9,7 @@ if pgrep -x "rofi" >/dev/null; then
 fi
 
 # Prompt for todo text via rofi
-text=$(rofi -dmenu -p "New todo:" -config "$HOME/.config/rofi/config-compact.rasi")
+text=$(rofi -dmenu -p "New todo:" -theme-str 'entry { placeholder: "Add a new task..."; }')
 
 # Exit if user cancelled or empty input
 if [ -z "$text" ]; then
@@ -22,12 +22,13 @@ mkdir -p "$(dirname "$TODO_FILE")"
 # Create file if it doesn't exist
 touch "$TODO_FILE"
 
-# Ensure file has at least 2 lines so insertion lands at line 3
+# Ensure file has at least 3 lines so insertion lands at line 4
 line_count=$(wc -l < "$TODO_FILE")
-while [ "$line_count" -lt 2 ]; do
+while [ "$line_count" -lt 3 ]; do
     echo "" >> "$TODO_FILE"
     line_count=$((line_count + 1))
 done
 
-# Insert todo item at line 3
-sed -i "3i - [ ] ${text}" "$TODO_FILE"
+# Insert todo item at line 4
+tmp=$(mktemp)
+sed "4i - [ ] ${text}" "$TODO_FILE" > "$tmp" && mv "$tmp" "$TODO_FILE"
