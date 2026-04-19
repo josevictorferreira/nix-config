@@ -20,8 +20,8 @@ _: {
         codex = "openai/gpt-5.3-codex";
         models = {
           quick = {
-            default = "openrouter/inception/mercury-2";
-            cheap = minimax;
+            default = minimax;
+            cheap = qwen;
             expensive = "github-copilot/grok-code-fast-1";
             alternative = "openrouter/openai/gpt-oss-120b";
           };
