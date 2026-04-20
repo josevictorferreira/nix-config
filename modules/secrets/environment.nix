@@ -10,11 +10,9 @@ let
     let
       cfg = config.jvf.secrets.environment;
       keyList = lib.attrNames cfg.keys;
-      secretLines = map
-        (
-          name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
-        )
-        keyList;
+      secretLines = map (
+        name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
+      ) keyList;
     in
     {
       options.jvf.secrets.environment = {
@@ -40,7 +38,7 @@ let
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
             kimi_api_key = true;
-            bailian_coding_plan_api_key = true;
+            alibaba_coding_plan_api_key = true;
             inception_api_key = true;
             roboflow_api_key = true;
             # Homelab / infra
@@ -69,7 +67,7 @@ let
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
             kimi_api_key = true;
-            bailian_coding_plan_api_key = true;
+            alibaba_coding_plan_api_key = true;
             inception_api_key = true;
             roboflow_api_key = true;
             # Homelab / infra
@@ -82,14 +80,12 @@ let
           lib.mkMerge [
             (lib.optionalAttrs (!isDarwin) {
               sops.secrets = lib.listToAttrs (
-                map
-                  (name: {
-                    inherit name;
-                    value = {
-                      owner = cfg.username;
-                    };
-                  })
-                  keyList
+                map (name: {
+                  inherit name;
+                  value = {
+                    owner = cfg.username;
+                  };
+                }) keyList
               );
             })
             {

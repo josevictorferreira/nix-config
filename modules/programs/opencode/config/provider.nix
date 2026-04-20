@@ -29,12 +29,12 @@ _: {
       };
     };
 
-    bailian-coding-plan = {
+    alibaba-coding-plan = {
       npm = "@ai-sdk/anthropic";
-      name = "Model Studio Coding Plan";
+      name = "Alibaba Coding Plan";
       options = {
         baseURL = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1";
-        apiKey = "{env:BAILIAN_CODING_PLAN_API_KEY}";
+        apiKey = "{env:ALIBABA_CODING_PLAN_API_KEY}";
       };
       models = {
         "qwen3.5-plus" = {
@@ -212,6 +212,26 @@ _: {
         apiKey = "{env:KIMI_API_KEY}";
       };
       models = {
+        "kimi-k2.6" = {
+          name = "Kimi K2.6";
+          modalities = {
+            input = [
+              "text"
+              "image"
+            ];
+            output = [ "text" ];
+          };
+          options = {
+            thinking = {
+              type = "enabled";
+              budgetTokens = 8192;
+            };
+          };
+          limit = {
+            context = 262144;
+            output = 32768;
+          };
+        };
         "kimi-k2.5" = {
           name = "Kimi K2.5";
           modalities = {
