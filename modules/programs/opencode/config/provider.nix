@@ -204,11 +204,11 @@ _: {
       };
     };
 
-    moonshotai = {
+    kimi-for-coding = {
       npm = "@ai-sdk/anthropic";
-      name = "Moonshot AI";
+      name = "Kimi For Coding";
       options = {
-        baseURL = "https://api.moonshot.ai/anthropic";
+        baseURL = "https://api.kimi.com/coding/v1";
         apiKey = "{env:KIMI_API_KEY}";
       };
       models = {

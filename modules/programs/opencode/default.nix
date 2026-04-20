@@ -5,11 +5,12 @@
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -33,27 +34,24 @@ let
         };
 
       opencodeConfigDir = pkgs.linkFarm "opencode-config" (
-        lib.mapAttrsToList
-          (
-            fileName: fileValue:
-              let
-                filePath =
-                  if builtins.isString fileValue then
-                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else if builtins.isAttrs fileValue then
-                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
-                      (
-                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                      )
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-          )
-          opencodeConfigs
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if builtins.isString fileValue then
+                pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else if builtins.isAttrs fileValue then
+                pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
+                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                )
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) opencodeConfigs
       );
     in
     {
@@ -100,6 +98,7 @@ let
           };
 
           small_model = "bailian-coding-plan/qwen3-coder-next";
+          default_agent = "OpenCode-Builder";
         };
 
         # Config materialization via jvf.home

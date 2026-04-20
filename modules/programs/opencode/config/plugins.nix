@@ -345,6 +345,8 @@ _: {
         sisyphus_agent = {
           enabled = true;
           model = models.coder.default;
+          default_builder_enabled = true;
+          replace_plan = false;
         };
         _migrations = {
           version = 1;
