@@ -10,7 +10,7 @@ _: {
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "kimi-for-coding/k2p5";
+        kimi = "kimi-for-coding/k2p6";
         glm = "zai-coding-plan/glm-5.1";
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
@@ -26,16 +26,16 @@ _: {
             alternative = "openrouter/openai/gpt-oss-120b";
           };
           coder = {
-            default = glm;
-            cheap = kimi;
+            default = kimi;
+            cheap = minimax;
             expensive = codex;
-            alternative = minimax;
+            alternative = glm;
           };
           intelligent = {
             default = gpt;
-            cheap = kimi;
+            cheap = glm;
             expensive = geminiPro;
-            alternative = glm;
+            alternative = kimi;
           };
           looker = {
             default = geminiFlash;
