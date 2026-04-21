@@ -16,9 +16,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
@@ -30,15 +31,17 @@ let
         users.users."${cfg.username}".packages = [
           pkgs.inkscape-with-extensions
           pkgs.blender
+          pkgs.freecad
           pkgs.orca-slicer
         ];
       };
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
