@@ -97,7 +97,7 @@ let
             ];
           };
 
-          small_model = "bailian-coding-plan/qwen3-coder-next";
+          small_model = "alibaba-coding-plan/qwen3-coder-next";
           default_agent = "OpenCode-Builder";
         };
 

@@ -1,4 +1,11 @@
-{ lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
+{ lib
+, pkgs
+, isDarwin
+, npx
+, defaultBrowser
+, kebabToHuman
+, ...
+}:
 {
   name = "browser-debug-tools";
   description = "Browser automation and debugging via Chrome DevTools Protocol. Control browser, inspect elements, execute JavaScript, monitor network/console, emulate devices, take screenshots, and automate interactions.";
@@ -8,14 +15,15 @@
   };
   mcp = {
     chrome-devtools = {
-      command = npx;
-      args = [
-        "-y"
-        "chrome-devtools-mcp@latest"
-        "--headless=true"
-        "--isolated=true"
-        "--executablePath=${defaultBrowser}"
-      ];
+      command = pkgs.writeShellScript "mcp-chrome-devtools-wrapper" ''
+        export PATH="${lib.getBin pkgs.nodejs}/bin:$PATH"
+        exec ${npx} -y chrome-devtools-mcp@latest \
+          --headless=true \
+          --isolated=true \
+          --executablePath=${defaultBrowser} \
+          "$@"
+      '';
+      args = [ ];
     };
   };
   prompt = ''

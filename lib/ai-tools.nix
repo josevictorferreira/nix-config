@@ -4,30 +4,21 @@
 
 let
 
-  transformMcpOptions = program: base:
+  transformMcpOptions =
+    program: base:
     if builtins.isAttrs base then
-      if program == "opencode" then
-      # OpenCode prefers command as a list including args, and NO args attribute
-        let
-          baseCommand = base.command or [ ];
-          command = if builtins.isList baseCommand then baseCommand else [ baseCommand ];
-          baseArgs = base.args or [ ];
-          args = if builtins.isList baseArgs then baseArgs else [ baseArgs ];
-          # Combine and filter out empty strings if command was missing
-          fullCommand = lib.filter (x: x != "") (command ++ args);
-        in
-        (builtins.removeAttrs base [ "args" ]) // {
-          command = fullCommand;
+      if base ? command && builtins.isList base.command then
+      # If command is already a list, split into command string + args list
+        base
+        // {
+          command = builtins.head base.command;
+          args = (builtins.tail base.command) ++ (base.args or [ ]);
         }
       else
-      # Others (claudecode, cursor, etc.) prefer command as string and args as list
-        if base ? command && builtins.isList base.command then
-          base // {
-            command = builtins.head base.command;
-            args = (builtins.tail base.command) ++ (base.args or [ ]);
-          }
-        else base
-    else base;
+      # command is already a string, keep as-is with args
+        base
+    else
+      base;
 
   mkSkillModule =
     args:
@@ -37,14 +28,20 @@ let
     if newApi then
       let
         inherit (args) skillOptions;
-        skillName =
-          skillOptions.name or (throw "mkSkillModule: skillOptions.name is required");
-        defaultPrograms = args.programs or (
-          if (skillOptions ? mcp && skillOptions.mcp != { }) || (skillOptions ? mcps && skillOptions.mcps != { }) then
-            [ "opencode" ]
-          else
-            [ "opencode" "claudecode" "gemini" ]
-        );
+        skillName = skillOptions.name or (throw "mkSkillModule: skillOptions.name is required");
+        defaultPrograms =
+          args.programs or (
+            if
+              (skillOptions ? mcp && skillOptions.mcp != { }) || (skillOptions ? mcps && skillOptions.mcps != { })
+            then
+              [ "opencode" ]
+            else
+              [
+                "opencode"
+                "claudecode"
+                "gemini"
+              ]
+          );
       in
       {
         options = {
@@ -57,10 +54,15 @@ let
             description = "Programs to install this skill in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.skills.${skillName};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
@@ -99,12 +101,17 @@ let
             ;
           "allowed-tools" = allowed-tools;
         };
-        defaultPrograms = args.programs or (
-          if (mcp != { }) then
-            [ "opencode" ]
-          else
-            [ "opencode" "claudecode" "gemini" ]
-        );
+        defaultPrograms =
+          args.programs or (
+            if (mcp != { }) then
+              [ "opencode" ]
+            else
+              [
+                "opencode"
+                "claudecode"
+                "gemini"
+              ]
+          );
       in
       {
         options = {
@@ -117,10 +124,15 @@ let
             description = "Programs to install this skill in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.skills.${name};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
@@ -155,9 +167,15 @@ let
     if newApi then
       let
         inherit (args) agentOptions;
-        agentName =
-          agentOptions.name or (throw "mkAgentModule: agentOptions.name is required");
-        defaultPrograms = args.programs or (agentOptions.programs or [ "opencode" "claudecode" "gemini" ]);
+        agentName = agentOptions.name or (throw "mkAgentModule: agentOptions.name is required");
+        defaultPrograms =
+          args.programs or (
+            agentOptions.programs or [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ]
+          );
       in
       {
         options = {
@@ -170,10 +188,15 @@ let
             description = "Programs to install this agent in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.agents.${agentName};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
@@ -196,7 +219,12 @@ let
         prompt = args.prompt or "";
         tools = args.tools or [ ];
         disabledTools = args.disabledTools or [ ];
-        defaultPrograms = args.programs or [ "opencode" "claudecode" "gemini" ];
+        defaultPrograms =
+          args.programs or [
+            "opencode"
+            "claudecode"
+            "gemini"
+          ];
         agentDefinition = {
           inherit
             name
@@ -222,10 +250,15 @@ let
             description = "Programs to install this agent in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.agents.${name};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
@@ -248,10 +281,16 @@ let
         optionName = args.name or "MCP Server";
         inherit (args) mcpOptions;
 
-        programs = args.programs or [ "opencode" "claudecode" "gemini" ];
+        programs =
+          args.programs or [
+            "opencode"
+            "claudecode"
+            "gemini"
+          ];
 
         mcpNames = args.mcpNames or { };
-        mcpNameForProgram = program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
+        mcpNameForProgram =
+          program: if builtins.hasAttr program mcpNames then mcpNames.${program} else optionName;
 
         mcpOptionsForProgram = program: transformMcpOptions program mcpOptions;
       in
@@ -277,7 +316,12 @@ let
     else
       let
         name = args.name or "MCP Server";
-        programs = args.programs or [ "opencode" "claudecode" "gemini" ];
+        programs =
+          args.programs or [
+            "opencode"
+            "claudecode"
+            "gemini"
+          ];
         config = args.config or { };
       in
       {
@@ -303,8 +347,18 @@ let
       let
         inherit (args) commandOptions;
         commandName =
-          args.name or (commandOptions.name or (throw "mkCommandModule: either name or commandOptions.name is required"));
-        defaultPrograms = args.programs or (commandOptions.programs or [ "opencode" "claudecode" "gemini" ]);
+          args.name
+            or (
+            commandOptions.name or (throw "mkCommandModule: either name or commandOptions.name is required")
+          );
+        defaultPrograms =
+          args.programs or (
+            commandOptions.programs or [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ]
+          );
       in
       {
         options = {
@@ -317,16 +371,22 @@ let
             description = "Programs to install this command in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.commands.${commandName};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
               map
                 (program: {
-                  jvf.programs.${program}.commands.${commandName} = lib.mkIf (lib.elem program cfg.programs) commandOptions;
+                  jvf.programs.${program}.commands.${commandName} =
+                    lib.mkIf (lib.elem program cfg.programs) commandOptions;
                 })
                 allPrograms
             )
@@ -338,7 +398,12 @@ let
         description = args.description or "";
         agent = args.agent or "";
         prompt = args.prompt or "";
-        defaultPrograms = args.programs or [ "opencode" "claudecode" "gemini" ];
+        defaultPrograms =
+          args.programs or [
+            "opencode"
+            "claudecode"
+            "gemini"
+          ];
         commandDefinition = {
           inherit
             name
@@ -359,22 +424,27 @@ let
             description = "Programs to install this command in";
           };
         };
-        config = { config, ... }:
+        config =
+          { config, ... }:
           let
             cfg = config.jvf.aiTools.commands.${name};
-            allPrograms = [ "opencode" "claudecode" "gemini" ];
+            allPrograms = [
+              "opencode"
+              "claudecode"
+              "gemini"
+            ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
               map
                 (program: {
-                  jvf.programs.${program}.commands.${name} = lib.mkIf (lib.elem program cfg.programs) commandDefinition;
+                  jvf.programs.${program}.commands.${name} =
+                    lib.mkIf (lib.elem program cfg.programs) commandDefinition;
                 })
                 allPrograms
             )
           );
       };
-
 
   toClaudeMarkdownPrompt =
     value:
@@ -506,14 +576,19 @@ let
           formatValue =
             name: cfg:
             let
-              # opencode prefers command as an array including args, and NO args attribute
-              cfgCommand = cfg.command or [ ];
-              command = if builtins.isList cfgCommand then cfgCommand else [ cfgCommand ];
+              # command as string with separate args list
+              cfgCommand = cfg.command or "";
+              commandStr = if builtins.isList cfgCommand then builtins.head cfgCommand else cfgCommand;
               cfgArgs = cfg.args or [ ];
-              args = if builtins.isList cfgArgs then cfgArgs else [ cfgArgs ];
-              fullCommand = lib.filter (x: x != "") (command ++ args);
+              argsList = if builtins.isList cfgArgs then cfgArgs else [ cfgArgs ];
 
-              commandLine = "command: [ ${lib.concatStringsSep ", " (map (arg: "\"${arg}\"") fullCommand)} ]";
+              commandLine = "command: \"${commandStr}\"";
+              argsLine =
+                if argsList != [ ] then
+                  "\n${indent}  args:\n"
+                  + (lib.concatStringsSep "\n" (map (arg: "${indent}    - \"${arg}\"") argsList))
+                else
+                  "";
 
               envStr =
                 if cfg ? env && cfg.env != { } then
@@ -522,7 +597,7 @@ let
                 else
                   "";
             in
-            "${indent}${name}:\n${indent}  ${commandLine}${envStr}";
+            "${indent}${name}:\n${indent}  ${commandLine}${argsLine}${envStr}";
         in
         "mcp:\n" + (lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg: formatValue name cfg) mcp));
 

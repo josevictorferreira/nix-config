@@ -19,10 +19,9 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-hypr =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.desktop.hyprland.hypr;

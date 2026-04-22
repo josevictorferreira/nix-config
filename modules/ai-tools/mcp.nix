@@ -9,11 +9,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkMcpModule;
@@ -44,7 +45,7 @@ let
         name = "context7";
         programs = [ "claudecode" ];
         mcpOptions = {
-          enabled = true;
+          enabled = false;
           type = "local";
           command = pkgs.writeShellScript "mcp-context7-wrapper" ''
             export PATH="${nodeBin}:$PATH"
@@ -60,7 +61,7 @@ let
         programs = [ "claudecode" ];
         mcpOptions = {
           type = "local";
-          enabled = true;
+          enabled = false;
           command = pkgs.writeShellScript "mcp-chrome-devtools-wrapper" ''
             export PATH="${nodeBin}:$PATH"
             exec ${npx} -y chrome-devtools-mcp@latest \
@@ -76,10 +77,10 @@ let
       # --- grafana ---
       grafanaDef = mkMcpModule {
         name = "grafana";
-        programs = [ "opencode" ];
+        programs = [ ];
         mcpOptions = {
           type = "local";
-          enabled = true;
+          enabled = false;
           command = grafanaMcpWrapper;
           args = [ ];
         };
@@ -93,7 +94,7 @@ let
           command = grafanaMcpWrapper;
           args = [ ];
           type = "local";
-          enabled = true;
+          enabled = false;
         };
       };
 

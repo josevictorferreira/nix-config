@@ -5,11 +5,14 @@ _: {
       npm = "@ai-sdk/openai-compatible";
       name = "Local";
       options = {
-        baseURL = "http://10.10.10.10:1234/v1";
+        baseURL = "http://10.10.10.10:8080/v1";
       };
       models = {
-        "nvidia_orchestrator-8b" = {
-          name = "NVIDIA Orchestrator 8B";
+        "0n9ljpgzn31y0bvcq6pbwvgmx2lz9kvr-gemma-4-26B-A4B-it-UD-Q3_K_M.gguf" = {
+          name = "Gemma 4 26B A4B IT UD Q3_K_M (Local)";
+        };
+        "ygxn6zpv0yd2z2p07zyvk9jk7rk9s6nr-Qwopus-GLM-18B-Healed-Q3_K_M.gguf" = {
+          name = "Qwopus GLM 18B Healed Q3_K_M (Local)";
         };
       };
     };

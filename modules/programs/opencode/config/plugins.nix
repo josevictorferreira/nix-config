@@ -15,7 +15,7 @@ _: {
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
-        qwen = "bailian-coding-plan/qwen3.5-plus";
+        qwen = "alibaba-coding-plan/qwen3.5-plus";
         gpt = "openai/gpt-5.4";
         codex = "openai/gpt-5.3-codex";
         models = {
@@ -197,7 +197,7 @@ _: {
             openrouter = 3;
             kimi-for-coding = 2;
             zai-coding-plan = 10;
-            bailian-coding-plan = 3;
+            alibaba-coding-plan = 3;
             minimax = 3;
           };
           modelConcurrency = 3;
@@ -302,7 +302,9 @@ _: {
         };
         google_auth = false;
         new_task_system_enabled = true;
-        disabled_mcps = [ ];
+        disabled_mcps = [
+          "chrome-devtools"
+        ];
         disabled_tools = [ ];
         mcp_env_allowlist = [ ];
         model_fallback = false;
@@ -322,9 +324,6 @@ _: {
           enabled = false;
           max_retries = 3;
           retry_delay_seconds = 5;
-        };
-        browser_automation_engine = {
-          default = "playwright";
         };
         websearch = {
           default_engine = "exa";
