@@ -39,7 +39,7 @@ GDK_BACKEND=$BACKEND yad --width=$dynamic_width --height=$dynamic_height \
 " SHIFT K" "Searchable Keybinds" "(Keybinds)" \
 " A" "Desktop Overview" "(AGS Overview)" \
 " D" "App Launcher" "(rofi-wayland)" \
-" T" "Open File Manager" "(Thunar)" \
+"\uf07b T" "Open File Manager" "(Yazi)" \
 " S" "Google Search" "(rofi)" \
 " Q" "close active window" "(not kill)" \
 " Shift Q " "kills an active window" "(kill)" \

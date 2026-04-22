@@ -30,11 +30,9 @@ let
     typeguard = psuper.typeguard.overridePythonAttrs (old: {
       doCheck = false;
       outputs = [ "out" ];
-      nativeBuildInputs = builtins.filter
-        (
-          p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx"
-        )
-        (old.nativeBuildInputs or [ ]);
+      nativeBuildInputs = builtins.filter (
+        p: (p.pname or "") != "sphinxHook" && (p.pname or "") != "sphinx"
+      ) (old.nativeBuildInputs or [ ]);
       postBuild = "";
     });
     sphinx-autodoc-typehints = psuper.buildPythonPackage {
@@ -161,7 +159,6 @@ in
         desktop-hyprland-qt5ct
         desktop-hyprland-qt6ct
         desktop-hyprland-kvantum
-        desktop-hyprland-thunar
         desktop-hyprland-xfce4
         desktop-hyprland-gtk3
         desktop-hyprland-fastfetch

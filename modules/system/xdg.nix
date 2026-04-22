@@ -54,8 +54,8 @@ let
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "calc.desktop"; # .xlsx
             "application/vnd.oasis.opendocument.spreadsheet" = "calc.desktop"; # .ods
 
-            # --- File Manager (Thunar) ---
-            "inode/directory" = "thunar.desktop";
+            # --- File Manager (Yazi) ---
+            "inode/directory" = "yazi-fm.desktop";
 
             # --- Images (Imv) ---
             "image/jpeg" = "imv.desktop";
@@ -113,10 +113,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.system.xdg;
