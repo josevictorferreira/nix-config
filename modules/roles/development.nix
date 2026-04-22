@@ -20,9 +20,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -41,6 +42,8 @@ let
         programs-git
         system-virtualization
         programs-brave
+        programs-brave
+        programs-yazi
       ]);
 
       config = {
@@ -83,9 +86,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -104,6 +108,7 @@ let
         programs-git
         system-virtualization
         programs-brave
+        programs-yazi
       ]);
 
       config = {
