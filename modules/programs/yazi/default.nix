@@ -1093,12 +1093,18 @@ let
           ++ lib.optionals (!isDarwin) [
             {
               on = "y";
-              run = "plugin wl-clipboard --args=copy";
+              run = [
+                "yank"
+                "plugin wl-clipboard --args=copy"
+              ];
               desc = "Copy to clipboard";
             }
             {
               on = "Y";
-              run = "plugin wl-clipboard --args=cut";
+              run = [
+                "yank --cut"
+                "plugin wl-clipboard --args=cut"
+              ];
               desc = "Cut to clipboard";
             }
             {
