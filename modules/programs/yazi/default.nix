@@ -982,6 +982,18 @@ let
               run = "plugin wl-clipboard --args=cut";
               desc = "Cut to clipboard";
             }
+            {
+              on = "<Esc>";
+              run = "shell 'hyprctl dispatch togglespecialworkspace yazi'";
+              desc = "Hide scratchpad";
+            }
+          ]
+          ++ lib.optionals isDarwin [
+            {
+              on = "<Esc>";
+              run = "quit";
+              desc = "Quit";
+            }
           ];
       };
 
