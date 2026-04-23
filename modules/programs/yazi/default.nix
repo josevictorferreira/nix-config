@@ -33,6 +33,8 @@ let
     let
       cfg = config.jvf.programs.yazi;
       yaziPlugins = pkgs.yaziPlugins;
+      yaziBin = lib.getExe cfg.package;
+      kittyBin = lib.getExe pkgs.kitty;
 
       tokyoNightFlavor = pkgs.fetchFromGitHub {
         owner = "BennyOe";
@@ -98,6 +100,10 @@ let
           name = "yatline-githead.yazi";
           path = yaziPlugins.yatline-githead;
         }
+        {
+          name = "wl-clipboard.yazi";
+          path = yaziPlugins.wl-clipboard;
+        }
       ];
 
       flavorsDir = pkgs.linkFarm "yazi-flavors" [
@@ -106,6 +112,119 @@ let
           path = tokyoNightFlavor;
         }
       ];
+
+      yaziDesktopItem = pkgs.makeDesktopItem {
+        name = "yazi-fm";
+        desktopName = "Yazi File Manager";
+        exec = "${kittyBin} --class=yazi-fm -e ${yaziBin} %F";
+        icon = "system-file-manager";
+        terminal = false;
+        type = "Application";
+        categories = [
+          "System"
+          "FileManager"
+        ];
+        mimeTypes = [
+          "inode/directory"
+          "application/x-directory"
+        ];
+      };
+
+      fileManager1Bridge = pkgs.writeShellScriptBin "yazi-filemanager1" ''
+        exec ${pkgs.gjs}/bin/gjs ${pkgs.writeText "yazi-filemanager1.js" ''
+          const { Gio, GLib } = imports.gi;
+
+          const nodeInfo = Gio.DBusNodeInfo.new_for_xml(`
+            <node>
+              <interface name="org.freedesktop.FileManager1">
+                <method name="ShowItems">
+                  <arg name="uris" type="as" direction="in"/>
+                  <arg name="startup_id" type="s" direction="in"/>
+                </method>
+                <method name="ShowFolders">
+                  <arg name="uris" type="as" direction="in"/>
+                  <arg name="startup_id" type="s" direction="in"/>
+                </method>
+                <method name="ShowItemProperties">
+                  <arg name="uris" type="as" direction="in"/>
+                  <arg name="startup_id" type="s" direction="in"/>
+                </method>
+              </interface>
+            </node>
+          `);
+
+          function uriToPath(uri) {
+            try {
+              return Gio.File.new_for_uri(uri).get_path();
+            } catch (error) {
+              return null;
+            }
+          }
+
+          function targetPath(path, methodName) {
+            if (!path) {
+              return null;
+            }
+
+            if (methodName === "ShowFolders") {
+              return path;
+            }
+
+            try {
+              const file = Gio.File.new_for_path(path);
+              if (file.query_file_type(Gio.FileQueryInfoFlags.NONE, null) === Gio.FileType.DIRECTORY) {
+                return path;
+              }
+            } catch (error) {
+              return GLib.path_get_dirname(path);
+            }
+
+            return GLib.path_get_dirname(path);
+          }
+
+          function openInYazi(path) {
+            if (!path) {
+              return;
+            }
+
+            Gio.Subprocess.new(
+              ["${kittyBin}", "--class=yazi-fm", "-e", "${yaziBin}", path],
+              Gio.SubprocessFlags.NONE
+            );
+          }
+
+          function handleMethodCall(_connection, _sender, _objectPath, _interfaceName, methodName, parameters, invocation) {
+            const [uris] = parameters.deepUnpack();
+            const path = uris.length > 0 ? targetPath(uriToPath(uris[0]), methodName) : null;
+            openInYazi(path);
+            invocation.return_value(new GLib.Variant("()", []));
+          }
+
+          Gio.bus_own_name(
+            Gio.BusType.SESSION,
+            "org.freedesktop.FileManager1",
+            Gio.BusNameOwnerFlags.NONE,
+            connection => {
+              connection.register_object(
+                "/org/freedesktop/FileManager1",
+                nodeInfo.interfaces[0],
+                { method_call: handleMethodCall },
+                null
+              );
+            },
+            null,
+            null
+          );
+
+          new GLib.MainLoop(null, false).run();
+        ''}
+      '';
+
+      fileManager1Service = pkgs.writeTextDir "share/dbus-1/services/org.freedesktop.FileManager1.service" ''
+        [D-BUS Service]
+        Name=org.freedesktop.FileManager1
+        Exec=${lib.getExe fileManager1Bridge}
+      '';
 
       # Shell wrapper function
       shellWrapperFunction = ''
@@ -1112,19 +1231,8 @@ let
       }
       // lib.optionalAttrs (!isDarwin) {
         users.users."${cfg.username}".packages = [
-          (pkgs.makeDesktopItem {
-            name = "yazi-fm";
-            desktopName = "Yazi File Manager";
-            exec = "${lib.getExe pkgs.kitty} --class=yazi-fm -e yazi %F";
-            icon = "system-file-manager";
-            terminal = false;
-            type = "Application";
-            categories = [
-              "System"
-              "FileManager"
-            ];
-            mimeTypes = [ "inode/directory" ];
-          })
+          yaziDesktopItem
+          fileManager1Service
         ];
       };
     };

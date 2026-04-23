@@ -56,6 +56,7 @@ let
 
             # --- File Manager (Yazi) ---
             "inode/directory" = "yazi-fm.desktop";
+            "application/x-directory" = "yazi-fm.desktop";
 
             # --- Images (Imv) ---
             "image/jpeg" = "imv.desktop";
