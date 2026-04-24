@@ -29,6 +29,10 @@ let
         dependency-audit = mkCommand ./_/commands/general/dependency-audit.nix;
         style-audit = mkCommand ./_/commands/general/style-audit.nix;
         session-retrospective = mkCommand ./_/commands/general/session-retrospective.nix;
+        understand-problem = mkCommand ./_/commands/general/understand-problem.nix;
+        plan-problem = mkCommand ./_/commands/general/plan-problem.nix;
+        execute-problem = mkCommand ./_/commands/general/execute-problem.nix;
+        review-problem = mkCommand ./_/commands/general/review-problem.nix;
 
         homelab-service-update = mkCommand ./_/commands/homelab/homelab-service-update.nix;
 

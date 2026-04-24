@@ -59,19 +59,113 @@ let
             "application/x-directory" = "yazi-fm.desktop";
 
             # --- Images (Imv) ---
-            "image/jpeg" = "imv.desktop";
-            "image/png" = "imv.desktop";
+            "image/avif" = "imv.desktop";
+            "image/bmp" = "imv.desktop";
             "image/gif" = "imv.desktop";
-            "image/webp" = "imv.desktop";
+            "image/heic" = "imv.desktop";
+            "image/heif" = "imv.desktop";
+            "image/jpeg" = "imv.desktop";
+            "image/jxl" = "imv.desktop";
+            "image/png" = "imv.desktop";
             "image/svg+xml" = "imv.desktop";
+            "image/tiff" = "imv.desktop";
+            "image/webp" = "imv.desktop";
+            "image/x-icon" = "imv.desktop";
+            "image/x-portable-anymap" = "imv.desktop";
+            "image/x-portable-bitmap" = "imv.desktop";
+            "image/x-portable-graymap" = "imv.desktop";
+            "image/x-portable-pixmap" = "imv.desktop";
+            "image/x-xbitmap" = "imv.desktop";
+            "image/x-xpixmap" = "imv.desktop";
 
             # --- Video/Audio (VLC) ---
             "application/octet-stream" = "vlc.desktop";
-            "video/mp4" = "vlc.desktop";
-            "video/x-matroska" = "vlc.desktop"; # .mkv
-            "video/webm" = "vlc.desktop";
+            "audio/flac" = "vlc.desktop";
+            "audio/mp4" = "vlc.desktop";
             "audio/mpeg" = "vlc.desktop"; # .mp3
+            "audio/ogg" = "vlc.desktop";
+            "audio/opus" = "vlc.desktop";
+            "audio/x-aac" = "vlc.desktop";
+            "audio/x-flac" = "vlc.desktop";
+            "audio/x-matroska" = "vlc.desktop";
+            "audio/x-mp3" = "vlc.desktop";
+            "audio/x-mpegurl" = "vlc.desktop";
+            "audio/x-ms-wma" = "vlc.desktop";
+            "audio/x-vorbis+ogg" = "vlc.desktop";
             "audio/x-wav" = "vlc.desktop";
+            "video/avi" = "vlc.desktop";
+            "video/mp2t" = "vlc.desktop";
+            "video/mp4" = "vlc.desktop";
+            "video/mpeg" = "vlc.desktop";
+            "video/ogg" = "vlc.desktop";
+            "video/quicktime" = "vlc.desktop";
+            "video/webm" = "vlc.desktop";
+            "video/x-avi" = "vlc.desktop";
+            "video/x-flv" = "vlc.desktop";
+            "video/x-matroska" = "vlc.desktop"; # .mkv
+            "video/x-ms-asf" = "vlc.desktop";
+            "video/x-ms-wmv" = "vlc.desktop";
+            "video/x-msvideo" = "vlc.desktop";
+            "video/x-theora+ogg" = "vlc.desktop";
+            "video/x-matroska-3d" = "vlc.desktop";
+
+            # --- Archives (Yazi) ---
+            "application/gzip" = "yazi-fm.desktop";
+            "application/vnd.rar" = "yazi-fm.desktop";
+            "application/x-7z-compressed" = "yazi-fm.desktop";
+            "application/x-ace" = "yazi-fm.desktop";
+            "application/x-arj" = "yazi-fm.desktop";
+            "application/x-bzip" = "yazi-fm.desktop";
+            "application/x-bzip-compressed-tar" = "yazi-fm.desktop";
+            "application/x-bzip2" = "yazi-fm.desktop";
+            "application/x-cabinet" = "yazi-fm.desktop";
+            "application/x-compress" = "yazi-fm.desktop";
+            "application/x-compressed-tar" = "yazi-fm.desktop";
+            "application/x-cpio" = "yazi-fm.desktop";
+            "application/x-java-archive" = "yazi-fm.desktop";
+            "application/x-lha" = "yazi-fm.desktop";
+            "application/x-lrzip" = "yazi-fm.desktop";
+            "application/x-lzip" = "yazi-fm.desktop";
+            "application/x-lzma" = "yazi-fm.desktop";
+            "application/x-lzop" = "yazi-fm.desktop";
+            "application/x-rar-compressed" = "yazi-fm.desktop";
+            "application/x-rpm" = "yazi-fm.desktop";
+            "application/x-source-rpm" = "yazi-fm.desktop";
+            "application/x-stuffit" = "yazi-fm.desktop";
+            "application/x-tar" = "yazi-fm.desktop";
+            "application/x-xz" = "yazi-fm.desktop";
+            "application/x-xz-compressed-tar" = "yazi-fm.desktop";
+            "application/x-zoo" = "yazi-fm.desktop";
+            "application/x-zstd" = "yazi-fm.desktop";
+            "application/zip" = "yazi-fm.desktop";
+            "application/x-7z-compressed-tar" = "yazi-fm.desktop";
+            "application/x-apple-diskimage" = "yazi-fm.desktop";
+            "application/x-archive" = "yazi-fm.desktop";
+            "application/x-unix-archive" = "yazi-fm.desktop";
+            "application/x-debian-binary-package" = "yazi-fm.desktop";
+            "application/x-ms-dos-executable" = "yazi-fm.desktop";
+            "application/x-msi" = "yazi-fm.desktop";
+            "application/x-iso9660-image" = "yazi-fm.desktop";
+            "application/x-raw-disk-image" = "yazi-fm.desktop";
+            "application/x-raw-disk-image-xz-compressed" = "yazi-fm.desktop";
+            "application/x-par2" = "yazi-fm.desktop";
+            "application/x-servicepack" = "yazi-fm.desktop";
+            "application/x-msdownload" = "yazi-fm.desktop";
+            "application/x-dms" = "yazi-fm.desktop";
+            "application/x-bsdiff" = "yazi-fm.desktop";
+            "application/x-ext2-image" = "yazi-fm.desktop";
+            "application/x-ext3-image" = "yazi-fm.desktop";
+            "application/x-ext4-image" = "yazi-fm.desktop";
+            "application/x-gpt" = "yazi-fm.desktop";
+            "application/x-vhd" = "yazi-fm.desktop";
+            "application/x-vhdx" = "yazi-fm.desktop";
+            "application/x-vmdk" = "yazi-fm.desktop";
+            "application/x-qed" = "yazi-fm.desktop";
+            "application/x-qcow" = "yazi-fm.desktop";
+            "application/x-qcow2" = "yazi-fm.desktop";
+            "application/x-virtualbox-vdi" = "yazi-fm.desktop";
+            "application/x-virtualbox-vhd" = "yazi-fm.desktop";
+            "application/x-virtualbox-vhdx" = "yazi-fm.desktop";
           };
           description = "Mapping of MIME types to default applications (.desktop files).";
         };
@@ -114,11 +208,10 @@ let
 
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.system.xdg;

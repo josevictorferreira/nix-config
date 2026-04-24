@@ -10,11 +10,12 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.claudecode;
@@ -53,76 +54,72 @@ let
       # FHS environment for Linux (claude-code needs glibc, etc.)
       claudeCodeFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv
-            {
-              name = "claude-fhs";
-              targetPkgs =
-                pkgs: with pkgs; [
-                  stdenv.cc.cc.lib
-                  zlib
-                  openssl
-                  curl
-                  nodejs_22
-                  coreutils
-                  tmux
-                  fzf
-                ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "claude-runner" ''
+          pkgs.buildFHSEnv {
+            name = "claude-fhs";
+            targetPkgs =
+              pkgs: with pkgs; [
+                stdenv.cc.cc.lib
+                zlib
+                openssl
+                curl
+                nodejs_22
+                coreutils
+                tmux
+                fzf
+              ];
+            profile = ''
+              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+              mkdir -p "$TMPDIR"
+            '';
+            runScript = "${pkgs.writeShellScript "claude-runner" ''
               exec "$HOME/.npm-global/bin/claude" "$@"
             ''}";
-            }
+          }
         else
           null;
 
       claudeRouterFHS =
         if (!isDarwin) then
-          pkgs.buildFHSEnv
-            {
-              name = "claude-router-fhs";
-              targetPkgs =
-                pkgs: with pkgs; [
-                  stdenv.cc.cc.lib
-                  zlib
-                  openssl
-                  curl
-                  nodejs_22
-                  coreutils
-                  tmux
-                  fzf
-                ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "claude-router-runner" ''
+          pkgs.buildFHSEnv {
+            name = "claude-router-fhs";
+            targetPkgs =
+              pkgs: with pkgs; [
+                stdenv.cc.cc.lib
+                zlib
+                openssl
+                curl
+                nodejs_22
+                coreutils
+                tmux
+                fzf
+              ];
+            profile = ''
+              export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
+              mkdir -p "$TMPDIR"
+            '';
+            runScript = "${pkgs.writeShellScript "claude-router-runner" ''
               exec "$HOME/.npm-global/bin/ccr" "$@"
             ''}";
-            }
+          }
         else
           null;
 
       # Wrapper script for claude-code
       # Transform raw mcps into Claude Code's expected schema (strip enabled, map type)
-      managedMcpServers = lib.mapAttrs
-        (
-          name: mcp:
-            {
-              command = mcp.command;
-              args = mcp.args or [ ];
-              env = mcp.env or { };
-            }
-            // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-              type = "stdio";
-            }
-            // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-              type = mcp.type;
-            }
-        )
-        cfg.mcps;
+      managedMcpServers = lib.mapAttrs (
+        name: mcp:
+        {
+          command = mcp.command;
+          args = mcp.args or [ ];
+          env = mcp.env or { };
+        }
+        // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+          type = "stdio";
+        }
+        // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+          type = mcp.type;
+        }
+      ) cfg.mcps;
 
       claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
         set -euo pipefail
@@ -231,27 +228,24 @@ let
         });
 
       claudeConfigDir = pkgs.linkFarm "claude-config" (
-        lib.mapAttrsToList
-          (
-            fileName: fileValue:
-              let
-                filePath =
-                  if builtins.isString fileValue then
-                    pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else if builtins.isAttrs fileValue then
-                    pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
-                      (
-                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                      )
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-          )
-          claudeConfigs
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if builtins.isString fileValue then
+                pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else if builtins.isAttrs fileValue then
+                pkgs.writeText "claude-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
+                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                )
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) claudeConfigs
       );
 
       # Build .claude-code-router config directory
@@ -272,22 +266,20 @@ let
         # Inject MCP servers into settings automatically
         jvf.programs.claudecode.settings = {
           mcpServers = lib.mkDefault (
-            lib.mapAttrs
-              (
-                name: mcp:
-                  {
-                    command = mcp.command;
-                    args = mcp.args or [ ];
-                    env = mcp.env or { };
-                  }
-                  // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
-                    type = "stdio";
-                  }
-                  // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
-                    type = mcp.type;
-                  }
-              )
-              cfg.mcps
+            lib.mapAttrs (
+              name: mcp:
+              {
+                command = mcp.command;
+                args = mcp.args or [ ];
+                env = mcp.env or { };
+              }
+              // lib.optionalAttrs (mcp.type == "local" || mcp.type == "stdio") {
+                type = "stdio";
+              }
+              // lib.optionalAttrs (mcp.type != "local" && mcp.type != "stdio" && mcp ? type) {
+                type = mcp.type;
+              }
+            ) cfg.mcps
           );
         };
 
@@ -318,6 +310,8 @@ let
               ".credentials.json"
               "mcp-needs-auth-cache.json"
               "sessions"
+              "sessions-index.json"
+              "sessions-index.jsonl"
               "backups"
               "plans"
               "session-env"

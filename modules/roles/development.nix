@@ -20,10 +20,9 @@ let
     };
 
   nixosModule =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -81,15 +80,15 @@ let
           pkgs.yq
           pkgs.bat
           pkgs.p7zip
+          pkgs.unrar
         ];
       };
     };
 
   darwinModule =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.development;
@@ -146,6 +145,7 @@ let
           pkgs.yq
           pkgs.bat
           pkgs.p7zip
+          pkgs.unrar
         ];
       };
     };
