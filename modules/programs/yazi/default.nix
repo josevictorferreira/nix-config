@@ -4,10 +4,11 @@
 _:
 let
   mkYaziOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.yazi = {
@@ -23,10 +24,11 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.yazi;
@@ -603,22 +605,20 @@ let
           }
         ];
         open =
-          lib.optional isDarwin
-            {
-              run = ''open "$@"'';
-              desc = "Open";
-            }
+          lib.optional isDarwin {
+            run = ''open "$@"'';
+            desc = "Open";
+          }
           ++ lib.optional (!isDarwin) {
             run = ''xdg-open "$@"'';
             desc = "Open";
             for = "unix";
           };
         reveal =
-          lib.optional isDarwin
-            {
-              run = ''open -R "$@"'';
-              desc = "Reveal in Finder";
-            }
+          lib.optional isDarwin {
+            run = ''open -R "$@"'';
+            desc = "Reveal in Finder";
+          }
           ++ lib.optional (!isDarwin) {
             run = ''xdg-open "$(dirname "$0")"'';
             desc = "Reveal in file manager";
@@ -1068,6 +1068,11 @@ let
               on = "F";
               run = "plugin jump-to-char";
               desc = "Jump to char";
+            }
+            {
+              on = "M";
+              run = "plugin mount";
+              desc = "Mount manager";
             }
             {
               on = "ch";

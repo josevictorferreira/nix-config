@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -34,6 +35,7 @@ let
         programs-ck-search
         programs-opencode
         programs-claudecode
+        programs-rtk
         programs-gemini
         programs-hermes-agent
       ]);
@@ -47,7 +49,10 @@ let
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
-        jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
+        jvf.aiTools.skills.browser-debug-tools.programs = [
+          "opencode"
+          "claudecode"
+        ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
@@ -66,9 +71,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -81,6 +87,7 @@ let
         programs-ck-search
         programs-opencode
         programs-claudecode
+        programs-rtk
         programs-gemini
         programs-hermes-agent
       ]);
@@ -94,7 +101,10 @@ let
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
-        jvf.aiTools.skills.browser-debug-tools.programs = [ "opencode" "claudecode" ];
+        jvf.aiTools.skills.browser-debug-tools.programs = [
+          "opencode"
+          "claudecode"
+        ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";

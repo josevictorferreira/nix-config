@@ -223,6 +223,9 @@ let
         (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
         // (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
         // (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+        // (lib.optionalAttrs (cfg.baseRules != "") {
+          "CLAUDE.md" = cfg.baseRules;
+        })
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;
         });

@@ -1,8 +1,9 @@
 # options.nix - OpenCode option definitions
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   json = pkgs.formats.json { };
@@ -66,6 +67,12 @@ in
       inherit (json) type;
       default = { };
       description = "Settings written to ~/.config/opencode/config.json";
+    };
+
+    extraConfigFiles = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.package);
+      default = { };
+      description = "Extra files to include in the opencode config dir (relative path → derivation/text)";
     };
   };
 }

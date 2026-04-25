@@ -617,15 +617,14 @@ let
       metadataYaml =
         if skill ? metadata && skill.metadata != { } then formatMetadata skill.metadata else "";
 
+      license = skill.license or skill.licence or "";
+
       headerLines = [
         "name: \"${skillName}\""
         "description: \"${skill.description or ""}\""
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
-      ++ lib.optional
-        (
-          (builtins.hasAttr "licence" skill) && skill.licence != ""
-        ) "licence: \"${skill.licence}\""
+      ++ lib.optional (license != "") "license: \"${license}\""
       ++ lib.optional (metadataYaml != "") metadataYaml
       ++ lib.optional (allowedToolsYaml != "") allowedToolsYaml
       ++ lib.optional (mcpYaml != "") mcpYaml
