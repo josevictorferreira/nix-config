@@ -67,10 +67,6 @@ let
             ```
 
             Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
-            ---
-
-            **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
           '';
         };
       };
@@ -89,9 +85,9 @@ let
       imports = [ mkOptions ];
 
       config = {
-        jvf.programs.opencode.baseRules = "# AGENTS.md\n${cfg.content}";
-        jvf.programs.claudecode.baseRules = "# CLAUDE.md\n${cfg.content}";
-        jvf.programs.gemini.baseRules = "# GEMINI.md\n${cfg.content}";
+        jvf.programs.opencode.baseRules = "# AGENTS.md\n\n${cfg.content}";
+        jvf.programs.claudecode.baseRules = "# CLAUDE.md\n\n${cfg.content}";
+        jvf.programs.gemini.baseRules = "# GEMINI.md\n\n${cfg.content}";
       };
     };
 in
