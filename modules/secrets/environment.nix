@@ -5,16 +5,14 @@
 { ... }:
 let
   mkConfig =
-    { isDarwin }:
+    _:
     { config, lib, ... }:
     let
       cfg = config.jvf.secrets.environment;
       keyList = lib.attrNames cfg.keys;
-      secretLines = map
-        (
-          name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
-        )
-        keyList;
+      secretLines = map (
+        name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
+      ) keyList;
     in
     {
       options.jvf.secrets.environment = {
@@ -80,18 +78,16 @@ let
         }
         (lib.mkIf (keyList != [ ]) (
           lib.mkMerge [
-            (lib.optionalAttrs (!isDarwin) {
+            {
               sops.secrets = lib.listToAttrs (
-                map
-                  (name: {
-                    inherit name;
-                    value = {
-                      owner = cfg.username;
-                    };
-                  })
-                  keyList
+                map (name: {
+                  inherit name;
+                  value = {
+                    owner = cfg.username;
+                  };
+                }) keyList
               );
-            })
+            }
             {
               programs.zsh.interactiveShellInit = lib.mkAfter (lib.concatStringsSep "\n" secretLines);
               programs.bash.interactiveShellInit = lib.mkAfter (lib.concatStringsSep "\n" secretLines);

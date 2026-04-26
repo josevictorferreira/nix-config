@@ -3,7 +3,7 @@
 # RTK reduces LLM token consumption 60-90% by rewriting CLI commands.
 let
   mkConfig =
-    { isDarwin }:
+    _:
     {
       config,
       lib,
@@ -31,13 +31,7 @@ let
           cmake
         ];
 
-        buildInputs =
-          with pkgs;
-          [ openssl ]
-          ++ lib.optionals isDarwin [
-            pkgs.darwin.apple_sdk.frameworks.Security
-            pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
-          ];
+        buildInputs = [ pkgs.openssl ];
 
         meta = {
           description = "Rust Token Killer - CLI proxy that reduces LLM token consumption 60-90%";
