@@ -12,12 +12,6 @@ let
           type = lib.types.str;
           description = "The content of the rules file.";
           default = ''
-            # CLAUDE.md
-
-            Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
-            **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
             ## 1. Think Before Coding
 
             **Don't assume. Don't hide confusion. Surface tradeoffs.**
@@ -84,8 +78,9 @@ let
 
   mkConfig =
     _:
-    { config
-    , ...
+    {
+      config,
+      ...
     }:
     let
       cfg = config.jvf.aiTools.baseRule;
@@ -94,9 +89,9 @@ let
       imports = [ mkOptions ];
 
       config = {
-        jvf.programs.opencode.baseRules = cfg.content;
-        jvf.programs.claudecode.baseRules = cfg.content;
-        jvf.programs.gemini.baseRules = cfg.content;
+        jvf.programs.opencode.baseRules = "# AGENTS.md\n${cfg.content}";
+        jvf.programs.claudecode.baseRules = "# CLAUDE.md\n${cfg.content}";
+        jvf.programs.gemini.baseRules = "# GEMINI.md\n${cfg.content}";
       };
     };
 in
