@@ -18,12 +18,13 @@ _: {
         qwen = "alibaba-coding-plan/qwen3.5-plus";
         gpt = "openai/gpt-5.5";
         codex = "openai/gpt-5.3-codex";
+        mercury = "inception/mercury-2";
         models = {
           quick = {
-            default = minimax;
+            default = mercury;
             cheap = qwen;
-            expensive = "github-copilot/grok-code-fast-1";
-            alternative = "openrouter/openai/gpt-oss-120b";
+            expensive = minimax;
+            alternative = "openrouter/inception/mercury-2";
           };
           coder = {
             default = kimi;
