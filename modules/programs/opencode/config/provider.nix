@@ -21,13 +21,13 @@ _: {
       npm = "@ai-sdk/openai-compatible";
       name = "Inception";
       options = {
-        baseURL = "https://api.inception.com/v1";
+        baseURL = "https://api.inceptionlabs.ai/v1/";
         apiKey = "{env:INCEPTION_API_KEY}";
       };
       models = {
         "mercury-2" = {
           name = "Mercury 2 (Inception)";
-          max_tokens = 8192;
+          max_tokens = 16384;
         };
       };
     };
@@ -38,12 +38,6 @@ _: {
       options = {
         baseURL = "https://openrouter.ai/api/v1";
         apiKey = "{env:OPENROUTER_API_KEY_CODE_AGENT}";
-      };
-      models = {
-        "inception/mercury-2" = {
-          name = "Inception Mercury 2 (OpenRouter)";
-          max_tokens = 16384;
-        };
       };
     };
 
