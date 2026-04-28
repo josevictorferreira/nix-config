@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.9"
-        "oh-my-openagent@3.17.5"
+        "oh-my-openagent@3.17.6"
       ];
     };
 
@@ -16,7 +16,7 @@ _: {
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
         qwen = "alibaba-coding-plan/qwen3.5-plus";
-        gpt = "openai/gpt-5.4";
+        gpt = "openai/gpt-5.5";
         codex = "openai/gpt-5.3-codex";
         models = {
           quick = {
