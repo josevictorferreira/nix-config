@@ -53,6 +53,8 @@ let
       skills = {
         auditing-security = mkSkill ./_/skills/auditing/security.nix;
         creating-skills = mkSkill ./_/skills/meta/creating-skills.nix;
+        skill-creator = mkSkill ./_/skills/meta/skill-creator.nix;
+        xlsx = mkSkill ./_/skills/meta/xlsx.nix;
         karpathy-guidelines = mkSkill ./_/skills/meta/karpathy-guidelines.nix;
         research-tools = mkSkill ./_/skills/research/research-tools.nix;
         oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;

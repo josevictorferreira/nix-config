@@ -74,9 +74,8 @@ let
 
   mkConfig =
     _:
-    {
-      config,
-      ...
+    { config
+    , ...
     }:
     let
       cfg = config.jvf.aiTools.baseRule;

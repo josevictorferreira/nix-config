@@ -3,7 +3,7 @@
 # RTK reduces LLM token consumption 60-90% by rewriting CLI commands.
 let
   mkConfig =
-    _:
+    { isDarwin }:
     {
       config,
       lib,

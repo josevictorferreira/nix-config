@@ -585,3 +585,15 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** When a jvf.home item doesn't appear in `_compiled` output, verify the module is actually imported by a host/role before investigating the module code itself.
 **Context:** Droid's `.factory` item was absent from `_compiled` — spent time debugging before realizing droid isn't imported by any host/role (pre-existing orphan module).
 **Verify:** `grep -r '<module-name>' modules/roles/ modules/hosts/` — if no hits, the module is orphaned and its items won't appear in compiled output.
+
+## Adding Skills with Bundled Resources to ai-tools
+
+### Use _body.md and builtins.readFile for Skill Files with Frontmatter
+**Lesson:** When adding a skill from an external SKILL.md with YAML frontmatter, pre-extract the body with `awk 'BEGIN{sep=0} /^---$/{sep++; next} sep>=2{print}' SKILL.md > _body.md` and load via `builtins.readFile`. Place all bundled files (scripts, agents, assets, eval-viewer) in a co-located `_/<skill-name>/` directory (prefixed with `_/` so import-tree ignores it).
+**Context:** Nix lacks clean YAML frontmatter stripping — pre-extraction avoids complex string manipulation at eval time. Files in `_/<name>/` won't be auto-discovered by import-tree.
+**Verify:** `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.programs.opencode.skills.<name>.name` returns the skill name.
+
+### Map Non-Standard Skill Directories to scripts/ Attribute
+**Lesson:** The skill system only materializes `scripts/` and `references/` subdirectories. Map agents/, eval-viewer/, assets/ into the `scripts` attribute with path separators in keys (e.g., `scripts."agents/grader.md"`), then use `builtins.replaceStrings` to adjust file path references in the prompt from `agents/grader.md` to `scripts/agents/grader.md`.
+**Context:** `mkSingleSkillConfigs` writes scripts as `skills/<name>/scripts/<key>` — keys with `/` create nested directories. References stay as `references/<key>.md`.
+**Verify:** Check prompt references match: `grep 'agents/' <skill-nix-file>` should show `scripts/agents/` prefix.
