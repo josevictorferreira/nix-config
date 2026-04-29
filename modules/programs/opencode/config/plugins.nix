@@ -15,7 +15,7 @@ _: {
         geminiPro = "github-copilot/gemini-3.1-pro-preview";
         geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
-        qwen = "alibaba-coding-plan/qwen3.5-plus";
+        qwen = "alibaba-coding-plan/qwen3.6-plus";
         gpt = "openai/gpt-5.5";
         codex = "openai/gpt-5.3-codex";
         mercury = "openrouter/inception/mercury-2";

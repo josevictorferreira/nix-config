@@ -34,6 +34,7 @@ let
             minimax_api_key = true;
             context7_api_key = true;
             hugging_face_api_key = true;
+            huggingface_api_key = true;
             civitai_api_key = true;
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
@@ -63,6 +64,7 @@ let
             minimax_api_key = true;
             context7_api_key = true;
             hugging_face_api_key = true;
+            huggingface_api_key = true;
             civitai_api_key = true;
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
