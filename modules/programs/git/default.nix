@@ -21,12 +21,21 @@ let
         core = {
           editor = "nvim";
           hooksPath = "/etc/git/hooks";
+          pager = "delta";
+        };
+        interactive = {
+          diffFilter = "delta --color-only";
+        };
+        delta = {
+          navigate = true;
+          light = false;
+          side-by-side = true;
         };
         diff = {
-          tool = "nvimdiff";
+          colorMoved = "default";
         };
         merge = {
-          tool = "nvimdiff3";
+          conflictstyle = "zdiff3";
         };
         mergetool = {
           prompt = false;
@@ -234,7 +243,7 @@ let
         environment.systemPackages = [
           cfg.package
           pkgs.yq
-          pkgs.difftastic
+          pkgs.delta
           pkgs.gitleaks
         ]
         ++ optional cfg.lfs.enable pkgs.git-lfs;
@@ -252,11 +261,7 @@ let
                     // (optionalAttrs cfg.signing.signByDefault { commit.gpgsign = "true"; })
                     // (optionalAttrs (cfg.aliases != { }) { alias = cfg.aliases; })
                     // cfg.extraConfig
-                )
-              + ''
-                [diff]
-                  external = ${pkgs.difftastic}/bin/difft
-              '';
+                );
           };
           items.".gitignore" = {
             kind = "file";
