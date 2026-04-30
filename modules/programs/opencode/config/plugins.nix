@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.9"
-        "oh-my-openagent@3.17.6"
+        "oh-my-openagent@3.17.12"
       ];
     };
 
@@ -12,8 +12,6 @@ _: {
       let
         kimi = "kimi-for-coding/k2p6";
         glm = "zai-coding-plan/glm-5.1";
-        geminiPro = "github-copilot/gemini-3.1-pro-preview";
-        geminiFlash = "github-copilot/gemini-3-flash-preview";
         minimax = "minimax/MiniMax-M2.7";
         qwen = "alibaba-coding-plan/qwen3.6-plus";
         gpt = "openai/gpt-5.5";
@@ -35,19 +33,19 @@ _: {
           intelligent = {
             default = gpt;
             cheap = glm;
-            expensive = geminiPro;
+            expensive = gpt;
             alternative = kimi;
           };
           looker = {
-            default = geminiFlash;
+            default = qwen;
             cheap = qwen;
-            expensive = geminiPro;
+            expensive = "zai-coding-plan/glm-5-turbo";
             alternative = kimi;
           };
           writer = {
             default = kimi;
             cheap = "kimi-for-coding/k2-thinking";
-            expensive = geminiFlash;
+            expensive = qwen;
             alternative = qwen;
           };
         };
