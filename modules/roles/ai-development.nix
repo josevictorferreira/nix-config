@@ -37,6 +37,7 @@ let
         programs-rtk
         programs-gemini
         programs-hermes-agent
+        programs-forgecode
       ]);
 
       config = {
@@ -88,6 +89,7 @@ let
         programs-rtk
         programs-gemini
         programs-hermes-agent
+        programs-forgecode
       ]);
 
       config = {

@@ -17,6 +17,15 @@ _: {
       };
     };
 
+    nvidia = {
+      npm = "@ai-sdk/nvidia";
+      name = "NVIDIA";
+      options = {
+        baseURL = "https://api.nvidia.com/ai/v1/";
+        apiKey = "{env:NVIDIA_API_KEY}";
+      };
+    };
+
     inception = {
       npm = "@ai-sdk/openai-compatible";
       name = "Inception";
