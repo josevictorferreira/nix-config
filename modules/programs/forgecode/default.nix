@@ -18,10 +18,11 @@ let
     };
 
   forgeCodeModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.forgecode;
@@ -54,21 +55,22 @@ let
           protobuf
         ];
 
-        buildInputs = with pkgs; [
-          sqlite
-        ] ++ lib.optionals stdenv.isLinux [
-          libxkbcommon
-          libx11
-          libxext
-          libxfixes
-          libxcb
-          wayland
-        ] ++ lib.optionals stdenv.isDarwin [
-          libiconv
-          darwin.apple_sdk.frameworks.AppKit
-          darwin.apple_sdk.frameworks.CoreGraphics
-          darwin.apple_sdk.frameworks.Foundation
-        ];
+        buildInputs =
+          with pkgs;
+          [
+            sqlite
+          ]
+          ++ lib.optionals stdenv.isLinux [
+            libxkbcommon
+            libx11
+            libxext
+            libxfixes
+            libxcb
+            wayland
+          ]
+          ++ lib.optionals stdenv.isDarwin [
+            libiconv
+          ];
 
         PROTOC = "${pkgs.protobuf}/bin/protoc";
         PROTOC_INCLUDE = "${pkgs.protobuf}/include";
