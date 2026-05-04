@@ -103,7 +103,7 @@ let
           };
 
           small_model = "alibaba-coding-plan/qwen3-coder-next";
-          default_agent = "OpenCode-Builder";
+          default_agent = "build";
         };
 
         # Config materialization via jvf.home
