@@ -5,11 +5,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkAgentModule;
@@ -17,9 +18,11 @@ let
       args = { inherit lib pkgs isDarwin; };
 
       # Helper to define an agent module
-      mkAgent = path: mkAgentModule {
-        agentOptions = import path args;
-      };
+      mkAgent =
+        path:
+        mkAgentModule {
+          agentOptions = import path args;
+        };
 
       agents = {
         ui-ux-architect = mkAgent ./_/agents/design/ui-ux-architect.nix;
@@ -30,6 +33,7 @@ let
         rails-linter = mkAgent ./_/agents/ruby/rails-linter.nix;
         rails-orchestrator = mkAgent ./_/agents/ruby/rails-orchestrator.nix;
         rails-tester = mkAgent ./_/agents/ruby/rails-tester.nix;
+        engineer = mkAgent ./_/agents/general/engineer.nix;
       };
 
       cfg = config.jvf.aiTools.agents;
@@ -37,9 +41,7 @@ let
     {
       options.jvf.aiTools.agents = lib.mapAttrs (name: agent: agent.options) agents;
 
-      config = lib.mkMerge (
-        lib.mapAttrsToList (name: agent: agent.config { inherit config; }) agents
-      );
+      config = lib.mkMerge (lib.mapAttrsToList (name: agent: agent.config { inherit config; }) agents);
     };
 in
 {

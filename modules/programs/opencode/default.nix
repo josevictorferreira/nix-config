@@ -103,7 +103,7 @@ let
           };
 
           small_model = "alibaba-coding-plan/qwen3-coder-next";
-          default_agent = "build";
+          default_agent = "engineer";
         };
 
         # Config materialization via jvf.home
