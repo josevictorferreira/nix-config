@@ -5,11 +5,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       inherit (inputs.lib.aiTools) mkCommandModule;
@@ -17,9 +18,11 @@ let
       args = { inherit lib pkgs isDarwin; };
 
       # Helper to define a command module
-      mkCommand = path: mkCommandModule {
-        commandOptions = import path args;
-      };
+      mkCommand =
+        path:
+        mkCommandModule {
+          commandOptions = import path args;
+        };
 
       commands = {
         add-and-format = mkCommand ./_/commands/git/add-and-format.nix;
@@ -29,6 +32,7 @@ let
         dependency-audit = mkCommand ./_/commands/general/dependency-audit.nix;
         style-audit = mkCommand ./_/commands/general/style-audit.nix;
         session-retrospective = mkCommand ./_/commands/general/session-retrospective.nix;
+        self-learn = mkCommand ./_/commands/general/self-learn.nix;
         understand-problem = mkCommand ./_/commands/general/understand-problem.nix;
         plan-problem = mkCommand ./_/commands/general/plan-problem.nix;
         execute-problem = mkCommand ./_/commands/general/execute-problem.nix;
@@ -68,9 +72,7 @@ let
     {
       options.jvf.aiTools.commands = lib.mapAttrs (name: cmd: cmd.options) commands;
 
-      config = lib.mkMerge (
-        lib.mapAttrsToList (name: cmd: cmd.config { inherit config; }) commands
-      );
+      config = lib.mkMerge (lib.mapAttrsToList (name: cmd: cmd.config { inherit config; }) commands);
     };
 in
 {
