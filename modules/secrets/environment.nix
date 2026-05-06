@@ -10,9 +10,11 @@ let
     let
       cfg = config.jvf.secrets.environment;
       keyList = lib.attrNames cfg.keys;
-      secretLines = map (
-        name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
-      ) keyList;
+      secretLines = map
+        (
+          name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
+        )
+        keyList;
     in
     {
       options.jvf.secrets.environment = {
@@ -84,12 +86,14 @@ let
           lib.mkMerge [
             {
               sops.secrets = lib.listToAttrs (
-                map (name: {
-                  inherit name;
-                  value = {
-                    owner = cfg.username;
-                  };
-                }) keyList
+                map
+                  (name: {
+                    inherit name;
+                    value = {
+                      owner = cfg.username;
+                    };
+                  })
+                  keyList
               );
             }
             {
