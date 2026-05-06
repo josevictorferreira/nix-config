@@ -51,14 +51,9 @@ _: {
         };
       in
       {
+        default_agent = "engineer";
         disabled_commands = [ ];
         agents = {
-          sisyphus = {
-            model = models.coder.default;
-            ultrawork = {
-              model = models.coder.default;
-            };
-          };
           hephaestus = {
             model = models.coder.expensive;
           };
@@ -341,9 +336,9 @@ _: {
           check_on_commit = true;
         };
         sisyphus_agent = {
-          enabled = true;
+          enabled = false;
           model = models.coder.default;
-          default_builder_enabled = true;
+          default_builder_enabled = false;
           replace_plan = false;
         };
         _migrations = {
