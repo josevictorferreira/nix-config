@@ -127,6 +127,9 @@
     - Use explicit image version tags plus registry digest pins; never deploy mutable `latest`.
     - If you change probe handler type, inspect Flux dry-run/apply errors for merged old handlers.
       Server-side apply can retain an old `httpGet` when adding a new `tcpSocket`.
+    - The openclaw-nix pod has TWO containers: `chromium` (sidecar, listed first) and `main`.
+      `kubectl exec deploy/openclaw-nix -- ...` defaults to `chromium`, which lacks curl, openclaw,
+      and most app tooling. Always pass `-c main` for `/health`, logs, and CLI invocations.
 
     ## Phase 1: Verify Upstream
 
@@ -255,8 +258,17 @@
     # 4. Tag and push
     podman tag localhost/openclaw-nix:"$LOCAL_TAG" ghcr.io/josevictorferreira/openclaw-nix:latest
     podman tag localhost/openclaw-nix:"$LOCAL_TAG" ghcr.io/josevictorferreira/openclaw-nix:"$LOCAL_TAG"
-    podman push --format=oci ghcr.io/josevictorferreira/openclaw-nix:"$LOCAL_TAG"
-    podman push --format=oci ghcr.io/josevictorferreira/openclaw-nix:latest
+    # 4. Push (background — image is ~7GB, foreground pushes routinely exceed 10-min tool timeouts).
+    mkdir -p /tmp/opencode
+    nohup podman push --format=oci ghcr.io/josevictorferreira/openclaw-nix:"$LOCAL_TAG" \
+      > /tmp/opencode/push-openclaw.log 2>&1 &
+    PUSH_PID=$!
+    while kill -0 $PUSH_PID 2>/dev/null; do sleep 60; tail -1 /tmp/opencode/push-openclaw.log; done
+    tail -3 /tmp/opencode/push-openclaw.log  # expect "Writing manifest to image destination"
+
+    nohup podman push --format=oci ghcr.io/josevictorferreira/openclaw-nix:latest \
+      > /tmp/opencode/push-latest.log 2>&1 &
+    wait
 
     # 5. Get the REMOTE digest (NOT local!)
     REMOTE_DIGEST=$(nix shell nixpkgs#skopeo -c skopeo inspect \
