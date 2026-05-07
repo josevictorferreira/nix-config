@@ -12,17 +12,20 @@ _: {
       let
         kimi = "kimi-for-coding/k2p6";
         glm = "zai-coding-plan/glm-5.1";
-        minimax = "minimax/MiniMax-M2.7";
+        minimax = "opencode-go/minimax-m2.7";
         qwen = "alibaba-coding-plan/qwen3.6-plus";
         gpt = "openai/gpt-5.5";
         codex = "openai/gpt-5.3-codex";
-        mercury = "openrouter/inception/mercury-2";
+        katcoder = "openrouter/kwaipilot/kat-coder-pro-v2";
+        deepseekPro = "opencode-go/deepseek-v4-pro";
+        deepseek = "opencode-go/deepseek-v4-flash";
+        mimo = "opencode-go/mimo-v2.5";
         models = {
           quick = {
-            default = mercury;
-            cheap = qwen;
-            expensive = minimax;
-            alternative = "openrouter/openai/gpt-oss-120b";
+            default = deepseek;
+            cheap = deepseek;
+            expensive = katcoder;
+            alternative = minimax;
           };
           coder = {
             default = kimi;
@@ -32,20 +35,20 @@ _: {
           };
           intelligent = {
             default = gpt;
-            cheap = glm;
+            cheap = deepseekPro;
             expensive = gpt;
-            alternative = kimi;
+            alternative = glm;
           };
           looker = {
             default = qwen;
             cheap = qwen;
-            expensive = "zai-coding-plan/glm-5-turbo";
+            expensive = mimo;
             alternative = kimi;
           };
           writer = {
             default = kimi;
-            cheap = "kimi-for-coding/k2-thinking";
-            expensive = qwen;
+            cheap = kimi;
+            expensive = mimo;
             alternative = qwen;
           };
         };
@@ -125,11 +128,12 @@ _: {
             ];
           };
           quick = {
-            model = models.quick.cheap;
+            model = models.quick.default;
+            model_fallback = true;
             fallback_models = [
+              models.quick.cheap
               models.quick.expensive
               models.quick.alternative
-              models.quick.default
             ];
           };
           most-capable = {
