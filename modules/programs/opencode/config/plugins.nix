@@ -15,7 +15,6 @@ _: {
         minimax = "opencode-go/minimax-m2.7";
         qwen = "alibaba-coding-plan/qwen3.6-plus";
         gpt = "openai/gpt-5.5";
-        codex = "openai/gpt-5.3-codex";
         katcoder = "openrouter/kwaipilot/kat-coder-pro-v2";
         deepseekPro = "opencode-go/deepseek-v4-pro";
         deepseek = "opencode-go/deepseek-v4-flash";
@@ -30,7 +29,7 @@ _: {
           coder = {
             default = kimi;
             cheap = minimax;
-            expensive = codex;
+            expensive = deepseekPro;
             alternative = glm;
           };
           intelligent = {
