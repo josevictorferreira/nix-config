@@ -85,6 +85,7 @@ _: {
           };
           oracle = {
             model = models.intelligent.default;
+            variant = "xhigh";
           };
           document-writer = {
             model = models.writer.default;
