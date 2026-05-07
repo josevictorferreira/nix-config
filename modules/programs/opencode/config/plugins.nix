@@ -3,7 +3,7 @@ _: {
   config = {
     jvf.programs.opencode.settings = {
       plugin = [
-        "@tarquinen/opencode-dcp@3.1.9"
+        "@tarquinen/opencode-dcp@3.1.11"
         "oh-my-openagent@4.0.0"
       ];
     };
@@ -242,7 +242,7 @@ _: {
               aggressive = true;
             };
           };
-          preemptive_compaction = true;
+          preemptive_compaction = false; # disabled: rely on DCP plugin (dcp_for_compaction) as the sole compactor
           plugin_load_timeout_ms = 10000;
           safe_hook_creation = true;
           disable_omo_env = false;
