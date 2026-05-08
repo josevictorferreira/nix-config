@@ -185,7 +185,7 @@ let
       {
         options = {
           enable = (lib.mkEnableOption agentName) // {
-            default = true;
+            default = agentOptions.enable or true;
           };
           programs = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -203,12 +203,13 @@ let
               "gemini"
               "command-code"
             ];
+            strippedAgentOptions = builtins.removeAttrs agentOptions [ "enable" ];
           in
           lib.mkIf cfg.enable (
             lib.mkMerge (
               map
                 (program: {
-                  jvf.programs.${program}.agents.${agentName} = lib.mkIf (lib.elem program cfg.programs) agentOptions;
+                  jvf.programs.${program}.agents.${agentName} = lib.mkIf (lib.elem program cfg.programs) strippedAgentOptions;
                 })
                 allPrograms
             )
