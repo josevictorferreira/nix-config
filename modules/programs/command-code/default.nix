@@ -1,5 +1,5 @@
 # Aspect: programs-command-code
-# Installs Command Code CLI with an auto-update wrapper.
+# Installs Command Code CLI and materializes its user configuration.
 _:
 let
   mkConfig =
@@ -7,10 +7,12 @@ let
     { config
     , lib
     , pkgs
+    , inputs
     , ...
     }:
     let
       cfg = config.jvf.programs.command-code;
+      json = pkgs.formats.json { };
 
       npmPrefix = "$HOME/.npm-global";
       commandCodePackage = "command-code@latest";
@@ -75,6 +77,90 @@ let
             ''
         }
       '';
+
+      toCommandCodeMarkdown =
+        value:
+        if builtins.isAttrs value && value ? prompt then
+          let
+            explicitTools = value.tools or (value.allowed-tools or [ ]);
+            toolsValue =
+              if explicitTools == [ ] then "none" else ''"${lib.concatStringsSep ", " explicitTools}"'';
+            headerLines = [
+              ''name: "${value.name or "unknown"}"''
+              "description: ${builtins.toJSON (value.description or "")}"
+              "tools: ${toolsValue}"
+            ];
+            yamlHeader = "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n\n";
+          in
+          yamlHeader + value.prompt
+        else
+          builtins.trace "WARNING: Using deprecated plain Markdown string format. Please migrate to structured format with mkAgent/mkCommand." value;
+
+      mkCommandCodeMdConfigs =
+        prefix: attrset:
+        lib.mapAttrs'
+          (name: value: {
+            name = "${prefix}/${name}.md";
+            value = toCommandCodeMarkdown value;
+          })
+          attrset;
+
+      normalizeMcp =
+        mcpCfg:
+        let
+          mcp = inputs.lib.aiTools.transformMcpOptions "command-code" mcpCfg;
+          rawTransport = mcp.transport or (mcp.type or (if mcp ? url then "http" else "stdio"));
+          transport = if rawTransport == "local" then "stdio" else rawTransport;
+        in
+        (builtins.removeAttrs mcp [ "type" ])
+        // {
+          inherit transport;
+          enabled = mcp.enabled or true;
+        };
+
+      commandCodeMcps = lib.mapAttrs (_name: normalizeMcp) cfg.mcps;
+
+      commandCodeConfigs =
+        (mkCommandCodeMdConfigs "agents" cfg.agents)
+        // (inputs.lib.aiTools.mkClaudecodeMdConfigs "commands" cfg.commands)
+        // (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
+        // (lib.optionalAttrs (cfg.baseRules != "") {
+          "AGENTS.md" = cfg.baseRules;
+        })
+        // (lib.optionalAttrs (cfg.settings != { }) {
+          "config.json" = cfg.settings;
+        })
+        // (lib.optionalAttrs (commandCodeMcps != { }) {
+          "mcp.json" = {
+            mcpServers = commandCodeMcps;
+          };
+        });
+
+      commandCodeConfigDir = pkgs.linkFarm "command-code-config" (
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if lib.isDerivation fileValue then
+                    fileValue
+                  else if builtins.isString fileValue then
+                    pkgs.writeText "command-code-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else if builtins.isAttrs fileValue then
+                    pkgs.writeText "command-code-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
+                      (
+                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                      )
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          commandCodeConfigs
+      );
     in
     {
       options.jvf.programs.command-code = {
@@ -83,12 +169,64 @@ let
           default = config.jvf.core.username;
           description = "Username for installing Command Code to.";
         };
+
+        baseRules = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+          description = "AGENTS.md instructions for Command Code.";
+        };
+
+        agents = lib.mkOption {
+          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+          default = { };
+          description = "Command Code custom agents to install.";
+        };
+
+        commands = lib.mkOption {
+          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+          default = { };
+          description = "Command Code custom slash commands to install.";
+        };
+
+        mcps = lib.mkOption {
+          type = lib.types.attrsOf json.type;
+          default = { };
+          description = "Command Code MCP servers to install.";
+        };
+
+        skills = lib.mkOption {
+          type = lib.types.attrsOf (lib.types.either lib.types.str json.type);
+          default = { };
+          description = "Command Code skills to install.";
+        };
+
+        settings = lib.mkOption {
+          inherit (json) type;
+          default = { };
+          description = "Settings written to ~/.commandcode/config.json.";
+        };
       };
 
       config = {
         jvf.wrappers.users.${cfg.username}.programs.cmd.packages = [
           commandCodeWrapper
         ];
+
+        jvf.home.users.${cfg.username}.items.".commandcode" = {
+          kind = "dir";
+          mode = "copy";
+          source = commandCodeConfigDir;
+          preserve = [
+            "auth.json"
+            "config.local.json"
+            "config.staging.json"
+            "projects"
+            "logs"
+            "cache"
+            "taste"
+            "sessions"
+          ];
+        };
       };
     };
 in

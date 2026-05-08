@@ -1,7 +1,7 @@
 # Aspect: ai-tools-rules
 # Base AI rule definitions (global constraints for all AI consumers).
 # Provides jvf.aiTools.baseRule options and propagates content to
-# opencode, claudecode, and gemini base rules.
+# opencode, claudecode, gemini, and command-code base rules.
 _:
 let
   mkOptions =
@@ -87,6 +87,7 @@ let
         jvf.programs.opencode.baseRules = "# AGENTS.md\n\n${cfg.content}";
         jvf.programs.claudecode.baseRules = "# CLAUDE.md\n\n${cfg.content}";
         jvf.programs.gemini.baseRules = "# GEMINI.md\n\n${cfg.content}";
+        jvf.programs.command-code.baseRules = "# AGENTS.md\n\n${cfg.content}";
       };
     };
 in

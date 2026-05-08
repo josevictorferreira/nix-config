@@ -40,6 +40,7 @@ let
                 "opencode"
                 "claudecode"
                 "gemini"
+                "command-code"
               ]
           );
       in
@@ -62,6 +63,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
@@ -110,6 +112,7 @@ let
                 "opencode"
                 "claudecode"
                 "gemini"
+                "command-code"
               ]
           );
       in
@@ -132,6 +135,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
@@ -174,6 +178,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ]
           );
       in
@@ -196,6 +201,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
@@ -224,6 +230,7 @@ let
             "opencode"
             "claudecode"
             "gemini"
+            "command-code"
           ];
         agentDefinition = {
           inherit
@@ -258,6 +265,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
@@ -286,6 +294,7 @@ let
             "opencode"
             "claudecode"
             "gemini"
+            "command-code"
           ];
 
         mcpNames = args.mcpNames or { };
@@ -321,6 +330,7 @@ let
             "opencode"
             "claudecode"
             "gemini"
+            "command-code"
           ];
         config = args.config or { };
       in
@@ -357,6 +367,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ]
           );
       in
@@ -379,6 +390,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
@@ -403,6 +415,7 @@ let
             "opencode"
             "claudecode"
             "gemini"
+            "command-code"
           ];
         commandDefinition = {
           inherit
@@ -432,6 +445,7 @@ let
               "opencode"
               "claudecode"
               "gemini"
+              "command-code"
             ];
           in
           lib.mkIf cfg.enable (
