@@ -39,6 +39,7 @@ let
         programs-starship
         programs-tmux
         programs-git
+        programs-command-code
         system-virtualization
         programs-brave
         programs-brave
@@ -105,6 +106,7 @@ let
         programs-starship
         programs-tmux
         programs-git
+        programs-command-code
         system-virtualization
         programs-brave
         programs-yazi
