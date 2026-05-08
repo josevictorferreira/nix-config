@@ -55,6 +55,11 @@ _: {
       {
         default_agent = "engineer";
         disabled_commands = [ ];
+        disabled_agents = [
+          "atlas"
+          "hephaestus"
+          "sisyphus"
+        ];
         agents = {
           hephaestus = {
             model = models.coder.expensive;

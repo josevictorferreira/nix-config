@@ -18,3 +18,4 @@ nix.conf
 *.qcow2
 
 __pycache__/
+.commandcode/

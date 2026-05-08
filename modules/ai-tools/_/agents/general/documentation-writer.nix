@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "documentation-writer";
+  enable = false;
   mode = "primary";
   model = "";
   temperature = null;

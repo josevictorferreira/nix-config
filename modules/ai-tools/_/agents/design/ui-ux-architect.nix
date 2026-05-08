@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "ui-ux-architect";
+  enable = false;
   mode = "primary";
   model = "";
   temperature = null;

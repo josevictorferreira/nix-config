@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "rails-tester";
+  enable = false;
   description = "Ruby on Rails implementation agent that builds features/fixes/refactors directly in the codebase (no delegation). Uses repo skills when applicable.";
   tools = [
     "List"

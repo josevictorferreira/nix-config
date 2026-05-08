@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "rails-orchestrator";
+  enable = false;
   description = "Intelligent router for Ruby on Rails work that analyzes requests and delegates to specialized Rails subagents.";
   tools = [
     "Task"

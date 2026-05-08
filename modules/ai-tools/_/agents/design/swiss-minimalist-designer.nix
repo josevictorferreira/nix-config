@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "swiss-minimalist-designer";
+  enable = false;
   mode = "primary";
   model = "";
   temperature = null;
@@ -246,5 +247,3 @@
     </design-system>
   '';
 }
-
-

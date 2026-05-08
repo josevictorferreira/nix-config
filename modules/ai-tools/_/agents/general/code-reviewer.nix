@@ -1,6 +1,7 @@
 { ... }:
 {
   name = "code-reviewer";
+  enable = false;
   mode = "primary";
   model = "";
   temperature = null;
