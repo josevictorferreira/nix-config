@@ -17,6 +17,13 @@ _: {
       };
     };
 
+    huggingface = {
+      name = "Hugging Face";
+      options = {
+        apiKey = "{env:HUGGING_FACE_API_KEY}";
+      };
+    };
+
     nvidia = {
       npm = "@ai-sdk/nvidia";
       name = "NVIDIA";
@@ -205,25 +212,25 @@ _: {
       };
     };
 
-    minimax = {
-      npm = "@ai-sdk/anthropic";
-      name = "Minimax";
-      options = {
-        baseURL = "https://api.minimax.io/anthropic/v1";
-        apiKey = "{env:MINIMAX_API_KEY}";
-      };
-      models = {
-        "MiniMax-M2" = {
-          name = "Minimax M2";
-        };
-        "MiniMax-M2.1" = {
-          name = "Minimax M2.1";
-        };
-        "MiniMax-M2.5" = {
-          name = "Minimax M2.5";
-        };
-      };
-    };
+    # minimax = {
+    #   npm = "@ai-sdk/anthropic";
+    #   name = "Minimax";
+    #   options = {
+    #     baseURL = "https://api.minimax.io/anthropic/v1";
+    #     apiKey = "{env:MINIMAX_API_KEY}";
+    #   };
+    #   models = {
+    #     "MiniMax-M2" = {
+    #       name = "Minimax M2";
+    #     };
+    #     "MiniMax-M2.1" = {
+    #       name = "Minimax M2.1";
+    #     };
+    #     "MiniMax-M2.5" = {
+    #       name = "Minimax M2.5";
+    #     };
+    #   };
+    # };
 
     kimi-for-coding = {
       npm = "@ai-sdk/anthropic";
