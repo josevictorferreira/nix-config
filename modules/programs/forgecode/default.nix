@@ -168,13 +168,19 @@ let
         if cfg.providers ? ${name} then defaultProvider // cfg.providers.${name} else defaultProvider
       ) defaultProviders;
 
-      # Generate TOML content for ~/.forge/.forge.toml
-      forgeTomlContent = inputs.lib.generators.toTOML (
-        {
-          providers = finalProviders;
-        }
-        // cfg.settings
-      );
+      # Convert providers map to a list for TOML array of tables format
+      # Forge expects providers as a list: [[providers]] entries
+      # Models should be comma-separated strings, not arrays
+      providersList = lib.mapAttrsToList (_: v: v // {
+        models = lib.concatStringsSep ", " v.models;
+      }) finalProviders;
+
+      # Generate TOML content using pkgs.formats.toml for proper [[providers]] syntax
+      forgeTomlData = {
+        providers = providersList;
+      } // cfg.settings;
+
+      forgeTomlContent = builtins.readFile ((pkgs.formats.toml { }).generate "forge.toml" forgeTomlData);
 
       # Generate command files (markdown with YAML frontmatter)
       mkCommandFile =
