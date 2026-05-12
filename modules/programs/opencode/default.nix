@@ -75,10 +75,10 @@ let
             lib.mapAttrs (name: mcpCfg: inputs.lib.aiTools.transformMcpOptions "opencode" mcpCfg) cfg.mcps
           );
           disabled_providers = lib.mkDefault [
-            "opencode"
             "copilot"
             "github-copilot-enterprise"
             "copilot-enterprise"
+            "github-copilot"
             "github-models"
             "minimax-cn"
             "anthropic"
