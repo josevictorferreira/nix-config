@@ -20,6 +20,7 @@ in
 
     # Environment Variables
     export CLAUDE_CODE_DEBUG=1
+    export CLAUDE_CODE_ENABLE_TELEMETRY=1
     export BAT_THEME="Dracula"
     export EDITOR="nvim"
     export VISUAL="nvim"

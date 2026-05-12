@@ -62,6 +62,7 @@ in
           settings.General = {
             Enable = lib.mkDefault (lib.concatStringsSep "," cfg.profiles);
             Experimental = lib.mkDefault cfg.enableExperimental;
+            ControllerMode = lib.mkDefault "bredr";
           };
         };
 
