@@ -83,8 +83,9 @@ let
       defaultProviders = {
         alibaba-coding-plan = {
           id = "alibaba-coding-plan";
-          api_key = "$ALIBABA_CODING_PLAN_API_KEY";
-          url = "https://www.gigis.ai/api/v1";
+          api_key_var = "ALIBABA_CODING_PLAN_API_KEY";
+          response_type = "OpenAI";
+          url = "https://www.gigis.ai/api/v1/chat/completions";
           models = [
             "qwen3.5-plus"
             "qwen3.6-plus"
@@ -99,8 +100,9 @@ let
         };
         kimi-for-coding = {
           id = "kimi-for-coding";
-          api_key = "$KIMI_API_KEY";
-          url = "https://api.kimi.com/coding/v1";
+          api_key_var = "KIMI_API_KEY";
+          response_type = "OpenAI";
+          url = "https://api.kimi.com/coding/v1/chat/completions";
           models = [
             "kimi-k2.6"
             "kimi-k2.5"
@@ -108,8 +110,9 @@ let
         };
         zai-coding-plan = {
           id = "zai-coding-plan";
-          api_key = "$ZAI_API_KEY";
-          url = "https://api.z.ai/coding/v1";
+          api_key_var = "Z_AI_API_KEY";
+          response_type = "OpenAI";
+          url = "https://api.z.ai/api/coding/paas/v4/chat/completions";
           models = [
             "glm-5-turbo"
             "glm-5.1"
@@ -120,28 +123,31 @@ let
         };
         openrouter = {
           id = "openrouter";
-          api_key = "$OPENROUTER_API_KEY_DEFAULT";
-          url = "https://openrouter.ai/api/v1";
+          api_key_var = "OPENROUTER_API_KEY_CODE_AGENT";
+          response_type = "OpenAI";
+          url = "https://openrouter.ai/api/v1/chat/completions";
           models = [ ];
         };
         nvidia = {
           id = "nvidia";
-          api_key = "$NVIDIA_API_KEY";
-          url = "https://api.nvidia.com/ai/v1/";
+          api_key_var = "NVIDIA_API_KEY";
+          response_type = "OpenAI";
+          url = "https://api.nvidia.com/ai/v1/chat/completions";
           models = [ ];
         };
         inception = {
           id = "inception";
-          api_key = "$INCEPTION_API_KEY";
-          url = "https://api.inceptionlabs.ai/v1/";
+          api_key_var = "INCEPTION_API_KEY";
+          response_type = "OpenAI";
+          url = "https://api.inceptionlabs.ai/v1/chat/completions";
           models = [
             "mercury-2"
           ];
         };
         local = {
           id = "local";
-          api_key = "";
-          url = "http://localhost:11434/v1";
+          response_type = "OpenAI";
+          url = "http://localhost:11434/v1/chat/completions";
           models = [
             "llama3.2"
             "qwen2.5-coder:14b"
@@ -156,8 +162,9 @@ let
         };
         huggingface = {
           id = "huggingface";
-          api_key = "$HUGGINGFACE_API_KEY";
-          url = "https://api-inference.huggingface.co/v1";
+          api_key_var = "HUGGINGFACE_API_KEY";
+          response_type = "OpenAI";
+          url = "https://api-inference.huggingface.co/v1/chat/completions";
           models = [ ];
         };
       };
@@ -168,19 +175,34 @@ let
         if cfg.providers ? ${name} then defaultProvider // cfg.providers.${name} else defaultProvider
       ) defaultProviders;
 
-      # Convert providers map to a list for TOML array of tables format
-      # Forge expects providers as a list: [[providers]] entries
-      # Models should be comma-separated strings, not arrays
-      providersList = lib.mapAttrsToList (_: v: v // {
-        models = lib.concatStringsSep ", " v.models;
-      }) finalProviders;
+      # Forge inline TOML providers only support model URLs. Use provider.json
+      # instead so these custom providers can keep their static model lists.
+      mkProviderModel = model: {
+        id = model;
+        name = model;
+      };
 
-      # Generate TOML content using pkgs.formats.toml for proper [[providers]] syntax
-      forgeTomlData = {
-        providers = providersList;
-      } // cfg.settings;
+      providersJson = lib.mapAttrsToList (
+        _: v:
+        {
+          inherit (v) id response_type url;
+          auth_methods = [ "api_key" ];
+          models = map mkProviderModel v.models;
+        }
+        // lib.optionalAttrs (v ? api_key_var && v.api_key_var != null) {
+          api_key_vars = v.api_key_var;
+        }
+      ) finalProviders;
+
+      # Generate TOML content for Forge settings. Provider definitions live in
+      # provider.json because Forge TOML provider entries cannot hold static models.
+      forgeTomlData = cfg.settings;
 
       forgeTomlContent = builtins.readFile ((pkgs.formats.toml { }).generate "forge.toml" forgeTomlData);
+
+      providerJsonContent = builtins.readFile (
+        (pkgs.formats.json { }).generate "provider.json" providersJson
+      );
 
       # Generate command files (markdown with YAML frontmatter)
       mkCommandFile =
@@ -330,18 +352,18 @@ let
         forgeTomlContent + lib.optionalString (mcpTomlContent != "") ("\n" + mcpTomlContent);
 
       # Build ForgeCode config directory as a derivation for jvf.home
-      forgeConfigFiles =
-        {
-          ".forge.toml" = fullTomlContent;
-        }
-        // lib.mapAttrs' (name: value: {
-          name = "commands/${name}.md";
-          value = mkCommandFile name value;
-        }) cfg.commands
-        // lib.mapAttrs' (name: value: {
-          name = "agents/${name}.md";
-          value = mkAgentFile name value;
-        }) cfg.agents;
+      forgeConfigFiles = {
+        ".forge.toml" = fullTomlContent;
+        "provider.json" = providerJsonContent;
+      }
+      // lib.mapAttrs' (name: value: {
+        name = "commands/${name}.md";
+        value = mkCommandFile name value;
+      }) cfg.commands
+      // lib.mapAttrs' (name: value: {
+        name = "agents/${name}.md";
+        value = mkAgentFile name value;
+      }) cfg.agents;
 
       forgeConfigDir = pkgs.linkFarm "forgecode-config" (
         lib.mapAttrsToList (
@@ -394,6 +416,8 @@ let
               source = forgeConfigDir;
               preserve = [
                 "cache"
+                ".credentials.json"
+                ".forge_history"
                 "logs"
                 "snapshots"
               ];

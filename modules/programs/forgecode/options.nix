@@ -45,29 +45,43 @@
     };
 
     providers = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options = {
-          id = lib.mkOption {
-            type = lib.types.str;
-            description = "Provider ID";
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options = {
+            id = lib.mkOption {
+              type = lib.types.str;
+              description = "Provider ID";
+            };
+            api_key_var = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Environment variable that contains the provider API key";
+            };
+            url = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "URL for the provider API";
+            };
+            response_type = lib.mkOption {
+              type = lib.types.enum [
+                "OpenAI"
+                "OpenAIResponses"
+                "Anthropic"
+                "Bedrock"
+                "Google"
+                "OpenCode"
+              ];
+              default = "OpenAI";
+              description = "Wire protocol used by the provider";
+            };
+            models = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+              description = "Known model IDs for this provider";
+            };
           };
-          api_key = lib.mkOption {
-            type = lib.types.str;
-            default = "";
-            description = "API key for the provider (use env var references like '$ENV_VAR')";
-          };
-          url = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            description = "URL for the provider API";
-          };
-          models = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
-            default = [ ];
-            description = "List of available models";
-          };
-        };
-      });
+        }
+      );
       default = { };
       description = "AI provider configurations for ForgeCode";
     };
