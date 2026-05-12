@@ -47,19 +47,19 @@
     providers = lib.mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
         options = {
-          name = lib.mkOption {
+          id = lib.mkOption {
             type = lib.types.str;
-            description = "Provider name";
+            description = "Provider ID";
           };
           api_key = lib.mkOption {
             type = lib.types.str;
             default = "";
             description = "API key for the provider (use env var references like '$ENV_VAR')";
           };
-          base_url = lib.mkOption {
+          url = lib.mkOption {
             type = lib.types.nullOr lib.types.str;
             default = null;
-            description = "Base URL for the provider API";
+            description = "URL for the provider API";
           };
           models = lib.mkOption {
             type = lib.types.listOf lib.types.str;

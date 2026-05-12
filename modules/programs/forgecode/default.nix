@@ -82,9 +82,9 @@ let
       # Default providers matching opencode configuration
       defaultProviders = {
         alibaba-coding-plan = {
-          name = "alibaba-coding-plan";
+          id = "alibaba-coding-plan";
           api_key = "$ALIBABA_CODING_PLAN_API_KEY";
-          base_url = "https://www.gigis.ai/api/v1";
+          url = "https://www.gigis.ai/api/v1";
           models = [
             "qwen3.5-plus"
             "qwen3.6-plus"
@@ -98,18 +98,18 @@ let
           ];
         };
         kimi-for-coding = {
-          name = "kimi-for-coding";
+          id = "kimi-for-coding";
           api_key = "$KIMI_API_KEY";
-          base_url = "https://api.kimi.com/coding/v1";
+          url = "https://api.kimi.com/coding/v1";
           models = [
             "kimi-k2.6"
             "kimi-k2.5"
           ];
         };
         zai-coding-plan = {
-          name = "zai-coding-plan";
+          id = "zai-coding-plan";
           api_key = "$ZAI_API_KEY";
-          base_url = "https://api.z.ai/coding/v1";
+          url = "https://api.z.ai/coding/v1";
           models = [
             "glm-5-turbo"
             "glm-5.1"
@@ -119,29 +119,29 @@ let
           ];
         };
         openrouter = {
-          name = "openrouter";
+          id = "openrouter";
           api_key = "$OPENROUTER_API_KEY_DEFAULT";
-          base_url = "https://openrouter.ai/api/v1";
+          url = "https://openrouter.ai/api/v1";
           models = [ ];
         };
         nvidia = {
-          name = "nvidia";
+          id = "nvidia";
           api_key = "$NVIDIA_API_KEY";
-          base_url = "https://api.nvidia.com/ai/v1/";
+          url = "https://api.nvidia.com/ai/v1/";
           models = [ ];
         };
         inception = {
-          name = "inception";
+          id = "inception";
           api_key = "$INCEPTION_API_KEY";
-          base_url = "https://api.inceptionlabs.ai/v1/";
+          url = "https://api.inceptionlabs.ai/v1/";
           models = [
             "mercury-2"
           ];
         };
         local = {
-          name = "local";
+          id = "local";
           api_key = "";
-          base_url = "http://localhost:11434/v1";
+          url = "http://localhost:11434/v1";
           models = [
             "llama3.2"
             "qwen2.5-coder:14b"
@@ -155,9 +155,9 @@ let
           ];
         };
         huggingface = {
-          name = "huggingface";
+          id = "huggingface";
           api_key = "$HUGGINGFACE_API_KEY";
-          base_url = "https://api-inference.huggingface.co/v1";
+          url = "https://api-inference.huggingface.co/v1";
           models = [ ];
         };
       };
