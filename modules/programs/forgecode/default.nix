@@ -3,7 +3,14 @@
 # Supports providers, skills, agents, and commands like OpenCode.
 _:
 let
-  mkForgeCodeConfig = { config, lib, pkgs, inputs, ... }:
+  mkForgeCodeConfig =
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
+    }:
     let
       cfg = config.jvf.programs.forgecode;
 
@@ -156,47 +163,64 @@ let
       };
 
       # Merge user providers with defaults
-      finalProviders = lib.mapAttrs (name: defaultProvider:
-        if cfg.providers ? ${name} then
-          defaultProvider // cfg.providers.${name}
-        else
-          defaultProvider
+      finalProviders = lib.mapAttrs (
+        name: defaultProvider:
+        if cfg.providers ? ${name} then defaultProvider // cfg.providers.${name} else defaultProvider
       ) defaultProviders;
 
       # Generate TOML content for ~/.forge/.forge.toml
-      forgeTomlContent = inputs.lib.generators.toTOML ({
-        providers = finalProviders;
-      } // cfg.settings);
+      forgeTomlContent = inputs.lib.generators.toTOML (
+        {
+          providers = finalProviders;
+        }
+        // cfg.settings
+      );
 
       # Generate command files (markdown with YAML frontmatter)
-      mkCommandFile = name: value:
+      mkCommandFile =
+        name: value:
         let
           isStructured = builtins.isAttrs value && value ? prompt;
-          prompt = if isStructured then value.prompt else if builtins.isString value then value else "";
+          prompt =
+            if isStructured then
+              value.prompt
+            else if builtins.isString value then
+              value
+            else
+              "";
           description = if isStructured then value.description or "" else "";
           model = if isStructured then value.model or "" else "";
           agent = if isStructured then value.agent or "" else "";
           temperature = if isStructured then value.temperature or null else null;
           tools = if isStructured then value.tools or [ ] else [ ];
-          
-          yamlLines = [ "---" ]
-            ++ [ "name: \"${name}\"" ]
-            ++ lib.optional (description != "") "description: \"${description}\""
-            ++ lib.optional (model != "") "model: \"${model}\""
-            ++ lib.optional (agent != "") "agent: \"${agent}\""
-            ++ lib.optional (temperature != null) "temperature: ${toString temperature}"
-            ++ lib.optional (tools != [ ]) "tools: [${lib.concatStringsSep ", " (map (t: "\"${t}\"") tools)}]"
-            ++ [ "---" ];
-          
+
+          yamlLines = [
+            "---"
+          ]
+          ++ [ "name: \"${name}\"" ]
+          ++ lib.optional (description != "") "description: \"${description}\""
+          ++ lib.optional (model != "") "model: \"${model}\""
+          ++ lib.optional (agent != "") "agent: \"${agent}\""
+          ++ lib.optional (temperature != null) "temperature: ${toString temperature}"
+          ++ lib.optional (tools != [ ]) "tools: [${lib.concatStringsSep ", " (map (t: "\"${t}\"") tools)}]"
+          ++ [ "---" ];
+
           yamlHeader = lib.concatStringsSep "\n" yamlLines;
         in
         yamlHeader + "\n\n" + prompt;
 
       # Generate agent files (markdown with YAML frontmatter)
-      mkAgentFile = name: value:
+      mkAgentFile =
+        name: value:
         let
           isStructured = builtins.isAttrs value && value ? prompt;
-          prompt = if isStructured then value.prompt else if builtins.isString value then value else "";
+          prompt =
+            if isStructured then
+              value.prompt
+            else if builtins.isString value then
+              value
+            else
+              "";
           description = if isStructured then value.description or "" else "";
           model = if isStructured then value.model or "" else "";
           mode = if isStructured then value.mode or "primary" else "primary";
@@ -204,94 +228,133 @@ let
           permission = if isStructured then value.permission or { } else { };
           tools = if isStructured then value.tools or [ ] else [ ];
           disabledTools = if isStructured then value.disabledTools or [ ] else [ ];
-          
-          formatPermission = key: perm:
+
+          formatPermission =
+            key: perm:
             if builtins.isString perm then
               "  ${key}: \"${perm}\""
             else if builtins.isAttrs perm then
               "  ${key}:\n" + lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "    ${k}: \"${v}\"") perm)
             else
               "";
-          
-          yamlLines = [ "---" ]
+
+          yamlLines =
+            [ "---" ]
             ++ [ "name: \"${name}\"" ]
             ++ [ "type: agent" ]
             ++ lib.optional (description != "") "description: \"${description}\""
             ++ lib.optional (model != "") "model: \"${model}\""
             ++ lib.optional (mode != "primary") "mode: \"${mode}\""
             ++ lib.optional (temperature != null) "temperature: ${toString temperature}"
-            ++ lib.optional (permission != { }) "permission:\n" + lib.concatStringsSep "\n" (lib.mapAttrsToList formatPermission permission)
-            ++ lib.optional (tools != [ ]) "tools:\n" + lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") tools)
-            ++ lib.optional (disabledTools != [ ]) "disabled_tools:\n" + lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") disabledTools)
-            ++ [ "---" ];
-          
+            ++ lib.optional (permission != { }) "permission:\n"
+            +
+              lib.concatStringsSep "\n" (lib.mapAttrsToList formatPermission permission)
+              ++ lib.optional (tools != [ ]) "tools:\n"
+            +
+              lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") tools)
+              ++ lib.optional (disabledTools != [ ]) "disabled_tools:\n"
+            + lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") disabledTools) ++ [ "---" ];
+
           yamlHeader = lib.concatStringsSep "\n" yamlLines;
         in
         yamlHeader + "\n\n" + prompt;
 
       # Generate skill configs using ai-tools lib
-      skillConfigs = if cfg.skills != { } then
-        inputs.lib.aiTools.mkSkillsConfigs cfg.skills
-      else
-        { };
+      skillConfigs = if cfg.skills != { } then inputs.lib.aiTools.mkSkillsConfigs cfg.skills else { };
 
       # Build skills directory using linkFarm
-      skillsDir = if skillConfigs != { } then
-        pkgs.linkFarm "forgecode-skills" (
-          lib.mapAttrsToList (fileName: fileValue:
-            let
-              filePath =
-                if lib.isDerivation fileValue then
-                  fileValue
-                else if builtins.isString fileValue then
-                  pkgs.writeText "forgecode-skill-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                else
-                  fileValue;
-            in
-            {
-              name = fileName;
-              path = filePath;
-            }
-          ) skillConfigs
-        )
-      else
-        null;
+      skillsDir =
+        if skillConfigs != { } then
+          pkgs.linkFarm "forgecode-skills" (
+            lib.mapAttrsToList (
+              fileName: fileValue:
+              let
+                filePath =
+                  if lib.isDerivation fileValue then
+                    fileValue
+                  else if builtins.isString fileValue then
+                    pkgs.writeText "forgecode-skill-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+            ) skillConfigs
+          )
+        else
+          null;
 
       # Generate MCP configs
-      mkMcpToml = mcps:
-        lib.concatStringsSep "\n" (lib.mapAttrsToList (name: cfg:
-          let
-            command = if cfg ? command then
-              if builtins.isList cfg.command then builtins.head cfg.command
-              else cfg.command
-            else "";
-            args = cfg.args or [ ];
-            env = cfg.env or { };
-            
-            argsStr = if args != [ ] then
-              "args = [" + lib.concatStringsSep ", " (map (a: "\"${a}\"") args) + "]"
-            else
-              "";
-            
-            envStr = if env != { } then
-              "env = { " + lib.concatStringsSep ", " (lib.mapAttrsToList (k: v: "${k} = \"${v}\"") env) + " }"
-            else
-              "";
-          in
-          "[mcp.\"${name}\"]\n" +
-          "command = \"${command}\"\n" +
-          lib.optionalString (argsStr != "") (argsStr + "\n") +
-          lib.optionalString (envStr != "") (envStr + "\n")
-        ) mcps);
+      mkMcpToml =
+        mcps:
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (
+            name: cfg:
+            let
+              command =
+                if cfg ? command then
+                  if builtins.isList cfg.command then builtins.head cfg.command else cfg.command
+                else
+                  "";
+              args = cfg.args or [ ];
+              env = cfg.env or { };
 
-      mcpTomlContent = if cfg.mcps != { } then
-        mkMcpToml cfg.mcps
-      else
-        "";
+              argsStr =
+                if args != [ ] then "args = [" + lib.concatStringsSep ", " (map (a: "\"${a}\"") args) + "]" else "";
+
+              envStr =
+                if env != { } then
+                  "env = { " + lib.concatStringsSep ", " (lib.mapAttrsToList (k: v: "${k} = \"${v}\"") env) + " }"
+                else
+                  "";
+            in
+            "[mcp.\"${name}\"]\n"
+            + "command = \"${command}\"\n"
+            + lib.optionalString (argsStr != "") (argsStr + "\n")
+            + lib.optionalString (envStr != "") (envStr + "\n")
+          ) mcps
+        );
+
+      mcpTomlContent = if cfg.mcps != { } then mkMcpToml cfg.mcps else "";
 
       # Combine all TOML content
-      fullTomlContent = forgeTomlContent + 
-        lib.optionalString (mcpTomlContent != "") ("\n" + mcpTomlContent);
+      fullTomlContent =
+        forgeTomlContent + lib.optionalString (mcpTomlContent != "") ("\n" + mcpTomlContent);
+
+      # Build ForgeCode config directory as a derivation for jvf.home
+      forgeConfigFiles =
+        {
+          ".forge.toml" = fullTomlContent;
+        }
+        // lib.mapAttrs' (name: value: {
+          name = "commands/${name}.md";
+          value = mkCommandFile name value;
+        }) cfg.commands
+        // lib.mapAttrs' (name: value: {
+          name = "agents/${name}.md";
+          value = mkAgentFile name value;
+        }) cfg.agents;
+
+      forgeConfigDir = pkgs.linkFarm "forgecode-config" (
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if lib.isDerivation fileValue then
+                fileValue
+              else if builtins.isString fileValue then
+                pkgs.writeText "forgecode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) forgeConfigFiles
+      );
 
     in
     {
@@ -317,33 +380,21 @@ let
 
         # Materialize ForgeCode configuration using jvf.home
         jvf.home.users.${cfg.username}.items = lib.mkMerge [
-          # Main config file at ~/.forge/.forge.toml
+          # ForgeCode config directory at ~/.forge with preserve for runtime data
           {
-            ".forge/.forge.toml" = {
-              kind = "file";
-              text = fullTomlContent;
+            ".forge" = {
+              kind = "dir";
+              mode = "copy";
+              source = forgeConfigDir;
+              preserve = [
+                "cache"
+                "logs"
+                "snapshots"
+              ];
             };
           }
-          
-          # Commands at ~/.forge/commands/*.md
-          (lib.mapAttrs' (name: value: {
-            name = ".forge/commands/${name}.md";
-            value = {
-              kind = "file";
-              text = mkCommandFile name value;
-            };
-          }) cfg.commands)
-          
-          # Agents at ~/.forge/agents/*.md
-          (lib.mapAttrs' (name: value: {
-            name = ".forge/agents/${name}.md";
-            value = {
-              kind = "file";
-              text = mkAgentFile name value;
-            };
-          }) cfg.agents)
-          
-          # Skills at ~/.agents/skills/* (co-installed)
+
+          # Skills at ~/.agents/skills/* (co-installed with OpenCode)
           (lib.optionalAttrs (skillsDir != null) {
             ".agents/skills" = {
               kind = "dir";
