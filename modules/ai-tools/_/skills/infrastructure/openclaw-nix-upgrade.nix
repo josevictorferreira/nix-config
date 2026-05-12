@@ -127,9 +127,8 @@
     - Use explicit image version tags plus registry digest pins; never deploy mutable `latest`.
     - If you change probe handler type, inspect Flux dry-run/apply errors for merged old handlers.
       Server-side apply can retain an old `httpGet` when adding a new `tcpSocket`.
-    - The openclaw-nix pod has TWO containers: `chromium` (sidecar, listed first) and `main`.
-      `kubectl exec deploy/openclaw-nix -- ...` defaults to `chromium`, which lacks curl, openclaw,
-      and most app tooling. Always pass `-c main` for `/health`, logs, and CLI invocations.
+    - The openclaw-nix pod may include sidecars (for example `chromium`) in addition to `main`.
+      Always pass `-c main` for `/health`, logs, and CLI invocations.
 
     ## Phase 1: Verify Upstream
 
@@ -168,6 +167,24 @@
        ```
 
     4. Check Python dependencies (around line 553): add any new deps needed for the new version.
+
+    5. Check upstream `packageManager`. If the release requires a newer pnpm major than nix-openclaw
+       provides, override both `fetchPnpmDeps` and gateway build inputs with that pnpm. For pnpm 11,
+       beware that nixpkgs' `fetchPnpmDeps` still runs `pnpm config set manage-package-manager-versions false`;
+       use a wrapper that no-ops only that config command if pnpm rejects it.
+
+       ```nix
+       customPnpmDeps = openclawPkgs.fetchPnpmDeps {
+         pname = "openclaw-gateway";
+         src = openclawSrc;
+         pnpm = pnpm11;
+         hash = sourceInfo.pnpmDepsHash;
+         fetcherVersion = 3;
+       };
+       ```
+
+       The FOD argument is `hash`, not `pnpmDepsHash`; using the wrong attr can make hash
+       mismatch output misleading.
 
     ### `modules/commands.nix` (line ~558)
 
@@ -222,6 +239,20 @@
     ```
     This must succeed. All derivations should build without errors.
 
+    ### OpenClaw 2026.5.x build failures to recognize
+
+    - `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH` around `patchedDependencies`: first check pnpm major
+      against upstream `packageManager`; do not inject duplicate root-level `patchedDependencies` if
+      `pnpm-workspace.yaml` already defines them.
+    - `pnpm rebuild` over the entire workspace can fail with missing hoisted locations. If root
+      `package.json` lacks `pnpm.onlyBuiltDependencies`, inject the small native build allowlist
+      before build so rebuild does not traverse everything.
+    - `pnpm exec <tool>` can fail under the Nix build even when `node_modules/.bin/<tool>` exists;
+      use a pnpm wrapper or build-phase patch that executes local `.bin` tools with the Nix node
+      interpreter instead of `/usr/bin/env node`.
+    - If `pnpm prune --prod` tries network access under pnpm 11, replace it with an offline prod
+      install using the existing store: `pnpm install --prod --offline --frozen-lockfile --ignore-scripts --store-dir "$store_path"`.
+
     ### Local image smoke tests
 
     Before pushing, load and validate the built image. Always confirm the main binary and basic
@@ -231,7 +262,7 @@
     IMAGE_PATH=$(nix build .#openclaw-nix-image --print-out-paths --no-link)
     "$IMAGE_PATH" | podman load
     LOCAL_TAG=$(podman images localhost/openclaw-nix --format '{{.Tag}}' | grep '^v{VERSION}' | head -1)
-    podman run --rm --entrypoint "" localhost/openclaw-nix:"$LOCAL_TAG" sh -c 'which openclaw && openclaw --version && which sed && which cat && which ls'
+    podman run --rm --entrypoint "" localhost/openclaw-nix:"$LOCAL_TAG" sh -c 'OPENCLAW_ALLOW_ROOT=1 openclaw --version && which openclaw && which sed && which cat && which ls'
     ```
 
     ## Phase 4: Push to GHCR
@@ -286,6 +317,13 @@
     CRITICAL: Use the REMOTE digest from `skopeo inspect`, NOT the local digest. The local
     digest from `streamLayeredImage` can differ from what the registry computes.
 
+    If `skopeo` is unavailable, pull the pushed image and read the digest after that pull:
+    ```bash
+    podman pull ghcr.io/josevictorferreira/openclaw-nix:"$LOCAL_TAG"
+    podman images --digests --format '{{.Repository}}:{{.Tag}} {{.Digest}} {{.ID}}' \
+      | grep "ghcr.io/josevictorferreira/openclaw-nix:$LOCAL_TAG"
+    ```
+
     ## Phase 5: Deploy
 
     ### Regenerate manifests
@@ -295,6 +333,12 @@
 
     Verify the generated `.k8s/apps/openclaw-nix.yaml` contains the correct digest (should match
     the remote digest hash you confirmed above).
+
+    If the container runs as root (`runAsUser = 0`) and OpenClaw exits with
+    `[openclaw] Refusing to run as root`, add this explicit container opt-in:
+    ```nix
+    OPENCLAW_ALLOW_ROOT = "1";
+    ```
 
     Only run the full pipeline. Do not run individual manifest stages (`nix build .#gen-manifests`,
     `vals eval`, etc.) because they can leave `.k8s/` misleading or incomplete.
