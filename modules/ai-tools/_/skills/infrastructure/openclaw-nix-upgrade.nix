@@ -436,6 +436,30 @@
     `ProgressDeadlineExceeded` as failure while events still show `Pulling`; wait for `Pulled`, then
     verify readiness, logs, and `/health`.
 
+    ### Adding external (non-bundled) plugins at runtime
+
+    For plugins not bundled in the OCI image (e.g., `@vectorize-io/hindsight-openclaw`), install at
+    runtime in the container entrypoint:
+
+    ```bash
+    # In entrypoint, before exec node:
+    npm install -g @vectorize-io/hindsight-openclaw
+    cp -r /data/npm-global/lib/node_modules/@vectorize-io/hindsight-openclaw \
+      /data/openclaw/extensions/hindsight-openclaw
+    ```
+
+    **Critical path details:**
+
+    1. **Global extensions dir** is `$OPENCLAW_STATE_DIR/extensions/` (currently `/data/openclaw/extensions/`),
+       NOT `$HOME/.openclaw/extensions/`. Verify with `env | grep OPENCLAW_STATE_DIR`.
+    2. **Memory plugin slot**: OpenClaw allows only ONE `kind: "memory"` plugin. Set
+       `plugins.slots.memory` in config to the desired memory plugin. Others are silently disabled.
+    3. **Conversation hooks**: Non-bundled plugins with conversation-level hooks need
+       `plugins.entries.<id>.hooks.allowConversationAccess = true` in config.
+    4. **Stock vs global**: Copying to `/lib/openclaw/dist/extensions/` (stock) causes "duplicate plugin id"
+       warning; prefer the global path to avoid bundled override.
+
+
     ### Matrix routing smoke check
 
     If Matrix agents are enabled, verify routing state after upgrade:

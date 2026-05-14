@@ -5,11 +5,11 @@
 let
   applyPlugin = p: "run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}";
 
-  # Powerline separator characters
-  sep_full = "\ue0b0";
-  sep_thin = "\ue0b1";
-  sep_left_full = "\ue0b2";
-  sep_left_thin = "\ue0b3";
+  # Powerline separator characters (actual Unicode, not escape sequences)
+  sep_full = "";
+  sep_thin = "";
+  sep_left_full = "";
+  sep_left_thin = "";
 
   # Color aliases for readability
   bg = colors.background;
