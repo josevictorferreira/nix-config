@@ -11,12 +11,13 @@ let
   sep_left_full = "";
   sep_left_thin = "";
 
-  # Color aliases for readability
+  # Color aliases for readability — tokyonight-night purple/dark theme
   bg = colors.background;
   fg = colors.foreground;
-  accent = colors.color4;
-  accent_fg = colors.background;
-  dim = colors.color8;
+  accent = colors.color5;        # bb9af7 — purple
+  accent_fg = colors.background; # 1a1b26 — dark background
+  dim = colors.color8;           # 414868 — muted gray
+  muted = colors.color0;         # 15161e — darker shade
 
   # Powerline-style status segments
   statusLeft = ''
@@ -40,14 +41,14 @@ let
   styleDirectives = ''
     # === Theme colors (generated from jvf.theme.colors) ===
     set -g status-style "bg=#${colors.background},fg=#${colors.foreground}"
-    set -g status-left-style "bg=#${colors.color4},fg=#${colors.background},bold"
+    set -g status-left-style "bg=#${colors.color5},fg=#${colors.background},bold"
     set -g status-right-style "bg=#${colors.color8},fg=#${colors.foreground}"
     set -g window-status-style "bg=#${colors.background},fg=#${colors.color8}"
-    set -g window-status-current-style "bg=#${colors.color4},fg=#${colors.background},bold"
+    set -g window-status-current-style "bg=#${colors.color5},fg=#${colors.background},bold"
     set -g pane-border-style "fg=#${colors.color8}"
-    set -g pane-active-border-style "fg=#${colors.color4}"
+    set -g pane-active-border-style "fg=#${colors.color5}"
     set -g message-style "bg=#${colors.background},fg=#${colors.color3}"
-    set -g mode-style "bg=#${colors.color4},fg=#${colors.background}"
+    set -g mode-style "bg=#${colors.color5},fg=#${colors.background}"
   '';
 in
 ''
