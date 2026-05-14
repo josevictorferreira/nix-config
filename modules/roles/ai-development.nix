@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -66,14 +67,18 @@ let
           };
         };
 
-        users.users."${cfg.username}".packages = [ pkgs.crush ];
+        users.users."${cfg.username}".packages = [
+          pkgs.crush
+          pkgs.pi-coding-agent
+        ];
       };
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -118,7 +123,10 @@ let
           };
         };
 
-        users.users."${cfg.username}".packages = [ pkgs.crush ];
+        users.users."${cfg.username}".packages = [
+          pkgs.crush
+          pkgs.pi-coding-agent
+        ];
       };
     };
 in

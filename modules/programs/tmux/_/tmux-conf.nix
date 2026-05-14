@@ -5,7 +5,42 @@
 let
   applyPlugin = p: "run-shell ${if lib.types.package.check p then p.rtp else p.plugin.rtp}";
 
+  # Powerline separator characters
+  sep_full = "\ue0b0";
+  sep_thin = "\ue0b1";
+  sep_left_full = "\ue0b2";
+  sep_left_thin = "\ue0b3";
+
+  # Color aliases for readability
+  bg = colors.background;
+  fg = colors.foreground;
+  accent = colors.color4;
+  accent_fg = colors.background;
+  dim = colors.color8;
+  warn = colors.color3;
+  error = colors.color1;
+
+  # Powerline-style status segments
+  statusLeft = ''
+    set -g status-left "#[bg=#${accent},fg=#${accent_fg},bold] #S #[bg=#${bg},fg=#${accent}]${sep_full}"
+    set -g status-left-length 40
+  '';
+
+  statusRight = ''
+    set -g status-right "#[bg=#${bg},fg=#${dim}]${sep_left_full}#[bg=#${dim},fg=#${fg}] #h ${sep_left_full}#[bg=#${accent},fg=#${accent_fg}] %Y-%m-%d %H:%M "
+    set -g status-right-length 60
+  '';
+
+  windowStatus = ''
+    set -g window-status-format "#[bg=#${dim},fg=#${bg}]${sep_full}#[bg=#${dim},fg=#${fg}] #I ${sep_thin} #W #[bg=#${bg},fg=#${dim}]${sep_full}"
+    set -g window-status-current-format "#[bg=#${accent},fg=#${bg}]${sep_full}#[bg=#${accent},fg=#${accent_fg},bold] #I ${sep_thin} #W #[bg=#${bg},fg=#${accent}]${sep_full}"
+    set -g window-status-separator ""
+  '';
+
   # Generate style directives from theme colors
+  # Hex colors in tmux need # prefix; our palette stores them without #
+  # Hex colors in tmux need # prefix; our palette stores them without #
+  # Hex colors in tmux need # prefix; our palette stores them without #
   # Hex colors in tmux need # prefix; our palette stores them without #
   styleDirectives = ''
     # === Theme colors (generated from jvf.theme.colors) ===
@@ -71,7 +106,6 @@ in
   set -g status-justify left
   set -g status-interval 2
 
-  set -g status-left '''
 
   set-option -g visual-activity off
   set-option -g visual-bell off
@@ -95,14 +129,17 @@ in
   bind t display-popup -E -w 60% -h 60% "tmuxp-picker"
 
   set -g status-position bottom
-  set -g status-left '''
-  set -g status-right-length 50
-  set -g status-left-length 20
+  set -g status-right-length 60
+  set -g status-left-length 40
 
   setw -g aggressive-resize on
   setw -g allow-rename off
   set -g set-clipboard on
   setw -g @shell_mode 'vi'
+
+  ${statusLeft}
+  ${statusRight}
+  ${windowStatus}
 
   ${styleDirectives}
   ${lib.strings.concatStringsSep "\n" (map applyPlugin plugins)}
