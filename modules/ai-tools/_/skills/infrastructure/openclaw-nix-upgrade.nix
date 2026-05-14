@@ -217,6 +217,18 @@
     podman run --rm --entrypoint "" <image> sh -c 'test -f /lib/openclaw/dist/extensions/<plugin>/index.ts && cd /lib/openclaw && node -e "import(\"@lancedb/lancedb\").then(()=>console.log(\"ok\"))"'
     ```
 
+    ### dist-runtime/extensions priority and boundary checks
+
+    OpenClaw 2026.5.12+ checks `dist-runtime/extensions/` **before** `dist/extensions/` when resolving bundled plugins. The `dist-runtime` directory contains thin re-export wrappers that cause `openRootFileSync` boundary check failures because the resolved path escapes the boundary root.
+
+    **If plugins fail with "module path escapes plugin root":**
+    - Remove `dist-runtime/extensions/` from the image: `rm -rf "$out/lib/openclaw/dist-runtime/extensions"`
+    - This forces `resolveBundledPluginsDir()` to fall back to `dist/extensions/` where our patched files live
+    - Copying node_modules into `dist-runtime/extensions/` does NOT fix the issue
+    - Setting `OPENCLAW_BUNDLED_PLUGINS_DIR` is NOT reliable
+
+    Verify after build: `podman run --rm --entrypoint "" <image> ls /lib/openclaw/dist-runtime/extensions` returns empty.
+
     ## Phase 3: Build Image
 
     **First build (resolve source hash):**
@@ -402,6 +414,17 @@
     - Health check: `kubectl exec ... -- /bin/curl -m 15 -sS http://127.0.0.1:18789/health` returns `{"ok":true,"status":"live"}`
     - Logs contain `[gateway] ready` with plugin list
     - No `ImagePullBackOff` or `ErrImagePull` events
+
+    ### Plugin load verification
+
+    After the pod reaches `Running`, check for plugin/channel load failures. `/health` returning `{"ok":true}` does NOT confirm
+    that all plugins loaded successfully.
+
+    ```bash
+    kubectl logs -n apps deploy/openclaw-nix -c main --tail=50 | grep -E 'failed to load|not registered|escapes plugin root'
+    ```
+
+    **Expected:** No matches. If `[channels] failed to load bundled channel` appears, see the `dist-runtime/extensions` note above.
 
     Large image pulls can exceed deployment progress deadlines. Do not treat
     `ProgressDeadlineExceeded` as failure while events still show `Pulling`; wait for `Pulled`, then
