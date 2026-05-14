@@ -17,8 +17,6 @@ let
   accent = colors.color4;
   accent_fg = colors.background;
   dim = colors.color8;
-  warn = colors.color3;
-  error = colors.color1;
 
   # Powerline-style status segments
   statusLeft = ''
@@ -38,9 +36,6 @@ let
   '';
 
   # Generate style directives from theme colors
-  # Hex colors in tmux need # prefix; our palette stores them without #
-  # Hex colors in tmux need # prefix; our palette stores them without #
-  # Hex colors in tmux need # prefix; our palette stores them without #
   # Hex colors in tmux need # prefix; our palette stores them without #
   styleDirectives = ''
     # === Theme colors (generated from jvf.theme.colors) ===
@@ -105,7 +100,6 @@ in
 
   set -g status-justify left
   set -g status-interval 2
-
 
   set-option -g visual-activity off
   set-option -g visual-bell off
