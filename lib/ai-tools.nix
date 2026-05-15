@@ -41,6 +41,7 @@ let
                 "claudecode"
                 "gemini"
                 "command-code"
+                "pi"
               ]
           );
       in
@@ -64,6 +65,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
           in
           lib.mkIf cfg.enable (
@@ -113,6 +115,7 @@ let
                 "claudecode"
                 "gemini"
                 "command-code"
+                "pi"
               ]
           );
       in
@@ -136,6 +139,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
           in
           lib.mkIf cfg.enable (
@@ -179,6 +183,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ]
           );
       in
@@ -202,6 +207,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
             strippedAgentOptions = builtins.removeAttrs agentOptions [ "enable" ];
           in
@@ -232,6 +238,7 @@ let
             "claudecode"
             "gemini"
             "command-code"
+            "pi"
           ];
         agentDefinition = {
           inherit
@@ -267,6 +274,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
           in
           lib.mkIf cfg.enable (
@@ -296,6 +304,7 @@ let
             "claudecode"
             "gemini"
             "command-code"
+            "pi"
           ];
 
         mcpNames = args.mcpNames or { };
@@ -332,6 +341,7 @@ let
             "claudecode"
             "gemini"
             "command-code"
+            "pi"
           ];
         config = args.config or { };
       in
@@ -369,6 +379,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ]
           );
       in
@@ -392,6 +403,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
           in
           lib.mkIf cfg.enable (
@@ -417,6 +429,7 @@ let
             "claudecode"
             "gemini"
             "command-code"
+            "pi"
           ];
         commandDefinition = {
           inherit
@@ -447,6 +460,7 @@ let
               "claudecode"
               "gemini"
               "command-code"
+              "pi"
             ];
           in
           lib.mkIf cfg.enable (

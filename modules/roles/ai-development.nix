@@ -38,6 +38,7 @@ let
         programs-gemini
         programs-hermes-agent
         programs-forgecode
+        programs-pi
       ]);
 
       config = {
@@ -93,6 +94,7 @@ let
         programs-gemini
         programs-hermes-agent
         programs-forgecode
+        programs-pi
       ]);
 
       config = {
