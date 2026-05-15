@@ -16,18 +16,14 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config, ... }:
+  nixosModule = { config, ... }:
     let
       cfg = config.jvf.system.display;
     in
     {
       imports = [ mkDisplayOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             services.xserver = {
               enable = true;
               xkb.options = "repeat:delay=250,rate=40";
@@ -38,12 +34,9 @@ let
             };
 
             console.useXkbConfig = true;
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-display = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-display = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-display = nixosModule;
 }

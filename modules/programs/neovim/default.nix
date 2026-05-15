@@ -16,8 +16,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  neovimModule =
     { config
     , lib
     , pkgs
@@ -85,7 +84,7 @@ let
         ++ lspServers
         ++ formatters
         ++ languages
-        ++ (lib.optionals (!isDarwin) [
+        ++ (lib.optionals (!pkgs.stdenv.isDarwin) [
           pkgs.glibc
           pkgs.glibc.dev
         ]);
@@ -97,6 +96,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-neovim = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-neovim = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-neovim = neovimModule;
+  flake.modules.darwin.programs-neovim = neovimModule;
 }

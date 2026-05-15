@@ -42,18 +42,14 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config, ... }:
+  nixosModule = { config, ... }:
     let
       cfg = config.jvf.system.logind;
     in
     {
       imports = [ mkLogindOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             services.logind.settings = {
               Login = {
                 HandleLidSwitch = cfg.handleLidSwitch;
@@ -61,12 +57,9 @@ let
                 HandleHibernateKey = cfg.handleHibernateKey;
               };
             };
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-logind = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-logind = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-logind = nixosModule;
 }

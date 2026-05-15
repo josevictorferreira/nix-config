@@ -3,8 +3,7 @@
 # Fixes clipboard issues by forcing the Wayland backend.
 _:
 let
-  mkConfig =
-    { isDarwin }:
+  braveModule =
     { config
     , pkgs
     , ...
@@ -13,7 +12,7 @@ let
       cfg = config.jvf.programs.brave;
       # Force Wayland and Ozone flags for Brave on Linux
       braveWrapped =
-        if isDarwin then
+        if pkgs.stdenv.isDarwin then
           pkgs.brave
         else
           pkgs.brave.override {
@@ -33,6 +32,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-brave = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-brave = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-brave = braveModule;
+  flake.modules.darwin.programs-brave = braveModule;
 }

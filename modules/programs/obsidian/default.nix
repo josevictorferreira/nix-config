@@ -1,7 +1,6 @@
 { lib, ... }:
 let
-  mkConfig =
-    { isDarwin }:
+  obsidianModule =
     { config
     , lib
     , pkgs
@@ -48,6 +47,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-obsidian = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-obsidian = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-obsidian = obsidianModule;
+  flake.modules.darwin.programs-obsidian = obsidianModule;
 }

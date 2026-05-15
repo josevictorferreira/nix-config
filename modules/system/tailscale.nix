@@ -21,8 +21,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  tailscaleModule =
     { config, pkgs, ... }:
     let
       cfg = config.jvf.system.tailscale;
@@ -33,13 +32,12 @@ let
       config = lib.mkIf cfg.enable {
         services.tailscale = {
           enable = true;
-        } // lib.optionalAttrs (!isDarwin) {
           useRoutingFeatures = "client";
           authKeyFile = cfg.authKeyFile;
           extraSetFlags = [ "--accept-dns=true" ];
         };
 
-        networking.firewall = lib.mkIf (!isDarwin) {
+        networking.firewall = {
           trustedInterfaces = [ "tailscale0" ];
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
@@ -47,6 +45,5 @@ let
     };
 in
 {
-  flake.modules.nixos.system-tailscale = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-tailscale = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-tailscale = tailscaleModule;
 }

@@ -2,8 +2,7 @@
 # Builds RTK (Rust Token Killer) and wires hooks into claudecode + opencode.
 # RTK reduces LLM token consumption 60-90% by rewriting CLI commands.
 let
-  mkConfig =
-    { isDarwin }:
+  rtkModule =
     { config
     , lib
     , pkgs
@@ -173,6 +172,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-rtk = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-rtk = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-rtk = rtkModule;
+  flake.modules.darwin.programs-rtk = rtkModule;
 }

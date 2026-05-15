@@ -66,9 +66,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
+  nixosModule = { config
     , pkgs
     , ...
     }:
@@ -78,9 +76,7 @@ let
     {
       imports = [ mkPowerManagementOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             users.users."${cfg.username}".packages = [
               pkgs.cpufrequtils
             ];
@@ -99,12 +95,9 @@ let
               enable = true;
               inherit (cfg) cpuFreqGovernor;
             };
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-power-management = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-power-management = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-power-management = nixosModule;
 }

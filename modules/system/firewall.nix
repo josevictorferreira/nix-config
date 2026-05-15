@@ -25,29 +25,22 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config, ... }:
+  nixosModule = { config, ... }:
     let
       cfg = config.jvf.system.firewall;
     in
     {
       imports = [ mkFirewallOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             networking.firewall = {
               enable = true;
               inherit (cfg) allowedTCPPorts;
               inherit (cfg) allowedUDPPorts;
             };
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-firewall = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-firewall = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-firewall = nixosModule;
 }

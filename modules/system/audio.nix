@@ -22,18 +22,14 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config, ... }:
+  nixosModule = { config, ... }:
     let
       cfg = config.jvf.system.audio;
     in
     {
       imports = [ mkAudioOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             # Disable PulseAudio when using PipeWire
             services.pulseaudio.enable = false;
 
@@ -54,12 +50,9 @@ let
 
             # Enable libinput for input devices
             services.libinput.enable = true;
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-audio = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-audio = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-audio = nixosModule;
 }

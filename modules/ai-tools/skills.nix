@@ -3,8 +3,7 @@
 # Migrated from modules/legacy/_/common/ai-tools/skills/
 _:
 let
-  mkConfig =
-    { isDarwin }:
+  skillsModule =
     { config
     , lib
     , pkgs
@@ -36,11 +35,11 @@ let
         inherit
           lib
           pkgs
-          isDarwin
           npx
           defaultBrowser
           kebabToHuman
           ;
+        isDarwin = pkgs.stdenv.isDarwin;
       };
 
       # Helper to define a skill module
@@ -92,6 +91,6 @@ let
     };
 in
 {
-  flake.modules.nixos.ai-tools-skills = mkConfig { isDarwin = false; };
-  flake.modules.darwin.ai-tools-skills = mkConfig { isDarwin = true; };
+  flake.modules.nixos.ai-tools-skills = skillsModule;
+  flake.modules.darwin.ai-tools-skills = skillsModule;
 }

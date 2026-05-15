@@ -3,8 +3,7 @@
 # NixOS-only (no Darwin equivalent).
 _:
 let
-  mkConfig =
-    { isDarwin }:
+  lightsOffModule =
     { lib, pkgs, ... }:
     let
       lights-off = pkgs.writeShellScriptBin "lights-off" ''
@@ -28,7 +27,7 @@ let
       '';
     in
     {
-      config = lib.mkIf (!isDarwin) {
+      config = {
         environment.systemPackages = [
           lights-off
           pkgs.liquidctl
@@ -37,6 +36,5 @@ let
     };
 in
 {
-  flake.modules.nixos.system-lights-off = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-lights-off = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-lights-off = lightsOffModule;
 }

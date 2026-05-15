@@ -46,8 +46,7 @@ let
         settings
     );
 
-  mkConfig =
-    { isDarwin }:
+  kittyModule =
     { config
     , lib
     , pkgs
@@ -60,7 +59,7 @@ let
         set -euo pipefail
 
         # Ensure we have a proper PATH on Darwin
-        ${lib.optionalString isDarwin ''
+        ${lib.optionalString pkgs.stdenv.isDarwin ''
           # Additional common paths for nix-darwin
           export PATH="/run/current-system/sw/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
           if [ -d "/etc/profiles/per-user/$USER/bin" ]; then
@@ -161,6 +160,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-kitty = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-kitty = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-kitty = kittyModule;
+  flake.modules.darwin.programs-kitty = kittyModule;
 }

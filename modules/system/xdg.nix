@@ -206,8 +206,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  xdgModule =
     { config
     , lib
     , pkgs
@@ -237,78 +236,74 @@ let
       imports = [ mkXdgOptions ];
 
       config =
-        if (!isDarwin) then
-          let
-            home = "/home/${cfg.username}";
-            # Generate user-dirs.dirs content
-            userDirsContent = lib.concatStringsSep "\n" (
-              lib.mapAttrsToList (name: path: ''XDG_${name}_DIR="${path}"'') cfg.userDirs
-            );
-          in
-          {
-            users.users."${cfg.username}".packages = [
-              pkgs.xdg-user-dirs
-              pkgs.xdg-utils
+        let
+          home = "/home/${cfg.username}";
+          # Generate user-dirs.dirs content
+          userDirsContent = lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (name: path: ''XDG_${name}_DIR="${path}"'') cfg.userDirs
+          );
+        in
+        {
+          users.users."${cfg.username}".packages = [
+            pkgs.xdg-user-dirs
+            pkgs.xdg-utils
 
-              nvimWrapper
-            ];
+            nvimWrapper
+          ];
 
-            xdg = {
-              mime = lib.mkIf cfg.enableMimeDefaults {
-                enable = true;
-                defaultApplications = cfg.mimeDefaults;
-              };
+          xdg = {
+            mime = lib.mkIf cfg.enableMimeDefaults {
+              enable = true;
+              defaultApplications = cfg.mimeDefaults;
+            };
 
-              portal = lib.mkIf cfg.enablePortals {
-                enable = true;
-                extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-                config = {
-                  common = {
-                    default = [ "gtk" ];
-                  };
-                  hyprland = {
-                    default = [
-                      "gtk"
-                      "hyprland"
-                    ];
-                  };
+            portal = lib.mkIf cfg.enablePortals {
+              enable = true;
+              extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+              config = {
+                common = {
+                  default = [ "gtk" ];
+                };
+                hyprland = {
+                  default = [
+                    "gtk"
+                    "hyprland"
+                  ];
                 };
               };
             };
+          };
 
-            systemd.user.tmpfiles.rules = [
-              "L+ %h/.config/mimeapps.list - - - - /etc/xdg/mimeapps.list"
-            ];
+          systemd.user.tmpfiles.rules = [
+            "L+ %h/.config/mimeapps.list - - - - /etc/xdg/mimeapps.list"
+          ];
 
-            # Create user-dirs.dirs and user-dirs.locale if userDirs is configured
-            system.activationScripts."xdg-user-dirs-${cfg.username}" = lib.mkIf (cfg.userDirs != { }) {
-              text =
-                let
-                  userDirsFile = pkgs.writeText "user-dirs.dirs" ''
-                    # This file is written by xdg-user-dirs-update
-                    # If you want to change or add directories, just edit the line you're
-                    # interested in. All local changes will be retained on the next run.
-                    # Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
-                    # homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
-                    # absolute path. No other format is supported.
-                    ${userDirsContent}
-                  '';
-                in
-                ''
-                  echo "Setting up XDG user directories for ${cfg.username}..."
-                  mkdir -p ${home}/.config
-                  cp ${userDirsFile} ${home}/.config/user-dirs.dirs
-                  echo "en_US" > ${home}/.config/user-dirs.locale
-                  chown ${cfg.username}:users ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
-                  chmod 644 ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
+          # Create user-dirs.dirs and user-dirs.locale if userDirs is configured
+          system.activationScripts."xdg-user-dirs-${cfg.username}" = lib.mkIf (cfg.userDirs != { }) {
+            text =
+              let
+                userDirsFile = pkgs.writeText "user-dirs.dirs" ''
+                  # This file is written by xdg-user-dirs-update
+                  # If you want to change or add directories, just edit the line you're
+                  # interested in. All local changes will be retained on the next run.
+                  # Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
+                  # homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
+                  # absolute path. No other format is supported.
+                  ${userDirsContent}
                 '';
-            };
-          }
-        else
-          { };
+              in
+              ''
+                echo "Setting up XDG user directories for ${cfg.username}..."
+                mkdir -p ${home}/.config
+                cp ${userDirsFile} ${home}/.config/user-dirs.dirs
+                echo "en_US" > ${home}/.config/user-dirs.locale
+                chown ${cfg.username}:users ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
+                chmod 644 ${home}/.config/user-dirs.dirs ${home}/.config/user-dirs.locale
+              '';
+          };
+        };
     };
 in
 {
-  flake.modules.nixos.system-xdg = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-xdg = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-xdg = xdgModule;
 }

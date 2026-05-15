@@ -46,18 +46,14 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config, lib, ... }:
+  nixosModule = { config, lib, ... }:
     let
       cfg = config.jvf.system.base-services;
     in
     {
       imports = [ mkBaseServicesOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             services = {
               dbus.enable = true;
               udev.enable = true;
@@ -82,12 +78,9 @@ let
                 interval = cfg.fstrimInterval;
               };
             };
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-base-services = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-base-services = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-base-services = nixosModule;
 }

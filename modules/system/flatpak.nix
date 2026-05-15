@@ -16,9 +16,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
-    { config
+  nixosModule = { config
     , lib
     , pkgs
     , ...
@@ -29,9 +27,7 @@ let
     {
       imports = [ mkFlatpakOptions ];
 
-      config =
-        if (!isDarwin) then
-          {
+      config = {
             services.flatpak.enable = true;
 
             services.rpcbind.enable = true;
@@ -42,12 +38,9 @@ let
                 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
               '';
             };
-          }
-        else
-          { };
+          };
     };
 in
 {
-  flake.modules.nixos.system-flatpak = mkConfig { isDarwin = false; };
-  flake.modules.darwin.system-flatpak = mkConfig { isDarwin = true; };
+  flake.modules.nixos.system-flatpak = nixosModule;
 }

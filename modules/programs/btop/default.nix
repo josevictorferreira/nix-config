@@ -118,8 +118,7 @@ let
       };
     };
 
-  mkConfig =
-    { isDarwin }:
+  btopModule =
     { config
     , lib
     , pkgs
@@ -127,7 +126,7 @@ let
     }:
     let
       cfg = config.jvf.programs.btop;
-      defaultPkg = if isDarwin then pkgs.btop else pkgs.btop-rocm;
+      defaultPkg = if pkgs.stdenv.isDarwin then pkgs.btop else pkgs.btop-rocm;
       colors = config.jvf.theme.colors;
 
       # Theme adapter: generate btop theme from jvf.theme.colors
@@ -198,6 +197,6 @@ let
     };
 in
 {
-  flake.modules.nixos.programs-btop = mkConfig { isDarwin = false; };
-  flake.modules.darwin.programs-btop = mkConfig { isDarwin = true; };
+  flake.modules.nixos.programs-btop = btopModule;
+  flake.modules.darwin.programs-btop = btopModule;
 }
