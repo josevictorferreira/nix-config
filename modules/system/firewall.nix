@@ -33,12 +33,12 @@ let
       imports = [ mkFirewallOptions ];
 
       config = {
-            networking.firewall = {
-              enable = true;
-              inherit (cfg) allowedTCPPorts;
-              inherit (cfg) allowedUDPPorts;
-            };
-          };
+        networking.firewall = {
+          enable = true;
+          inherit (cfg) allowedTCPPorts;
+          inherit (cfg) allowedUDPPorts;
+        };
+      };
     };
 in
 {

@@ -4,12 +4,11 @@
 _:
 let
   mkForgeCodeConfig =
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.forgecode;
@@ -170,10 +169,12 @@ let
       };
 
       # Merge user providers with defaults
-      finalProviders = lib.mapAttrs (
-        name: defaultProvider:
-        if cfg.providers ? ${name} then defaultProvider // cfg.providers.${name} else defaultProvider
-      ) defaultProviders;
+      finalProviders = lib.mapAttrs
+        (
+          name: defaultProvider:
+            if cfg.providers ? ${name} then defaultProvider // cfg.providers.${name} else defaultProvider
+        )
+        defaultProviders;
 
       # Forge inline TOML providers only support model URLs. Use provider.json
       # instead so these custom providers can keep their static model lists.
@@ -182,17 +183,19 @@ let
         name = model;
       };
 
-      providersJson = lib.mapAttrsToList (
-        _: v:
-        {
-          inherit (v) id response_type url;
-          auth_methods = [ "api_key" ];
-          models = map mkProviderModel v.models;
-        }
-        // lib.optionalAttrs (v ? api_key_var && v.api_key_var != null) {
-          api_key_vars = v.api_key_var;
-        }
-      ) finalProviders;
+      providersJson = lib.mapAttrsToList
+        (
+          _: v:
+            {
+              inherit (v) id response_type url;
+              auth_methods = [ "api_key" ];
+              models = map mkProviderModel v.models;
+            }
+            // lib.optionalAttrs (v ? api_key_var && v.api_key_var != null) {
+              api_key_vars = v.api_key_var;
+            }
+        )
+        finalProviders;
 
       # Generate TOML content for Forge settings. Provider definitions live in
       # provider.json because Forge TOML provider entries cannot hold static models.
@@ -276,11 +279,11 @@ let
             ++ lib.optional (temperature != null) "temperature: ${toString temperature}"
             ++ lib.optional (permission != { }) "permission:\n"
             +
-              lib.concatStringsSep "\n" (lib.mapAttrsToList formatPermission permission)
-              ++ lib.optional (tools != [ ]) "tools:\n"
+            lib.concatStringsSep "\n" (lib.mapAttrsToList formatPermission permission)
+            ++ lib.optional (tools != [ ]) "tools:\n"
             +
-              lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") tools)
-              ++ lib.optional (disabledTools != [ ]) "disabled_tools:\n"
+            lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") tools)
+            ++ lib.optional (disabledTools != [ ]) "disabled_tools:\n"
             + lib.concatStringsSep "\n" (map (t: "  - \"${t}\"") disabledTools) ++ [ "---" ];
 
           yamlHeader = lib.concatStringsSep "\n" yamlLines;
@@ -293,24 +296,27 @@ let
       # Build skills directory using linkFarm
       skillsDir =
         if skillConfigs != { } then
-          pkgs.linkFarm "forgecode-skills" (
-            lib.mapAttrsToList (
-              fileName: fileValue:
-              let
-                filePath =
-                  if lib.isDerivation fileValue then
-                    fileValue
-                  else if builtins.isString fileValue then
-                    pkgs.writeText "forgecode-skill-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-            ) skillConfigs
-          )
+          pkgs.linkFarm "forgecode-skills"
+            (
+              lib.mapAttrsToList
+                (
+                  fileName: fileValue:
+                    let
+                      filePath =
+                        if lib.isDerivation fileValue then
+                          fileValue
+                        else if builtins.isString fileValue then
+                          pkgs.writeText "forgecode-skill-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                        else
+                          fileValue;
+                    in
+                    {
+                      name = fileName;
+                      path = filePath;
+                    }
+                )
+                skillConfigs
+            )
         else
           null;
 
@@ -318,31 +324,33 @@ let
       mkMcpToml =
         mcps:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            name: cfg:
-            let
-              command =
-                if cfg ? command then
-                  if builtins.isList cfg.command then builtins.head cfg.command else cfg.command
-                else
-                  "";
-              args = cfg.args or [ ];
-              env = cfg.env or { };
+          lib.mapAttrsToList
+            (
+              name: cfg:
+              let
+                command =
+                  if cfg ? command then
+                    if builtins.isList cfg.command then builtins.head cfg.command else cfg.command
+                  else
+                    "";
+                args = cfg.args or [ ];
+                env = cfg.env or { };
 
-              argsStr =
-                if args != [ ] then "args = [" + lib.concatStringsSep ", " (map (a: "\"${a}\"") args) + "]" else "";
+                argsStr =
+                  if args != [ ] then "args = [" + lib.concatStringsSep ", " (map (a: "\"${a}\"") args) + "]" else "";
 
-              envStr =
-                if env != { } then
-                  "env = { " + lib.concatStringsSep ", " (lib.mapAttrsToList (k: v: "${k} = \"${v}\"") env) + " }"
-                else
-                  "";
-            in
-            "[mcp.\"${name}\"]\n"
-            + "command = \"${command}\"\n"
-            + lib.optionalString (argsStr != "") (argsStr + "\n")
-            + lib.optionalString (envStr != "") (envStr + "\n")
-          ) mcps
+                envStr =
+                  if env != { } then
+                    "env = { " + lib.concatStringsSep ", " (lib.mapAttrsToList (k: v: "${k} = \"${v}\"") env) + " }"
+                  else
+                    "";
+              in
+              "[mcp.\"${name}\"]\n"
+              + "command = \"${command}\"\n"
+              + lib.optionalString (argsStr != "") (argsStr + "\n")
+              + lib.optionalString (envStr != "") (envStr + "\n")
+            )
+            mcps
         );
 
       mcpTomlContent = if cfg.mcps != { } then mkMcpToml cfg.mcps else "";
@@ -356,32 +364,38 @@ let
         ".forge.toml" = fullTomlContent;
         "provider.json" = providerJsonContent;
       }
-      // lib.mapAttrs' (name: value: {
-        name = "commands/${name}.md";
-        value = mkCommandFile name value;
-      }) cfg.commands
-      // lib.mapAttrs' (name: value: {
-        name = "agents/${name}.md";
-        value = mkAgentFile name value;
-      }) cfg.agents;
+      // lib.mapAttrs'
+        (name: value: {
+          name = "commands/${name}.md";
+          value = mkCommandFile name value;
+        })
+        cfg.commands
+      // lib.mapAttrs'
+        (name: value: {
+          name = "agents/${name}.md";
+          value = mkAgentFile name value;
+        })
+        cfg.agents;
 
       forgeConfigDir = pkgs.linkFarm "forgecode-config" (
-        lib.mapAttrsToList (
-          fileName: fileValue:
-          let
-            filePath =
-              if lib.isDerivation fileValue then
-                fileValue
-              else if builtins.isString fileValue then
-                pkgs.writeText "forgecode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-              else
-                fileValue;
-          in
-          {
-            name = fileName;
-            path = filePath;
-          }
-        ) forgeConfigFiles
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if lib.isDerivation fileValue then
+                    fileValue
+                  else if builtins.isString fileValue then
+                    pkgs.writeText "forgecode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          forgeConfigFiles
       );
 
     in

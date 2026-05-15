@@ -16,7 +16,8 @@ let
       };
     };
 
-  nixosModule = { config
+  nixosModule =
+    { config
     , lib
     , pkgs
     , ...
@@ -28,17 +29,17 @@ let
       imports = [ mkFlatpakOptions ];
 
       config = {
-            services.flatpak.enable = true;
+        services.flatpak.enable = true;
 
-            services.rpcbind.enable = true;
+        services.rpcbind.enable = true;
 
-            systemd.services.flatpak-repo = lib.mkIf cfg.enableFlathub {
-              path = [ pkgs.flatpak ];
-              script = ''
-                flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-              '';
-            };
-          };
+        systemd.services.flatpak-repo = lib.mkIf cfg.enableFlathub {
+          path = [ pkgs.flatpak ];
+          script = ''
+            flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          '';
+        };
+      };
     };
 in
 {

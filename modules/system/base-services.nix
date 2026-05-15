@@ -54,31 +54,31 @@ let
       imports = [ mkBaseServicesOptions ];
 
       config = {
-            services = {
-              dbus.enable = true;
-              udev.enable = true;
-              libinput.enable = true;
-              envfs.enable = true;
+        services = {
+          dbus.enable = true;
+          udev.enable = true;
+          libinput.enable = true;
+          envfs.enable = true;
 
-              gvfs = lib.mkIf cfg.enableGvfs {
-                enable = true;
-              };
-
-              tumbler.enable = lib.mkIf cfg.enableTumbler true;
-
-              smartd = lib.mkIf cfg.enableSmartd {
-                enable = true;
-                autodetect = true;
-              };
-
-              lorri.enable = lib.mkIf cfg.enableLorri true;
-
-              fstrim = lib.mkIf cfg.enableFstrim {
-                enable = true;
-                interval = cfg.fstrimInterval;
-              };
-            };
+          gvfs = lib.mkIf cfg.enableGvfs {
+            enable = true;
           };
+
+          tumbler.enable = lib.mkIf cfg.enableTumbler true;
+
+          smartd = lib.mkIf cfg.enableSmartd {
+            enable = true;
+            autodetect = true;
+          };
+
+          lorri.enable = lib.mkIf cfg.enableLorri true;
+
+          fstrim = lib.mkIf cfg.enableFstrim {
+            enable = true;
+            interval = cfg.fstrimInterval;
+          };
+        };
+      };
     };
 in
 {

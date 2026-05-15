@@ -30,27 +30,27 @@ let
       imports = [ mkAudioOptions ];
 
       config = {
-            # Disable PulseAudio when using PipeWire
-            services.pulseaudio.enable = false;
+        # Disable PulseAudio when using PipeWire
+        services.pulseaudio.enable = false;
 
-            # Enable PipeWire with ALSA and PulseAudio compatibility
-            services.pipewire = {
-              enable = true;
-              alsa = {
-                enable = true;
-                support32Bit = cfg.alsa32BitSupport;
-              };
-              pulse = {
-                enable = true;
-              };
-              wireplumber = {
-                enable = cfg.wireplumberEnable;
-              };
-            };
-
-            # Enable libinput for input devices
-            services.libinput.enable = true;
+        # Enable PipeWire with ALSA and PulseAudio compatibility
+        services.pipewire = {
+          enable = true;
+          alsa = {
+            enable = true;
+            support32Bit = cfg.alsa32BitSupport;
           };
+          pulse = {
+            enable = true;
+          };
+          wireplumber = {
+            enable = cfg.wireplumberEnable;
+          };
+        };
+
+        # Enable libinput for input devices
+        services.libinput.enable = true;
+      };
     };
 in
 {

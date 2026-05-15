@@ -66,7 +66,8 @@ let
       };
     };
 
-  nixosModule = { config
+  nixosModule =
+    { config
     , pkgs
     , ...
     }:
@@ -77,25 +78,25 @@ let
       imports = [ mkPowerManagementOptions ];
 
       config = {
-            users.users."${cfg.username}".packages = [
-              pkgs.cpufrequtils
-            ];
+        users.users."${cfg.username}".packages = [
+          pkgs.cpufrequtils
+        ];
 
-            zramSwap = {
-              enable = true;
-              priority = cfg.zramPriority;
-              memoryPercent = cfg.zramMemoryPercent;
-              swapDevices = 1;
-              algorithm = cfg.zramAlgorithm;
-            };
+        zramSwap = {
+          enable = true;
+          priority = cfg.zramPriority;
+          memoryPercent = cfg.zramMemoryPercent;
+          swapDevices = 1;
+          algorithm = cfg.zramAlgorithm;
+        };
 
-            systemd.services."systemd-zram-setup@zram0".restartIfChanged = false;
+        systemd.services."systemd-zram-setup@zram0".restartIfChanged = false;
 
-            powerManagement = {
-              enable = true;
-              inherit (cfg) cpuFreqGovernor;
-            };
-          };
+        powerManagement = {
+          enable = true;
+          inherit (cfg) cpuFreqGovernor;
+        };
+      };
     };
 in
 {

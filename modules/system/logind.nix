@@ -50,14 +50,14 @@ let
       imports = [ mkLogindOptions ];
 
       config = {
-            services.logind.settings = {
-              Login = {
-                HandleLidSwitch = cfg.handleLidSwitch;
-                HandleSuspendKey = cfg.handleSuspendKey;
-                HandleHibernateKey = cfg.handleHibernateKey;
-              };
-            };
+        services.logind.settings = {
+          Login = {
+            HandleLidSwitch = cfg.handleLidSwitch;
+            HandleSuspendKey = cfg.handleSuspendKey;
+            HandleHibernateKey = cfg.handleHibernateKey;
           };
+        };
+      };
     };
 in
 {

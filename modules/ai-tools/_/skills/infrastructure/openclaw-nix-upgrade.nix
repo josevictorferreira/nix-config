@@ -1,11 +1,10 @@
-{
-  lib,
-  pkgs,
-  isDarwin,
-  npx,
-  defaultBrowser,
-  kebabToHuman,
-  ...
+{ lib
+, pkgs
+, isDarwin
+, npx
+, defaultBrowser
+, kebabToHuman
+, ...
 }:
 {
   name = "openclaw-nix-upgrade";

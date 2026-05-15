@@ -19,10 +19,9 @@ let
     };
 
   nixosModule =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -75,10 +74,9 @@ let
     };
 
   darwinModule =
-    {
-      config,
-      pkgs,
-      ...
+    { config
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.roles.ai-development;

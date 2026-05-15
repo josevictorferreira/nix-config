@@ -64,6 +64,7 @@ let
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
         developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;
         creating-nix-modules = mkSkill ./_/skills/nix/creating-modules.nix;
+        maintaining-dendritic-nix-config = mkSkill ./_/skills/nix/maintaining-dendritic-nix-config.nix;
         managing-flakes = mkSkill ./_/skills/nix/managing-flakes.nix;
         writing-nix-code = mkSkill ./_/skills/nix/writing-code.nix;
         pythonic-scraping-websites = mkSkill ./_/skills/browser/pythonic-scraping.nix;

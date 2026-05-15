@@ -14,10 +14,10 @@ let
   # Color aliases for readability — tokyonight-night purple/dark theme
   bg = colors.background;
   fg = colors.foreground;
-  accent = colors.color5;        # bb9af7 — purple
+  accent = colors.color5; # bb9af7 — purple
   accent_fg = colors.background; # 1a1b26 — dark background
-  dim = colors.color8;           # 414868 — muted gray
-  muted = colors.color0;         # 15161e — darker shade
+  dim = colors.color8; # 414868 — muted gray
+  muted = colors.color0; # 15161e — darker shade
 
   # Powerline-style status segments
   statusLeft = ''
