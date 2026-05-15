@@ -648,9 +648,23 @@ let
 
       license = skill.license or skill.licence or "";
 
+      # Format description safely for YAML frontmatter
+      descriptionLine =
+        let
+          desc = skill.description or "";
+          hasNewlines = builtins.match ".*[\n].*" desc != null;
+        in
+        if hasNewlines then
+        # Use folded block scalar for multiline descriptions
+          "description: >\n"
+          + lib.concatStringsSep "\n" (map (line: "  ${line}") (lib.splitString "\n" desc))
+        else
+        # Escape quotes in single-line descriptions
+          "description: \"${builtins.replaceStrings [ "\"" ] [ "\\\"" ] desc}\"";
+
       headerLines = [
         "name: \"${skillName}\""
-        "description: \"${skill.description or ""}\""
+        descriptionLine
       ]
       ++ lib.optional ((builtins.hasAttr "model" skill) && skill.model != "") "model: ${skill.model}"
       ++ lib.optional (license != "") "license: \"${license}\""

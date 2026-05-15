@@ -5,12 +5,19 @@
 YAZI_CLASS="yazi-fm"
 YAZI_CMD="kitty --class=yazi-fm -e yazi"
 
+yazi_running() {
+    hyprctl clients -j | jq -e '.[] | select(.class == "'"$YAZI_CLASS"'")' > /dev/null 2>&1
+}
+
 # Check if yazi-fm window exists
-if ! hyprctl clients -j | jq -e '.[] | select(.class == "'"$YAZI_CLASS"'")' > /dev/null 2>&1; then
+if ! yazi_running; then
     # Not running — start it in the background
     $YAZI_CMD &
-    # Give it a moment to spawn
-    sleep 0.3
+    # Wait for the window to register with Hyprland (up to 3 seconds)
+    for i in $(seq 1 30); do
+        if yazi_running; then break; fi
+        sleep 0.1
+    done
 fi
 
 # Toggle the special workspace
