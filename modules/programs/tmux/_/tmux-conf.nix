@@ -59,6 +59,8 @@ in
 
   set -g base-index 1
 
+  set -g extended-keys on
+
   set -g mouse on
 
   set -g pane-base-index 1
