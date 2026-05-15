@@ -70,6 +70,7 @@
     - If no significant friction occurred: write "No significant project-level learnings to record." and skip
 
     **De-dupe (mandatory):** Read existing `AGENTS.md` / `CLAUDE.md` first. Update/clarify equivalent lessons instead of duplicating.
+    **Remove stale rules:** If an existing lesson no longer applies or has become obsolete, delete it. Outdated rules erode trust just as much as noise does.
 
     **Format per lesson:**
     ```
@@ -93,17 +94,19 @@
        ```
        Use `Glob` or `Grep` if you don't know the path. The skill name in the `skill` tool maps to `<category>/<name>.nix` under that root.
 
-    2. **Identify what was missing or wrong** in the skill that cost you time:
+    2. **Identify what was missing, wrong, or obsolete** in the skill that cost you time or could mislead future sessions:
        - Missing instruction or warning ("don't do X, do Y")
        - Outdated example or wrong API
        - Missing reference (URL, command, file path)
        - Ambiguous wording that led you down the wrong path
        - Repeatable procedure that was described in prose but should be a script
+       - Obsolete rule or instruction that no longer applies — remove it
 
     3. **Apply changes directly to the `.nix` skill file**:
        - Edit the `prompt` field for prose updates (instructions, gotchas, examples)
        - Edit the `description` field if trigger conditions need tightening
        - Edit `allowed-tools` if a tool was needed but not whitelisted
+       - Delete obsolete rules, examples, or instructions that no longer make sense
        - For multi-step repeatable procedures, add a script. The skill DSL supports `scripts."<name>"` (mapped to `skills/<skill>/scripts/<name>` at runtime). If the skill doesn't already have a `scripts` attribute, see an existing skill that does (e.g. one of the meta or research skills) and follow that pattern.
 
     4. **Skill-improvement quality bar** (same spirit as project lessons):
