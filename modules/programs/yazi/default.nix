@@ -425,6 +425,7 @@ let
           {
             name = "*.zip";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -432,6 +433,7 @@ let
           {
             name = "*.tar";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -439,6 +441,7 @@ let
           {
             name = "*.tar.gz";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -446,6 +449,7 @@ let
           {
             name = "*.tar.bz2";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -453,6 +457,7 @@ let
           {
             name = "*.tar.xz";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -460,6 +465,7 @@ let
           {
             name = "*.tar.zst";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -467,6 +473,7 @@ let
           {
             name = "*.gz";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -474,6 +481,7 @@ let
           {
             name = "*.bz2";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -481,6 +489,7 @@ let
           {
             name = "*.7z";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -488,6 +497,7 @@ let
           {
             name = "*.rar";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -495,6 +505,7 @@ let
           {
             name = "*.xz";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -502,6 +513,7 @@ let
           {
             mime = "application/zip";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -509,6 +521,7 @@ let
           {
             mime = "application/gzip";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -516,6 +529,7 @@ let
           {
             mime = "application/x-tar";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -523,6 +537,7 @@ let
           {
             mime = "application/x-bzip";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -530,6 +545,7 @@ let
           {
             mime = "application/x-bzip2";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -537,6 +553,7 @@ let
           {
             mime = "application/x-7z-compressed";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -544,6 +561,7 @@ let
           {
             mime = "application/x-rar-compressed";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -551,6 +569,7 @@ let
           {
             mime = "application/x-xz";
             use = [
+              "archive"
               "extract"
               "open"
             ];
@@ -571,7 +590,10 @@ let
           }
           {
             mime = "image/*";
-            use = [ "open" ];
+            use = [
+              "image"
+              "open"
+            ];
           }
           {
             mime = "text/*";
@@ -610,6 +632,7 @@ let
             }
           ++ lib.optional (!isDarwin) {
             run = ''xdg-open "$@"'';
+            orphan = true;
             desc = "Open";
             for = "unix";
           };
@@ -642,6 +665,8 @@ let
             for = "windows";
           }
         ];
+        image = [ { run = ''eog "$@"''; orphan = true; for = "unix"; } ];
+        archive = [ { run = ''file-roller "$@"''; orphan = true; for = "unix"; } ];
       };
 
       settingsPlugin = {

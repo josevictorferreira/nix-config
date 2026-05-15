@@ -11,9 +11,9 @@ kitty_conf="$HOME/.config/kitty/kitty.conf"
 
 pkill swaybg
 
-swww query || swww-daemon
+awww query || awww-daemon
 
-swww="swww img"
+awww="awww img"
 effect="--transition-bezier .43,1.19,1,.4 --transition-fps 60 --transition-type grow --transition-pos 0.925,0.977 --transition-duration 2"
 
 if [ "$(cat $HOME/.cache/.theme_mode)" = "Light" ]; then
@@ -72,7 +72,7 @@ else
     next_wallpaper="$(find "${light_wallpapers}" -type f \( -iname "*.jpg" -o -iname "*.png" \) -print0 | shuf -n1 -z | xargs -0)"
 fi
 
-$swww "${next_wallpaper}" $effect
+$awww "${next_wallpaper}" $effect
 
 
 if [ "$next_mode" = "Dark" ]; then
@@ -168,7 +168,7 @@ set_custom_gtk_theme "$next_mode"
 update_theme_mode
 
 sleep 0.5
-${SCRIPTSDIR}/WallustSwww.sh
+${SCRIPTSDIR}/WallustAwww.sh
 sleep 1
 ${SCRIPTSDIR}/Refresh.sh 
 

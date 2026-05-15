@@ -23,7 +23,7 @@ _: {
         jvf.wrappers.users.${cfg.username}.programs.wallust = {
           packages = [
             pkgs.wallust
-            pkgs.swww
+            pkgs.awww
           ];
         };
         jvf.home.users.${cfg.username}.items.".config/wallust" = {

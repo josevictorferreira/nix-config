@@ -9,7 +9,7 @@ focused_monitor=$(hyprctl monitors | awk '/^Monitor/{name=$2} /focused: yes/{pri
 # Directory for swaync
 iDIR="$HOME/.config/swaync/images"
 
-# swww transition config
+# awww transition config
 FPS=60
 TYPE="wipe"
 DURATION=1.5
@@ -37,8 +37,8 @@ declare -A effects=(
 
 # Function to apply no effects
 no-effects() {
-    swww img -o "$focused_monitor" "$current_wallpaper" $SWWW_PARAMS &
-    # Wait for swww command to complete
+    awww img -o "$focused_monitor" "$current_wallpaper" $SWWW_PARAMS &
+    # Wait for awww command to complete
     wait $!
     # Refresh rofi, waybar palettes
     "${SCRIPTSDIR}/Refresh.sh"
@@ -68,9 +68,9 @@ main() {
             eval "${effects[$choice]}"
             # Wait for effects to be applied
             sleep 1
-            # Execute swww command after image conversion
-            swww img -o "$focused_monitor" "$wallpaper_output" $SWWW_PARAMS &
-            # Wait for swww command to complete
+            # Execute awww command after image conversion
+            awww img -o "$focused_monitor" "$wallpaper_output" $SWWW_PARAMS &
+            # Wait for awww command to complete
             sleep 1.5
             # Refresh rofi, waybar palettes
             "${SCRIPTSDIR}/Refresh.sh"

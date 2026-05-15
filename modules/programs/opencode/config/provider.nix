@@ -138,23 +138,6 @@ _: {
             output = 65536;
           };
         };
-        "MiniMax-M2.5" = {
-          name = "MiniMax M2.5";
-          modalities = {
-            input = [ "text" ];
-            output = [ "text" ];
-          };
-          options = {
-            thinking = {
-              type = "enabled";
-              budgetTokens = 8192;
-            };
-          };
-          limit = {
-            context = 196608;
-            output = 24576;
-          };
-        };
         "glm-5" = {
           name = "GLM-5";
           modalities = {

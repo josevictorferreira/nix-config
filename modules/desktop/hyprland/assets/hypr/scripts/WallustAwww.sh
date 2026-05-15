@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Define the path to the swww cache directory
-cache_dir="$HOME/.cache/swww/"
+cache_dir="$HOME/.cache/awww/"
 
 # Get all monitors
 monitors=($(hyprctl monitors -j | jq -r '.[].name'))

@@ -33,7 +33,6 @@ let
             openrouter_api_key_autocomplete = true;
             openrouter_api_key_code_agent = true;
             openrouter_api_key_benchmark = true;
-            minimax_api_key = true;
             context7_api_key = true;
             hugging_face_api_key = true;
             huggingface_api_key = true;
@@ -64,7 +63,6 @@ let
             openrouter_api_key_autocomplete = true;
             openrouter_api_key_code_agent = true;
             openrouter_api_key_benchmark = true;
-            minimax_api_key = true;
             context7_api_key = true;
             hugging_face_api_key = true;
             huggingface_api_key = true;

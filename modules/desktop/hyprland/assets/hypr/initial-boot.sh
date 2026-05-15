@@ -8,24 +8,24 @@ gtk_theme="Andromeda-dark"
 icon_theme="Flat-Remix-Blue-Dark"
 cursor_theme="Bibata-Modern-Ice"
 
-swww="swww img"
+awww="awww img"
 effect="--transition-bezier .43,1.19,1,.4 --transition-fps 30 --transition-type grow --transition-pos 0.925,0.977 --transition-duration 2"
 
 if [ ! -f "$HOME/.initial_startup_done" ]; then
     sleep 1
 	if [ -f "$wallpaper" ]; then
-		swww query || swww-daemon
+		awww query || awww-daemon
 		
-		# Small delay to ensure swww daemon is ready and monitors are initialized
+		# Small delay to ensure awww daemon is ready and monitors are initialized
 		sleep 0.5
 		
 		# Apply wallpaper to all monitors
 		for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
-			$swww -o "$monitor" $wallpaper $effect &
+			$awww -o "$monitor" $wallpaper $effect &
 		done
 		wait
 		
-	    "$scriptsDir/WallustSwww.sh" > /dev/null 2>&1 & 
+	    "$scriptsDir/WallustAwww.sh" > /dev/null 2>&1 & 
 	fi
     gsettings set org.gnome.desktop.interface color-scheme $color_scheme > /dev/null 2>&1 &
     gsettings set org.gnome.desktop.interface gtk-theme $gtk_theme > /dev/null 2>&1 &

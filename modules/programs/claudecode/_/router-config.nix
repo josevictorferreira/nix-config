@@ -29,7 +29,6 @@ _:
         "x-ai/grok-4"
         "z-ai/glm-4.6"
         "z-ai/glm-4.6:exacto"
-        "minimax/minimax-m2:free"
         "openai/gpt-oss-120b:exacto"
         "deepseek/deepseek-v3.1-terminus:exacto"
         "deepseek/deepseek-v3.2-exp"
@@ -40,22 +39,10 @@ _:
         "qwen/qwen3-coder-next"
         "stepfun/step-3.5-flash"
         "moonshotai/kimi-k2.5"
-        "minimax/minimax-m2.5"
       ];
       transformer = {
         use = [ "openrouter" ];
       };
-    }
-
-    {
-      name = "minimax";
-      api_base_url = "https://api.minimax.io/anthropic/v1";
-      api_key = "\${MINIMAX_API_KEY}";
-      models = [
-        "MiniMax-M2"
-        "MiniMax-M2.1"
-        "MiniMax-M2.5"
-      ];
     }
 
     {

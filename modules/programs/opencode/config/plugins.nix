@@ -12,7 +12,6 @@ _: {
       let
         kimi = "kimi-for-coding/k2p6";
         glm = "zai-coding-plan/glm-5.1";
-        minimax = "opencode-go/minimax-m2.7";
         qwen = "alibaba-coding-plan/qwen3.6-plus";
         gpt = "openai/gpt-5.5";
         katcoder = "openrouter/kwaipilot/kat-coder-pro-v2";
@@ -24,11 +23,11 @@ _: {
             default = deepseek;
             cheap = deepseek;
             expensive = katcoder;
-            alternative = minimax;
+            alternative = katcoder;
           };
           coder = {
             default = kimi;
-            cheap = minimax;
+            cheap = deepseek;
             expensive = deepseekPro;
             alternative = glm;
           };
@@ -196,12 +195,10 @@ _: {
           defaultConcurrency = 6;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            github-copilot = 2;
             openrouter = 3;
             kimi-for-coding = 2;
-            zai-coding-plan = 10;
-            alibaba-coding-plan = 3;
-            minimax = 3;
+            "zai-coding-plan" = 10;
+            "alibaba-coding-plan" = 3;
           };
           modelConcurrency = 3;
           maxDepth = 10;

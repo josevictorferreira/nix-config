@@ -49,8 +49,8 @@ menu() {
   done
 }
 
-# initiate swww if not running
-swww query || swww-daemon --format xrgb
+# initiate awww if not running
+awww query || awww-daemon --format xrgb
 
 # Choice of wallpapers
 main() {
@@ -68,9 +68,9 @@ main() {
 
   # Random choice case
   if [[ "$choice" == "$RANDOM_PIC_NAME" ]]; then
-	swww img -o "$focused_monitor" "$RANDOM_PIC" $SWWW_PARAMS;
+	awww img -o "$focused_monitor" "$RANDOM_PIC" $SWWW_PARAMS;
     sleep 1.5
-    "$SCRIPTSDIR/WallustSwww.sh"
+    "$SCRIPTSDIR/WallustAwww.sh"
     sleep 0.5
     "$SCRIPTSDIR/Refresh.sh"
     exit 0
@@ -87,7 +87,7 @@ main() {
   done
 
   if [[ $pic_index -ne -1 ]]; then
-    swww img -o "$focused_monitor" "${PICS[$pic_index]}" $SWWW_PARAMS
+    awww img -o "$focused_monitor" "${PICS[$pic_index]}" $SWWW_PARAMS
   else
     echo "Image not found."
     exit 1
@@ -103,7 +103,7 @@ fi
 main
 
 sleep 1.5
-"$SCRIPTSDIR/WallustSwww.sh"
+"$SCRIPTSDIR/WallustAwww.sh"
 
 sleep 0.5
 "$SCRIPTSDIR/Refresh.sh"

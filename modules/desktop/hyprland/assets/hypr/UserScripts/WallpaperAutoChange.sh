@@ -22,7 +22,7 @@ while true; do
 		| while read -r img; do
 			# Apply wallpaper to all monitors
 			for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
-				swww img -o "$monitor" "$img" &
+				awww img -o "$monitor" "$img" &
 			done
 			wait
 			$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
