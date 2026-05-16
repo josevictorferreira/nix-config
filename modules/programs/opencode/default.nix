@@ -119,7 +119,13 @@ let
                 path = pkgs.writeText "hindsight-opencode.json" (
                   builtins.toJSON {
                     hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                    bankId = "opencode";
+                    # Per-project memory isolation, shared with Claude Code.
+                    # gitProject = basename of the main worktree root from
+                    # `git rev-parse --git-common-dir`; falls back to cwd
+                    # basename when not in a repo. Matches Claude Code's
+                    # `project` field with resolveWorktrees=true.
+                    dynamicBankId = true;
+                    dynamicBankGranularity = [ "gitProject" ];
                     autoRecall = true;
                     autoRetain = true;
                     recallBudget = "mid";
@@ -131,7 +137,14 @@ let
                 path = pkgs.writeText "hindsight-claude-code.json" (
                   builtins.toJSON {
                     hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                    bankId = "claudecode";
+                    # Per-project memory isolation, shared with opencode.
+                    # Claude Code's `project` field uses git-common-dir
+                    # resolution when resolveWorktrees=true (the default),
+                    # so it produces the same string as opencode's
+                    # `gitProject` for any given repo.
+                    dynamicBankId = true;
+                    dynamicBankGranularity = [ "project" ];
+                    resolveWorktrees = true;
                     autoRecall = true;
                     autoRetain = true;
                     recallBudget = "mid";

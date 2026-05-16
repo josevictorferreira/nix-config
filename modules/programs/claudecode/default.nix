@@ -103,9 +103,11 @@ let
         # Suppress Node.js deprecation warnings
         export NODE_NO_WARNINGS=1
 
-        # Hindsight memory configuration
+        # Hindsight memory configuration. Per-project granularity lives in
+        # ~/.hindsight/claude-code.json (dynamicBankGranularity=["project"]
+        # with resolveWorktrees=true). Granularity isn't an env-var knob.
         export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
-        export HINDSIGHT_BANK_ID="claudecode"
+        export HINDSIGHT_DYNAMIC_BANK_ID="true"
         export HINDSIGHT_AUTO_RECALL="true"
         export HINDSIGHT_AUTO_RETAIN="true"
         export HINDSIGHT_RECALL_BUDGET="mid"

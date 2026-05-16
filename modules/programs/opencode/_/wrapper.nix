@@ -78,9 +78,11 @@ let
 
     ${reinstallGuard}
 
-    # Hindsight memory configuration
+    # Hindsight memory configuration. Per-project granularity lives in
+    # ~/.hindsight/opencode.json (dynamicBankGranularity=["gitProject"]).
+    # Granularity isn't an env-var knob; only the on/off switch is.
     export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
-    export HINDSIGHT_BANK_ID="opencode"
+    export HINDSIGHT_DYNAMIC_BANK_ID="true"
     export HINDSIGHT_AUTO_RECALL="true"
     export HINDSIGHT_AUTO_RETAIN="true"
     export HINDSIGHT_RECALL_BUDGET="mid"
@@ -97,9 +99,11 @@ let
 
     ${reinstallGuard}
 
-    # Hindsight memory configuration
+    # Hindsight memory configuration. Per-project granularity lives in
+    # ~/.hindsight/opencode.json (dynamicBankGranularity=["gitProject"]).
+    # Granularity isn't an env-var knob; only the on/off switch is.
     export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
-    export HINDSIGHT_BANK_ID="opencode"
+    export HINDSIGHT_DYNAMIC_BANK_ID="true"
     export HINDSIGHT_AUTO_RECALL="true"
     export HINDSIGHT_AUTO_RETAIN="true"
     export HINDSIGHT_RECALL_BUDGET="mid"
