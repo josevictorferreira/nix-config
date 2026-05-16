@@ -298,7 +298,7 @@ _: {
           skills = false;
           agents = false;
           hooks = true;
-          plugins = [ ];
+          plugins = false;
           plugins_override = { };
         };
         google_auth = false;

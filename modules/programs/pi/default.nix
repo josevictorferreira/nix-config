@@ -62,6 +62,9 @@ let
         })
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;
+        })
+        // (lib.optionalAttrs (cfg.models != { }) {
+          "models.json" = cfg.models;
         });
 
       piAgentDir = pkgs.linkFarm "pi-agent-config" (
@@ -141,7 +144,21 @@ let
           default = { };
           description = "Pi settings.json contents.";
         };
+
+        models = lib.mkOption {
+          inherit (json) type;
+          default = { };
+          description = ''
+            Pi models.json contents. Custom providers and models loaded by pi at
+            startup (see pi-coding-agent docs/models.md). Top-level shape:
+            `{ providers = { name = { baseUrl, api, apiKey, models = [...]; }; }; }`.
+          '';
+        };
       };
+
+      imports = [
+        ./_/provider.nix
+      ];
 
       config = {
         jvf.wrappers.users.${cfg.username}.programs.pi = {
