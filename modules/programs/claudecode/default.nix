@@ -287,8 +287,26 @@ let
         # Set default router settings from imported config
         jvf.programs.claudecode.routerSettings = lib.mkDefault defaultRouterConfig;
 
-        # Inject MCP servers into settings automatically
+        # Inject plugins and MCP servers into settings automatically
         jvf.programs.claudecode.settings = {
+          enabledPlugins = lib.mkDefault {
+            "hindsight-memory@hindsight" = true;
+            "oh-my-claudecode@omc" = true;
+          };
+          extraKnownMarketplaces = lib.mkDefault {
+            hindsight = {
+              source = {
+                source = "github";
+                repo = "vectorize-io/hindsight";
+              };
+            };
+            omc = {
+              source = {
+                source = "git";
+                url = "https://github.com/Yeachan-Heo/oh-my-claudecode.git";
+              };
+            };
+          };
           mcpServers = lib.mkDefault (
             lib.mapAttrs
               (
