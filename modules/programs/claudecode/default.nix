@@ -125,7 +125,7 @@ let
         fi
 
         # Auto-install plugins once
-        PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v2"
+        PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v3"
         if [ ! -f "$PLUGINS_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
           echo "Installing hindsight-memory plugin..."
           ${
@@ -141,15 +141,13 @@ let
               ''"$CLAUDE_BIN"''
           } plugin install hindsight-memory 2>/dev/null || true
 
-          echo "Installing oh-my-openclaude plugin..."
+          echo "Installing oh-my-claudecode plugin..."
           ${
             if (!isDarwin) then
               ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
             else
               ''"$CLAUDE_BIN"''
-          } plugin install oh-my-openclaude 2>/dev/null || true
-
-          # Also try oh-my-claudecode just in case of naming confusion
+          } plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode 2>/dev/null || true
           ${
             if (!isDarwin) then
               ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
@@ -223,7 +221,7 @@ let
         # Install oh-my-claudecode if not present
         if [ ! -x "$OMC_BIN" ]; then
           echo "Installing oh-my-claudecode..."
-          PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g claudecode-omc@latest
+          PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g oh-my-claude-sisyphus@latest
         fi
 
         ${
