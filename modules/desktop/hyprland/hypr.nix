@@ -100,8 +100,10 @@ in
 
               # Make all scripts executable
               find "$TARGET_PATH/scripts" "$TARGET_PATH/UserScripts" -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
-              echo "Reloading Hyprland..."
-              ${config.programs.hyprland.package}/bin/hyprctl reload 2>/dev/null || true
+              if [ -n "''${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+                echo "Reloading Hyprland..."
+                ${config.programs.hyprland.package}/bin/hyprctl reload >/dev/null 2>&1 || true
+              fi
             '';
           };
           ".config/pypr" = {

@@ -665,8 +665,8 @@ let
             for = "windows";
           }
         ];
-        image = [ { run = ''eog "$@"''; orphan = true; for = "unix"; } ];
-        archive = [ { run = ''file-roller "$@"''; orphan = true; for = "unix"; } ];
+        image = [{ run = ''eog "$@"''; orphan = true; for = "unix"; }];
+        archive = [{ run = ''file-roller "$@"''; orphan = true; for = "unix"; }];
       };
 
       settingsPlugin = {

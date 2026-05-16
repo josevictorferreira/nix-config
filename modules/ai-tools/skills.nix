@@ -59,6 +59,7 @@ let
         oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;
         grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
         openclaw-nix-upgrade = mkSkill ./_/skills/infrastructure/openclaw-nix-upgrade.nix;
+        openclaw-upgrade = mkSkill ./_/skills/infrastructure/openclaw-upgrade.nix;
         browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
