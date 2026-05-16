@@ -595,3 +595,10 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** The skill system only materializes `scripts/` and `references/` subdirectories. Map agents/, eval-viewer/, assets/ into the `scripts` attribute with path separators in keys (e.g., `scripts."agents/grader.md"`), then use `builtins.replaceStrings` to adjust file path references in the prompt from `agents/grader.md` to `scripts/agents/grader.md`.
 **Context:** `mkSingleSkillConfigs` writes scripts as `skills/<name>/scripts/<key>` — keys with `/` create nested directories. References stay as `references/<key>.md`.
 **Verify:** Check prompt references match: `grep 'agents/' <skill-nix-file>` should show `scripts/agents/` prefix.
+
+## Hyprland & Desktop Integrations
+
+### Auto-Closing Scratchpads on App Spawn
+**Lesson:** When an application running inside a Hyprland special workspace (scratchpad) spawns an external GUI window (like opening a file in a player or browser), intercept the opener command to toggle the special workspace off.
+**Context:** By default, new windows spawned from a special workspace open in the regular workspace underneath, leaving the user staring at the still-open scratchpad while the newly opened file is hidden behind it.
+**Verify:** Prefix the app's internal opener commands with a conditional Hyprland dispatch: `hyprctl activewindow | grep -q "class: <expected-class>" && hyprctl dispatch togglespecialworkspace <name>; <original_cmd>`. This ensures it only auto-closes when actually running as a scratchpad.

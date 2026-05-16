@@ -130,6 +130,13 @@ let
         # Suppress Node.js deprecation warnings
         export NODE_NO_WARNINGS=1
 
+        # Hindsight memory configuration
+        export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
+        export HINDSIGHT_BANK_ID="claudecode"
+        export HINDSIGHT_AUTO_RECALL="true"
+        export HINDSIGHT_AUTO_RETAIN="true"
+        export HINDSIGHT_RECALL_BUDGET="mid"
+
         NPM_GLOBAL_DIR="$HOME/.npm-global"
         NPM_GLOBAL_BIN="$NPM_GLOBAL_DIR/bin"
         CLAUDE_BIN="$NPM_GLOBAL_BIN/claude"
@@ -142,6 +149,16 @@ let
         if [ ! -x "$CLAUDE_BIN" ]; then
           echo "Installing claude-code..."
           PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g @anthropic-ai/claude-code
+        fi
+
+        # Auto-install hindsight-memory plugin once
+        HINDSIGHT_SENTINEL="$HOME/.claude/.hindsight-memory-installed"
+        if [ ! -f "$HINDSIGHT_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
+          echo "Installing hindsight-memory plugin..."
+          "$CLAUDE_BIN" plugin marketplace add vectorize-io/hindsight 2>/dev/null || true
+          "$CLAUDE_BIN" plugin install hindsight-memory 2>/dev/null || true
+          mkdir -p "$HOME/.claude"
+          touch "$HINDSIGHT_SENTINEL"
         fi
 
         ${

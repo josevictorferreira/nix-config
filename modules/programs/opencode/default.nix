@@ -109,6 +109,34 @@ let
 
         # Config materialization via jvf.home
         jvf.home.users.${cfg.username}.items = {
+          ".hindsight" = {
+            kind = "dir";
+            mode = "copy";
+            source = pkgs.linkFarm "hindsight-config" [
+              {
+                name = "opencode.json";
+                path = pkgs.writeText "hindsight-opencode.json" (builtins.toJSON {
+                  hindsightApiUrl = "https://hindsight-api.josevictor.me";
+                  bankId = "opencode";
+                  autoRecall = true;
+                  autoRetain = true;
+                  recallBudget = "mid";
+                });
+              }
+              {
+                name = "claude-code.json";
+                path = pkgs.writeText "hindsight-claude-code.json" (builtins.toJSON {
+                  hindsightApiUrl = "https://hindsight-api.josevictor.me";
+                  bankId = "claudecode";
+                  autoRecall = true;
+                  autoRetain = true;
+                  recallBudget = "mid";
+                  enableKnowledgeTools = true;
+                });
+              }
+            ];
+            preserve = [ ];
+          };
           ".config/opencode" = {
             kind = "dir";
             mode = "copy";

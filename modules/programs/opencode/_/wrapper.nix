@@ -78,6 +78,13 @@ let
 
     ${reinstallGuard}
 
+    # Hindsight memory configuration
+    export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
+    export HINDSIGHT_BANK_ID="opencode"
+    export HINDSIGHT_AUTO_RECALL="true"
+    export HINDSIGHT_AUTO_RETAIN="true"
+    export HINDSIGHT_RECALL_BUDGET="mid"
+
     exec "${openCodeFHS}/bin/opencode-fhs" "$@"
   '';
 
@@ -89,6 +96,13 @@ let
     OPENCODE_BIN="$LOCAL_BIN/opencode"
 
     ${reinstallGuard}
+
+    # Hindsight memory configuration
+    export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
+    export HINDSIGHT_BANK_ID="opencode"
+    export HINDSIGHT_AUTO_RECALL="true"
+    export HINDSIGHT_AUTO_RETAIN="true"
+    export HINDSIGHT_RECALL_BUDGET="mid"
 
     exec "$OPENCODE_BIN" "$@"
   '';
