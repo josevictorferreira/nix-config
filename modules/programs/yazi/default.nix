@@ -631,7 +631,7 @@ let
               desc = "Open";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''xdg-open "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; xdg-open "$@"'';
             orphan = true;
             desc = "Open";
             for = "unix";
@@ -643,7 +643,7 @@ let
               desc = "Reveal in Finder";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''xdg-open "$(dirname "$0")"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; xdg-open "$(dirname "$0")"'';
             desc = "Reveal in file manager";
             for = "unix";
           };
@@ -655,7 +655,7 @@ let
         ];
         play = [
           {
-            run = ''mpv "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; mpv "$@"'';
             orphan = true;
             for = "unix";
           }
@@ -665,8 +665,8 @@ let
             for = "windows";
           }
         ];
-        image = [{ run = ''eog "$@"''; orphan = true; for = "unix"; }];
-        archive = [{ run = ''file-roller "$@"''; orphan = true; for = "unix"; }];
+        image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; eog "$@"''; orphan = true; for = "unix"; }];
+        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; file-roller "$@"''; orphan = true; for = "unix"; }];
       };
 
       settingsPlugin = {
