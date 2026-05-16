@@ -5,11 +5,12 @@
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.opencode;
@@ -34,29 +35,26 @@ let
         // cfg.extraConfigFiles;
 
       opencodeConfigDir = pkgs.linkFarm "opencode-config" (
-        lib.mapAttrsToList
-          (
-            fileName: fileValue:
-              let
-                filePath =
-                  if lib.isDerivation fileValue then
-                    fileValue
-                  else if builtins.isString fileValue then
-                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else if builtins.isAttrs fileValue then
-                    pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
-                      (
-                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                      )
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-          )
-          opencodeConfigs
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if lib.isDerivation fileValue then
+                fileValue
+              else if builtins.isString fileValue then
+                pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else if builtins.isAttrs fileValue then
+                pkgs.writeText "opencode-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
+                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                )
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) opencodeConfigs
       );
     in
     {
@@ -78,6 +76,9 @@ let
           );
           disabled_providers = lib.mkDefault [
             "anthropic"
+            "github-copilot"
+            "minimax"
+            "google"
           ];
           instructions = [
             ".docs/rules.md"
@@ -115,24 +116,28 @@ let
             source = pkgs.linkFarm "hindsight-config" [
               {
                 name = "opencode.json";
-                path = pkgs.writeText "hindsight-opencode.json" (builtins.toJSON {
-                  hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                  bankId = "opencode";
-                  autoRecall = true;
-                  autoRetain = true;
-                  recallBudget = "mid";
-                });
+                path = pkgs.writeText "hindsight-opencode.json" (
+                  builtins.toJSON {
+                    hindsightApiUrl = "https://hindsight-api.josevictor.me";
+                    bankId = "opencode";
+                    autoRecall = true;
+                    autoRetain = true;
+                    recallBudget = "mid";
+                  }
+                );
               }
               {
                 name = "claude-code.json";
-                path = pkgs.writeText "hindsight-claude-code.json" (builtins.toJSON {
-                  hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                  bankId = "claudecode";
-                  autoRecall = true;
-                  autoRetain = true;
-                  recallBudget = "mid";
-                  enableKnowledgeTools = true;
-                });
+                path = pkgs.writeText "hindsight-claude-code.json" (
+                  builtins.toJSON {
+                    hindsightApiUrl = "https://hindsight-api.josevictor.me";
+                    bankId = "claudecode";
+                    autoRecall = true;
+                    autoRetain = true;
+                    recallBudget = "mid";
+                    enableKnowledgeTools = true;
+                  }
+                );
               }
             ];
             preserve = [ ];
