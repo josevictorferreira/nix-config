@@ -50,12 +50,12 @@ let
         else
           lib.recursiveUpdate (presets.${cfg.theme} or { }) cfg.statusline;
 
-      # FHS environment for Linux (claude-code needs glibc, etc.)
-      claudeCodeFHS =
+      # FHS environment for Linux (npm global bins need glibc, etc.)
+      nodeFHS =
         if (!isDarwin) then
           pkgs.buildFHSEnv
             {
-              name = "claude-fhs";
+              name = "node-fhs";
               targetPkgs =
                 pkgs: with pkgs; [
                   stdenv.cc.cc.lib
@@ -71,35 +71,8 @@ let
                 export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
                 mkdir -p "$TMPDIR"
               '';
-              runScript = "${pkgs.writeShellScript "claude-runner" ''
-              exec "$HOME/.npm-global/bin/claude" "$@"
-            ''}";
-            }
-        else
-          null;
-
-      claudeRouterFHS =
-        if (!isDarwin) then
-          pkgs.buildFHSEnv
-            {
-              name = "claude-router-fhs";
-              targetPkgs =
-                pkgs: with pkgs; [
-                  stdenv.cc.cc.lib
-                  zlib
-                  openssl
-                  curl
-                  nodejs_22
-                  coreutils
-                  tmux
-                  fzf
-                ];
-              profile = ''
-                export TMPDIR="''${TMPDIR:-$HOME/.cache/claude-tmp}"
-                mkdir -p "$TMPDIR"
-              '';
-              runScript = "${pkgs.writeShellScript "claude-router-runner" ''
-              exec "$HOME/.npm-global/bin/ccr" "$@"
+              runScript = "${pkgs.writeShellScript "node-runner" ''
+              exec "$@"
             ''}";
             }
         else
@@ -151,20 +124,47 @@ let
           PATH="$NPM_GLOBAL_BIN:$PATH" ${pkgs.nodejs_22}/bin/npm install -g @anthropic-ai/claude-code
         fi
 
-        # Auto-install hindsight-memory plugin once
-        HINDSIGHT_SENTINEL="$HOME/.claude/.hindsight-memory-installed"
-        if [ ! -f "$HINDSIGHT_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
+        # Auto-install plugins once
+        PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v2"
+        if [ ! -f "$PLUGINS_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
           echo "Installing hindsight-memory plugin..."
-          "$CLAUDE_BIN" plugin marketplace add vectorize-io/hindsight 2>/dev/null || true
-          "$CLAUDE_BIN" plugin install hindsight-memory 2>/dev/null || true
+          ${
+            if (!isDarwin) then
+              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
+            else
+              ''"$CLAUDE_BIN"''
+          } plugin marketplace add vectorize-io/hindsight 2>/dev/null || true
+          ${
+            if (!isDarwin) then
+              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
+            else
+              ''"$CLAUDE_BIN"''
+          } plugin install hindsight-memory 2>/dev/null || true
+
+          echo "Installing oh-my-openclaude plugin..."
+          ${
+            if (!isDarwin) then
+              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
+            else
+              ''"$CLAUDE_BIN"''
+          } plugin install oh-my-openclaude 2>/dev/null || true
+
+          # Also try oh-my-claudecode just in case of naming confusion
+          ${
+            if (!isDarwin) then
+              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
+            else
+              ''"$CLAUDE_BIN"''
+          } plugin install oh-my-claudecode 2>/dev/null || true
+
           mkdir -p "$HOME/.claude"
-          touch "$HINDSIGHT_SENTINEL"
+          touch "$PLUGINS_SENTINEL"
         fi
 
         ${
           if (!isDarwin) then
             ''
-              exec "${claudeCodeFHS}/bin/claude-fhs" "$@"
+              exec "${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN" "$@"
             ''
           else
             ''
@@ -197,7 +197,7 @@ let
         ${
           if (!isDarwin) then
             ''
-              exec "${claudeRouterFHS}/bin/claude-router-fhs" "$@"
+              exec "${nodeFHS}/bin/node-fhs" "$ROUTER_BIN" "$@"
             ''
           else
             ''
@@ -229,7 +229,7 @@ let
         ${
           if (!isDarwin) then
             ''
-              exec "${claudeCodeFHS}/bin/claude-fhs" "$OMC_BIN" "$@"
+              exec "${nodeFHS}/bin/node-fhs" "$OMC_BIN" "$@"
             ''
           else
             ''
