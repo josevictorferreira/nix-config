@@ -19,3 +19,4 @@ nix.conf
 
 __pycache__/
 .commandcode/
+.omc/
