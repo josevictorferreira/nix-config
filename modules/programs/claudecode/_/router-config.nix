@@ -22,6 +22,9 @@ _: {
         "glm-4.7"
         "kimi-k2.5"
       ];
+      transformer = {
+        use = [ "Anthropic" ];
+      };
     }
     {
       name = "openrouter";
@@ -36,12 +39,15 @@ _: {
 
     {
       name = "kimi-for-coding";
-      api_base_url = "https://api.kimi.com/coding/";
+      api_base_url = "https://api.kimi.com/coding";
       api_key = "\${KIMI_API_KEY}";
       models = [
         "kimi-k2.6"
         "kimi-k2.5"
       ];
+      transformer = {
+        use = [ "Anthropic" ];
+      };
     }
 
     {
@@ -54,6 +60,9 @@ _: {
         "glm-4.7"
         "glm-5-turbo"
       ];
+      transformer = {
+        use = [ "Anthropic" ];
+      };
     }
 
     {
@@ -72,6 +81,9 @@ _: {
         "qwen3.5-plus"
         "qwen3.6-plus"
       ];
+      transformer = {
+        use = [ "openrouter" ];
+      };
     }
   ];
   Router = {
