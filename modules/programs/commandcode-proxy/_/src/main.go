@@ -194,7 +194,10 @@ func extractText(raw json.RawMessage) string {
 // extracts system-role content into a separate `system` string.
 func translateMessages(in []oaiMessage) ([]interface{}, string) {
 	var systemText strings.Builder
-	var out []interface{}
+	// Initialized to empty slice (not nil) so JSON marshals to `[]` even
+	// when all input messages were filtered out — CC's validator rejects
+	// `messages: null` with HTTP 400.
+	out := []interface{}{}
 
 	// Only forward tool results whose tool_call_id matches an emitted assistant call.
 	emitted := map[string]bool{}
@@ -242,16 +245,17 @@ func translateMessages(in []oaiMessage) ([]interface{}, string) {
 			if !emitted[m.ToolCallID] {
 				continue
 			}
+			// CC accepts only `user`/`assistant` roles and the Anthropic
+			// `tool_result` content shape (underscored, with `tool_use_id`
+			// and string `content`). The Vercel `role:"tool"` /
+			// `type:"tool-result"` form is rejected by CC's validator.
 			out = append(out, map[string]interface{}{
-				"role": "tool",
+				"role": "user",
 				"content": []interface{}{
 					map[string]interface{}{
-						"type":       "tool-result",
-						"toolCallId": m.ToolCallID,
-						"output": map[string]interface{}{
-							"type":  "text",
-							"value": extractText(m.Content),
-						},
+						"type":        "tool_result",
+						"tool_use_id": m.ToolCallID,
+						"content":     extractText(m.Content),
 					},
 				},
 			})
@@ -273,22 +277,39 @@ func translateTools(in []oaiTool) []interface{} {
 	return out
 }
 
+// writeError emits an OpenAI-shaped JSON error envelope so AI-SDK clients
+// surface the actual upstream message instead of wrapping it as
+// "Invalid error response format".
+func writeError(w http.ResponseWriter, status int, errType, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	payload, _ := json.Marshal(map[string]interface{}{
+		"error": map[string]interface{}{
+			"message": message,
+			"type":    errType,
+			"code":    status,
+		},
+	})
+	_, _ = w.Write(payload)
+}
+
 // --- chat handler ---
 
 func handleChat(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "method not allowed")
 		return
 	}
 	var oReq oaiRequest
 	if err := json.NewDecoder(r.Body).Decode(&oReq); err != nil {
-		http.Error(w, "invalid request: "+err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "invalid_request", err.Error())
 		return
 	}
 
 	apiKey, err := loadAPIKey()
 	if err != nil {
-		http.Error(w, "auth: "+err.Error(), http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, "auth_error", err.Error())
 		return
 	}
 
@@ -330,17 +351,33 @@ func handleChat(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := http.DefaultClient.Do(httpReq)
 	if err != nil {
-		http.Error(w, "upstream: "+err.Error(), http.StatusBadGateway)
+		log.Printf("model=%q upstream dial error: %v", oReq.Model, err)
+		writeError(w, http.StatusBadGateway, "upstream_error", err.Error())
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		errBody, _ := io.ReadAll(resp.Body)
-		http.Error(w, fmt.Sprintf("upstream %d: %s", resp.StatusCode, errBody), resp.StatusCode)
+		// Log full request + CC response so journalctl reveals what was rejected.
+		log.Printf("model=%q upstream %d in %s\n  req: %s\n  resp: %s",
+			oReq.Model, resp.StatusCode, time.Since(start), string(body), string(errBody))
+		// Pull CC's own message into our JSON envelope when possible.
+		msg := fmt.Sprintf("upstream %d: %s", resp.StatusCode, errBody)
+		var ccErr struct {
+			Error struct {
+				Message string `json:"message"`
+				Code    string `json:"code"`
+			} `json:"error"`
+		}
+		if json.Unmarshal(errBody, &ccErr) == nil && ccErr.Error.Message != "" {
+			msg = fmt.Sprintf("Command Code: %s", ccErr.Error.Message)
+		}
+		writeError(w, resp.StatusCode, "upstream_error", msg)
 		return
 	}
 
+	log.Printf("model=%q upstream=200 stream=%v setup=%s", oReq.Model, oReq.Stream, time.Since(start))
 	if oReq.Stream {
 		streamCCToOAI(w, resp.Body, oReq.Model)
 	} else {
