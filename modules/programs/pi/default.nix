@@ -192,38 +192,44 @@ let
               # Ensure the skills and prompts subdirectories exist
               mkdir -p "$TARGET_PATH/skills" "$TARGET_PATH/prompts"
 
-              # Write settings.json if it doesn't exist or needs updating
+              # Settings merge: keep user-written content (e.g. pi's `packages`
+              # key after `pi install`) and layer our generated keys on top.
               SETTINGS_FILE="$TARGET_PATH/settings.json"
               if [ ! -f "$SETTINGS_FILE" ]; then
                 echo '{}' > "$SETTINGS_FILE"
               fi
-
-              # Merge our generated settings with existing settings
               ${lib.getExe pkgs.jq} -s '.[0] * .[1]' "$SETTINGS_FILE" "$TARGET_PATH/settings.json" > "$SETTINGS_FILE.tmp" 2>/dev/null || cp "$TARGET_PATH/settings.json" "$SETTINGS_FILE.tmp"
               mv -f "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-            '';
-          };
 
-          # Extension-state sentinel: re-runs `pi install` only when the
-          # declared extensions list changes (mirrors the opencode plugins
-          # sentinel pattern). Failures are non-fatal so a flaky network
-          # cannot break activation; the next rebuild will retry.
-          ".cache/pi-nix-state/extensions.json" = {
-            kind = "file";
-            mode = "copy";
-            text = builtins.toJSON cfg.extensions;
-            postInstall = ''
-              export HOME="$HOME_DIR"
-              PI="${pkgs.pi-coding-agent}/bin/pi"
-              if [ ! -x "$PI" ]; then
-                echo "[pi] pi binary not found at $PI; skipping extension install."
-                exit 0
+              # Activation runs as root and copies from the read-only nix store;
+              # hand ownership + write bit back to the user so pi can mutate
+              # settings.json at runtime (pi install/remove rewrites it).
+              chown -R "$USER_NAME:$GROUP_NAME" "$TARGET_PATH"
+              chmod -R u+w "$TARGET_PATH"
+
+              # Run `pi install` for each declared extension whenever the
+              # desired list differs from the last-applied state. Sentinel
+              # lives in the agent dir alongside other runtime state.
+              EXT_STATE="$TARGET_PATH/.nix-extensions.json"
+              DESIRED=${lib.escapeShellArg (builtins.toJSON cfg.extensions)}
+              CURRENT="$(cat "$EXT_STATE" 2>/dev/null || echo '[]')"
+              if [ "$DESIRED" != "$CURRENT" ]; then
+                PI=${lib.escapeShellArg "${pkgs.pi-coding-agent}/bin/pi"}
+                if [ -x "$PI" ]; then
+                  if [ "$(id -u)" -eq 0 ] && command -v runuser >/dev/null 2>&1; then
+                    run_pi() { runuser -u "$USER_NAME" -- env "HOME=$HOME_DIR" "$PI" "$@"; }
+                  else
+                    run_pi() { env "HOME=$HOME_DIR" "$PI" "$@"; }
+                  fi
+                  ${lib.concatMapStringsSep "\n" (ext: ''
+                    echo "[pi] Installing extension: ${ext}"
+                    run_pi install ${lib.escapeShellArg ext} \
+                      || echo "[pi] WARN: failed to install ${ext}"
+                  '') cfg.extensions}
+                  echo "$DESIRED" > "$EXT_STATE"
+                  chown "$USER_NAME:$GROUP_NAME" "$EXT_STATE"
+                fi
               fi
-              ${lib.concatMapStringsSep "\n" (ext: ''
-                echo "[pi] Installing extension: ${ext}"
-                "$PI" install ${lib.escapeShellArg ext} \
-                  || echo "[pi] WARN: failed to install ${ext}"
-              '') cfg.extensions}
             '';
           };
         };
