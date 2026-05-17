@@ -51,15 +51,46 @@ let
       piAgentConfigs =
         (inputs.lib.aiTools.mkSkillsConfigs cfg.skills)
         // (mkPiPromptConfigs (cfg.commands // cfg.agents))
-        // (lib.optionalAttrs (cfg.baseRules != "") {
-          "rules.md" = ''
+        // {
+          # Pi's resource-loader (core/resource-loader.js) only auto-loads
+          # AGENTS.md / AGENTS.MD / CLAUDE.md / CLAUDE.MD as system-prompt
+          # context — not rules.md. (Pi cascades: ~/.pi/agent/AGENTS.md
+          # global, plus every ancestor of cwd, all concatenated.)
+          #
+          # The tool whitelist section is pi-intrinsic — pi only ships
+          # `read`, `bash`, `edit`, `write` — so models calling sub-agent
+          # tools like `explore`/`glob` produce client-side `ModelMessage`
+          # validation errors before the request even leaves pi. The fan-out
+          # via jvf.aiTools.baseRule.content is appended below.
+          "AGENTS.md" = ''
             ---
-            description: Base rules and conventions for this project
+            description: Base rules and tool whitelist for pi
             ---
+
+            ## Available Tools
+
+            This pi installation ships only the following tools:
+
+            - `read` — read a file
+            - `bash` — execute a shell command
+            - `edit` — replace text in a file
+            - `write` — write a new file
+
+            Do not call any other tool. Sub-agent tools such as `explore`,
+            `glob`, `grep`, `search`, `task`, or any code-exploration agent
+            do not exist here — calling them will fail.
+
+            If you need to search the codebase, use `bash` with `rg`
+            (ripgrep) or `find`. If you need to read multiple files, call
+            `read` repeatedly.
+          ''
+          + lib.optionalString (cfg.baseRules != "") ''
+
+            ## Base Rules
 
             ${cfg.baseRules}
           '';
-        })
+        }
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;
         })
