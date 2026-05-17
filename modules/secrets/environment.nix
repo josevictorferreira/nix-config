@@ -10,11 +10,9 @@ let
     let
       cfg = config.jvf.secrets.environment;
       keyList = lib.attrNames cfg.keys;
-      secretLines = map
-        (
-          name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
-        )
-        keyList;
+      secretLines = map (
+        name: "export ${lib.toUpper name}=\"$(cat ${config.sops.secrets.${name}.path})\""
+      ) keyList;
     in
     {
       options.jvf.secrets.environment = {
@@ -40,6 +38,7 @@ let
             civitai_api_key = true;
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
+            opencode_go_api_key = true;
             kimi_api_key = true;
             alibaba_coding_plan_api_key = true;
             inception_api_key = true;
@@ -70,6 +69,7 @@ let
             civitai_api_key = true;
             google_generative_ai_api_key = true;
             z_ai_api_key = true;
+            opencode_go_api_key = true;
             kimi_api_key = true;
             alibaba_coding_plan_api_key = true;
             inception_api_key = true;
@@ -84,14 +84,12 @@ let
           lib.mkMerge [
             {
               sops.secrets = lib.listToAttrs (
-                map
-                  (name: {
-                    inherit name;
-                    value = {
-                      owner = cfg.username;
-                    };
-                  })
-                  keyList
+                map (name: {
+                  inherit name;
+                  value = {
+                    owner = cfg.username;
+                  };
+                }) keyList
               );
             }
             {
