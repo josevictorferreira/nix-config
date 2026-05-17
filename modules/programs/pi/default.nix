@@ -154,6 +154,18 @@ let
             `{ providers = { name = { baseUrl, api, apiKey, models = [...]; }; }; }`.
           '';
         };
+
+        extensions = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          example = [ "npm:pi-commandcode-provider" ];
+          description = ''
+            Pi extension specs passed verbatim to `pi install` whenever the
+            declared list changes. Each entry should be a spec pi understands,
+            e.g. `"npm:pi-commandcode-provider"` or shorthand `"pi-commandcode-provider"`.
+            Installs happen during activation via a sentinel-tracked postInstall hook.
+          '';
+        };
       };
 
       imports = [
@@ -189,6 +201,29 @@ let
               # Merge our generated settings with existing settings
               ${lib.getExe pkgs.jq} -s '.[0] * .[1]' "$SETTINGS_FILE" "$TARGET_PATH/settings.json" > "$SETTINGS_FILE.tmp" 2>/dev/null || cp "$TARGET_PATH/settings.json" "$SETTINGS_FILE.tmp"
               mv -f "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+            '';
+          };
+
+          # Extension-state sentinel: re-runs `pi install` only when the
+          # declared extensions list changes (mirrors the opencode plugins
+          # sentinel pattern). Failures are non-fatal so a flaky network
+          # cannot break activation; the next rebuild will retry.
+          ".cache/pi-nix-state/extensions.json" = {
+            kind = "file";
+            mode = "copy";
+            text = builtins.toJSON cfg.extensions;
+            postInstall = ''
+              export HOME="$HOME_DIR"
+              PI="${pkgs.pi-coding-agent}/bin/pi"
+              if [ ! -x "$PI" ]; then
+                echo "[pi] pi binary not found at $PI; skipping extension install."
+                exit 0
+              fi
+              ${lib.concatMapStringsSep "\n" (ext: ''
+                echo "[pi] Installing extension: ${ext}"
+                "$PI" install ${lib.escapeShellArg ext} \
+                  || echo "[pi] WARN: failed to install ${ext}"
+              '') cfg.extensions}
             '';
           };
         };

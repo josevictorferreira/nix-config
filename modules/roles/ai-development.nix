@@ -39,6 +39,7 @@ let
         programs-hermes-agent
         programs-forgecode
         programs-pi
+        programs-vix
       ]);
 
       config = {
@@ -54,6 +55,9 @@ let
           "opencode"
           "claudecode"
         ];
+
+        # Pi extensions (declarative install via sentinel postInstall)
+        jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
@@ -95,6 +99,7 @@ let
         programs-hermes-agent
         programs-forgecode
         programs-pi
+        programs-vix
       ]);
 
       config = {
@@ -110,6 +115,9 @@ let
           "opencode"
           "claudecode"
         ];
+
+        # Pi extensions (declarative install via sentinel postInstall)
+        jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";

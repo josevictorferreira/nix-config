@@ -1,7 +1,6 @@
 # Default router settings for claude-code-router
 # Pure data export - no module boilerplate
-_:
-{
+_: {
   LOG = true;
   HOST = "127.0.0.1";
   PORT = 3456;
@@ -10,35 +9,25 @@ _:
   APIKEY = "local-dev";
   Providers = [
     {
+      name = "alibaba-coding-plan";
+      api_base_url = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1";
+      api_key = "\${ALIBABA_CODING_PLAN_API_KEY}";
+      models = [
+        "qwen3.6-plus"
+        "qwen3.5-plus"
+        "qwen3-max-2026-01-23"
+        "qwen3-coder-next"
+        "qwen3-coder-plus"
+        "glm-5"
+        "glm-4.7"
+        "kimi-k2.5"
+      ];
+    }
+    {
       name = "openrouter";
       api_base_url = "https://openrouter.ai/api/v1/chat/completions";
       api_key = "\${OPENROUTER_API_KEY_CODE_AGENT}";
       models = [
-        "anthropic/claude-sonnet-4.5"
-        "anthropic/claude-haiku-4.5"
-        "google/gemini-2.5-flash-image"
-        "google/gemini-2.5-flash-lite:online"
-        "google/gemini-2.5-pro"
-        "moonshotai/kimi-k2-0905"
-        "moonshotai/kimi-k2-0905:exacto"
-        "moonshotai/kimi-k2"
-        "qwen/qwen3-coder-480b"
-        "qwen/qwen3-235b-a22b-2507"
-        "x-ai/grok-4-fast"
-        "x-ai/grok-code-fast-1"
-        "x-ai/grok-4"
-        "z-ai/glm-4.6"
-        "z-ai/glm-4.6:exacto"
-        "openai/gpt-oss-120b:exacto"
-        "deepseek/deepseek-v3.1-terminus:exacto"
-        "deepseek/deepseek-v3.2-exp"
-        "moonshotai/kimi-k2-thinking"
-        "google/gemini-3-pro-preview"
-        "z-ai/glm-4.7"
-        "qwen/qwen3.5-397b-a17b"
-        "qwen/qwen3-coder-next"
-        "stepfun/step-3.5-flash"
-        "moonshotai/kimi-k2.5"
       ];
       transformer = {
         use = [ "openrouter" ];
@@ -46,31 +35,52 @@ _:
     }
 
     {
-      name = "moonshotai";
-      api_base_url = "https://api.moonshot.ai/anthropic";
+      name = "kimi-for-coding";
+      api_base_url = "https://api.kimi.com/coding/v1";
       api_key = "\${KIMI_API_KEY}";
       models = [
+        "kimi-k2.6"
         "kimi-k2.5"
       ];
     }
 
     {
-      name = "zai";
-      api_base_url = "https://api.z.ai/api/coding/paas/v4";
+      name = "zai-coding-plan";
+      api_base_url = "https://api.z.ai/api/anthropic";
       api_key = "\${Z_AI_API_KEY}";
       models = [
+        "glm-5.1"
         "glm-5"
         "glm-4.7"
+        "glm-5-turbo"
+      ];
+    }
+
+    {
+      name = "opencode-go";
+      api_base_url = "https://opencode.ai/zen/go/v1";
+      api_key = "\${OPENCODE_GO_API_KEY}";
+      models = [
+        "deepseek-v4-flash"
+        "deepseek-v4-pro"
+        "glm-5"
+        "glm-5.1"
+        "kimi-k2.5"
+        "kimi-k2.6"
+        "mimo-v2.5"
+        "mimo-v2.5-pro"
+        "qwen3.5-plus"
+        "qwen3.6-plus"
       ];
     }
   ];
   Router = {
-    default = "openrouter,moonshotai/kimi-k2.5";
-    background = "openrouter,openai/gpt-oss-120b:exacto";
-    think = "openrouter,moonshotai/kimi-k2.5";
-    longContext = "openrouter,moonshotai/kimi-k2.5";
+    default = "zai-coding-plan,glm-5.1";
+    background = "alibaba-coding-plan,qwen3-coder-next";
+    think = "kimi-for-coding,kimi-k2.6";
+    longContext = "opencode-go,deeppseek-v4-pro";
     webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
-    image = "openrouter,google/gemini-2.5-flash-image";
+    image = "opencode-go,qwen3.6-plus";
     longContextThreshold = 250000;
   };
   StatusLine = {
