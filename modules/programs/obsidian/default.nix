@@ -15,6 +15,10 @@ let
         paths = [
           (pkgs.writeShellScriptBin "obsidian" ''
             export DICPATH="${pkgs.hunspellDicts.en_US}/lib/hunspell:${pkgs.hunspellDicts.pt_BR}/lib/hunspell"
+            # Force polling-based file watching: bindfs over cephfs (~/Homelab)
+            # doesn't propagate inotify events from the underlying mount.
+            export CHOKIDAR_USEPOLLING=1
+            export CHOKIDAR_INTERVAL=2000
             exec ${lib.getExe pkgs.obsidian} "$@"
           '')
           pkgs.hunspellDicts.en_US
