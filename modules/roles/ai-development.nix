@@ -40,6 +40,7 @@ let
         programs-forgecode
         programs-pi
         programs-vix
+        programs-commandcode-proxy
       ]);
 
       config = {
@@ -100,6 +101,7 @@ let
         programs-forgecode
         programs-pi
         programs-vix
+        programs-commandcode-proxy
       ]);
 
       config = {
