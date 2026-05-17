@@ -10,7 +10,7 @@ _: {
   Providers = [
     {
       name = "alibaba-coding-plan";
-      api_base_url = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
+      api_base_url = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1/messages";
       api_key = "\${ALIBABA_CODING_PLAN_API_KEY}";
       models = [
         "qwen3.6-plus"
@@ -39,11 +39,10 @@ _: {
 
     {
       name = "kimi-for-coding";
-      api_base_url = "https://api.kimi.com/coding";
+      api_base_url = "https://api.kimi.com/coding/v1/messages";
       api_key = "\${KIMI_API_KEY}";
       models = [
-        "kimi-k2.6"
-        "kimi-k2.5"
+        "kimi-for-coding"
       ];
       transformer = {
         use = [ "Anthropic" ];
@@ -52,7 +51,7 @@ _: {
 
     {
       name = "zai-coding-plan";
-      api_base_url = "https://api.z.ai/api/anthropic";
+      api_base_url = "https://api.z.ai/api/anthropic/v1/messages";
       api_key = "\${Z_AI_API_KEY}";
       models = [
         "glm-5.1"
@@ -89,7 +88,7 @@ _: {
   Router = {
     default = "zai-coding-plan,glm-5.1";
     background = "alibaba-coding-plan,qwen3-coder-next";
-    think = "kimi-for-coding,kimi-k2.6";
+    think = "kimi-for-coding,kimi-for-coding";
     longContext = "opencode-go,deepseek-v4-pro";
     webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
     image = "opencode-go,qwen3.6-plus";
