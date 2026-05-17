@@ -3,9 +3,9 @@ _: {
   config = {
     jvf.programs.opencode.settings = {
       plugin = [
-        "@tarquinen/opencode-dcp@3.1.12"
-        "oh-my-openagent@4.1.2"
-        "@vectorize-io/opencode-hindsight"
+        # "@tarquinen/opencode-dcp@3.1.12"
+        # "oh-my-openagent@4.1.2"
+        # "@vectorize-io/opencode-hindsight"
       ];
     };
 

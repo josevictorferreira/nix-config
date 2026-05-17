@@ -36,6 +36,14 @@ let
     set -g window-status-separator ""
   '';
 
+  # tmux-fingers customization
+  fingersConfig = ''
+    # Match opencode session resume command (e.g. `opencode -s ses_1c97...`)
+    set -g @fingers-pattern-0 'opencode -s ses_[A-Za-z0-9]+'
+    # Match a bare opencode/claudecode session id anywhere
+    set -g @fingers-pattern-1 'ses_[A-Za-z0-9]+'
+  '';
+
   # Generate style directives from theme colors
   # Hex colors in tmux need # prefix; our palette stores them without #
   styleDirectives = ''
@@ -140,5 +148,6 @@ in
   ${windowStatus}
 
   ${styleDirectives}
+  ${fingersConfig}
   ${lib.strings.concatStringsSep "\n" (map applyPlugin plugins)}
 ''
