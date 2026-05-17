@@ -187,6 +187,14 @@ let
               "state"
               "cache"
               "sessions"
+              # Pi mutates these at runtime (theme, installed packages list,
+              # OAuth tokens). Without preserving them, jvf.home re-syncs the
+              # agent dir on every rebuild and nukes pi's own state — which
+              # cascades into pi npm-pruning extensions whose `packages` entry
+              # has vanished.
+              "settings.json"
+              "auth.json"
+              ".nix-extensions.json"
             ];
             postInstall = ''
               # Ensure the skills and prompts subdirectories exist
