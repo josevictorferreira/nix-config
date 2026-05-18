@@ -10,7 +10,7 @@ _: {
   Providers = [
     {
       name = "alibaba-coding-plan";
-      api_base_url = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1/messages";
+      api_base_url = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
       api_key = "\${ALIBABA_CODING_PLAN_API_KEY}";
       models = [
         "qwen3.6-plus"
@@ -51,7 +51,7 @@ _: {
 
     {
       name = "zai-coding-plan";
-      api_base_url = "https://api.z.ai/api/anthropic/v1/messages";
+      api_base_url = "https://api.z.ai/api/anthropic";
       api_key = "\${Z_AI_API_KEY}";
       models = [
         "glm-5.1"
@@ -66,7 +66,7 @@ _: {
 
     {
       name = "opencode-go";
-      api_base_url = "https://opencode.ai/zen/go";
+      api_base_url = "https://opencode.ai/zen/go/v1/chat/completions";
       api_key = "\${OPENCODE_GO_API_KEY}";
       models = [
         "deepseek-v4-flash"
@@ -80,9 +80,9 @@ _: {
         "qwen3.5-plus"
         "qwen3.6-plus"
       ];
-      transformer = {
-        use = [ "openrouter" ];
-      };
+      # transformer = {
+      #   use = [ "openrouter" ];
+      # };
     }
   ];
   Router = {
