@@ -4,6 +4,7 @@
 
 TODO_CLASS="todo-nvim"
 TODO_FILE="$HOME/Homelab/notetaking/01-projects/active/Todo.md"
+TODO_CMD="kitty --class=$TODO_CLASS -e nvim $TODO_FILE"
 
 todo_running() {
     hyprctl clients -j | jq -e '.[] | select(.class == "'"$TODO_CLASS"'")' > /dev/null 2>&1
