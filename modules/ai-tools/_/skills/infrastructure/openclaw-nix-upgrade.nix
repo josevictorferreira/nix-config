@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, isDarwin
-, npx
-, defaultBrowser
-, kebabToHuman
-, ...
+{
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
 }:
 {
   name = "openclaw-nix-upgrade";
@@ -366,8 +367,9 @@
 
     ### Validate live OpenClaw config safely
 
-    The real config is `~/Homelab/openclaw/openclaw.json` on CephFS. The Nix configmap is
-    fallback/mirror only.
+    **The canonical OpenClaw config is `~/Homelab/openclaw/openclaw.json` on CephFS.** This is the PRIMARY
+    configuration. The Nix source at `modules/kubenix/apps/openclaw-config.enc.nix` is a MIRROR of it,
+    and the Kubernetes configmap is fallback only.
 
     Do not dump the full config. Use allowlisted structural checks only:
 
@@ -376,8 +378,10 @@
     jq '.plugins.slots, (.plugins.entries | keys)' ~/Homelab/openclaw/openclaw.json
     ```
 
-    If startup fails with `Invalid config`, patch the live config surgically and mirror non-secret
-    structural changes back to `modules/kubenix/apps/openclaw-config.enc.nix`.
+    When config keys need to be added, removed, or changed, **always edit the live CephFS config first**
+    (`~/Homelab/openclaw/openclaw.json`), then mirror the non-secret structural changes to the Nix
+    source (`modules/kubenix/apps/openclaw-config.enc.nix`). Never edit the Nix source alone —
+    the CephFS mount controls what the running pod actually reads.
 
     ### Persist or apply changes
 
