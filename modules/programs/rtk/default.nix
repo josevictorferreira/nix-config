@@ -3,10 +3,11 @@
 # RTK reduces LLM token consumption 60-90% by rewriting CLI commands.
 let
   rtkModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.rtk;
@@ -110,33 +111,6 @@ let
             }' <<<"$INPUT"
         fi
       '';
-
-      rtkOpenCodePlugin = pkgs.writeText "rtk-opencode-plugin.ts" ''
-        import type { Plugin } from "@opencode-ai/plugin"
-        export const RtkOpenCodePlugin: Plugin = async ({ $ }) => {
-          try { await $`which ${rtkPkg}/bin/rtk`.quiet() } catch {
-            console.warn("[rtk] rtk binary not found -- plugin disabled")
-            return {}
-          }
-          return {
-            "tool.execute.before": async (input, output) => {
-              const tool = String(input?.tool ?? "").toLowerCase()
-              if (tool !== "bash" && tool !== "shell") return
-              const args = output?.args
-              if (!args || typeof args !== "object") return
-              const command = (args as Record<string, unknown>).command
-              if (typeof command !== "string" || !command) return
-              try {
-                const result = await $`${rtkPkg}/bin/rtk rewrite ''${command}`.quiet().nothrow()
-                const rewritten = String(result.stdout).trim()
-                if (rewritten && rewritten !== command) {
-                  ;(args as Record<string, unknown>).command = rewritten
-                }
-              } catch {}
-            },
-          }
-        }
-      '';
     in
     {
       options.jvf.programs.rtk = {
@@ -165,9 +139,6 @@ let
             }
           ];
         };
-
-        # Deploy OpenCode plugin
-        jvf.programs.opencode.extraConfigFiles."plugins/rtk.ts" = rtkOpenCodePlugin;
       };
     };
 in

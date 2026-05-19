@@ -59,9 +59,9 @@ _: {
         "glm-4.7"
         "glm-5-turbo"
       ];
-      transformer = {
-        use = [ "Anthropic" ];
-      };
+      # transformer = {
+      #   use = [ "Anthropic" ];
+      # };
     }
 
     {
@@ -80,16 +80,16 @@ _: {
         "qwen3.5-plus"
         "qwen3.6-plus"
       ];
-      # transformer = {
-      #   use = [ "openrouter" ];
-      # };
+      transformer = {
+        use = [ "openrouter" ];
+      };
     }
   ];
   Router = {
-    default = "zai-coding-plan,glm-5.1";
+    default = "kimi-for-coding,kimi-for-coding";
     background = "alibaba-coding-plan,qwen3-coder-next";
     think = "kimi-for-coding,kimi-for-coding";
-    longContext = "opencode-go,deepseek-v4-pro";
+    longContext = "kimi-for-coding,kimi-for-coding";
     webSearch = "openrouter,google/gemini-2.5-flash-lite:online";
     image = "opencode-go,qwen3.6-plus";
     longContextThreshold = 250000;
