@@ -1,10 +1,11 @@
-{ lib
-, pkgs
-, isDarwin
-, npx
-, defaultBrowser
-, kebabToHuman
-, ...
+{
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
 }:
 {
   name = "openclaw-upgrade";
@@ -102,12 +103,17 @@
 
     ## Overview
 
+    There are TWO OpenClaw image types in this repo:
+    - **nix-based** (`openclaw`): Built via podman from `oci-images/openclaw/Dockerfile`. Heavy (~7GB).
+    - **debian-based** (`openclaw-debian`): Built via Nix from `oci-images/openclaw-debian.nix`
+      using `dockerTools.pullImage` for the base + tools overlay (~550MB).
+
     This upgrade involves 5 phases:
     1. **Verify upstream** — confirm the target version tag exists
-    2. **Update Nix sources** — bump version, resolve hashes, update deps
-    3. **Build image** — `nix build .#openclaw-image` with placeholder hashes
+    2. **Update Nix sources** — bump version strings across the tag chain
+    3. **Build image** — Nix build (debian) or podman build (nix)
     4. **Push to GHCR** — push image, verify remote digest, pin in manifest
-    5. **Deploy** — regenerate manifests, apply or reconcile, verify pod
+    5. **Deploy** — regenerate manifests, config migration check, apply, verify pod
 
     ## Security Guardrails
 
@@ -128,6 +134,9 @@
       Server-side apply can retain an old `httpGet` when adding a new `tcpSocket`.
     - The openclaw pod may include sidecars (for example `chromium`) in addition to `main`.
       Always pass `-c main` for `/health`, logs, and CLI invocations.
+    - **Debian image**: The `openclaw-debian.nix` build requires `NIXPKGS_ALLOW_UNFREE=1` (obsidian
+      has unfree license). The `make push-openclaw-debian` command does NOT pass `--impure` — push
+      manually if needed.
 
     ## Phase 1: Verify Upstream
 
@@ -140,32 +149,40 @@
 
     ## Phase 2: Update Sources
 
-    **Files to edit:**
-
-    Trace the whole tag chain before editing to avoid double suffixes:
+    **Files to edit (trace the full tag chain first):**
 
     ```bash
     grep -rn 'imageTag\|openclawVersion\|tagSuffix\|image.tag\|tag =' flake.nix oci-images/ modules/
     ```
 
-    ### `oci-images/openclaw/Dockerfile` (or `Containerfile`)
+    ### For the nix-based image (`openclaw`)
 
-    Update the base image or version build arguments to point to the new `{VERSION}`.
-    If you have any custom bundled plugins, ensure they are copied appropriately into the image during the build.
+    - `oci-images/openclaw/Dockerfile` — update base image or build args
+    - `modules/commands.nix` line ~558: `openclawVersion = "{VERSION}";`
 
-    ### `modules/commands.nix` (line ~558)
+    ### For the debian-based image (`openclaw-debian`)
 
-    ```nix
-    openclawVersion = "{VERSION}";
-    ```
+    - `oci-images/openclaw-debian.nix` — update the `tag` in `dockerTools.pullImage` at line ~111
+      to point to the upstream `ghcr.io/openclaw/openclaw:{VERSION}`. If the base image version
+      changes, the `pullImage` FOD hash will mismatch — run `nix build` to get the new hash.
+      The tools overlay (ffmpeg, obsidian, typst, etc.) and lossless-claw plugin overlay stay the same.
+    - `modules/commands.nix` line ~561: `openclawDebianVersion = "{VERSION}";`
+    - `modules/kubenix/apps/openclaw.nix` line ~8: Update the `image` tag string and digest.
 
     ## Phase 3: Build Image
 
-    Build the container image using podman:
+    ### For the nix-based image:
     ```bash
     podman build -t localhost/openclaw:v{VERSION} -f oci-images/openclaw/Dockerfile oci-images/openclaw/
     ```
-    This must succeed. All steps should build without errors.
+
+    ### For the debian-based image:
+    ```bash
+    NIXPKGS_ALLOW_UNFREE=1 nix build .#openclaw-debian-image
+    ```
+
+    This must succeed. For the debian image, a `dockerTools.pullImage` FOD hash mismatch
+    is expected — copy the new hash from the error message into `oci-images/openclaw-debian.nix`.
 
     ### Local image smoke tests
 
@@ -271,6 +288,23 @@
 
     If startup fails with `Invalid config`, patch the live config surgically and mirror non-secret
     structural changes back to `modules/kubenix/apps/openclaw-config.enc.nix`.
+
+    ### Check config key migration
+
+    Before deploying, check if the new OpenClaw version removed or renamed config keys:
+
+    ```bash
+    # Run doctor against the local image to catch config issues early
+    podman run --rm --entrypoint "" ghcr.io/josevictorferreira/openclaw-debian:{VERSION} \
+      sh -c 'OPENCLAW_ALLOW_ROOT=1 openclaw doctor 2>&1' 2>/dev/null || true
+    ```
+
+    Common keys removed in recent versions:
+    - v2026.5.18: `silentReply`, `silentReplyRewrite`
+
+    If the gateway fails to start with `Invalid config`, check pod logs and patch both
+    the live CephFS config (`~/Homelab/openclaw/openclaw.json`) and the Nix source
+    (`modules/kubenix/apps/openclaw-config.enc.nix`).
 
     ### Persist or apply changes
 
@@ -380,6 +414,7 @@
     | Pod stuck `Terminating` during rollout | Large image pull or stale sandbox | Force-delete pod only if replacement is blocked; inspect events and node sandbox errors |
     | Gateway stalls after channel startup | CephFS credential/runtime-dep lock | Check `/proc/1/fd` for Matrix credential `*.tmp`; keep plugin stage dir pod-local |
     | `openclaw: not found` in container | Image `/bin` refactor dropped app binary | Re-run local smoke test: `which openclaw` before pushing |
+    | `Invalid config` on startup | New version removed/renamed config keys | Check pod logs for `Invalid config`; patch live CephFS config and Nix source (`openclaw-config.enc.nix`); run `openclaw doctor --fix` |
 
     ## See Also
 
