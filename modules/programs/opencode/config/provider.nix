@@ -66,8 +66,8 @@
         apiKey = "{env:ALIBABA_CODING_PLAN_API_KEY}";
       };
       models = {
-        "qwen3.5-plus" = {
-          name = "Qwen3.5 Plus";
+        "qwen3.6-plus" = {
+          name = "Qwen3.6 Plus";
           modalities = {
             input = [
               "text"
@@ -86,8 +86,8 @@
             output = 65536;
           };
         };
-        "qwen3.6-plus" = {
-          name = "Qwen3.6 Plus";
+        "qwen3.5-plus" = {
+          name = "Qwen3.5 Plus";
           modalities = {
             input = [
               "text"
