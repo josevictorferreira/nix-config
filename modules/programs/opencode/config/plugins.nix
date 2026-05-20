@@ -5,7 +5,7 @@ _: {
       plugin = [
         "openrtk"
         "@tarquinen/opencode-dcp@3.1.12"
-        "oh-my-openagent@4.2.2"
+        "oh-my-openagent@4.2.3"
         "@vectorize-io/opencode-hindsight"
       ];
     };
