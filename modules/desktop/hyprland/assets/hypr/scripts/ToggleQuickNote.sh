@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Toggle Quick Notes.md scratchpad with crash recovery
-# Opens neovim editing ~/Homelab/notetaking/01-projects/active/Quick Notes.md
+# Toggle quick-notes.md scratchpad with crash recovery
+# Opens neovim editing ~/Homelab/notetaking/01-projects/active/quick-notes.md
 
 QUICK_NOTE_CLASS="quick-note-nvim"
-QUICK_NOTE_FILE="$HOME/Homelab/notetaking/01-projects/active/Quick Notes.md"
+QUICK_NOTE_FILE="$HOME/Homelab/notetaking/01-projects/active/quick-notes.md"
 
 quick_note_running() {
     hyprctl clients -j | jq -e '.[] | select(.class == "'"$QUICK_NOTE_CLASS"'")' > /dev/null 2>&1
 }
 
-# Ensure Quick Notes.md file exists
+# Ensure quick-notes.md file exists
 if [ ! -f "$QUICK_NOTE_FILE" ]; then
     mkdir -p "$(dirname "$QUICK_NOTE_FILE")"
     touch "$QUICK_NOTE_FILE"
