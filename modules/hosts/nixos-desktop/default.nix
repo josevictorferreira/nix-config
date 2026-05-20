@@ -71,7 +71,7 @@ in
         system-nixpkgs
         system-nix-daemon
         system-security
-        system-tailscale
+        # system-tailscale
         system-lights-off
 
         # Hardware
