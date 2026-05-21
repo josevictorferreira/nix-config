@@ -81,6 +81,13 @@ let
             "google"
             "alibaba-cn"
             "alibaba-coding-plan-cn"
+            "zai-coding-plan"
+            "kimi-for-coding"
+            "openrouter"
+            "inception"
+            "huggingface"
+            "local"
+            "alibaba-coding-plan"
           ];
           instructions = [
             ".docs/rules.md"
