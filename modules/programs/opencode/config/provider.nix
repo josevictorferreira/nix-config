@@ -355,7 +355,7 @@
       };
     };
 
-    nineRouter = {
+    "9-router" = {
       npm = "@ai-sdk/openai-compatible";
       name = "9Router";
       options = {
