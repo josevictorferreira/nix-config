@@ -42,6 +42,7 @@ let
       homeDir = if isDarwin then "/Users/${cfg.username}" else "/home/${cfg.username}";
       group = lib.strings.toLower cfg.name;
       mntPoint = "${homeDir}/${cfg.name}";
+      hermesPath = "${mntPoint}/hermes";
       scriptName = "mount-${group}-smb";
 
       mntOptions = [
@@ -118,19 +119,28 @@ let
               mode = "0755";
               content = ''
                 #!/bin/sh
+
+                ensure_hermes_writable() {
+                  if [ -d ${lib.escapeShellArg hermesPath} ]; then
+                    chmod -R ug+rwX ${lib.escapeShellArg hermesPath} || true
+                  fi
+                }
+
                 if [ ! -d "${mntPoint}" ]; then
                   mkdir -p "${mntPoint}"
                   chown ${cfg.username}:${group} "${mntPoint}"
                   chmod 2775 "${mntPoint}"
                 fi
 
-                /sbin/mount | /usr/bin/grep -q " on ${mntPoint} " && exit 0
+                /sbin/mount | /usr/bin/grep -q " on ${mntPoint} " && ensure_hermes_writable && exit 0
 
                 /sbin/mount_smbfs -N -f 0644 -d 0775 -o ${lib.concatStringsSep "," mntOptions} \
                   //${config.sops.placeholder."${group}_smb_username"}:${
                     config.sops.placeholder."${group}_smb_password"
                   }@${cfg.serverAddress}/${cfg.exportedName} \
-                  ${mntPoint}
+                  ${mntPoint} || exit $?
+
+                ensure_hermes_writable
               '';
             };
 
