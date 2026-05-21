@@ -355,123 +355,43 @@
       };
     };
 
-    commandcode = {
+    nineRouter = {
       npm = "@ai-sdk/openai-compatible";
-      name = "Command Code";
+      name = "9Router";
       options = {
         baseURL = "https://router9.josevictor.me/v1";
         apiKey = "{env:NINEROUTER_API_KEY}";
       };
       models = {
-        "cmc/deepseek/deepseek-v4-pro" = {
-          name = "DeepSeek V4 Pro (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1000000;
-            output = 384000;
-          };
+        "kimi-k2.5" = {
+          name = "Kimi K2.5 (9Router)";
         };
-        "cmc/deepseek/deepseek-v4-flash" = {
-          name = "DeepSeek V4 Flash (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1000000;
-            output = 384000;
-          };
+        "kimi-k2.6" = {
+          name = "Kimi K2.6 (9Router)";
         };
-        "cmc/moonshotai/Kimi-K2.6" = {
-          name = "Kimi K2.6 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 262144;
-            output = 131072;
-          };
+        "deepseek-v4-flash" = {
+          name = "DeepSeek V4 Flash (9Router)";
         };
-        "cmc/moonshotai/Kimi-K2.5" = {
-          name = "Kimi K2.5 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 262144;
-            output = 131072;
-          };
+        "deepseek-v4-pro" = {
+          name = "DeepSeek V4 Pro (9Router)";
         };
-        "cmc/zai-org/GLM-5.1" = {
-          name = "GLM-5.1 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 131072;
-          };
+        "glm-5.1" = {
+          name = "GLM-5.1 (9Router)";
         };
-        "cmc/zai-org/GLM-5" = {
-          name = "GLM-5 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 131072;
-          };
+        "glm-5" = {
+          name = "GLM-5 (9Router)";
         };
-        "cmc/MiniMaxAI/MiniMax-M2.7" = {
-          name = "MiniMax M2.7 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1048576;
-            output = 131072;
-          };
+        "glm-4.7" = {
+          name = "GLM-4.7 (9Router)";
         };
-        "cmc/MiniMaxAI/MiniMax-M2.5" = {
-          name = "MiniMax M2.5 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1048576;
-            output = 131072;
-          };
+        "minimax-m2.7" = {
+          name = "MiniMax M2.7 (9Router)";
         };
-        "cmc/Qwen/Qwen3.6-Max-Preview" = {
-          name = "Qwen 3.6 Max (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1000000;
-            output = 131072;
-          };
+        "minimax-m2.5" = {
+          name = "MiniMax M2.5 (9Router)";
         };
-        "cmc/Qwen/Qwen3.6-Plus" = {
-          name = "Qwen 3.6 Plus (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 1000000;
-            output = 131072;
-          };
+        "qwen3.6-plus" = {
+          name = "Qwen 3.6 Plus (9Router)";
         };
       };
     };
