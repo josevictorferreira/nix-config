@@ -360,6 +360,7 @@
       name = "Command Code";
       options = {
         baseURL = "https://router9.josevictor.me/v1";
+        apiKey = "{env:NINEROUTER_API_KEY}";
       };
       models = {
         "claude-opus-4-7" = {
