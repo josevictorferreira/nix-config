@@ -363,91 +363,7 @@
         apiKey = "{env:NINEROUTER_API_KEY}";
       };
       models = {
-        "claude-opus-4-7" = {
-          name = "Claude Opus 4.7 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 32000;
-          };
-        };
-        "claude-opus-4-6" = {
-          name = "Claude Opus 4.6 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 32000;
-          };
-        };
-        "claude-sonnet-4-6" = {
-          name = "Claude Sonnet 4.6 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 16384;
-          };
-        };
-        "claude-haiku-4-5-20251001" = {
-          name = "Claude Haiku 4.5 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 200000;
-            output = 8192;
-          };
-        };
-        "gpt-5.5" = {
-          name = "GPT-5.5 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 256000;
-            output = 128000;
-          };
-        };
-        "gpt-5.4" = {
-          name = "GPT-5.4 (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 256000;
-            output = 128000;
-          };
-        };
-        "gpt-5.3-codex" = {
-          name = "GPT-5.3 Codex (CC)";
-          options.thinking = {
-            type = "enabled";
-            budgetTokens = 8192;
-          };
-          limit = {
-            context = 256000;
-            output = 128000;
-          };
-        };
-        "gpt-5.4-mini" = {
-          name = "GPT-5.4 Mini (CC)";
-          limit = {
-            context = 256000;
-            output = 128000;
-          };
-        };
-        "deepseek/deepseek-v4-pro" = {
+        "cmc/deepseek/deepseek-v4-pro" = {
           name = "DeepSeek V4 Pro (CC)";
           options.thinking = {
             type = "enabled";
@@ -458,7 +374,7 @@
             output = 384000;
           };
         };
-        "deepseek/deepseek-v4-flash" = {
+        "cmc/deepseek/deepseek-v4-flash" = {
           name = "DeepSeek V4 Flash (CC)";
           options.thinking = {
             type = "enabled";
@@ -469,7 +385,7 @@
             output = 384000;
           };
         };
-        "moonshotai/Kimi-K2.6" = {
+        "cmc/moonshotai/Kimi-K2.6" = {
           name = "Kimi K2.6 (CC)";
           options.thinking = {
             type = "enabled";
@@ -480,7 +396,7 @@
             output = 131072;
           };
         };
-        "moonshotai/Kimi-K2.5" = {
+        "cmc/moonshotai/Kimi-K2.5" = {
           name = "Kimi K2.5 (CC)";
           options.thinking = {
             type = "enabled";
@@ -491,7 +407,7 @@
             output = 131072;
           };
         };
-        "zai-org/GLM-5.1" = {
+        "cmc/zai-org/GLM-5.1" = {
           name = "GLM-5.1 (CC)";
           options.thinking = {
             type = "enabled";
@@ -502,7 +418,7 @@
             output = 131072;
           };
         };
-        "zai-org/GLM-5" = {
+        "cmc/zai-org/GLM-5" = {
           name = "GLM-5 (CC)";
           options.thinking = {
             type = "enabled";
@@ -513,7 +429,7 @@
             output = 131072;
           };
         };
-        "MiniMaxAI/MiniMax-M2.7" = {
+        "cmc/MiniMaxAI/MiniMax-M2.7" = {
           name = "MiniMax M2.7 (CC)";
           options.thinking = {
             type = "enabled";
@@ -524,7 +440,7 @@
             output = 131072;
           };
         };
-        "MiniMaxAI/MiniMax-M2.5" = {
+        "cmc/MiniMaxAI/MiniMax-M2.5" = {
           name = "MiniMax M2.5 (CC)";
           options.thinking = {
             type = "enabled";
@@ -535,7 +451,7 @@
             output = 131072;
           };
         };
-        "Qwen/Qwen3.6-Max-Preview" = {
+        "cmc/Qwen/Qwen3.6-Max-Preview" = {
           name = "Qwen 3.6 Max (CC)";
           options.thinking = {
             type = "enabled";
@@ -546,7 +462,7 @@
             output = 131072;
           };
         };
-        "Qwen/Qwen3.6-Plus" = {
+        "cmc/Qwen/Qwen3.6-Plus" = {
           name = "Qwen 3.6 Plus (CC)";
           options.thinking = {
             type = "enabled";
