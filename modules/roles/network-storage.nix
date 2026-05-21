@@ -18,9 +18,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.networkStorage;
@@ -56,9 +57,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.networkStorage;
@@ -79,7 +81,7 @@ let
         jvf.services.smb = {
           name = "Homelab";
           inherit (cfg) username;
-          serverAddress = "10.10.10.129";
+          serverAddress = "10.10.10.149";
           exportedName = "homelab-smb";
         };
       };
