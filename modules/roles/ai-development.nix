@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -40,7 +41,6 @@ let
         programs-forgecode
         programs-pi
         programs-vix
-        programs-commandcode-proxy
       ]);
 
       config = {
@@ -80,9 +80,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -101,7 +102,6 @@ let
         programs-forgecode
         programs-pi
         programs-vix
-        programs-commandcode-proxy
       ]);
 
       config = {

@@ -359,7 +359,7 @@
       npm = "@ai-sdk/openai-compatible";
       name = "Command Code";
       options = {
-        baseURL = "http://${config.jvf.programs.commandcode-proxy.bind}:${toString config.jvf.programs.commandcode-proxy.port}/v1";
+        baseURL = "https://router9.josevictor.me/v1";
       };
       models = {
         "claude-opus-4-7" = {
