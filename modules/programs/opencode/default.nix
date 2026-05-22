@@ -74,25 +74,6 @@ let
           mcp = lib.mkDefault (
             lib.mapAttrs (name: mcpCfg: inputs.lib.aiTools.transformMcpOptions "opencode" mcpCfg) cfg.mcps
           );
-          disabled_providers = lib.mkDefault [
-            "anthropic"
-            "github-copilot"
-            "github-models"
-            "minimax"
-            "google"
-            "alibaba-cn"
-            "alibaba-coding-plan-cn"
-            "zai-coding-plan"
-            "kimi-for-coding"
-            "openrouter"
-            "inception"
-            "huggingface"
-            "local"
-            "alibaba-coding-plan"
-            "nvidia"
-            "opencode"
-            "opencode-go"
-          ];
           instructions = [
             ".docs/rules.md"
           ];
