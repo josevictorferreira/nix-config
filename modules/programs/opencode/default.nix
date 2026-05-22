@@ -77,6 +77,7 @@ let
           disabled_providers = lib.mkDefault [
             "anthropic"
             "github-copilot"
+            "github-models"
             "minimax"
             "google"
             "alibaba-cn"
@@ -88,6 +89,9 @@ let
             "huggingface"
             "local"
             "alibaba-coding-plan"
+            "nvidia"
+            "opencode"
+            "opencode-go"
           ];
           instructions = [
             ".docs/rules.md"
