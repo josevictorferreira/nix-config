@@ -11,20 +11,20 @@ _: {
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "kimi-for-coding/k2p6";
-        glm = "zai-coding-plan/glm-5.1";
-        qwen = "alibaba-coding-plan/qwen3.6-plus";
-        gpt = "openai/gpt-5.5";
-        katcoder = "openrouter/kwaipilot/kat-coder-pro-v2";
-        deepseekPro = "opencode-go/deepseek-v4-pro";
-        deepseek = "opencode-go/deepseek-v4-flash";
-        mimo = "opencode-go/mimo-v2.5";
+        kimi = "9router/kimi-k2.6";
+        glm = "9router/glm-5.1";
+        qwen = "9router/qwen3.6-plus";
+        gpt = "9router/gpt-5.5";
+        deepseekPro = "9router/deepseek-v4-pro";
+        deepseek = "9router/deepseek-v4-flash";
+        cheapFast = "9router/cheap-fast";
+        minimax = "9router/minimax-m2.5";
         models = {
           quick = {
-            default = deepseek;
-            cheap = deepseek;
-            expensive = katcoder;
-            alternative = katcoder;
+            default = cheapFast;
+            cheap = cheapFast;
+            expensive = deepseek;
+            alternative = minimax;
           };
           coder = {
             default = kimi;
@@ -41,13 +41,13 @@ _: {
           looker = {
             default = qwen;
             cheap = qwen;
-            expensive = mimo;
+            expensive = kimi;
             alternative = kimi;
           };
           writer = {
             default = kimi;
             cheap = kimi;
-            expensive = mimo;
+            expensive = kimi;
             alternative = qwen;
           };
         };
@@ -256,7 +256,7 @@ _: {
         ralph_loop = {
           enabled = true;
           default_max_iterations = 1000;
-          state_dir = ".sisyphus/ralph";
+          state_dir = ".omo/ralph";
           default_strategy = "sequential";
         };
         disabled_hooks = [
