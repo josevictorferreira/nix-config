@@ -33,6 +33,7 @@ let
         rails-orchestrator = mkAgent ./_/agents/ruby/rails-orchestrator.nix;
         rails-tester = mkAgent ./_/agents/ruby/rails-tester.nix;
         engineer = mkAgent ./_/agents/general/engineer.nix;
+        architect = mkAgent ./_/agents/general/architect.nix;
       };
 
       cfg = config.jvf.aiTools.agents;

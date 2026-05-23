@@ -3,11 +3,10 @@
 # RTK reduces LLM token consumption 60-90% by rewriting CLI commands.
 let
   rtkModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.rtk;

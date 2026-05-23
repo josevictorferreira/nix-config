@@ -98,6 +98,9 @@ _: {
           multimodal-looker = {
             model = models.looker.default;
           };
+          architect = {
+            model = models.coder.expensive;
+          };
         };
         categories = {
           visual-engineering = {
