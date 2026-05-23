@@ -36,6 +36,7 @@ let
         rails-tester = mkAgent ./_/agents/ruby/rails-tester.nix;
         engineer = mkAgent ./_/agents/general/engineer.nix;
         architect = mkAgent ./_/agents/general/architect.nix;
+        product-manager = mkAgent ./_/agents/general/product-manager.nix;
       };
 
       cfg = config.jvf.aiTools.agents;

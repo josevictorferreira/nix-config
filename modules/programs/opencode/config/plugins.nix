@@ -101,6 +101,9 @@ _: {
           ui-designer = {
             model = models.looker.default;
           };
+          product-manager = {
+            model = models.intelligent.default;
+          };
           architect = {
             model = models.coder.expensive;
           };
