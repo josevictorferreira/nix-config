@@ -98,8 +98,14 @@ _: {
           multimodal-looker = {
             model = models.looker.default;
           };
+          ui-designer = {
+            model = models.looker.default;
+          };
           architect = {
             model = models.coder.expensive;
+          };
+          devops = {
+            model = models.coder.default;
           };
         };
         categories = {

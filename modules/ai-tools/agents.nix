@@ -26,8 +26,10 @@ let
       agents = {
         ui-ux-architect = mkAgent ./_/agents/design/ui-ux-architect.nix;
         swiss-minimalist-designer = mkAgent ./_/agents/design/swiss-minimalist-designer.nix;
+        ui-designer = mkAgent ./_/agents/design/ui-designer.nix;
         code-reviewer = mkAgent ./_/agents/general/code-reviewer.nix;
         documentation-writer = mkAgent ./_/agents/general/documentation-writer.nix;
+        devops = mkAgent ./_/agents/general/devops.nix;
         rails-builder = mkAgent ./_/agents/ruby/rails-builder.nix;
         rails-linter = mkAgent ./_/agents/ruby/rails-linter.nix;
         rails-orchestrator = mkAgent ./_/agents/ruby/rails-orchestrator.nix;
