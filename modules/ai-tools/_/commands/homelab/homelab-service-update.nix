@@ -72,6 +72,18 @@
        make manifests
        ```
 
+    5. ⚠️ **Commit and Push**
+      - Ensure no sensitive data is exposed in the diff before committing, if everything is ok, then do it.
+
+    6. **Wait for Flux reconciliation**
+      - After pushing your changes, wait for Flux to reconcile the updated manifests and verify the new images are pulled successfully.
+      - You can force reconciliation using the `make reconcile` command.
+      - Check in the cluster context `ze-homelab` if the changes are applied, the pod is running and operational.
+
+    7. **Final Verification**
+      - If any error is happening, fix it. Don't stop until the pod is fully running and operational, also verify inside the pod container for the version of the application, if it's really the version you wanted.
+      
+
     ## CRITICAL GOTCHAS & EDGE CASES
 
     1. **Multiple Images per App**
