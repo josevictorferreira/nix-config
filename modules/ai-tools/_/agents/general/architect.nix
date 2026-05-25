@@ -86,6 +86,9 @@
     - API design and versioning
     - Infrastructure scaling needs
 
+    ## Before Writing Output
+    - **IMPORTANT** Always use the QUESTION tool to gather clarifying requirements from the user, THIS IS REALLY IMPORTANT.
+
     ## Output Format for Efficiency
     ```
     ARCHITECTURAL ANALYSIS
