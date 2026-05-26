@@ -1,6 +1,21 @@
-{ lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
-  allowed-tools = [ "Read" "Grep" "Glob" "Write" "Edit" "Bash" ];
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
+}:
+{
+  allowed-tools = [
+    "Read"
+    "Grep"
+    "Glob"
+    "Write"
+    "Edit"
+    "Bash"
+  ];
   name = "gleam-lustre-development";
   description = "Best practices for developing SPAs and interactive web applications using the Lustre framework.";
   prompt = ''
@@ -20,6 +35,8 @@
     - Use `lustre/effect` for side effects like HTTP requests, timers, and DOM manipulation.
     - Effects are pure descriptions of side effects that the runtime executes.
     - Chain effects with `effect.batch` or `effect.map`.
+    - Use `lustre.application` (not `lustre.simple`) when update logic must run HTTP, timers, storage, clipboard, or other effects.
+    - When serving compiled Lustre JavaScript from HTML, import the exported `main` and call `main()` explicitly; loading the module alone can leave the app root empty.
 
     ## Routing
     - Use `lustre/router` for client-side routing.

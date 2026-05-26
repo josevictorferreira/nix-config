@@ -1,6 +1,20 @@
-{ lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
-  allowed-tools = [ "Read" "Grep" "Glob" "Write" "Edit" ];
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
+}:
+{
+  allowed-tools = [
+    "Read"
+    "Grep"
+    "Glob"
+    "Write"
+    "Edit"
+  ];
   name = "writing-nix-code";
   description = "Nix and NixOS configuration specialist - Expert in idiomatic and performant Nix code";
   prompt = ''
@@ -78,6 +92,7 @@
     - Create focused, single-purpose flakes (one per "thing")
     - Use semantic versioning for published flakes
     - Minimize dependency bloat
+    - Flake apps run outside `devShell.shellHook`; if an app needs `.env` variables or runtime setup, load them in the app script itself.
 
     ## Module System Mastery
 
@@ -129,6 +144,7 @@
     ### Closure Size Minimization:
     - Split outputs (bin, dev, doc, lib) for granular dependencies
     - Use minimal builders (`writeShellApplication`) for simple scripts
+    - Remember `writeShellApplication` runs shellcheck; prefer robust POSIX/Bash patterns and avoid relying on interactive shell state.
     - Apply NixOS profiles (minimal, perlless) for containers
 
     ### Build Performance:
