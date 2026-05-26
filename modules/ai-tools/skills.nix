@@ -4,12 +4,11 @@
 _:
 let
   skillsModule =
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       inherit (inputs.lib.aiTools) mkSkillModule;
@@ -20,14 +19,16 @@ let
       kebabToHuman =
         s:
         lib.concatStringsSep " " (
-          map (
-            w:
-            let
-              first = builtins.substring 0 1 w;
-              rest = builtins.substring 1 (-1) w;
-            in
-            (lib.toUpper first) + rest
-          ) (lib.splitString "-" s)
+          map
+            (
+              w:
+              let
+                first = builtins.substring 0 1 w;
+                rest = builtins.substring 1 (-1) w;
+              in
+              (lib.toUpper first) + rest
+            )
+            (lib.splitString "-" s)
         );
 
       args = {

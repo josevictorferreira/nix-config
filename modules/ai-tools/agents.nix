@@ -37,6 +37,7 @@ let
         engineer = mkAgent ./_/agents/general/engineer.nix;
         architect = mkAgent ./_/agents/general/architect.nix;
         product-manager = mkAgent ./_/agents/general/product-manager.nix;
+        ux-researcher = mkAgent ./_/agents/general/ux-researcher.nix;
       };
 
       cfg = config.jvf.aiTools.agents;

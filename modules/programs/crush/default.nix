@@ -2,17 +2,15 @@
 # Defines jvf.programs.crush options for the Crush AI coding agent.
 # Config materialization via jvf.home; wrappers provide the package.
 # Crush reads config from ~/.config/crush/crush.json.
-{
-  ...
+{ ...
 }:
 let
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.crush;
