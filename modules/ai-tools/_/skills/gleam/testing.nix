@@ -1,6 +1,21 @@
-{ lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
-  allowed-tools = [ "Read" "Grep" "Glob" "Write" "Edit" "Bash" ];
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
+}:
+{
+  allowed-tools = [
+    "Read"
+    "Grep"
+    "Glob"
+    "Write"
+    "Edit"
+    "Bash"
+  ];
   name = "gleam-testing";
   description = "Testing strategies and patterns for Gleam applications using gleeunit and other tools.";
   prompt = ''
@@ -20,6 +35,8 @@
     - `let assert Ok(value) = result` to unwrap Results.
     - `let assert Error(err) = result` to assert errors.
     - Use `should.equal` and `should.be_true`/`should.be_false` for clarity.
+    - **NEVER write `panic("msg")`** — Gleam's `panic` is an operator, not a function. Use `panic as "msg"` instead, but prefer `should.equal` for assertions on custom type variants to avoid verbosity and syntax mistakes.
+    - When asserting a custom type variant, construct the expected value and use `should.equal`: `response.status |> should.equal(api.AudioJobFailed("..."))`.
 
     ## Property-Based Testing
     - Use `gleeunit` with property-based testing libraries.
