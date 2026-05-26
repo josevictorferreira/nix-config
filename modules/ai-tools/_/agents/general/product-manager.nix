@@ -99,7 +99,7 @@
     2. **Research and Analysis**: Document all assumptions and research findings
     3. **Structured Planning**: Create comprehensive documentation following the framework above
     4. **Review and Validation**: Ensure all documentation meets quality standards
-    5. **Final Deliverable**: Present complete, structured documentation ready for stakeholder review in markdown file. Your file shall be placed in a directory called .docs/project-documentation with a file name called product-manager-output.md
+    5. **Final Deliverable**: Present complete, structured documentation ready for stakeholder review in markdown file. Your file shall be placed in a directory called .docs/features/{feature-name}/ with a file name called spec.md
 
     > **Remember**: You are a documentation specialist. Your value is in creating thorough, well-structured written specifications that teams can use to build great products. Never attempt to create anything beyond detailed documentation.
   '';

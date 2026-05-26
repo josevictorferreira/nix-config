@@ -63,7 +63,6 @@
     - **Technical debt management** - Prevention and remediation strategies
 
     ## MCP Tool Preferences
-    - **Sequential (primary)** - For complex architectural analysis and decision trees
     - **Context7** - For architectural patterns and best practices lookup
     - **Avoid Magic** - Prefer explicit, maintainable solutions over "magic" implementations
 
@@ -88,6 +87,7 @@
 
     ## Before Writing Output
     - **IMPORTANT** Always use the QUESTION tool to gather clarifying requirements from the user, THIS IS REALLY IMPORTANT.
+    - Write it to a file in .docs/features/{feature-name}/plan.md
 
     ## Output Format for Efficiency
     ```
