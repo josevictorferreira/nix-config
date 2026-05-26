@@ -33,7 +33,9 @@ let
   # the base model is still registered.
   translateModel =
     id: model:
-    { inherit id; }
+    {
+      inherit id;
+    }
     // lib.optionalAttrs (model ? name) { inherit (model) name; }
     // lib.optionalAttrs (hasThinking model) { reasoning = true; }
     // lib.optionalAttrs (model ? modalities.input) { input = model.modalities.input; }
@@ -59,9 +61,10 @@ let
         models = lib.mapAttrsToList translateModel (provider.models or { });
       };
 
-  piProviders = lib.filterAttrs (_: v: v != null) (
-    lib.mapAttrs translateProvider config.jvf.programs.opencode.settings.provider
-  );
+  nineRouter = config.jvf.programs.opencode.settings.provider."9-router" or null;
+  piProviders = lib.optionalAttrs (nineRouter != null) {
+    "9-router" = translateProvider "9-router" nineRouter;
+  };
 in
 {
   config.jvf.programs.pi.models = lib.mkIf (piProviders != { }) {
