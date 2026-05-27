@@ -83,6 +83,8 @@ let
         gleam-package-development = mkSkill ./_/skills/gleam/package-development.nix;
         gleam-testing = mkSkill ./_/skills/gleam/testing.nix;
         gleam-web-development = mkSkill ./_/skills/gleam/web-development.nix;
+        gleam-actor-model = mkSkill ./_/skills/gleam/actor-model.nix;
+        gleam-conventions = mkSkill ./_/skills/gleam/conventions.nix;
       };
 
       cfg = config.jvf.aiTools.skills;
