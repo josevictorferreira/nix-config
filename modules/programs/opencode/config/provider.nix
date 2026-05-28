@@ -30,6 +30,12 @@
           apiKey = "{env:NINEROUTER_API_KEY}";
         };
         models = {
+          "mimo-v2.5-pro" = {
+            name = "Mimo V2.5 Pro (9Router)";
+          };
+          "mimo-v2.5" = {
+            name = "Mimo V2.5 (9Router)";
+          };
           "gpt-5.5" = {
             name = "GPT 5.5";
           };
