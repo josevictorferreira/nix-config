@@ -11,15 +11,15 @@ _: {
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "9router/kimi-k2.6";
-        glm = "9router/glm-5.1";
-        qwen = "9router/qwen3.6-plus";
-        gpt = "9router/gpt-5.5";
-        deepseekPro = "9router/deepseek-v4-pro";
-        deepseek = "9router/deepseek-v4-flash";
-        cheapFast = "9router/cheap-fast";
-        minimax = "9router/minimax-m2.5";
-        mimo = "9router/mimo-v2.5-pro";
+        kimi = "ninerouter/kimi-k2.6";
+        glm = "ninerouter/glm-5.1";
+        qwen = "ninerouter/qwen3.6-plus";
+        gpt = "ninerouter/gpt-5.5";
+        deepseekPro = "ninerouter/deepseek-v4-pro";
+        deepseek = "ninerouter/deepseek-v4-flash";
+        cheapFast = "ninerouter/haldir";
+        minimax = "ninerouter/minimax-m2.5";
+        mimo = "ninerouter/mimo-v2.5-pro";
         models = {
           quick = {
             default = cheapFast;
@@ -90,7 +90,7 @@ _: {
             ];
           };
           atlas = {
-            model = models.coder.alternative;
+            model = models.intelligent.default;
             fallback_models = [
               models.coder.alternative
               models.coder.default
@@ -319,12 +319,12 @@ _: {
           };
         };
         background_task = {
-          defaultConcurrency = 6;
+          defaultConcurrency = 8;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            "9router" = 6;
+            "ninerouter" = 8;
           };
-          modelConcurrency = 3;
+          modelConcurrency = 8;
           maxDepth = 10;
           maxDescendants = 50;
           messageStalenessTimeoutMs = 300000;
@@ -334,7 +334,7 @@ _: {
           maxToolCalls = 100;
           circuitBreaker = {
             enabled = true;
-            failure_threshold = 5;
+            failure_threshold = 3;
             reset_timeout_seconds = 300;
           };
         };

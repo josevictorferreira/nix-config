@@ -22,58 +22,62 @@
       "opencode-go"
     ];
     provider = {
-      "9-router" = {
+      "ninerouter" = {
         npm = "@ai-sdk/openai-compatible";
-        name = "9Router";
+        id = "ninerouter";
+        name = "ninerouter";
         options = {
           baseURL = "https://router9.josevictor.me/v1";
           apiKey = "{env:NINEROUTER_API_KEY}";
         };
         models = {
           "mimo-v2.5-pro" = {
-            name = "Mimo V2.5 Pro (9Router)";
+            name = "Mimo V2.5 Pro (ninerouter)";
           };
           "mimo-v2.5" = {
-            name = "Mimo V2.5 (9Router)";
+            name = "Mimo V2.5 (ninerouter)";
           };
           "gpt-5.5" = {
             name = "GPT 5.5";
           };
           "kimi-k2.5" = {
-            name = "Kimi K2.5 (9Router)";
+            name = "Kimi K2.5 (ninerouter)";
           };
           "kimi-k2.6" = {
-            name = "Kimi K2.6 (9Router)";
+            name = "Kimi K2.6 (ninerouter)";
           };
           "deepseek-v4-flash" = {
-            name = "DeepSeek V4 Flash (9Router)";
+            name = "DeepSeek V4 Flash (ninerouter)";
           };
           "deepseek-v4-pro" = {
-            name = "DeepSeek V4 Pro (9Router)";
+            name = "DeepSeek V4 Pro (ninerouter)";
           };
           "glm-5.1" = {
-            name = "GLM-5.1 (9Router)";
+            name = "GLM-5.1 (ninerouter)";
           };
           "glm-5" = {
-            name = "GLM-5 (9Router)";
+            name = "GLM-5 (ninerouter)";
           };
           "glm-4.7" = {
-            name = "GLM-4.7 (9Router)";
+            name = "GLM-4.7 (ninerouter)";
           };
           "minimax-m2.7" = {
-            name = "MiniMax M2.7 (9Router)";
+            name = "MiniMax M2.7 (ninerouter)";
           };
           "minimax-m2.5" = {
-            name = "MiniMax M2.5 (9Router)";
+            name = "MiniMax M2.5 (ninerouter)";
           };
           "qwen3.6-plus" = {
-            name = "Qwen 3.6 Plus (9Router)";
+            name = "Qwen 3.6 Plus (ninerouter)";
           };
-          "cheap-nitro" = {
-            name = "Cheap Nitro (9Router)";
+          "samwise" = {
+            name = "Samwise (ninerouter)";
           };
-          "cheap-fast" = {
-            name = "Cheap Fast (9Router)";
+          "pippin" = {
+            name = "Pippin (ninerouter)";
+          };
+          "haldir" = {
+            name = "Haldir (ninerouter)";
           };
         };
       };
