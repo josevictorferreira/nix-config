@@ -53,19 +53,31 @@ _: {
         };
       in
       {
-        default_agent = "engineer";
+        default_run_agent = "engineer";
         disabled_commands = [ ];
-        disabled_agents = [
-          "atlas"
-          "hephaestus"
-          "sisyphus"
+        disabled_agents = [ ];
+        disabled_skills = [
+          "git-master"
+          "playwright"
+          "dev-browser"
         ];
         agents = {
           hephaestus = {
             model = models.coder.expensive;
+            fallback_models = [
+              models.coder.expensive
+              models.coder.default
+              models.coder.alternative
+            ];
           };
           librarian = {
             model = models.quick.cheap;
+            fallback_models = [
+              models.quick.cheap
+              models.quick.default
+              models.quick.alternative
+              models.quick.expensive
+            ];
           };
           explore = {
             model = models.quick.default;
@@ -78,37 +90,138 @@ _: {
           };
           atlas = {
             model = models.coder.alternative;
+            fallback_models = [
+              models.coder.alternative
+              models.coder.default
+              models.coder.expensive
+            ];
           };
           prometheus = {
             model = models.intelligent.default;
+            fallback_models = [
+              models.intelligent.default
+              models.intelligent.expensive
+              models.intelligent.alternative
+              models.intelligent.cheap
+            ];
           };
           metis = {
             model = models.intelligent.expensive;
+            fallback_models = [
+              models.intelligent.expensive
+              models.intelligent.default
+              models.intelligent.alternative
+              models.intelligent.cheap
+            ];
           };
           momus = {
             model = models.intelligent.alternative;
+            fallback_models = [
+              models.intelligent.alternative
+              models.intelligent.default
+              models.intelligent.expensive
+              models.intelligent.cheap
+            ];
           };
           oracle = {
             model = models.intelligent.default;
             variant = "xhigh";
+            fallback_models = [
+              models.intelligent.default
+              models.intelligent.expensive
+              models.intelligent.alternative
+              models.intelligent.cheap
+            ];
           };
           document-writer = {
             model = models.writer.default;
+            fallback_models = [
+              models.writer.default
+              models.writer.expensive
+              models.writer.alternative
+              models.writer.cheap
+            ];
           };
           multimodal-looker = {
             model = models.looker.default;
+            fallback_models = [
+              models.looker.default
+              models.looker.expensive
+              models.looker.alternative
+              models.looker.cheap
+            ];
           };
           ui-designer = {
             model = models.looker.default;
+            fallback_models = [
+              models.looker.default
+              models.looker.expensive
+              models.looker.alternative
+              models.looker.cheap
+            ];
           };
           product-manager = {
             model = models.intelligent.default;
+            fallback_models = [
+              models.intelligent.default
+              models.intelligent.expensive
+              models.intelligent.alternative
+              models.intelligent.cheap
+            ];
           };
           architect = {
             model = models.coder.expensive;
+            fallback_models = [
+              models.coder.expensive
+              models.coder.default
+              models.coder.alternative
+              models.coder.cheap
+            ];
           };
           devops = {
             model = models.coder.default;
+            fallback_models = [
+              models.coder.default
+              models.coder.alternative
+              models.coder.expensive
+              models.coder.cheap
+            ];
+          };
+          sisyphus = {
+            model = models.coder.default;
+            fallback_models = [
+              models.coder.default
+              models.coder.alternative
+              models.coder.expensive
+              models.coder.cheap
+            ];
+          };
+          sisyphus-junior = {
+            model = models.coder.default;
+            fallback_models = [
+              models.coder.default
+              models.coder.alternative
+              models.coder.expensive
+              models.coder.cheap
+            ];
+          };
+          build = {
+            model = models.coder.default;
+            fallback_models = [
+              models.coder.default
+              models.coder.alternative
+              models.coder.expensive
+              models.coder.cheap
+            ];
+          };
+          plan = {
+            model = models.intelligent.default;
+            fallback_models = [
+              models.intelligent.default
+              models.intelligent.expensive
+              models.intelligent.alternative
+              models.intelligent.cheap
+            ];
           };
         };
         categories = {
@@ -208,10 +321,7 @@ _: {
           defaultConcurrency = 6;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            openrouter = 3;
-            kimi-for-coding = 2;
-            "zai-coding-plan" = 10;
-            "alibaba-coding-plan" = 3;
+            "9router" = 6;
           };
           modelConcurrency = 3;
           maxDepth = 10;
@@ -275,17 +385,6 @@ _: {
           "rules-injector"
         ];
         hashline_edit = true;
-        skills = {
-          enable = [
-          ];
-          disable = [
-            "git-master"
-            "playwright"
-            "playwright-cli"
-            "dev-browser"
-          ];
-          sources = [ ];
-        };
         git_master = {
           commit_footer = false;
           include_co_authored_by = false;
@@ -313,28 +412,23 @@ _: {
           plugins = false;
           plugins_override = { };
         };
-        google_auth = false;
         new_task_system_enabled = true;
         disabled_mcps = [
           "chrome-devtools"
         ];
         disabled_tools = [ ];
         mcp_env_allowlist = [ ];
-        model_fallback = false;
+        model_fallback = true;
         notification = {
           enabled = true;
           sound = true;
           desktop = true;
         };
-        model_capabilities = {
-          thinking = { };
-          reasoning_effort = { };
-        };
         openclaw = {
           enabled = false;
         };
         babysitting = {
-          enabled = false;
+          enabled = true;
           max_retries = 3;
           retry_delay_seconds = 5;
         };
@@ -355,10 +449,11 @@ _: {
           check_on_commit = true;
         };
         sisyphus_agent = {
-          enabled = false;
-          model = models.coder.default;
-          default_builder_enabled = false;
-          replace_plan = false;
+          disabled = false;
+          default_builder_enabled = true;
+          planner_enabled = true;
+          replace_plan = true;
+          tdd = true;
         };
         _migrations = {
           version = 1;
