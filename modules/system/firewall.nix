@@ -12,7 +12,7 @@ let
           type = lib.types.listOf lib.types.port;
           default = [
             8000
-            8188
+            5174
           ];
           description = "List of allowed TCP ports.";
         };
@@ -25,7 +25,8 @@ let
       };
     };
 
-  nixosModule = { config, ... }:
+  nixosModule =
+    { config, ... }:
     let
       cfg = config.jvf.system.firewall;
     in

@@ -19,6 +19,7 @@ _: {
         deepseek = "9router/deepseek-v4-flash";
         cheapFast = "9router/cheap-fast";
         minimax = "9router/minimax-m2.5";
+        mimo = "9router/mimo-v2.5-pro";
         models = {
           quick = {
             default = cheapFast;
@@ -27,16 +28,16 @@ _: {
             alternative = minimax;
           };
           coder = {
-            default = kimi;
-            cheap = deepseek;
-            expensive = deepseekPro;
-            alternative = glm;
+            default = glm;
+            cheap = kimi;
+            expensive = mimo;
+            alternative = qwen;
           };
           intelligent = {
             default = gpt;
-            cheap = deepseekPro;
+            cheap = glm;
             expensive = gpt;
-            alternative = glm;
+            alternative = kimi;
           };
           looker = {
             default = qwen;
