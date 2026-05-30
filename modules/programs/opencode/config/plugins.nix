@@ -6,6 +6,7 @@ _: {
         "@tarquinen/opencode-dcp@3.1.12"
         "oh-my-openagent@4.5.1"
         "@vectorize-io/opencode-hindsight"
+        "oh-my-openagent/tui"
       ];
     };
 
@@ -324,13 +325,11 @@ _: {
           providerConcurrency = {
             "ninerouter" = 8;
           };
-          modelConcurrency = 8;
           maxDepth = 10;
           maxDescendants = 50;
           messageStalenessTimeoutMs = 300000;
           taskTtlMs = 86400000;
           sessionGoneTimeoutMs = 60000;
-          syncPollTimeoutMs = 30000;
           maxToolCalls = 100;
           circuitBreaker = {
             enabled = true;
@@ -342,8 +341,7 @@ _: {
           dcp_for_compaction = true;
           dynamic_context_pruning = {
             enabled = true;
-            notification = true;
-            turn_protection = 3;
+            notification = "minimal";
             protected_tools = [
               "task"
               "skill"
@@ -376,11 +374,20 @@ _: {
           model_fallback_title = true;
           max_tools = 50;
         };
+        claude_code = {
+          mcp = false;
+          commands = false;
+          skills = false;
+          agents = false;
+          hooks = false;
+          plugins = false;
+          plugins_override = { };
+        };
         ralph_loop = {
           enabled = true;
           default_max_iterations = 1000;
           state_dir = ".omo/ralph";
-          default_strategy = "sequential";
+          default_strategy = "continue";
         };
         disabled_hooks = [
           "rules-injector"
@@ -389,29 +396,24 @@ _: {
         git_master = {
           commit_footer = false;
           include_co_authored_by = false;
-          git_env_prefix = "GIT_";
         };
         runtime_fallback = {
-          enabled = false;
+          enabled = true;
           retry_on_errors = [
             400
+            401
+            403
+            404
             429
+            500
+            502
             503
-            529
+            504
           ];
           max_fallback_attempts = 3;
-          cooldown_seconds = 60;
-          timeout_seconds = 25;
+          cooldown_seconds = 15;
+          timeout_seconds = 10;
           notify_on_fallback = true;
-        };
-        claude_code = {
-          mcp = false;
-          commands = false;
-          skills = false;
-          agents = false;
-          hooks = true;
-          plugins = false;
-          plugins_override = { };
         };
         new_task_system_enabled = true;
         disabled_mcps = [
@@ -441,10 +443,7 @@ _: {
           enabled = true;
           auto_plan = true;
         };
-        auto_update = {
-          enabled = true;
-          check_interval_hours = 24;
-        };
+        auto_update = false;
         comment_checker = {
           enabled = true;
           check_on_commit = true;
@@ -455,10 +454,6 @@ _: {
           planner_enabled = true;
           replace_plan = true;
           tdd = true;
-        };
-        _migrations = {
-          version = 1;
-          auto_migrate = true;
         };
       };
   };

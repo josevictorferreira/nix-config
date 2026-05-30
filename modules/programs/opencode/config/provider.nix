@@ -44,7 +44,35 @@
             name = "Kimi K2.5 (ninerouter)";
           };
           "kimi-k2.6" = {
-            name = "Kimi K2.6 (ninerouter)";
+            name = "Kimi K2.6 Thinking (ninerouter)";
+            limit = {
+              context = 262144;
+              output = 32768;
+            };
+            reasoning = true;
+            options = {
+              temperature = 1.0;
+              top_p = 0.95;
+              extra_body = {
+                thinking = {
+                  type = "enabled";
+                  keep = "all";
+                };
+              };
+            };
+            cost = {
+              input = 0.95;
+              output = 4.0;
+              cache_read = 0.16;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "video"
+              ];
+              output = [ "text" ];
+            };
           };
           "deepseek-v4-flash" = {
             name = "DeepSeek V4 Flash (ninerouter)";

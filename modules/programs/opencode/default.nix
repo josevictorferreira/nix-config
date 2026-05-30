@@ -31,6 +31,10 @@ let
           "AGENTS.md" = cfg.baseRules;
           "opencode.json" = cfg.settings;
           "oh-my-openagent.json" = cfg.ohMyOpenCodeSettings;
+          "tui.json" = {
+            theme = "tokyonight";
+            plugins = [ "oh-my-openagent/tui" ];
+          };
         }
         // cfg.extraConfigFiles;
 
@@ -95,6 +99,7 @@ let
               "__pycache__/**"
               ".ck/**"
               ".bun_cache/**"
+              "tui.json"
             ];
           };
 
@@ -159,6 +164,7 @@ let
             preserve = [
               "dcp.jsonc"
               "dcp.json"
+              "tui.json"
             ];
           };
 
