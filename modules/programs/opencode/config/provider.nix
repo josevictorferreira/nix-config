@@ -22,29 +22,32 @@
       "opencode-go"
     ];
     provider = {
-      "ninerouter" = {
-        npm = "@ai-sdk/openai-compatible";
-        id = "ninerouter";
-        name = "ninerouter";
+      "9router" = {
+        npm = "@ai-sdk/anthropic";
+        id = "9router";
+        name = "9router";
         options = {
           baseURL = "https://router9.josevictor.me/v1";
           apiKey = "{env:NINEROUTER_API_KEY}";
+          headers = {
+            "anthropic-version" = "2023-06-01";
+          };
         };
         models = {
           "mimo-v2.5-pro" = {
-            name = "Mimo V2.5 Pro (ninerouter)";
+            name = "Mimo V2.5 Pro (9router)";
           };
           "mimo-v2.5" = {
-            name = "Mimo V2.5 (ninerouter)";
+            name = "Mimo V2.5 (9router)";
           };
           "gpt-5.5" = {
             name = "GPT 5.5";
           };
           "kimi-k2.5" = {
-            name = "Kimi K2.5 (ninerouter)";
+            name = "Kimi K2.5 (9router)";
           };
           "kimi-k2.6" = {
-            name = "Kimi K2.6 Thinking (ninerouter)";
+            name = "Kimi K2.6 Thinking (9router)";
             limit = {
               context = 262144;
               output = 32768;
@@ -75,37 +78,37 @@
             };
           };
           "deepseek-v4-flash" = {
-            name = "DeepSeek V4 Flash (ninerouter)";
+            name = "DeepSeek V4 Flash (9router)";
           };
           "deepseek-v4-pro" = {
-            name = "DeepSeek V4 Pro (ninerouter)";
+            name = "DeepSeek V4 Pro (9router)";
           };
           "glm-5.1" = {
-            name = "GLM-5.1 (ninerouter)";
+            name = "GLM-5.1 (9router)";
           };
           "glm-5" = {
-            name = "GLM-5 (ninerouter)";
+            name = "GLM-5 (9router)";
           };
           "glm-4.7" = {
-            name = "GLM-4.7 (ninerouter)";
+            name = "GLM-4.7 (9router)";
           };
           "minimax-m2.7" = {
-            name = "MiniMax M2.7 (ninerouter)";
+            name = "MiniMax M2.7 (9router)";
           };
           "minimax-m2.5" = {
-            name = "MiniMax M2.5 (ninerouter)";
+            name = "MiniMax M2.5 (9router)";
           };
           "qwen3.6-plus" = {
-            name = "Qwen 3.6 Plus (ninerouter)";
+            name = "Qwen 3.6 Plus (9router)";
           };
           "samwise" = {
-            name = "Samwise (ninerouter)";
+            name = "Samwise (9router)";
           };
           "pippin" = {
-            name = "Pippin (ninerouter)";
+            name = "Pippin (9router)";
           };
           "haldir" = {
-            name = "Haldir (ninerouter)";
+            name = "Haldir (9router)";
           };
         };
       };

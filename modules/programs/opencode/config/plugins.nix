@@ -6,21 +6,20 @@ _: {
         "@tarquinen/opencode-dcp@3.1.12"
         "oh-my-openagent@4.5.1"
         "@vectorize-io/opencode-hindsight"
-        "oh-my-openagent/tui"
       ];
     };
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "ninerouter/kimi-k2.6";
-        glm = "ninerouter/glm-5.1";
-        qwen = "ninerouter/qwen3.6-plus";
-        gpt = "ninerouter/gpt-5.5";
-        deepseekPro = "ninerouter/deepseek-v4-pro";
-        deepseek = "ninerouter/deepseek-v4-flash";
-        cheapFast = "ninerouter/haldir";
-        minimax = "ninerouter/minimax-m2.5";
-        mimo = "ninerouter/mimo-v2.5-pro";
+        kimi = "9router/kimi-k2.6";
+        glm = "9router/glm-5.1";
+        qwen = "9router/qwen3.6-plus";
+        gpt = "9router/gpt-5.5";
+        deepseekPro = "9router/deepseek-v4-pro";
+        deepseek = "9router/deepseek-v4-flash";
+        cheapFast = "9router/haldir";
+        minimax = "9router/minimax-m2.5";
+        mimo = "9router/mimo-v2.5-pro";
         models = {
           quick = {
             default = cheapFast;
@@ -323,7 +322,7 @@ _: {
           defaultConcurrency = 8;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            "ninerouter" = 8;
+            "9router" = 8;
           };
           maxDepth = 10;
           maxDescendants = 50;
