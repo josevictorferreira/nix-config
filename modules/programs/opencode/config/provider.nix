@@ -25,7 +25,7 @@
       "omniroute" = {
         npm = "@ai-sdk/anthropic";
         id = "omniroute";
-        name = "omniroute";
+        name = "OmniRoute";
         options = {
           baseURL = "https://omniroute.josevictor.me/v1";
           apiKey = "{env:OMNIROUTE_API_KEY}";
@@ -35,19 +35,19 @@
         };
         models = {
           "mimo-v2.5-pro" = {
-            name = "Mimo V2.5 Pro (omniroute)";
+            name = "Mimo V2.5 Pro (OmniRoute)";
           };
           "mimo-v2.5" = {
-            name = "Mimo V2.5 (omniroute)";
+            name = "Mimo V2.5 (OmniRoute)";
           };
           "gpt-5.5" = {
             name = "GPT 5.5";
           };
           "kimi-k2.5" = {
-            name = "Kimi K2.5 (omniroute)";
+            name = "Kimi K2.5 (OmniRoute)";
           };
           "kimi-k2.6" = {
-            name = "Kimi K2.6 (omniroute)";
+            name = "Kimi K2.6 (OmniRoute)";
             limit = {
               context = 262144;
               output = 32768;
@@ -78,7 +78,7 @@
             };
           };
           "kimi-k2.6-thinking" = {
-            name = "Kimi K2.6 Thinking (omniroute)";
+            name = "Kimi K2.6 Thinking (OmniRoute)";
             limit = {
               context = 262144;
               output = 32768;
@@ -109,43 +109,43 @@
             };
           };
           "deepseek-v4-flash" = {
-            name = "DeepSeek V4 Flash (omniroute)";
+            name = "DeepSeek V4 Flash (OmniRoute)";
           };
           "deepseek-v4-pro" = {
-            name = "DeepSeek V4 Pro (omniroute)";
+            name = "DeepSeek V4 Pro (OmniRoute)";
           };
           "glm-5.1" = {
-            name = "GLM-5.1 (omniroute)";
+            name = "GLM-5.1 (OmniRoute)";
           };
           "glm-5.1-thinking" = {
-            name = "GLM-5.1 Thinking (omniroute)";
+            name = "GLM-5.1 Thinking (OmniRoute)";
           };
           "glm-5" = {
-            name = "GLM-5 (omniroute)";
+            name = "GLM-5 (OmniRoute)";
           };
           "glm-4.7" = {
-            name = "GLM-4.7 (omniroute)";
+            name = "GLM-4.7 (OmniRoute)";
           };
           "minimax-m2.7" = {
-            name = "MiniMax M2.7 (omniroute)";
+            name = "MiniMax M2.7 (OmniRoute)";
           };
           "minimax-m2.5" = {
-            name = "MiniMax M2.5 (omniroute)";
+            name = "MiniMax M2.5 (OmniRoute)";
           };
           "qwen3.6-plus" = {
-            name = "Qwen 3.6 Plus (omniroute)";
+            name = "Qwen 3.6 Plus (OmniRoute)";
           };
           "gandalf" = {
-            name = "Gandalf (omniroute)";
+            name = "Gandalf (OmniRoute)";
           };
           "legolas" = {
-            name = "Legolas (omniroute)";
+            name = "Legolas (OmniRoute)";
           };
           "pippin" = {
-            name = "Pippin (omniroute)";
+            name = "Pippin (OmniRoute)";
           };
           "haldir" = {
-            name = "Haldir (omniroute)";
+            name = "Haldir (OmniRoute)";
           };
         };
       };
