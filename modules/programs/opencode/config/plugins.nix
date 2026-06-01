@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.12"
-        "oh-my-openagent@4.5.1"
+        "oh-my-openagent@4.6.0"
         "@vectorize-io/opencode-hindsight"
       ];
     };
@@ -18,6 +18,7 @@ _: {
         qwen = "omniroute/qwen3.6-plus";
         gpt = "omniroute/gpt-5.5";
         gandalf = "omniroute/gandalf";
+        radagast = "omniroute/radagast";
         deepseekPro = "omniroute/deepseek-v4-pro";
         deepseek = "omniroute/deepseek-v4-flash";
         cheapFast = "omniroute/legolas";
@@ -39,7 +40,7 @@ _: {
           intelligent = {
             default = gandalf;
             cheap = glmThinking;
-            expensive = gpt;
+            expensive = radagast;
             alternative = kimiThinking;
           };
           looker = {
@@ -116,11 +117,11 @@ _: {
             ];
           };
           metis = {
-            model = models.intelligent.alternative;
+            model = models.intelligent.expensive;
             model_fallback = true;
             fallback_models = [
-              models.intelligent.alternative
               models.intelligent.expensive
+              models.intelligent.alternative
               models.intelligent.cheap
               models.intelligent.default
             ];
