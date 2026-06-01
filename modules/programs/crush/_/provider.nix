@@ -1,4 +1,4 @@
-# _/provider.nix - Translate opencode's 9-router provider to Crush's crush.json format.
+# _/provider.nix - Translate opencode's omniroute provider to Crush's crush.json format.
 # Lives under _/ so import-tree skips it; ../default.nix imports it explicitly
 # into the programs-crush aspect (where pkgs/options are properly in scope).
 # Requires programs-opencode to be co-imported (e.g. via roles/ai-development.nix)
@@ -25,7 +25,11 @@ let
     if m != null then "$" + builtins.elemAt m 0 else s;
 
   # opencode models are attrs (id -> attrs); Crush wants a list.
-  toCrushModels = models: lib.mapAttrsToList (id: model: { inherit id; } // lib.optionalAttrs (model ? name) { inherit (model) name; }) models;
+  toCrushModels =
+    models:
+    lib.mapAttrsToList (
+      id: model: { inherit id; } // lib.optionalAttrs (model ? name) { inherit (model) name; }
+    ) models;
 
   translateProvider =
     name: provider:
@@ -44,14 +48,14 @@ let
         models = toCrushModels (provider.models or { });
       };
 
-  # Only extract 9-router from opencode's provider config
-  nineRouter = config.jvf.programs.opencode.settings.provider."9-router" or null;
-  nineRouterCrush = lib.optionalAttrs (nineRouter != null) {
-    providers."9-router" = translateProvider "9-router" nineRouter;
+  # Only extract omniroute from opencode's provider config
+  omniroute = config.jvf.programs.opencode.settings.provider."omniroute" or null;
+  omnirouteCrush = lib.optionalAttrs (omniroute != null) {
+    providers."omniroute" = translateProvider "omniroute" omniroute;
   };
 in
 {
   config.jvf.programs.crush.settings = lib.mkMerge [
-    (lib.mkIf (nineRouter != null) nineRouterCrush)
+    (lib.mkIf (omniroute != null) omnirouteCrush)
   ];
 }

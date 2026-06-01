@@ -11,15 +11,18 @@ _: {
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "9router/kimi-k2.6";
-        glm = "9router/glm-5.1";
-        qwen = "9router/qwen3.6-plus";
-        gpt = "9router/gpt-5.5";
-        deepseekPro = "9router/deepseek-v4-pro";
-        deepseek = "9router/deepseek-v4-flash";
-        cheapFast = "9router/haldir";
-        minimax = "9router/minimax-m2.5";
-        mimo = "9router/mimo-v2.5-pro";
+        kimi = "omniroute/kimi-k2.6";
+        kimiThinking = "omniroute/kimi-k2.6-thinking";
+        glm = "omniroute/glm-5.1";
+        glmThinking = "omniroute/glm-5.1-thinking";
+        qwen = "omniroute/qwen3.6-plus";
+        gpt = "omniroute/gpt-5.5";
+        gandalf = "omniroute/gandalf";
+        deepseekPro = "omniroute/deepseek-v4-pro";
+        deepseek = "omniroute/deepseek-v4-flash";
+        cheapFast = "omniroute/legolas";
+        minimax = "omniroute/minimax-m2.5";
+        mimo = "omniroute/mimo-v2.5-pro";
         models = {
           quick = {
             default = cheapFast;
@@ -34,10 +37,10 @@ _: {
             alternative = qwen;
           };
           intelligent = {
-            default = gpt;
-            cheap = glm;
+            default = gandalf;
+            cheap = glmThinking;
             expensive = gpt;
-            alternative = kimi;
+            alternative = kimiThinking;
           };
           looker = {
             default = qwen;
@@ -65,6 +68,7 @@ _: {
         agents = {
           hephaestus = {
             model = models.coder.expensive;
+            model_fallback = true;
             fallback_models = [
               models.coder.expensive
               models.coder.default
@@ -73,6 +77,7 @@ _: {
           };
           librarian = {
             model = models.quick.cheap;
+            model_fallback = true;
             fallback_models = [
               models.quick.cheap
               models.quick.default
@@ -84,6 +89,7 @@ _: {
             model = models.quick.default;
             model_fallback = true;
             fallback_models = [
+              models.quick.default
               models.quick.alternative
               models.quick.cheap
               models.quick.expensive
@@ -91,7 +97,9 @@ _: {
           };
           atlas = {
             model = models.intelligent.default;
+            model_fallback = true;
             fallback_models = [
+              models.intelligent.default
               models.coder.alternative
               models.coder.default
               models.coder.expensive
@@ -99,6 +107,7 @@ _: {
           };
           prometheus = {
             model = models.intelligent.default;
+            model_fallback = true;
             fallback_models = [
               models.intelligent.default
               models.intelligent.expensive
@@ -107,26 +116,28 @@ _: {
             ];
           };
           metis = {
-            model = models.intelligent.expensive;
+            model = models.intelligent.alternative;
+            model_fallback = true;
             fallback_models = [
-              models.intelligent.expensive
-              models.intelligent.default
               models.intelligent.alternative
+              models.intelligent.expensive
               models.intelligent.cheap
+              models.intelligent.default
             ];
           };
           momus = {
-            model = models.intelligent.alternative;
+            model = models.intelligent.cheap;
+            model_fallback = true;
             fallback_models = [
+              models.intelligent.cheap
               models.intelligent.alternative
               models.intelligent.default
               models.intelligent.expensive
-              models.intelligent.cheap
             ];
           };
           oracle = {
             model = models.intelligent.default;
-            variant = "xhigh";
+            model_fallback = true;
             fallback_models = [
               models.intelligent.default
               models.intelligent.expensive
@@ -136,6 +147,7 @@ _: {
           };
           document-writer = {
             model = models.writer.default;
+            model_fallback = true;
             fallback_models = [
               models.writer.default
               models.writer.expensive
@@ -145,6 +157,7 @@ _: {
           };
           multimodal-looker = {
             model = models.looker.default;
+            model_fallback = true;
             fallback_models = [
               models.looker.default
               models.looker.expensive
@@ -154,6 +167,7 @@ _: {
           };
           ui-designer = {
             model = models.looker.default;
+            model_fallback = true;
             fallback_models = [
               models.looker.default
               models.looker.expensive
@@ -163,6 +177,7 @@ _: {
           };
           product-manager = {
             model = models.intelligent.default;
+            model_fallback = true;
             fallback_models = [
               models.intelligent.default
               models.intelligent.expensive
@@ -172,6 +187,7 @@ _: {
           };
           architect = {
             model = models.coder.expensive;
+            model_fallback = true;
             fallback_models = [
               models.coder.expensive
               models.coder.default
@@ -181,6 +197,7 @@ _: {
           };
           devops = {
             model = models.coder.default;
+            model_fallback = true;
             fallback_models = [
               models.coder.default
               models.coder.alternative
@@ -190,6 +207,7 @@ _: {
           };
           sisyphus = {
             model = models.coder.default;
+            model_fallback = true;
             fallback_models = [
               models.coder.default
               models.coder.alternative
@@ -199,6 +217,7 @@ _: {
           };
           sisyphus-junior = {
             model = models.coder.default;
+            model_fallback = true;
             fallback_models = [
               models.coder.default
               models.coder.alternative
@@ -208,6 +227,7 @@ _: {
           };
           build = {
             model = models.coder.default;
+            model_fallback = true;
             fallback_models = [
               models.coder.default
               models.coder.alternative
@@ -217,6 +237,7 @@ _: {
           };
           plan = {
             model = models.intelligent.default;
+            model_fallback = true;
             fallback_models = [
               models.intelligent.default
               models.intelligent.expensive
@@ -322,7 +343,7 @@ _: {
           defaultConcurrency = 8;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            "9router" = 8;
+            "omniroute" = 8;
           };
           maxDepth = 10;
           maxDescendants = 50;

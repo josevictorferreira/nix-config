@@ -103,7 +103,7 @@ let
             ];
           };
 
-          small_model = "9router/pippin";
+          small_model = "omniroute/pippin";
           default_agent = "engineer";
         };
 

@@ -61,9 +61,9 @@ let
         models = lib.mapAttrsToList translateModel (provider.models or { });
       };
 
-  nineRouter = config.jvf.programs.opencode.settings.provider."9-router" or null;
-  piProviders = lib.optionalAttrs (nineRouter != null) {
-    "9-router" = translateProvider "9-router" nineRouter;
+  omniroute = config.jvf.programs.opencode.settings.provider."omniroute" or null;
+  piProviders = lib.optionalAttrs (omniroute != null) {
+    "omniroute" = translateProvider "omniroute" omniroute;
   };
 in
 {
