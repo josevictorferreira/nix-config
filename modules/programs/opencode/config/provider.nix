@@ -23,7 +23,7 @@
     ];
     provider = {
       "omniroute" = {
-        npm = "@ai-sdk/anthropic";
+        npm = "@ai-sdk/openai";
         name = "OmniRoute";
         options = {
           baseURL = "https://omniroute.josevictor.me/v1";
