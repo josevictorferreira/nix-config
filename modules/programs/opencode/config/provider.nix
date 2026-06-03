@@ -24,6 +24,7 @@
     provider = {
       "omniroute" = {
         npm = "@ai-sdk/openai-compatible";
+        id = "omniroute";
         name = "OmniRoute";
         options = {
           baseURL = "https://omniroute.josevictor.me/v1";
@@ -52,12 +53,6 @@
             options = {
               temperature = 1.0;
               top_p = 0.95;
-              extra_body = {
-                thinking = {
-                  type = "enabled";
-                  keep = "all";
-                };
-              };
             };
             cost = {
               input = 0.95;
@@ -78,12 +73,6 @@
             options = {
               temperature = 1.0;
               top_p = 0.95;
-              extra_body = {
-                thinking = {
-                  type = "enabled";
-                  keep = "all";
-                };
-              };
             };
             cost = {
               input = 0.95;
