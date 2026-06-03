@@ -8,11 +8,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.pi;
@@ -27,10 +28,7 @@ let
             prompt = value.prompt or "";
             headerLines = lib.optional (description != "") "description: ${builtins.toJSON description}";
             yamlHeader =
-              if headerLines != [ ] then
-                "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n\n"
-              else
-                "";
+              if headerLines != [ ] then "---\n" + lib.concatStringsSep "\n" headerLines + "\n---\n\n" else "";
           in
           yamlHeader + prompt
         else
@@ -38,14 +36,10 @@ let
 
       mkPiPromptConfigs =
         attrset:
-        lib.mapAttrs'
-          (
-            name: value: {
-              name = "${name}.md";
-              value = toPiPromptTemplate value;
-            }
-          )
-          attrset;
+        lib.mapAttrs' (name: value: {
+          name = "${name}.md";
+          value = toPiPromptTemplate value;
+        }) attrset;
 
       # Build pi agent config directory contents
       piAgentConfigs =
@@ -62,34 +56,14 @@ let
           # tools like `explore`/`glob` produce client-side `ModelMessage`
           # validation errors before the request even leaves pi. The fan-out
           # via jvf.aiTools.baseRule.content is appended below.
-          "AGENTS.md" = ''
-            ---
-            description: Base rules and tool whitelist for pi
-            ---
+          "AGENTS.md" =
+            ""
+            + lib.optionalString (cfg.baseRules != "") ''
 
-            ## Available Tools
+              ## Base Rules
 
-            This pi installation ships only the following tools:
-
-            - `read` — read a file
-            - `bash` — execute a shell command
-            - `edit` — replace text in a file
-            - `write` — write a new file
-
-            Do not call any other tool. Sub-agent tools such as `explore`,
-            `glob`, `grep`, `search`, `task`, or any code-exploration agent
-            do not exist here — calling them will fail.
-
-            If you need to search the codebase, use `bash` with `rg`
-            (ripgrep) or `find`. If you need to read multiple files, call
-            `read` repeatedly.
-          ''
-          + lib.optionalString (cfg.baseRules != "") ''
-
-            ## Base Rules
-
-            ${cfg.baseRules}
-          '';
+              ${cfg.baseRules}
+            '';
         }
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;
@@ -99,38 +73,34 @@ let
         });
 
       piAgentDir = pkgs.linkFarm "pi-agent-config" (
-        lib.mapAttrsToList
-          (
-            fileName: fileValue:
-              let
-                filePath =
-                  if lib.isDerivation fileValue then
-                    fileValue
-                  else if builtins.isString fileValue then
-                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else if builtins.isAttrs fileValue then
-                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
-                      (
-                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                      )
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-          )
-          piAgentConfigs
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if lib.isDerivation fileValue then
+                fileValue
+              else if builtins.isString fileValue then
+                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else if builtins.isAttrs fileValue then
+                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
+                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                )
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) piAgentConfigs
       );
 
       # Build the pi settings file that points to skills and prompts directories
-      piSettings =
-        {
-          skills = [ "skills" ];
-          prompts = [ "prompts" ];
-        }
-        // cfg.settings;
+      piSettings = {
+        skills = [ "skills" ];
+        prompts = [ "prompts" ];
+      }
+      // cfg.settings;
     in
     {
       options.jvf.programs.pi = {

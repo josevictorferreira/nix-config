@@ -38,7 +38,6 @@ let
     }
     // lib.optionalAttrs (model ? name) { inherit (model) name; }
     // lib.optionalAttrs (hasThinking model) { reasoning = true; }
-    // lib.optionalAttrs (model ? modalities.input) { input = model.modalities.input; }
     // lib.optionalAttrs (model ? limit.context) { contextWindow = model.limit.context; }
     // lib.optionalAttrs (model ? limit.output) { maxTokens = model.limit.output; }
     // lib.optionalAttrs (model ? max_tokens) { maxTokens = model.max_tokens; };

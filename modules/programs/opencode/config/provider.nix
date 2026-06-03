@@ -23,7 +23,7 @@
     ];
     provider = {
       "omniroute" = {
-        npm = "@ai-sdk/openai-compatible";
+        npm = "@ai-sdk/anthropic";
         name = "OmniRoute";
         options = {
           baseURL = "https://omniroute.josevictor.me/v1";
@@ -65,11 +65,6 @@
               cache_read = 0.16;
             };
             modalities = {
-              input = [
-                "text"
-                "image"
-                "video"
-              ];
               output = [ "text" ];
             };
           };
@@ -96,11 +91,6 @@
               cache_read = 0.16;
             };
             modalities = {
-              input = [
-                "text"
-                "image"
-                "video"
-              ];
               output = [ "text" ];
             };
           };
