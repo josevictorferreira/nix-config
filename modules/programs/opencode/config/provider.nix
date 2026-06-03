@@ -23,15 +23,11 @@
     ];
     provider = {
       "omniroute" = {
-        npm = "@ai-sdk/anthropic";
-        id = "omniroute";
+        npm = "@ai-sdk/openai-compatible";
         name = "OmniRoute";
         options = {
           baseURL = "https://omniroute.josevictor.me/v1";
           apiKey = "{env:OMNIROUTE_API_KEY}";
-          headers = {
-            "anthropic-version" = "2023-06-01";
-          };
         };
         models = {
           "mimo-v2.5-pro" = {
