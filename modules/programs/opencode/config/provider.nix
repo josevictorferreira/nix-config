@@ -113,6 +113,12 @@
           "gandalf" = {
             name = "Gandalf (OmniRoute)";
           };
+          "radagast" = {
+            name = "Radagast (OmniRoute)";
+          };
+          "saruman" = {
+            name = "Saruman (OmniRoute)";
+          };
           "legolas" = {
             name = "Legolas (OmniRoute)";
           };

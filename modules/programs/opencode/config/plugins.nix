@@ -19,6 +19,7 @@ _: {
         gpt = "omniroute/gpt-5.5";
         gandalf = "omniroute/gandalf";
         radagast = "omniroute/radagast";
+        saruman = "omniroute/saruman";
         deepseekPro = "omniroute/deepseek-v4-pro";
         deepseek = "omniroute/deepseek-v4-flash";
         cheapFast = "omniroute/legolas";
@@ -40,8 +41,8 @@ _: {
           intelligent = {
             default = gandalf;
             cheap = glmThinking;
-            expensive = radagast;
-            alternative = kimiThinking;
+            expensive = saruman;
+            alternative = radagast;
           };
           looker = {
             default = qwen;
@@ -111,9 +112,9 @@ _: {
             model_fallback = true;
             fallback_models = [
               models.intelligent.default
+              models.intelligent.cheap
               models.intelligent.expensive
               models.intelligent.alternative
-              models.intelligent.cheap
             ];
           };
           metis = {
@@ -121,17 +122,17 @@ _: {
             model_fallback = true;
             fallback_models = [
               models.intelligent.expensive
-              models.intelligent.alternative
               models.intelligent.cheap
+              models.intelligent.alternative
               models.intelligent.default
             ];
           };
           momus = {
-            model = models.intelligent.cheap;
+            model = models.intelligent.alternative;
             model_fallback = true;
             fallback_models = [
-              models.intelligent.cheap
               models.intelligent.alternative
+              models.intelligent.cheap
               models.intelligent.default
               models.intelligent.expensive
             ];
