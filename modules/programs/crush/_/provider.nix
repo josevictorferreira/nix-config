@@ -27,9 +27,11 @@ let
   # opencode models are attrs (id -> attrs); Crush wants a list.
   toCrushModels =
     models:
-    lib.mapAttrsToList (
-      id: model: { inherit id; } // lib.optionalAttrs (model ? name) { inherit (model) name; }
-    ) models;
+    lib.mapAttrsToList
+      (
+        id: model: { inherit id; } // lib.optionalAttrs (model ? name) { inherit (model) name; }
+      )
+      models;
 
   translateProvider =
     name: provider:

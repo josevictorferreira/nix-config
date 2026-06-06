@@ -3,6 +3,24 @@
 # NixOS: btop-rocm default, full config with wrappers.
 # Darwin: btop default, full config with wrappers.
 let
+  # Pure btop theme generator -- parameterized by colors attrset
+  mkBtopThemeText = colors: ''
+    theme[main_bg]="#${colors.background}"
+    theme[main_fg]="#${colors.foreground}"
+    theme[title]="#${colors.color4}"
+    theme[hi_fg]="#${colors.color1}"
+    theme[selected_bg]="#${colors.color8}"
+    theme[selected_fg]="#${colors.foreground}"
+    theme[inactive_fg]="#${colors.color8}"
+    theme[graph_text]="#${colors.color8}"
+    theme[meter_bg]="#${colors.color8}"
+    theme[proc_misc]="#${colors.color8}"
+    theme[cpu_box]="#${colors.color2}"
+    theme[mem_box]="#${colors.color1}"
+    theme[net_box]="#${colors.color6}"
+    theme[proc_box]="#${colors.color5}"
+    theme[div_line]="#${colors.color8}"
+  '';
   mkBtopOptions =
     { config
     , lib
@@ -128,25 +146,10 @@ let
       cfg = config.jvf.programs.btop;
       defaultPkg = if pkgs.stdenv.isDarwin then pkgs.btop else pkgs.btop-rocm;
       colors = config.jvf.theme.colors;
+      darkPreset = config.jvf.theme.presets.tokyonight-night;
+      lightPreset = config.jvf.theme.presets.tokyonight-day;
 
-      # Theme adapter: generate btop theme from jvf.theme.colors
-      btopTheme = ''
-        theme[main_bg]="#${colors.background}"
-        theme[main_fg]="#${colors.foreground}"
-        theme[title]="#${colors.color4}"
-        theme[hi_fg]="#${colors.color1}"
-        theme[selected_bg]="#${colors.color8}"
-        theme[selected_fg]="#${colors.foreground}"
-        theme[inactive_fg]="#${colors.color8}"
-        theme[graph_text]="#${colors.color8}"
-        theme[meter_bg]="#${colors.color8}"
-        theme[proc_misc]="#${colors.color8}"
-        theme[cpu_box]="#${colors.color2}"
-        theme[mem_box]="#${colors.color1}"
-        theme[net_box]="#${colors.color6}"
-        theme[proc_box]="#${colors.color5}"
-        theme[div_line]="#${colors.color8}"
-      '';
+      btopTheme = mkBtopThemeText colors;
 
       themeName = config.jvf.theme.active;
 
@@ -180,6 +183,10 @@ let
           (pkgs.writeTextDir "themes/${themeName}.theme" btopTheme)
         ];
       };
+
+      # Profile artifacts for dual-theme runtime switching
+      darkBtopArtifact = pkgs.writeTextDir "tokyonight-night.theme" (mkBtopThemeText darkPreset.colors);
+      lightBtopArtifact = pkgs.writeTextDir "tokyonight-day.theme" (mkBtopThemeText lightPreset.colors);
     in
     {
       imports = [ mkBtopOptions ];
@@ -193,6 +200,9 @@ let
             source = btopConfigDir;
           };
         };
+        # Profile artifacts for dual-theme runtime switching
+        jvf.theme.profileArtifacts.dark.btop = darkBtopArtifact;
+        jvf.theme.profileArtifacts.light.btop = lightBtopArtifact;
       };
     };
 in

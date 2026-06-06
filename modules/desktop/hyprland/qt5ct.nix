@@ -1,5 +1,7 @@
 # Aspect: desktop-hyprland-qt5ct (NixOS only)
 # Qt5ct settings for Hyprland.
+# DEFERRED: Hardcoded Catppuccin palettes — profile artifacts not yet generated.
+# Future: parameterize color_scheme_path and generate dark/light qt5ct artifacts.
 _: {
   flake.modules.nixos.desktop-hyprland-qt5ct =
     { config

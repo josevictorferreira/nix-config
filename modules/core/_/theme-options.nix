@@ -2,8 +2,8 @@
 # Provides jvf.theme.{colors, fonts, gtk} as the single source of truth
 # for visual theming across all desktop modules.
 #
-# Colors use a base16 palette (color0–color15) + semantic aliases.
-# Per-app adapters live in each desktop module — they consume config.jvf.theme.
+# Colors use a base16 palette (color0-color15) + semantic aliases.
+# Per-app adapters live in each desktop module -- they consume config.jvf.theme.
 #
 # Set jvf.theme.active in your host config to select a preset, or
 # override jvf.theme.colors / jvf.theme.fonts directly.
@@ -139,8 +139,30 @@ let
         default = 24;
         description = "Cursor size in pixels.";
       };
+      applicationPreferDarkTheme = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Whether GTK apps should prefer dark theme variant.";
+      };
     };
   };
+
+  qtPreferencesType = types.submodule {
+    options = {
+      style = mkOption {
+        type = types.str;
+        default = "kvantum";
+        description = "Qt widget style.";
+      };
+      colorScheme = mkOption {
+        type = types.str;
+        default = "Kvantum";
+        description = "Qt color scheme name.";
+      };
+    };
+  };
+
+  artifactsType = types.attrsOf types.str;
 
   # Rofi needs semantic mappings derived from the base16 palette
   rofiSemanticType = types.submodule (
@@ -204,6 +226,11 @@ let
         default = { };
         description = "GTK overrides for this preset.";
       };
+      qt = mkOption {
+        type = qtPreferencesType;
+        default = { };
+        description = "Qt toolkit preferences for this preset.";
+      };
       rofiSemantic = mkOption {
         type = rofiSemanticType;
         description = "Rofi semantic color mappings.";
@@ -212,6 +239,11 @@ let
         type = types.str;
         default = "0.25";
         description = "Background alpha for transparent panels (waybar, etc).";
+      };
+      artifacts = mkOption {
+        type = artifactsType;
+        default = { };
+        description = "Consumer category subpaths under the profile artifact directory.";
       };
     };
   };
@@ -236,36 +268,100 @@ in
     colors = mkOption {
       type = paletteType;
       default = cfg.presets.${cfg.active}.colors;
-      defaultText = lib.literalExpression "config.jvf.theme.presets.\${config.jvf.theme.active}.colors";
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.colors";
       description = "Active color palette. Defaults to the active preset's colors.";
     };
 
     fonts = mkOption {
       type = fontsType;
       default = cfg.presets.${cfg.active}.fonts;
-      defaultText = lib.literalExpression "config.jvf.theme.presets.\${config.jvf.theme.active}.fonts";
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.fonts";
       description = "Active fonts. Defaults to the active preset's fonts.";
     };
 
     gtk = mkOption {
       type = gtkType;
       default = cfg.presets.${cfg.active}.gtk;
-      defaultText = lib.literalExpression "config.jvf.theme.presets.\${config.jvf.theme.active}.gtk";
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.gtk";
       description = "Active GTK settings. Defaults to the active preset's GTK.";
+    };
+
+    qt = mkOption {
+      type = qtPreferencesType;
+      default = cfg.presets.${cfg.active}.qt;
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.qt";
+      description = "Active Qt preferences.";
     };
 
     rofiSemantic = mkOption {
       type = rofiSemanticType;
       default = cfg.presets.${cfg.active}.rofiSemantic;
-      defaultText = lib.literalExpression "config.jvf.theme.presets.\${config.jvf.theme.active}.rofiSemantic";
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.rofiSemantic";
       description = "Active rofi semantic colors. Defaults to the active preset's.";
     };
 
     backgroundAlpha = mkOption {
       type = types.str;
       default = cfg.presets.${cfg.active}.backgroundAlpha;
-      defaultText = lib.literalExpression "config.jvf.theme.presets.\${config.jvf.theme.active}.backgroundAlpha";
+      defaultText = lib.literalExpression "config.jvf.theme.presets.${config.jvf.theme.active}.backgroundAlpha";
       description = "Background alpha for transparent panels.";
+    };
+
+    profiles = mkOption {
+      type = types.attrsOf (types.submodule {
+        options = {
+          preset = mkOption { type = types.str; };
+          displayName = mkOption { type = types.str; };
+          artifacts = mkOption { type = artifactsType; default = { }; };
+        };
+      });
+      default = { };
+      description = "Runtime profiles (dark, light) mapping to presets.";
+    };
+
+    artifactContract = mkOption {
+      type = types.attrsOf types.str;
+      default = { };
+      description = "Maps consumer category names to subdirectory names under profile artifact dir.";
+    };
+
+    profileArtifacts = mkOption {
+      type = types.attrsOf (types.attrsOf types.package);
+      default = { };
+      description = "Registered adapter artifacts: profile -> category -> derivation.";
+    };
+
+    paths = mkOption {
+      type = types.submodule {
+        options = {
+          artifactBase = mkOption {
+            type = types.str;
+            default = ".local/share/jvf-theme/profiles";
+          };
+          runtimeState = mkOption {
+            type = types.str;
+            default = ".local/state/jvf-theme";
+          };
+        };
+      };
+      default = { };
+    };
+
+    profileSchedule = mkOption {
+      type = types.submodule {
+        options = {
+          light = mkOption {
+            type = types.submodule {
+              options = {
+                start = mkOption { type = types.str; default = "06:00"; };
+                end = mkOption { type = types.str; default = "12:00"; };
+              };
+            };
+            default = { };
+          };
+        };
+      };
+      default = { };
     };
   };
 }

@@ -64,6 +64,7 @@ in
         desktop-hyprland-swappy
         desktop-hyprland-wlogout
         desktop-hyprland-wallust
+        desktop-hyprland-theme-switcher
         boot-grub-theme
 
         # System infra (not pulled by roles)
@@ -73,6 +74,7 @@ in
         system-security
         # system-tailscale
         system-lights-off
+        system-terminal-artifacts
 
         # Hardware
         hardware-boot

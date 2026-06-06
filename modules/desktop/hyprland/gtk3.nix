@@ -1,6 +1,7 @@
 # Aspect: desktop-hyprland-gtk3 (NixOS only)
 # GTK 3.0 settings, bookmarks, and folder icons for Hyprland.
 # Theme adapter: generates settings.ini from jvf.theme.{gtk, fonts}.
+# Profile artifacts: dark/light GTK configs for runtime theme switching.
 _: {
   flake.modules.nixos.desktop-hyprland-gtk3 =
     { config
@@ -10,6 +11,9 @@ _: {
     }:
     let
       cfg = config.jvf.desktop.hyprland.gtk3;
+
+      darkPreset = config.jvf.theme.presets.tokyonight-night;
+      lightPreset = config.jvf.theme.presets.tokyonight-day;
 
       # Bookmark entry type
       bookmarkType = lib.types.submodule {
@@ -74,29 +78,35 @@ _: {
           allFolderIcons
       );
 
-      # Theme adapter: generate settings.ini from jvf.theme
-      gtk = config.jvf.theme.gtk;
-      fonts = config.jvf.theme.fonts;
+      # Theme adapter: generate settings.ini from a preset's gtk + fonts config
+      mkGtkConf =
+        preset:
+        let
+          gtkPreset = preset.gtk;
+          fontsPreset = preset.fonts;
+        in
+        pkgs.writeText "settings.ini" ''
+          [Settings]
+          gtk-theme-name=${gtkPreset.theme}
+          gtk-icon-theme-name=${gtkPreset.iconTheme}
+          gtk-font-name=${fontsPreset.sansSerif} Semi-Bold ${toString fontsPreset.size}
+          gtk-cursor-theme-name=${gtkPreset.cursorTheme}
+          gtk-cursor-theme-size=${toString gtkPreset.cursorSize}
+          gtk-toolbar-style=GTK_TOOLBAR_ICONS
+          gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+          gtk-button-images=1
+          gtk-menu-images=1
+          gtk-enable-event-sounds=1
+          gtk-enable-input-feedback-sounds=0
+          gtk-xft-antialias=1
+          gtk-xft-hinting=1
+          gtk-xft-hintstyle=hintslight
+          gtk-xft-rgba=rgb
+          gtk-application-prefer-dark-theme=${if gtkPreset.applicationPreferDarkTheme then "1" else "0"}
+        '';
 
-      generatedSettingsIni = pkgs.writeText "settings.ini" ''
-        [Settings]
-        gtk-theme-name=${gtk.theme}
-        gtk-icon-theme-name=${gtk.iconTheme}
-        gtk-font-name=${fonts.sansSerif} Semi-Bold ${toString fonts.size}
-        gtk-cursor-theme-name=${gtk.cursorTheme}
-        gtk-cursor-theme-size=${toString gtk.cursorSize}
-        gtk-toolbar-style=GTK_TOOLBAR_ICONS
-        gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
-        gtk-button-images=1
-        gtk-menu-images=1
-        gtk-enable-event-sounds=1
-        gtk-enable-input-feedback-sounds=0
-        gtk-xft-antialias=1
-        gtk-xft-hinting=1
-        gtk-xft-hintstyle=hintslight
-        gtk-xft-rgba=rgb
-        gtk-application-prefer-dark-theme=1
-      '';
+      # Current active config (for jvf.home deployment)
+      generatedSettingsIni = mkGtkConf config.jvf.theme;
 
       # Build the config directory with generated settings.ini and optional bookmarks
       configDir = pkgs.runCommand "gtk-3.0-config" { } ''
@@ -107,6 +117,16 @@ _: {
           ${bookmarksContent}
           EOF
         ''}
+      '';
+
+      # Profile artifacts for dual-theme runtime switching
+      darkGtkArtifact = pkgs.runCommand "theme-gtk-dark" { } ''
+        mkdir -p $out
+        cp ${mkGtkConf darkPreset} $out/settings.ini
+      '';
+      lightGtkArtifact = pkgs.runCommand "theme-gtk-light" { } ''
+        mkdir -p $out
+        cp ${mkGtkConf lightPreset} $out/settings.ini
       '';
     in
     {
@@ -163,6 +183,10 @@ _: {
           source = configDir;
           postInstall = lib.mkIf (allFolderIcons != { }) folderIconCommands;
         };
+
+        # Profile artifacts for dual-theme runtime switching
+        jvf.theme.profileArtifacts.dark.gtk = darkGtkArtifact;
+        jvf.theme.profileArtifacts.light.gtk = lightGtkArtifact;
       };
     };
 }
