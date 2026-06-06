@@ -6,8 +6,7 @@
   font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
 }
 
-@import "./style/catppuccin-themes/mocha.css";
-@import "./style/[Dark] Golden Noir.css";
+@import "./wallust/colors-waybar.css";
 
 window#waybar {
   transition-property: background-color;
@@ -29,7 +28,7 @@ window#waybar.empty #window {
 
 #taskbar button,
 #workspaces button {
-  color: @overlay1;
+  color: @color8;
   box-shadow: none;
   text-shadow: none;
   padding: 0px;
@@ -43,8 +42,8 @@ window#waybar.empty #window {
 #taskbar button:hover,
 #workspaces button:hover {
   border-radius: 10px;
-  color: @peach;
-  background-color: @surface0;
+  color: @color9;
+  background-color: @color0;
   padding-left: 2px;
   padding-right: 2px;
   animation: gradient_f 20s ease-in infinite;
@@ -52,13 +51,13 @@ window#waybar.empty #window {
 }
 
 #workspaces button.persistent {
-  color: @surface1;
+  color: @color8;
   border-radius: 10px;
 }
 
 #taskbar button.active,
 #workspaces button.active {
-  color: @mauve;
+  color: @color5;
   border-radius: 10px;
   padding-left: 8px;
   padding-right: 8px;
@@ -67,7 +66,7 @@ window#waybar.empty #window {
 }
 
 #workspaces button.urgent {
-  color: @red;
+  color: @color1;
   border-radius: 0px;
 }
 
@@ -75,8 +74,8 @@ window#waybar.empty #window {
 .modules-left,
 .modules-center,
 .modules-right {
-  background: @theme_base_color;
-  border: 0.5px solid @overlay0;
+  background: @background;
+  border: 0.5px solid @color8;
   padding-top: 2px;
   padding-bottom: 2px;
   padding-right: 4px;
@@ -87,7 +86,7 @@ window#waybar.empty #window {
 
 .modules-left,
 .modules-right {
-  border: 1px solid @blue;
+  border: 1px solid @color4;
   padding-top: 2px;
   padding-bottom: 2px;
   padding-right: 4px;
@@ -161,22 +160,22 @@ window#waybar.empty #window {
 
 #bluetooth,
 #backlight {
-  color: @blue;
+  color: @color4;
 }
 
 #battery {
-  color: @green;
+  color: @color2;
 }
 
 @keyframes blink {
   to {
-    color: @surface0;
+    color: @color0;
   }
 }
 
 #battery.critical:not(.charging) {
-  background-color: @red;
-  color: @theme_text_color;
+  background-color: @color1;
+  color: @foreground;
   animation-name: blink;
   animation-duration: 0.5s;
   animation-timing-function: linear;
@@ -186,28 +185,28 @@ window#waybar.empty #window {
 }
 
 #clock {
-  color: @yellow;
+  color: @color3;
 }
 
 #cpu {
-  color: @green;
+  color: @color2;
 }
 
 #custom-keyboard,
 #memory {
-  color: @sky;
+  color: @color6;
 }
 
 #disk {
-  color: @sapphire;
+  color: @color12;
 }
 
 #temperature {
-  color: @teal;
+  color: @color14;
 }
 
 #temperature.critical {
-  background-color: @red;
+  background-color: @color1;
 }
 
 #tray>.passive {
@@ -219,65 +218,65 @@ window#waybar.empty #window {
 }
 
 #keyboard-state {
-  color: @flamingo;
+  color: @color15;
 }
 
 #custom-cava_mviz {
-  color: @pink;
+  color: @color13;
 }
 
 #custom-menu {
-  color: @rosewater;
+  color: @foreground;
 }
 
 #custom-power {
-  color: @red;
+  color: @color1;
 }
 
 #custom-updater {
-  color: @red;
+  color: @color1;
 }
 
 #custom-light_dark {
-  color: @blue;
+  color: @color4;
 }
 
 #custom-weather {
-  color: @lavender;
+  color: @color13;
 }
 
 #custom-lock {
-  color: @maroon;
+  color: @color9;
 }
 
 #pulseaudio {
-  color: @sapphire;
+  color: @color12;
 }
 
 #pulseaudio.bluetooth {
-  color: @pink;
+  color: @color13;
 }
 
 #pulseaudio.muted {
-  color: @red;
+  color: @color1;
 }
 
 #window {
-  color: @mauve;
+  color: @color5;
 }
 
 #mpris {
-  color: @lavender;
+  color: @color13;
 }
 
 #network {
-  color: @teal;
+  color: @color14;
 }
 
 #network.disconnected,
 #network.disabled {
-  background-color: @surface0;
-  color: @text;
+  background-color: @color0;
+  color: @foreground;
 }
 
 #pulseaudio-slider slider {
