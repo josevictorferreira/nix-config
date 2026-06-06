@@ -5,10 +5,11 @@
 _:
 let
   mkKittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.kitty = {
@@ -35,22 +36,21 @@ let
   toConfigFormat =
     lib: settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          key: value:
-          if builtins.isBool value then
-            "${key} ${if value then "yes" else "no"}"
-          else
-            "${key} ${toString value}"
-        )
-        settings
+      lib.mapAttrsToList (
+        key: value:
+        if builtins.isBool value then
+          "${key} ${if value then "yes" else "no"}"
+        else
+          "${key} ${toString value}"
+      ) settings
     );
 
   kittyModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.kitty;
@@ -114,6 +114,8 @@ let
         cursor_trail = 1;
         cursor_trail_decay = "0.1 0.2";
         cursor_trail_start_threshold = 4;
+        allow_remote_control = "socket-only";
+        listen_on = "unix:\${XDG_RUNTIME_DIR}/jvf-kitty-remote";
       };
 
       colorIndices = lib.genList lib.id 16;
@@ -127,12 +129,10 @@ let
         cursor_trail_color = "#${config.jvf.theme.colors.cursor}";
       }
       // lib.listToAttrs (
-        map
-          (
-            i:
-            lib.nameValuePair "color${toString i}" "#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
-          )
-          colorIndices
+        map (
+          i:
+          lib.nameValuePair "color${toString i}" "#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+        ) colorIndices
       );
     in
     {

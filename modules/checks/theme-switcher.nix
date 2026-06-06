@@ -299,10 +299,13 @@
               fi
               if command -v kitty >/dev/null 2>&1; then
                 local kitty_conf="$profile_dir/terminals/kitty.conf"
-                if [ -S /tmp/kitty-remote ]; then
+                kitty_socket="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jvf-kitty-remote"
+                if [ -S "$kitty_socket" ]; then
                   if [ -f "$kitty_conf" ]; then
-                    kitty @ --to unix:/tmp/kitty-remote set-colors --all "$kitty_conf" 2>/dev/null \
+                    kitty @ --to "unix:$kitty_socket" set-colors --all "$kitty_conf" 2>/dev/null \
                       && log "kitty set-colors: ok" || warn "kitty set-colors failed"
+                    kitty @ --to "unix:$kitty_socket" load-config 2>/dev/null \
+                      && log "kitty load-config: ok" || warn "kitty load-config failed"
                   else
                     warn "hook: kitty.conf not found in profile"
                   fi

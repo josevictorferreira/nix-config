@@ -77,18 +77,23 @@ let
               deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
               deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
               deploy_artifacts "$profile_dir/gtk/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
-              # Deploy kitty terminal colors (preserve shell line from current config)
+              # Deploy kitty terminal colors (preserve operational lines from current config)
               kitty_src="$profile_dir/terminals/kitty.conf"
               kitty_dst="$HOME/.config/kitty/kitty.conf"
               if [[ -f "$kitty_src" ]]; then
+                mkdir -p "$(dirname "$kitty_dst")"
                 kitty_tmp=$(mktemp)
                 if [[ -f "$kitty_dst" ]]; then
                   cp "$kitty_dst" "$kitty_tmp"
                 fi
-                cp "$kitty_src" "$kitty_dst"
-                # Restore shell line from original config (set by nix, not in profile)
-                if [[ -f "$kitty_tmp" ]] && grep -q '^shell ' "$kitty_tmp"; then
-                  grep '^shell ' "$kitty_tmp" >> "$kitty_dst"
+                if cp "$kitty_src" "$kitty_dst" 2>/dev/null; then
+                  log "deploy: kitty.conf → $kitty_dst"
+                else
+                  warn "deploy: kitty.conf copy failed"
+                fi
+                # Restore operational lines from original config (set by nix, not in profile)
+                if [[ -f "$kitty_tmp" ]]; then
+                  grep -E '^(shell|allow_remote_control|listen_on) ' "$kitty_tmp" >> "$kitty_dst" || true
                 fi
                 rm -f "$kitty_tmp"
               fi
@@ -111,19 +116,21 @@ let
                 warn "hook: waybar not available"
               fi
 
-              # Kitty remote
+              # Kitty remote — live retheme via kitty remote control socket
               if command -v kitty >/dev/null 2>&1; then
                 local kitty_conf="$profile_dir/terminals/kitty.conf"
-                if [ -S /tmp/kitty-remote ]; then
+                kitty_socket="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jvf-kitty-remote"
+                if [ -S "$kitty_socket" ]; then
                   if [ -f "$kitty_conf" ]; then
-                    kitty @ --to unix:/tmp/kitty-remote set-colors --all "$kitty_conf" 2>/dev/null \
+                    kitty @ --to "unix:$kitty_socket" set-colors --all "$kitty_conf" 2>/dev/null \
                       && log "kitty set-colors: ok" || warn "kitty set-colors failed"
-                    kitty @ --to unix:/tmp/kitty-remote load-config 2>/dev/null || true
+                    kitty @ --to "unix:$kitty_socket" load-config 2>/dev/null \
+                      && log "kitty load-config: ok" || warn "kitty load-config failed (kitty may need restart)"
                   else
                     warn "hook: kitty.conf not found in profile"
                   fi
                 else
-                  warn "hook: kitty remote socket not available"
+                  warn "hook: kitty remote socket not available ($kitty_socket)"
                 fi
               else
                 warn "hook: kitty not available"
