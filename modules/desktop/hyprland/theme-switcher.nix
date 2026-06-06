@@ -49,6 +49,35 @@ let
               rm -f "$WARN_FILE"
               : > "$LOG_FILE"
 
+              # ── Deploy profile artifacts to app config paths ──────────
+              deploy_artifacts() {
+                local src="$1"
+                local dst="$2"
+                if [ ! -f "$src" ]; then
+                  warn "deploy: artifact missing: $src"
+                  return 1
+                fi
+                local dst_dir
+                dst_dir=$(dirname "$dst")
+                if [ ! -d "$dst_dir" ]; then
+                  warn "deploy: target dir missing: $dst_dir"
+                  return 1
+                fi
+                if cp "$src" "$dst" 2>/dev/null; then
+                  log "deploy: $(basename "$src") → $dst"
+                  return 0
+                else
+                  warn "deploy: copy failed (read-only?): $dst"
+                  return 1
+                fi
+              }
+
+              # Deploy each artifact to its app config path
+              deploy_artifacts "$profile_dir/hypr/wallust-hyprland.conf" "$HOME/.config/hypr/wallust/wallust-hyprland.conf"
+              deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
+              deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
+              deploy_artifacts "$profile_dir/gtk/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+
               # Hyprland
               if command -v hyprctl >/dev/null 2>&1; then
                 hyprctl reload >/dev/null 2>&1 && log "hyprctl reload: ok" || warn "hyprctl reload failed"
@@ -188,10 +217,11 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-theme-switcher =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       username = config.jvf.core.username;

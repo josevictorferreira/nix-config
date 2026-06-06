@@ -173,29 +173,38 @@ let
   };
 in
 {
-  flake.modules.nixos.core-theme = { config, lib, pkgs, ... }:
+  flake.modules.nixos.core-theme =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       cfg = config.jvf.theme;
       username = config.jvf.core.username;
 
-      mkProfileDir = profileName:
+      mkProfileDir =
+        profileName:
         let
           profileCfg = cfg.profiles.${profileName};
           registered = cfg.profileArtifacts.${profileName} or { };
         in
-        pkgs.runCommand "jvf-theme-profile-${profileName}" { }
-          ''
-            mkdir $out
-            ${lib.concatStringsSep "\n" (
-              lib.mapAttrsToList (catName: subpath:
-                let artifact = registered.${catName} or null; in
-                if artifact != null then
-                  "ln -s ${lib.escapeShellArg "${artifact}"} ${lib.escapeShellArg "$out/${subpath}"}"
-                else
-                  "mkdir -p ${lib.escapeShellArg "$out/${subpath}"}"
-              ) profileCfg.artifacts
-            )}
-          '';
+        pkgs.runCommand "jvf-theme-profile-${profileName}" { } ''
+          mkdir $out
+          ${lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (
+              catName: subpath:
+              let
+                artifact = registered.${catName} or null;
+              in
+              if artifact != null then
+                "ln -s ${lib.escapeShellArg "${artifact}"} $out/${lib.escapeShellArg subpath}"
+              else
+                "mkdir -p $out/${lib.escapeShellArg subpath}"
+            ) profileCfg.artifacts
+          )}
+        '';
     in
     {
       imports = [ ./_/theme-options.nix ];
@@ -213,18 +222,19 @@ in
         runtimeState = ".local/state/jvf-theme";
       };
 
-      config.jvf.theme.profileSchedule.light = { start = "06:00"; end = "12:00"; };
+      config.jvf.theme.profileSchedule.light = {
+        start = "06:00";
+        end = "12:00";
+      };
 
       config.jvf.home.users.${username}.items = lib.mkMerge (
-        lib.mapAttrsToList
-          (profileName: _: {
-            "${cfg.paths.artifactBase}/${profileName}" = {
-              kind = "dir";
-              mode = "copy";
-              source = mkProfileDir profileName;
-            };
-          })
-          cfg.profiles
+        lib.mapAttrsToList (profileName: _: {
+          "${cfg.paths.artifactBase}/${profileName}" = {
+            kind = "dir";
+            mode = "copy";
+            source = mkProfileDir profileName;
+          };
+        }) cfg.profiles
       );
     };
 
@@ -244,6 +254,9 @@ in
       runtimeState = ".local/state/jvf-theme";
     };
 
-    config.jvf.theme.profileSchedule.light = { start = "06:00"; end = "12:00"; };
+    config.jvf.theme.profileSchedule.light = {
+      start = "06:00";
+      end = "12:00";
+    };
   };
 }
