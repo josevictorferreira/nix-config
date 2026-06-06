@@ -77,6 +77,21 @@ let
               deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
               deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
               deploy_artifacts "$profile_dir/gtk/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+              # Deploy kitty terminal colors (preserve shell line from current config)
+              kitty_src="$profile_dir/terminals/kitty.conf"
+              kitty_dst="$HOME/.config/kitty/kitty.conf"
+              if [[ -f "$kitty_src" ]]; then
+                kitty_tmp=$(mktemp)
+                if [[ -f "$kitty_dst" ]]; then
+                  cp "$kitty_dst" "$kitty_tmp"
+                fi
+                cp "$kitty_src" "$kitty_dst"
+                # Restore shell line from original config (set by nix, not in profile)
+                if [[ -f "$kitty_tmp" ]] && grep -q '^shell ' "$kitty_tmp"; then
+                  grep '^shell ' "$kitty_tmp" >> "$kitty_dst"
+                fi
+                rm -f "$kitty_tmp"
+              fi
 
               # Hyprland
               if command -v hyprctl >/dev/null 2>&1; then
@@ -103,6 +118,7 @@ let
                   if [ -f "$kitty_conf" ]; then
                     kitty @ --to unix:/tmp/kitty-remote set-colors --all "$kitty_conf" 2>/dev/null \
                       && log "kitty set-colors: ok" || warn "kitty set-colors failed"
+                    kitty @ --to unix:/tmp/kitty-remote load-config 2>/dev/null || true
                   else
                     warn "hook: kitty.conf not found in profile"
                   fi
