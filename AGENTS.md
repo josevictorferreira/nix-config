@@ -602,3 +602,13 @@ Critical lessons from past sessions to avoid repeated friction.
 **Lesson:** When an application running inside a Hyprland special workspace (scratchpad) spawns an external GUI window (like opening a file in a player or browser), intercept the opener command to toggle the special workspace off.
 **Context:** By default, new windows spawned from a special workspace open in the regular workspace underneath, leaving the user staring at the still-open scratchpad while the newly opened file is hidden behind it.
 **Verify:** Prefix the app's internal opener commands with a conditional Hyprland dispatch: `hyprctl activewindow | grep -q "class: <expected-class>" && hyprctl dispatch togglespecialworkspace <name>; <original_cmd>`. This ensures it only auto-closes when actually running as a scratchpad.
+
+### XDG Portal UseIn Restriction on Hyprland
+**Lesson:** `xdg-desktop-portal-gtk` declares `UseIn=gnome` in its `.portal` file, so it silently refuses to load on Hyprland (`XDG_CURRENT_DESKTOP=Hyprland`). This means the `Settings` interface (used by Chromium browsers for `color-scheme`) is unavailable. Fix: `overrideAttrs` to patch `UseIn=gnome;Hyprland` + `lib.mkForce` on `extraPortals` to prevent duplicate collision (Hyprland NixOS module also adds unpatched GTK portal).
+**Context:** Brave couldn't detect system theme because the portal lacked Settings interface. No error or warning — just silent absence. Required `gdbus introspect` to diagnose.
+**Verify:** `gdbus introspect --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop` should list `org.freedesktop.portal.Settings` after rebuild + `systemctl --user restart xdg-desktop-portal`.
+
+### sed Config Editing Must Verify Match
+**Lesson:** When using `sed -i` to edit config files in activation/switcher scripts, always verify the sed pattern matches the actual file format first. `sed` exits 0 on no-match, producing false-positive "ok" logs. Read the target file to confirm key format (spaces around `=`, quotes around values, etc.) before writing the pattern.
+**Context:** btop.conf uses `color_theme = "tokyonight-night"` (spaces + quotes) but sed pattern `^color_theme=.*` expected `color_theme=` (no spaces). Script logged success but never changed the value.
+**Verify:** After writing sed-based config editing, test with `sed -n '/<pattern>/p' <config-file>` to confirm the pattern actually matches before relying on it.

@@ -1,6 +1,20 @@
-{ lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
-  allowed-tools = [ "Read" "Grep" "Glob" "Write" "Bash" ];
+  lib,
+  pkgs,
+  isDarwin,
+  npx,
+  defaultBrowser,
+  kebabToHuman,
+  ...
+}:
+{
+  allowed-tools = [
+    "Read"
+    "Grep"
+    "Glob"
+    "Write"
+    "Bash"
+  ];
   name = "maintaining-dendritic-nix-config";
   description = ''
     Specialized knowledge for maintaining this specific dendritic Nix flake repository
@@ -11,7 +25,8 @@
   '';
 
   references = {
-    "dendritic-rules" = builtins.readFile ./_/maintaining-dendritic-nix-config/references/dendritic-rules.md;
+    "dendritic-rules" =
+      builtins.readFile ./_/maintaining-dendritic-nix-config/references/dendritic-rules.md;
   };
 
   prompt = ''
@@ -150,9 +165,9 @@
     | `option is already declared` | Leaf module imports another leaf module | Remove import; let roles compose |
     | `No key source configured` (sops) | Two modules set sops base config | Single owner for sops config |
     | `conflicting definition values` (VM) | Boot/grub setting clashes with qemu-vm.nix | Wrap with `lib.mkDefault` |
+    | `ln: failed to create symbolic link '.../xdg-desktop-portal-gtk.service': File exists` | External module (e.g., Hyprland) also contributes portal to `extraPortals` | Use `lib.mkForce` on `extraPortals` to override entire list |
     | `dynamic attribute already defined` | Multiple `items."path"` in same module | Use `lib.mkMerge` |
     | `expected a set but found a Boolean` (INI) | `pkgs.formats.ini` with bool values | Custom generator |
-    | `is not of type 'null or absolute path or package'` | `pkgs.runCommand` missing `{}` attrset | Add empty attrset `{}` |
 
     ## Before You Start Editing
 
