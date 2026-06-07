@@ -119,8 +119,8 @@ let
               # Kitty remote — live retheme via kitty remote control socket
               if command -v kitty >/dev/null 2>&1; then
                 local kitty_conf="$profile_dir/terminals/kitty.conf"
-                kitty_socket="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jvf-kitty-remote"
-                if [ -S "$kitty_socket" ]; then
+                kitty_socket=$(find "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" -maxdepth 1 -name 'jvf-kitty-remote*' -type s 2>/dev/null | head -1)
+                if [ -n "$kitty_socket" ]; then
                   if [ -f "$kitty_conf" ]; then
                     kitty @ --to "unix:$kitty_socket" set-colors --all "$kitty_conf" 2>/dev/null \
                       && log "kitty set-colors: ok" || warn "kitty set-colors failed"
@@ -149,15 +149,22 @@ let
                 warn "hook: gsettings not available"
               fi
 
-              # Btop — symlink theme file if runtime state exists
+              # Btop — update color_theme in btop.conf + symlink theme file
               if [ -d "$profile_dir/btop" ]; then
                 local btop_theme
                 btop_theme=$(find "$profile_dir/btop" -name '*.theme' -type f 2>/dev/null | head -1)
                 if [ -n "$btop_theme" ]; then
                   local btop_themes_dir="$HOME/.config/btop/themes"
+                  local btop_theme_name="$(basename "$btop_theme" .theme)"
                   mkdir -p "$btop_themes_dir"
                   ln -sf "$btop_theme" "$btop_themes_dir/$(basename "$btop_theme")" 2>/dev/null \
                     && log "btop theme symlink: ok" || warn "btop theme symlink failed"
+                  # Update color_theme in btop.conf so btop loads the right theme
+                  local btop_conf="$HOME/.config/btop/btop.conf"
+                  if [ -f "$btop_conf" ]; then
+                    sed -i "s/^color_theme *= *\"[^\"]*\"/color_theme = \"$btop_theme_name\"/" "$btop_conf" 2>/dev/null \
+                      && log "btop color_theme: ok" || warn "btop color_theme update failed"
+                  fi
                 fi
               fi
             }

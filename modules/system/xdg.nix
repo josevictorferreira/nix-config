@@ -207,10 +207,11 @@ let
     };
 
   xdgModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.system.xdg;
@@ -259,7 +260,17 @@ let
 
             portal = lib.mkIf cfg.enablePortals {
               enable = true;
-              extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+              # Patch gtk.portal UseIn to include Hyprland so the Settings interface
+              # (color-scheme) is available for Chromium-based browsers on Hyprland.
+              # Without this, UseIn=gnome restricts the GTK portal to GNOME only.
+              extraPortals = lib.mkForce [
+                (pkgs.xdg-desktop-portal-gtk.overrideAttrs (old: {
+                  postInstall = (old.postInstall or "") + ''
+                    sed -i 's/UseIn=gnome/UseIn=gnome;Hyprland/' $out/share/xdg-desktop-portal/portals/gtk.portal
+                  '';
+                }))
+                pkgs.xdg-desktop-portal-hyprland
+              ];
               config = {
                 common = {
                   default = [ "gtk" ];
@@ -272,8 +283,8 @@ let
                 };
               };
             };
-          };
 
+          };
           systemd.user.tmpfiles.rules = [
             "L+ %h/.config/mimeapps.list - - - - /etc/xdg/mimeapps.list"
           ];
