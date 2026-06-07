@@ -25,6 +25,20 @@ let
     let
       cfg = config.jvf.programs.neovim;
 
+      # Theme-aware wrapper for neovim
+      nvimWrapper = pkgs.writeShellScriptBin "nvim" ''
+        # Read current JVF theme and export for nvim config
+        if [ -f "$HOME/.local/state/jvf-theme/env" ]; then
+          source "$HOME/.local/state/jvf-theme/env"
+        fi
+        # Fallback if env file doesn't exist
+        if [ -z "''${JVF_THEME:-}" ]; then
+          JVF_THEME="dark"
+        fi
+        export JVF_THEME
+        exec ${pkgs.neovim}/bin/nvim "$@"
+      '';
+
       # Development tools (inlined from deleted legacy module)
       lspServers = [
         pkgs.rust-analyzer
@@ -71,7 +85,7 @@ let
 
       config = {
         users.users."${cfg.username}".packages = [
-          pkgs.neovim
+          nvimWrapper
           pkgs.fzf
           pkgs.ripgrep
           pkgs.fd

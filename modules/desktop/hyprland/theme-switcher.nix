@@ -166,7 +166,13 @@ let
                       && log "btop color_theme: ok" || warn "btop color_theme update failed"
                   fi
                 fi
-              fi
+              # Export JVF_THEME env var for other apps (neovim, etc)
+              mkdir -p "$STATE_DIR"
+              echo "export JVF_THEME='$profile'" > "$STATE_DIR/env"
+            }
+              mkdir -p "$STATE_DIR"
+              echo "export JVF_THEME='$profile'" > "$STATE_DIR/env"
+            }
             }
 
             # ── Switch commands ──────────────────────────────────────────────
