@@ -4,6 +4,7 @@
     "Read"
     "Grep"
     "Glob"
+    "Bash"
   ];
   name = "auditing-security";
   description = "Security analysis and vulnerability assessment specialist";
@@ -213,6 +214,12 @@
     - Integration with specialized secrets detection tools
     - Manual review of configuration and deployment files
     - Runtime analysis of memory and network traffic
+
+    **Leak-alert workflow:**
+    - Never print raw secret values. Use scanner redaction (for example, `gitleaks --redact=100`) and report only path, rule, commit, key name, and rotation status.
+    - Do not trust repository-provided scanner config alone. Run the normal scan and a strict/default scan with an empty ignore file to catch over-broad allowlists.
+    - Scan both current files and reachable history/all refs; generated manifests and encrypted-file names can still contain plaintext mistakes historically.
+    - Check repository visibility and hosted secret-scanning alert access; record whether an HTTP 404 means disabled scanning, missing permissions, or unavailable API data.
 
     **Remediation guidance:**
     - Immediate steps for exposed credential rotation
