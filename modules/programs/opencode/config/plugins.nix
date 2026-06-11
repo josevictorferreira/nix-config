@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.12"
-        "oh-my-openagent@4.7.5"
+        "oh-my-openagent@4.8.1"
         "@vectorize-io/opencode-hindsight"
       ];
     };
@@ -20,15 +20,15 @@ _: {
         gandalf = "omniroute/gandalf";
         radagast = "omniroute/radagast";
         saruman = "omniroute/saruman";
+        legolas = "omniroute/legolas";
         deepseekPro = "omniroute/deepseek-v4-pro";
         deepseek = "omniroute/deepseek-v4-flash";
-        cheapFast = "omniroute/legolas";
         minimax = "omniroute/minimax-m2.5";
         mimo = "omniroute/mimo-v2.5-pro";
         models = {
           quick = {
-            default = cheapFast;
-            cheap = cheapFast;
+            default = legolas;
+            cheap = legolas;
             expensive = deepseek;
             alternative = minimax;
           };

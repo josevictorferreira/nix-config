@@ -119,6 +119,9 @@
           "saruman" = {
             name = "Saruman (OmniRoute)";
           };
+          "sauron" = {
+            name = "Sauron (OmniRoute)";
+          };
           "legolas" = {
             name = "Legolas (OmniRoute)";
           };
