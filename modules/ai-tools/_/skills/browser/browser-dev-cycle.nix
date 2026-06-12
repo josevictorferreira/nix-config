@@ -19,7 +19,8 @@
       command = pkgs.writeShellScript "mcp-playwright-wrapper" ''
         export PATH="${lib.getBin pkgs.nodejs}/bin:$PATH"
         exec ${npx} -y @playwright/mcp@latest \
-          --browser=${defaultBrowser} \
+          --browser=chrome \
+          --executable-path=${defaultBrowser} \
           "$@"
       '';
       args = [ ];
