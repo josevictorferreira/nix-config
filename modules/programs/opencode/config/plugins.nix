@@ -12,6 +12,7 @@ _: {
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
         kimi = "omniroute/kimi-k2.6";
+        kimiCoder = "omniroute/kimi-coding";
         kimiThinking = "omniroute/kimi-k2.6-thinking";
         glm = "omniroute/glm-5.1";
         glmThinking = "omniroute/glm-5.1-thinking";
@@ -33,8 +34,8 @@ _: {
             alternative = minimax;
           };
           coder = {
-            default = glm;
-            cheap = kimi;
+            default = kimiCoder;
+            cheap = glm;
             expensive = mimo;
             alternative = qwen;
           };
@@ -52,9 +53,9 @@ _: {
           };
           writer = {
             default = kimi;
-            cheap = kimi;
-            expensive = kimi;
-            alternative = qwen;
+            cheap = qwen;
+            expensive = radagast;
+            alternative = mimo;
           };
         };
       in
