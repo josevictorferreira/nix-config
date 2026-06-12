@@ -19,9 +19,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -52,10 +53,6 @@ let
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
-        jvf.aiTools.skills.browser-debug-tools.programs = [
-          "opencode"
-          "claudecode"
-        ];
 
         # Pi extensions (declarative install via sentinel postInstall)
         jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
@@ -79,9 +76,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.ai-development;
@@ -112,10 +110,6 @@ let
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
-        jvf.aiTools.skills.browser-debug-tools.programs = [
-          "opencode"
-          "claudecode"
-        ];
 
         # Pi extensions (declarative install via sentinel postInstall)
         jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
