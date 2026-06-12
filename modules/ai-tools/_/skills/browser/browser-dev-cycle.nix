@@ -25,6 +25,16 @@
       args = [ ];
     };
   };
+  scripts = {
+    "network-mock.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/network-mock.mjs;
+    "playwright-helper.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/playwright-helper.mjs;
+    "viewport-test.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/viewport-test.mjs;
+  };
+  references = {
+    "tool-comparison" = builtins.readFile ./_/browser-dev-cycle/references/tool-comparison.md;
+    "workbook-patterns" = builtins.readFile ./_/browser-dev-cycle/references/workbook-patterns.md;
+  };
+
   prompt = ''
     # Browser Dev Cycle: Three-Tier Automation Strategy
 
