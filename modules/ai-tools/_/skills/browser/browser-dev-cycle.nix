@@ -24,6 +24,17 @@
       '';
       args = [ ];
     };
+    chrome-devtools = {
+      command = pkgs.writeShellScript "mcp-chrome-devtools-wrapper" ''
+        export PATH="${lib.getBin pkgs.nodejs}/bin:$PATH"
+        exec ${npx} -y chrome-devtools-mcp@latest \
+          --headless=true \
+          --isolated=true \
+          --executablePath=${defaultBrowser} \
+          "$@"
+      '';
+      args = [ ];
+    };
   };
   scripts = {
     "network-mock.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/network-mock.mjs;
