@@ -5,10 +5,11 @@
 _:
 let
   mkAlacrittyOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     {
       options.jvf.programs.alacritty = {
@@ -33,16 +34,17 @@ let
     };
 
   alacrittyModule =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     let
       cfg = config.jvf.programs.alacritty;
       colors = config.jvf.theme.colors;
       fonts = config.jvf.theme.fonts;
-      fontFamily = "TamzenForPowerline";
+      fontFamily = "JetBrainsMonoNL Nerd Font";
       tomlFormat = pkgs.formats.toml { };
       themeColors = {
         primary = {
