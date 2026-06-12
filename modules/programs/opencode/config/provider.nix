@@ -103,6 +103,9 @@
               output = [ "text" ];
             };
           };
+          "kimi-coding" = {
+            name = "Kimi Coding (OmniRoute)";
+          };
           "kimi-k2.6" = {
             name = "Kimi K2.6 (OmniRoute)";
             limit = {
