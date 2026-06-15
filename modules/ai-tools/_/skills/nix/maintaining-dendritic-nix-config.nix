@@ -89,6 +89,27 @@
       (bash with env vars: `TARGET_PATH`, `HOME_DIR`, `USER_NAME`, `GROUP_NAME`,
       `IS_DARWIN`, `BACKUP_DIR`).
 
+    ## jvf.wrappers (CLI Commands on PATH)
+
+    Wrappers expose executables on the user PATH. Each
+    `jvf.wrappers.users.''${cfg.username}.programs.<key>` with a non-null `command`
+    produces EXACTLY ONE binary named `<key>` (a `writeShellScriptBin` that execs
+    `''${command} "$@"`). To expose N command names you need N program keys.
+
+    ```nix
+    # Three commands -> three keys, all pointing at one core script + subcommand
+    jvf.wrappers.users.''${cfg.username}.programs = {
+      "myapp-status".command = "''${core}/bin/myapp-core status";
+      "myapp-toggle".command = "''${core}/bin/myapp-core toggle";
+      "myapp-reset".command  = "''${core}/bin/myapp-core reset";
+    };
+    ```
+
+    Build the core script with `pkgs.writeShellScriptBin` (NOT
+    `writeShellApplication`) when it contains shell heredocs / many quotes —
+    shellcheck-free avoids spurious failures. Add runtime deps (e.g. `libnotify`
+    for `notify-send`) by prepending them to `PATH` inside the script.
+
     ## Adding New Modules
 
     | Task | Location | Pattern |

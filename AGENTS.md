@@ -521,6 +521,11 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** k9s had 3 separate jvf.* blocks. Statix warning: "The key jvf is first assigned here ... repeated here".
 **Verify:** Run `nix build .#checks.x86_64-linux.statix` — if W10/W11 warnings about repeated jvf, consolidate.
 
+### `make format` Reformats the Entire Tree
+**Lesson:** `make format` (nixpkgs-fmt) reformats ALL `.nix` files repo-wide, not just the ones you touched. After running it mid-task, `git diff --stat` and `git checkout HEAD --` any unrelated files it churned before continuing.
+**Context:** Running it during QA repeatedly introduced large unrelated diffs (ai-tools, theme, kitty, etc.) that masqueraded as scope creep and had to be reverted twice.
+**Verify:** `git diff --name-only` after `make format` should list only files you intended to change.
+
 ### Verify with nix eval Early
 **Lesson:** Run `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel` after each module migration, not just at end. Catches dynamic attribute conflicts immediately.
 **Context:** Assumed `nix flake check` would catch all errors. Dynamic attribute conflicts only appear during NixOS module eval.
