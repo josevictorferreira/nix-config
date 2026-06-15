@@ -34,6 +34,7 @@ let
         system-power-management
         system-xdg
         system-flatpak
+        programs-pomodoro
       ]);
 
       config = {

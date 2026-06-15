@@ -210,4 +210,14 @@
 	"tooltip": true,
 	"tooltip-format": "Open CCTV Stream",
 },
+"custom/pomodoro": {
+		"format": "{}",
+		"exec": "pomodoro-waybar-status",
+		"interval": 1,
+		"return-type": "json",
+		"on-click": "pomodoro-toggle",
+		"on-click-right": "pomodoro-reset",
+		"tooltip": true
+	},
+
 }

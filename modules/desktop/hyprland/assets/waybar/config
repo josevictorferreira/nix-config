@@ -33,9 +33,10 @@
 	"hyprland/workspaces#kanji",
 	"custom/separator#dot-line",
 	"idle_inhibitor",	
-  "custom/screenshot",
-	"custom/hint",	
-	], 
+"custom/screenshot",
+	"custom/hint",
+	"custom/pomodoro",
+],
 
 "modules-right": [
 	"network#speed",
