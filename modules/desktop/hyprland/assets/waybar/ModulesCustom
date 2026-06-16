@@ -212,11 +212,11 @@
 },
 "custom/pomodoro": {
 		"format": "{}",
-		"exec": "pomodoro-waybar-status",
+		"exec": "$HOME/.local/bin/pomodoro-waybar-status",
 		"interval": 1,
 		"return-type": "json",
-		"on-click": "pomodoro-toggle",
-		"on-click-right": "pomodoro-reset",
+		"on-click": "$HOME/.local/bin/pomodoro-toggle",
+		"on-click-right": "$HOME/.local/bin/pomodoro-reset",
 		"tooltip": true
 	},
 
