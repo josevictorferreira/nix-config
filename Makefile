@@ -27,7 +27,7 @@ check: lint ## Check if the flake is valid.
 	@bash -c "nix flake check --show-trace"
 
 update: ## Update flake
-	sudo nix flake update
+	nix flake update
 
 boot: ## Rebuild boot NixOS configuration.
 	sudo nixos-rebuild boot --upgrade --flake .#nixos-desktop

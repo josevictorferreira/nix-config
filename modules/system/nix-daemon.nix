@@ -71,6 +71,7 @@ let
             inherit (cfg) substituters;
             trusted-substituters = cfg.trustedSubstituters;
             trusted-public-keys = cfg.trustedPublicKeys;
+            netrc-file = "/home/${config.jvf.core.username}/.netrc";
           };
           optimise = {
             automatic = cfg.autoOptimiseStore;

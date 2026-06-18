@@ -162,6 +162,9 @@
           "deepseek-v4-pro" = {
             name = "DeepSeek V4 Pro (OmniRoute)";
           };
+          "glm-5.2" = {
+            name = "GLM-5.2 (OmniRoute)";
+          };
           "glm-5.1" = {
             name = "GLM-5.1 (OmniRoute)";
             limit = {
