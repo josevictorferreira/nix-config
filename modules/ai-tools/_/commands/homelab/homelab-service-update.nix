@@ -31,8 +31,8 @@
        # Navigate to the package page
        https://github.com/{owner}/{repo}/pkgs/container/{image-name}/versions
        
-       # Find the tag, click to see full digest
-       # Format: sha256:64hexchars
+       Find the tag, click to see full digest
+       Format: sha256:64hexchars
        ```
        
        **Method 2 - Docker Hub:**
