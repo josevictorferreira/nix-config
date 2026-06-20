@@ -12,7 +12,7 @@ _: {
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
         kimi = "omniroute/kimi-k2.7-code";
-        kimiCoder = "omniroute/kimi-highspeed";
+        kimiCoder = "omniroute/kimi-coding";
         glm = "omniroute/glm-5.2";
         glmThinking = "omniroute/glm-5.2-max";
         qwen = "omniroute/qwen3.7-plus";
