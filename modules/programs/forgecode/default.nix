@@ -201,11 +201,20 @@ let
       # provider.json because Forge TOML provider entries cannot hold static models.
       forgeTomlData = cfg.settings;
 
-      forgeTomlContent = builtins.readFile ((pkgs.formats.toml { }).generate "forge.toml" forgeTomlData);
+      forgeTomlFile = (pkgs.formats.toml { }).generate "forge.toml" forgeTomlData;
 
-      providerJsonContent = builtins.readFile (
-        (pkgs.formats.json { }).generate "provider.json" providersJson
-      );
+      providerJsonFile = (pkgs.formats.json { }).generate "provider.json" providersJson;
+
+      # Combine Forge TOML with optional MCP TOML without forcing an eval-time build.
+      fullTomlFile =
+        if mcpTomlContent != "" then
+          pkgs.runCommand "forge.toml" { } ''
+            cat ${forgeTomlFile} > "$out"
+            echo "" >> "$out"
+            cat ${pkgs.writeText "mcp.toml" mcpTomlContent} >> "$out"
+          ''
+        else
+          forgeTomlFile;
 
       # Generate command files (markdown with YAML frontmatter)
       mkCommandFile =
@@ -355,14 +364,10 @@ let
 
       mcpTomlContent = if cfg.mcps != { } then mkMcpToml cfg.mcps else "";
 
-      # Combine all TOML content
-      fullTomlContent =
-        forgeTomlContent + lib.optionalString (mcpTomlContent != "") ("\n" + mcpTomlContent);
-
       # Build ForgeCode config directory as a derivation for jvf.home
       forgeConfigFiles = {
-        ".forge.toml" = fullTomlContent;
-        "provider.json" = providerJsonContent;
+        ".forge.toml" = fullTomlFile;
+        "provider.json" = providerJsonFile;
       }
       // lib.mapAttrs'
         (name: value: {

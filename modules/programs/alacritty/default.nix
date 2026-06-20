@@ -5,11 +5,10 @@
 _:
 let
   mkAlacrittyOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     {
       options.jvf.programs.alacritty = {
@@ -34,11 +33,10 @@ let
     };
 
   alacrittyModule =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
+    { config
+    , pkgs
+    , lib
+    , ...
     }:
     let
       cfg = config.jvf.programs.alacritty;
@@ -87,7 +85,7 @@ let
             TERM = "tmux-256color";
           };
           font = {
-            size = fonts.size;
+            inherit (fonts) size;
             normal = {
               family = fontFamily;
               style = "Medium";
@@ -134,7 +132,7 @@ let
         jvf.home.users.${cfg.username}.items.".config/alacritty/alacritty.toml" = {
           kind = "file";
           mode = "copy";
-          text = builtins.readFile ((pkgs.formats.toml { }).generate "alacritty.toml" cfg.settings);
+          toml = cfg.settings;
         };
         fonts.packages = [
           pkgs.ibm-plex

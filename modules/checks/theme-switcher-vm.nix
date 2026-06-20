@@ -4,7 +4,7 @@
 { inputs, self, ... }:
 {
   perSystem =
-    { system, pkgs, ... }:
+    { system, pkgs, lib, ... }:
     let
       # ── Module stack ────────────────────────────────────────────────────
       # core-jvf: options + identity
@@ -20,7 +20,9 @@
         self.modules.nixos.desktop-hyprland-theme-switcher
       ];
     in
-    {
+    { }
+    // lib.optionalAttrs (lib.hasSuffix "-linux" system) {
+      # VM tests require a Linux builder; skip on Darwin.
       checks.theme-switcher-vm = pkgs.testers.nixosTest {
         name = "theme-switcher-vm";
 

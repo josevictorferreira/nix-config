@@ -15,6 +15,12 @@ let
     let
       cfg = config.jvf.programs.crush;
       json = pkgs.formats.json { };
+
+      # Crush's test suite hardcodes /tmp paths that fail in the Darwin sandbox.
+      # Override to skip the broken tests; we only need the binary.
+      crushPkg = pkgs.crush.overrideAttrs (previousAttrs: {
+        doCheck = false;
+      });
     in
     {
       options.jvf.programs.crush = {
@@ -37,7 +43,7 @@ let
 
       config = {
         jvf.wrappers.users.${cfg.username}.programs.crush = {
-          packages = [ pkgs.crush ];
+          packages = [ crushPkg ];
         };
 
         jvf.home.users.${cfg.username}.items.".config/crush/crush.json" = {

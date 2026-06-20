@@ -5,7 +5,7 @@
 { inputs, self, ... }:
 {
   perSystem =
-    { system, pkgs, ... }:
+    { system, pkgs, lib, ... }:
     let
       # ── Minimal module stack shared by both checks ─────────────────────────
       # Provides: jvf.core.*, jvf.home.*
@@ -165,10 +165,12 @@
           echo "jvf-home-eval passed" > $out/result
         '';
       };
-
+    }
+    // lib.optionalAttrs (lib.hasSuffix "-linux" system) {
       # ── VM integration test ─────────────────────────────────────────────────
       # Uses specialisation to switch from config-A to config-B inside the VM,
       # then asserts preserved files survive and settings.json reflects version B.
+      # VM tests require a Linux builder; skip on Darwin.
       checks.jvf-home-vm = pkgs.testers.nixosTest {
         name = "jvf-home-vm";
 
