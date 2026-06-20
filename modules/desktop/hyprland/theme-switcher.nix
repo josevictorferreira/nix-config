@@ -105,15 +105,13 @@ let
                 warn "hook: hyprctl not available"
               fi
 
-              # Waybar
-              if command -v waybar >/dev/null 2>&1; then
-                if pgrep -x waybar >/dev/null 2>&1; then
-                  kill -SIGUSR2 "$(pgrep -x waybar | head -1)" 2>/dev/null && log "waybar reload: ok" || warn "waybar SIGUSR2 failed"
-                else
-                  warn "hook: waybar not running"
-                fi
+              # Waybar — click handlers can run with a restricted PATH, so use
+              # procps from the Nix store instead of relying on pgrep/pkill on PATH.
+              if ${pkgs.procps}/bin/pkill -SIGUSR2 -x waybar >/dev/null 2>&1 \
+                || ${pkgs.procps}/bin/pkill -SIGUSR2 -f '(^|[[:space:]/])waybar([[:space:]]|$)' >/dev/null 2>&1; then
+                log "waybar reload: ok"
               else
-                warn "hook: waybar not available"
+                warn "hook: waybar not running"
               fi
 
               # Kitty remote — live retheme via kitty remote control socket
@@ -162,7 +160,7 @@ let
                   # Update color_theme in btop.conf so btop loads the right theme
                   local btop_conf="$HOME/.config/btop/btop.conf"
                   if [ -f "$btop_conf" ]; then
-                    sed -i "s/^color_theme *= *\"[^\"]*\"/color_theme = \"$btop_theme_name\"/" "$btop_conf" 2>/dev/null \
+                    sed -i "s/^color_theme *=.*/color_theme = \"$btop_theme_name\"/" "$btop_conf" 2>/dev/null \
                       && log "btop color_theme: ok" || warn "btop color_theme update failed"
                   fi
                 fi

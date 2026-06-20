@@ -83,6 +83,16 @@
           # Pre-create runtime state dir with correct ownership
           machine.succeed("mkdir -p /home/alice/.local/state/jvf-theme && chown -R alice:users /home/alice/.local/state")
 
+          # Start a fake Waybar-like process whose command line contains
+          # "waybar". This catches regressions where the switcher cannot signal
+          # Waybar from click-handler environments with a restricted PATH.
+          machine.succeed(
+            "sudo -u alice sh -c '"
+            + "${pkgs.python3}/bin/python3 -c \"import os, pathlib, signal, time; signal.signal(signal.SIGUSR2, lambda *_: (pathlib.Path(\\\"/home/alice/waybar-reloaded\\\").touch(), os._exit(0))); pathlib.Path(\\\"/home/alice/waybar-ready\\\").touch(); time.sleep(600)\" waybar "
+            + ">/tmp/fake-waybar.log 2>&1 & echo $! > /home/alice/fake-waybar.pid'"
+          )
+          machine.wait_until_succeeds("test -f /home/alice/waybar-ready")
+
           # ── 2. jvf-theme-switch light ───────────────────────────────────
           machine.succeed(
             "sudo -u alice "
@@ -99,6 +109,9 @@
           assert target.endswith("/light"), f"expected current→light, got {target}"
 
           machine.succeed("test -f /home/alice/.local/state/jvf-theme/last-switch")
+          machine.wait_until_succeeds("test -f /home/alice/waybar-reloaded")
+          hooks_log = machine.succeed("cat /home/alice/.local/state/jvf-theme/hooks.log")
+          assert "waybar reload: ok" in hooks_log, "switcher should signal running Waybar"
 
           # ── 3. jvf-theme-switch dark ────────────────────────────────────
           machine.succeed(
