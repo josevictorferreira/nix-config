@@ -103,8 +103,14 @@
               output = [ "text" ];
             };
           };
+          "kimi-k2.7-code" = {
+            name = "Kimi K2.7 Code (OmniRoute)";
+          };
           "kimi-coding" = {
             name = "Kimi Coding (OmniRoute)";
+          };
+          "kimi-highspeed" = {
+            name = "Kimi Highspeed (OmniRoute)";
           };
           "kimi-k2.6" = {
             name = "Kimi K2.6 (OmniRoute)";
@@ -165,6 +171,9 @@
           "glm-5.2" = {
             name = "GLM-5.2 (OmniRoute)";
           };
+          "glm-5.2-max" = {
+            name = "GLM-5.2 Max (OmniRoute)";
+          };
           "glm-5.1" = {
             name = "GLM-5.1 (OmniRoute)";
             limit = {
@@ -191,6 +200,9 @@
           "glm-4.7" = {
             name = "GLM-4.7 (OmniRoute)";
           };
+          "minimax-m3" = {
+            name = "MiniMax M3 (OmniRoute)";
+          };
           "minimax-m2.7" = {
             name = "MiniMax M2.7 (OmniRoute)";
           };
@@ -198,6 +210,9 @@
             name = "MiniMax M2.5 (OmniRoute)";
           };
           "qwen3.6-plus" = {
+            name = "Qwen 3.6 Plus (OmniRoute)";
+          };
+          "qwen3.7-plus" = {
             name = "Qwen 3.6 Plus (OmniRoute)";
           };
           "gandalf" = {

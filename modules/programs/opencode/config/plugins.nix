@@ -11,12 +11,11 @@ _: {
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "omniroute/kimi-k2.6";
-        kimiCoder = "omniroute/kimi-coding";
-        kimiThinking = "omniroute/kimi-k2.6-thinking";
-        glm = "omniroute/glm-5.1";
-        glmThinking = "omniroute/glm-5.1-thinking";
-        qwen = "omniroute/qwen3.6-plus";
+        kimi = "omniroute/kimi-k2.7-code";
+        kimiCoder = "omniroute/kimi-highspeed";
+        glm = "omniroute/glm-5.2";
+        glmThinking = "omniroute/glm-5.2-max";
+        qwen = "omniroute/qwen3.7-plus";
         gpt = "omniroute/gpt-5.5";
         gandalf = "omniroute/gandalf";
         radagast = "omniroute/radagast";
@@ -24,7 +23,7 @@ _: {
         legolas = "omniroute/legolas";
         deepseekPro = "omniroute/deepseek-v4-pro";
         deepseek = "omniroute/deepseek-v4-flash";
-        minimax = "omniroute/minimax-m2.5";
+        minimax = "omniroute/minimax-m3";
         mimo = "omniroute/mimo-v2.5-pro";
         models = {
           quick = {
