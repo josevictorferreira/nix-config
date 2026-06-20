@@ -18,6 +18,7 @@
 
 "modules-left": [
 	"group/app_drawer",
+	"custom/light_dark",
 	"custom/separator#dot-line",
 	"group/mobo_drawer",
 	"custom/separator#line",

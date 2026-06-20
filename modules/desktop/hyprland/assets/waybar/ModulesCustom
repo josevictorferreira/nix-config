@@ -90,12 +90,14 @@
 },
 
 "custom/light_dark": {
-	"format": "󰔎 ",
-	"on-click": "$HOME/.config/hypr/scripts/DarkLight.sh",
+	"exec": "profile=$(jvf-theme-switch status 2>/dev/null | awk '/^Profile:/ { print $2 }'); case \"$profile\" in light) echo '󰔎 light' ;; dark) echo '󰔎 dark' ;; *) echo '󰔎 auto' ;; esac",
+	"interval": 5,
+	"exec-on-event": true,
+	"on-click": "jvf-theme-switch toggle",
 	"on-click-right": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Switch Dark-Light Themes\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Current: {}\nLeft Click: Toggle whole system theme\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
 },
 
 "custom/lock": {

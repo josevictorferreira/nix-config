@@ -4,7 +4,11 @@
 { inputs, self, ... }:
 {
   perSystem =
-    { system, pkgs, lib, ... }:
+    { system
+    , pkgs
+    , lib
+    , ...
+    }:
     let
       # ── Module stack ────────────────────────────────────────────────────
       # core-jvf: options + identity
@@ -64,6 +68,12 @@
           ).strip()
           assert switcher != "", "jvf-theme-switch binary not found in /nix"
 
+          # Systemd executes the script directly, so the shebang must be the
+          # first bytes of the file; an interactive shell may hide this by
+          # falling back to interpreting scripts with a bad shebang.
+          machine.succeed(f"test \"$(head -c 2 '{switcher}')\" = '#!'")
+          machine.succeed(f"bash -n '{switcher}'")
+
           # Debug: filesystem state
           machine.succeed("ls -la /home/alice/.local/share/jvf-theme/ 2>&1 || true")
           # ── 1. Profile artifacts exist ──────────────────────────────────
@@ -103,7 +113,29 @@
           target = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()
           assert target.endswith("/dark"), f"expected current→dark, got {target}"
 
-          # ── 4. auto with FAKE_HOUR=7 → light ───────────────────────────
+          # ── 4. jvf-theme-switch toggle ─────────────────────────────────
+          machine.succeed(
+            "sudo -u alice "
+            + "JFV_THEME_STATE_DIR=/home/alice/.local/state/jvf-theme "
+            + "JFV_THEME_PROFILES_DIR=/home/alice/.local/share/jvf-theme/profiles "
+            + f"{switcher} toggle"
+          )
+          mode = machine.succeed("cat /home/alice/.local/state/jvf-theme/mode").strip()
+          assert mode == "light", f"toggle from dark should set mode=light, got {mode}"
+
+          target = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()
+          assert target.endswith("/light"), f"toggle from dark should select light, got {target}"
+
+          machine.succeed(
+            "sudo -u alice "
+            + "JFV_THEME_STATE_DIR=/home/alice/.local/state/jvf-theme "
+            + "JFV_THEME_PROFILES_DIR=/home/alice/.local/share/jvf-theme/profiles "
+            + f"{switcher} toggle"
+          )
+          target = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()
+          assert target.endswith("/dark"), f"toggle from light should select dark, got {target}"
+
+          # ── 5. auto with FAKE_HOUR=7 → light ───────────────────────────
           machine.succeed(
             "sudo -u alice "
             + "JFV_THEME_STATE_DIR=/home/alice/.local/state/jvf-theme "
@@ -117,7 +149,7 @@
           target = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()
           assert target.endswith("/light"), f"hour=7 should select light, got {target}"
 
-          # ── 5. auto with FAKE_HOUR=14 → dark ───────────────────────────
+          # ── 6. auto with FAKE_HOUR=14 → dark ───────────────────────────
           machine.succeed(
             "sudo -u alice "
             + "JFV_THEME_STATE_DIR=/home/alice/.local/state/jvf-theme "
@@ -128,7 +160,7 @@
           target = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()
           assert target.endswith("/dark"), f"hour=14 should select dark, got {target}"
 
-          # ── 6. status --verbose ─────────────────────────────────────────
+          # ── 7. status --verbose ─────────────────────────────────────────
           status_out = machine.succeed(
             "sudo -u alice "
             + "JFV_THEME_STATE_DIR=/home/alice/.local/state/jvf-theme "
@@ -142,7 +174,7 @@
           assert "Last switch:" in status_out, "status --verbose should show Last switch"
           assert "Reload warnings:" in status_out, "status --verbose should show Reload warnings"
 
-          # ── 7. Systemd timer defined ────────────────────────────────────
+          # ── 8. Systemd timer defined ────────────────────────────────────
           # Verify the timer unit file exists in the user's systemd directory
           timer_unit = machine.succeed(
             "find /etc/systemd/user/ -name 'jvf-theme-switcher.timer' -not -path '*/wants/*' 2>/dev/null | head -1 || true"
@@ -154,7 +186,7 @@
           assert "OnCalendar" in timer_content, "timer should have OnCalendar"
           assert "Persistent=true" in timer_content, "timer should have Persistent=true"
 
-          # ── 8. Systemd services defined ─────────────────────────────────
+          # ── 9. Systemd services defined ─────────────────────────────────
           svc_unit = machine.succeed(
             "find /etc/systemd/user/ -name 'jvf-theme-switcher.service' -not -path '*/wants/*' 2>/dev/null | head -1 || true"
           ).strip()
@@ -174,7 +206,7 @@
           assert "RemainAfterExit" in resume_content, "resume service should have RemainAfterExit"
           assert "jvf-theme-switch auto" in resume_content, "resume service should run jvf-theme-switch auto in ExecStop"
 
-          # ── 9. Rebuild idempotency ──────────────────────────────────────
+          # ── 10. Rebuild idempotency ─────────────────────────────────────
           # Record runtime state before simulated rebuild
           mode_before = machine.succeed("cat /home/alice/.local/state/jvf-theme/mode").strip()
           target_before = machine.succeed("readlink /home/alice/.local/state/jvf-theme/current").strip()

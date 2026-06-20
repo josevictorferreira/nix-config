@@ -1,5 +1,5 @@
 # Aspect: desktop-hyprland-theme-switcher (NixOS only)
-# Runtime theme switcher CLI: jvf-theme-switch {light|dark|auto|status}
+# Runtime theme switcher CLI: jvf-theme-switch {light|dark|toggle|auto|status}
 # Exposes script via jvf.wrappers packages.
 # Runtime state lives in ~/.local/state/jvf-theme/ (never mutates Nix store).
 #
@@ -10,8 +10,7 @@ _:
 let
   switcherScript =
     { pkgs }:
-    pkgs.writeScriptBin "jvf-theme-switch" ''
-            #!/usr/bin/env bash
+    pkgs.writeShellScriptBin "jvf-theme-switch" ''
             set -euo pipefail
 
             STATE_DIR="''${JFV_THEME_STATE_DIR:-$HOME/.local/state/jvf-theme}"
@@ -21,12 +20,13 @@ let
 
             usage() {
               cat >&2 <<'HELP'
-      Usage: jvf-theme-switch {light|dark|auto|status} [--verbose]
+      Usage: jvf-theme-switch {light|dark|toggle|auto|status} [--verbose]
              jvf-theme-switch --help
 
       Commands:
         light   Switch to light profile and stay there (manual override)
         dark    Switch to dark profile and stay there (manual override)
+        toggle  Switch between light and dark profiles (manual override)
         auto    Follow schedule: light 06:00-11:59, dark 12:00-05:59
         status  Show current mode and profile
                 Use --verbose for schedule, last switch time, warnings, and limitations
@@ -55,20 +55,20 @@ let
                 local dst="$2"
                 if [ ! -f "$src" ]; then
                   warn "deploy: artifact missing: $src"
-                  return 1
+                  return 0
                 fi
                 local dst_dir
                 dst_dir=$(dirname "$dst")
                 if [ ! -d "$dst_dir" ]; then
                   warn "deploy: target dir missing: $dst_dir"
-                  return 1
+                  return 0
                 fi
                 if cp "$src" "$dst" 2>/dev/null; then
                   log "deploy: $(basename "$src") → $dst"
                   return 0
                 else
                   warn "deploy: copy failed (read-only?): $dst"
-                  return 1
+                  return 0
                 fi
               }
 
@@ -166,13 +166,10 @@ let
                       && log "btop color_theme: ok" || warn "btop color_theme update failed"
                   fi
                 fi
+              fi
               # Export JVF_THEME env var for other apps (neovim, etc)
               mkdir -p "$STATE_DIR"
               echo "export JVF_THEME='$profile'" > "$STATE_DIR/env"
-            }
-              mkdir -p "$STATE_DIR"
-              echo "export JVF_THEME='$profile'" > "$STATE_DIR/env"
-            }
             }
 
             # ── Switch commands ──────────────────────────────────────────────
@@ -185,6 +182,16 @@ let
               date +%s > "$STATE_DIR/last-switch"
               run_hooks "$PROFILES_DIR/$profile"
               echo "Mode set to $mode"
+            }
+
+            do_toggle() {
+              local target
+              target=$(readlink "$STATE_DIR/current" 2>/dev/null || echo "")
+              if [ "$(basename "$target" 2>/dev/null || echo "")" = "light" ]; then
+                do_switch dark dark
+              else
+                do_switch light light
+              fi
             }
 
             do_auto() {
@@ -244,6 +251,7 @@ let
               --help|-h) usage ;;
               light)  do_switch light light ;;
               dark)   do_switch dark dark ;;
+              toggle) do_toggle ;;
               auto)   do_auto ;;
               status) do_status "''${2:-}" ;;
               *)      usage ;;
@@ -253,11 +261,10 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-theme-switcher =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       username = config.jvf.core.username;
