@@ -19,7 +19,17 @@ let
     }:
     let
       darkPreset = config.jvf.theme.presets.tokyonight-night;
-      lightPreset = config.jvf.theme.presets.tokyonight-day;
+      # Terminal-only contrast tweaks for the light theme: the default
+      # tokyonight-day foreground (#3760bf) and blue (#2e7de9) are hard to read
+      # on the #e1e2e7 background. Darken them here so kitty/alacritty/tmux are
+      # legible, while waybar/rofi/gtk keep the unmodified tokyonight-day palette.
+      lightPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-day {
+        colors = {
+          foreground = "343b58";
+          color4 = "284b8f";
+          color12 = "284b8f";
+        };
+      };
 
       tomlFmt = pkgs.formats.toml { };
       yamlFmt = pkgs.formats.yaml { };
