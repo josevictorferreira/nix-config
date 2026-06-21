@@ -32,6 +32,12 @@ let
           # ~1.7:1 — unreadable for dim text (shell hints, comments). Use Tokyo
           # Night's comment slate for ~4.8:1 while staying muted.
           color8 = "565f89";
+          # "white"/"bright white" slots default to light blues (#6172b0/#3760bf)
+          # in tokyonight-day — but these are the slots used for normal/bold
+          # default text, so washed-out light-blue text shows up everywhere on
+          # the light background. Darken while keeping the blue identity.
+          color7 = "3f4a6b";
+          color15 = "34548a";
         };
       };
 

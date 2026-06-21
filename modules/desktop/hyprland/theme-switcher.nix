@@ -13,6 +13,19 @@ let
     pkgs.writeShellScriptBin "jvf-theme-switch" ''
             set -euo pipefail
 
+            # Waybar click handlers launch this with a minimal PATH, so the
+            # reload hooks (dconf, find, sed, cp…) silently no-op. Pin the core
+            # tools from the Nix store; keep $PATH for session tools (hyprctl, kitty).
+            export PATH="${
+              pkgs.lib.makeBinPath [
+                pkgs.coreutils
+                pkgs.findutils
+                pkgs.gnused
+                pkgs.gnugrep
+                pkgs.dconf
+              ]
+            }:$PATH"
+
             STATE_DIR="''${JFV_THEME_STATE_DIR:-$HOME/.local/state/jvf-theme}"
             PROFILES_DIR="''${JFV_THEME_PROFILES_DIR:-$HOME/.local/share/jvf-theme/profiles}"
             LOG_FILE="$STATE_DIR/hooks.log"
@@ -134,17 +147,22 @@ let
                 warn "hook: kitty not available"
               fi
 
-              # GTK
-              if command -v gsettings >/dev/null 2>&1; then
-                local gtk_scheme
-                case "$(cat "$STATE_DIR/mode" 2>/dev/null)" in
-                  light) gtk_scheme="prefer-light" ;;
-                  *)     gtk_scheme="prefer-dark" ;;
-                esac
-                gsettings set org.gnome.desktop.interface color-scheme "$gtk_scheme" 2>/dev/null \
-                  && log "gsettings: ok" || warn "gsettings set failed"
+              # Desktop color-scheme for portal-aware apps (Brave/Chromium, GTK).
+              # Write via dconf, not gsettings: the org.gnome.desktop.interface
+              # schema is not installed in this environment, so `gsettings set`
+              # always fails. dconf writes the same key directly, and
+              # xdg-desktop-portal-gtk relays it as org.freedesktop.appearance
+              # color-scheme — which Chromium honors live. Keyed off the profile
+              # (not $mode) so `auto` resolves correctly too.
+              local color_scheme
+              case "$(basename "$profile_dir")" in
+                light) color_scheme="prefer-light" ;;
+                *)     color_scheme="prefer-dark" ;;
+              esac
+              if dconf write /org/gnome/desktop/interface/color-scheme "'$color_scheme'" 2>/dev/null; then
+                log "dconf color-scheme: $color_scheme"
               else
-                warn "hook: gsettings not available"
+                warn "dconf color-scheme write failed"
               fi
 
               # Btop — update color_theme in btop.conf + symlink theme file
