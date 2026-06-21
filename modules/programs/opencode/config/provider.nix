@@ -159,6 +159,10 @@
               cache_read = 0.16;
             };
             modalities = {
+              input = [
+                "text"
+                "image"
+              ];
               output = [ "text" ];
             };
           };
