@@ -28,6 +28,10 @@ let
           foreground = "343b58";
           color4 = "284b8f";
           color12 = "284b8f";
+          # "bright black"/dim slot: default #a8aecb is a pale lavender-blue at
+          # ~1.7:1 — unreadable for dim text (shell hints, comments). Use Tokyo
+          # Night's comment slate for ~4.8:1 while staying muted.
+          color8 = "565f89";
         };
       };
 
