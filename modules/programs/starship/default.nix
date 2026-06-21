@@ -94,6 +94,16 @@ let
               enable = true;
               settings = starshipSettings;
             };
+
+            # Deploy a writable starship.toml so the theme switcher can swap the
+            # prompt colors per profile. NixOS's programs.starship only pins its
+            # store config when ~/.config/starship.toml is absent (see the guard
+            # it writes into /etc/zshrc), so this file takes precedence.
+            jvf.home.users.${config.jvf.core.username}.items.".config/starship.toml" = {
+              kind = "file";
+              mode = "copy";
+              source = configFile;
+            };
           }
         else
           {

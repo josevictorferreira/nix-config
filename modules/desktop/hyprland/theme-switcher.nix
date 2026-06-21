@@ -90,6 +90,11 @@ let
               deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
               deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
               deploy_artifacts "$profile_dir/gtk/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+              # Starship prompt colors. NixOS's programs.starship defers to
+              # ~/.config/starship.toml when it exists, so swapping it here makes
+              # the prompt follow the active theme (light's blue is unreadable
+              # against the dark-preset prompt colors otherwise).
+              deploy_artifacts "$profile_dir/terminals/starship.toml" "$HOME/.config/starship.toml"
               # Deploy kitty terminal colors (preserve operational lines from current config)
               kitty_src="$profile_dir/terminals/kitty.conf"
               kitty_dst="$HOME/.config/kitty/kitty.conf"
