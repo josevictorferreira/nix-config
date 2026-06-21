@@ -12,13 +12,19 @@ let
   k9sSkinFn = import ./../programs/k9s/_/skin.nix;
 
   terminalArtifactModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
-      darkPreset = config.jvf.theme.presets.tokyonight-night;
+      # Heavier terminal body text (both themes) — Regular strokes look thin,
+      # especially on the light background. Bold text still uses the Bold face.
+      terminalFont = "JetBrainsMonoNL NF SemiBold";
+      darkPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-night {
+        fonts.monospace = terminalFont;
+      };
       # Terminal-only contrast tweaks for the light theme: the default
       # tokyonight-day foreground (#3760bf) and blue (#2e7de9) are hard to read
       # on the #e1e2e7 background. Darken them here so kitty/alacritty/tmux are
@@ -26,8 +32,10 @@ let
       lightPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-day {
         colors = {
           foreground = "343b58";
-          color4 = "284b8f";
-          color12 = "284b8f";
+          # Blue / bright-blue: #284b8f (~4.85:1) still read as too light on the
+          # #e1e2e7 background. Deepen to ~8.5:1 (AAA) while staying blue.
+          color4 = "1c3a6e";
+          color12 = "1c3a6e";
           # "bright black"/dim slot: default #a8aecb is a pale lavender-blue at
           # ~1.7:1 — unreadable for dim text (shell hints, comments). Use Tokyo
           # Night's comment slate for ~4.8:1 while staying muted.
@@ -37,8 +45,12 @@ let
           # default text, so washed-out light-blue text shows up everywhere on
           # the light background. Darken while keeping the blue identity.
           color7 = "3f4a6b";
-          color15 = "34548a";
+          # bright-white slot: #34548a (~5.8:1) also read as too light; deepen.
+          color15 = "243b66";
         };
+        # SemiBold body text (shared with dark via terminalFont). Fontconfig
+        # alias resolves for kitty and alacritty.
+        fonts.monospace = terminalFont;
       };
 
       tomlFmt = pkgs.formats.toml { };

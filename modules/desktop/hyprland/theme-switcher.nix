@@ -95,6 +95,10 @@ let
               # the prompt follow the active theme (light's blue is unreadable
               # against the dark-preset prompt colors otherwise).
               deploy_artifacts "$profile_dir/terminals/starship.toml" "$HOME/.config/starship.toml"
+              # tmux statusline/colors — full generated config, safe to
+              # overwrite wholesale; reloaded live in the hooks below. Without
+              # this the statusbar stays on the dark preset (light-blue text).
+              deploy_artifacts "$profile_dir/terminals/tmux.conf" "$HOME/.config/tmux/tmux.conf"
               # Deploy kitty terminal colors (preserve operational lines from current config)
               kitty_src="$profile_dir/terminals/kitty.conf"
               kitty_dst="$HOME/.config/kitty/kitty.conf"
@@ -130,6 +134,14 @@ let
                 log "waybar reload: ok"
               else
                 warn "hook: waybar not running"
+              fi
+
+              # tmux — reload config live for the running server (best-effort)
+              if ${pkgs.tmux}/bin/tmux list-sessions >/dev/null 2>&1; then
+                ${pkgs.tmux}/bin/tmux source-file "$HOME/.config/tmux/tmux.conf" >/dev/null 2>&1 \
+                  && log "tmux source-file: ok" || warn "tmux source-file failed"
+              else
+                warn "hook: tmux server not running"
               fi
 
               # Kitty remote — live retheme via kitty remote control socket

@@ -94,7 +94,8 @@ let
       selectedForeground = "1a1b26";
       borderColor = "7dcfff";
     };
-    backgroundAlpha = "0.25";
+    # Waybar background: near-solid (only consumer of backgroundAlpha).
+    backgroundAlpha = "0.99";
   };
 
   tokyonightDay = {
@@ -146,7 +147,8 @@ let
       selectedForeground = "e1e2e7";
       borderColor = "a8aecb";
     };
-    backgroundAlpha = "0.85";
+    # Waybar background: near-solid (only consumer of backgroundAlpha).
+    backgroundAlpha = "0.99";
   };
 
   contract = {
