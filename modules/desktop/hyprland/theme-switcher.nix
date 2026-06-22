@@ -99,6 +99,11 @@ let
               # overwrite wholesale; reloaded live in the hooks below. Without
               # this the statusbar stays on the dark preset (light-blue text).
               deploy_artifacts "$profile_dir/terminals/tmux.conf" "$HOME/.config/tmux/tmux.conf"
+              # alacritty + k9s were also frozen on the active (dark) preset —
+              # their configs carry the full color set, safe to overwrite. k9s
+              # picks up the skin on next launch; alacritty live-reloads.
+              deploy_artifacts "$profile_dir/terminals/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+              deploy_artifacts "$profile_dir/terminals/k9s/tokyonight.yaml" "$HOME/.config/k9s/skins/tokyonight.yaml"
               # Deploy kitty terminal colors (preserve operational lines from current config)
               kitty_src="$profile_dir/terminals/kitty.conf"
               kitty_dst="$HOME/.config/kitty/kitty.conf"
