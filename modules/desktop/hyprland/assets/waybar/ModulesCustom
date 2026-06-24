@@ -93,7 +93,7 @@
 	"exec": "profile=$(jvf-theme-switch status 2>/dev/null | awk '/^Profile:/ { print $2 }'); case \"$profile\" in light) echo '󰔎 light' ;; dark) echo '󰔎 dark' ;; *) echo '󰔎 auto' ;; esac",
 	"interval": 5,
 	"exec-on-event": true,
-	"on-click": "jvf-theme-switch toggle",
+	"on-click": "setsid -f jvf-theme-switch toggle",
 	"on-click-right": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"tooltip": true,
