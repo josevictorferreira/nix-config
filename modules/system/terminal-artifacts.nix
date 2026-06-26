@@ -25,31 +25,9 @@ let
       darkPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-night {
         fonts.monospace = terminalFont;
       };
-      # Terminal-only contrast tweaks for the light theme: the default
-      # tokyonight-day foreground (#3760bf) and blue (#2e7de9) are hard to read
-      # on the #e1e2e7 background. Darken them here so kitty/alacritty/tmux are
-      # legible, while waybar/rofi/gtk keep the unmodified tokyonight-day palette.
+      # Pure upstream tokyonight-day palette — kept unmodified for
+      # consistency with folke/tokyonight.nvim. Only the font weight differs.
       lightPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-day {
-        colors = {
-          foreground = "343b58";
-          # Blue / bright-blue: #284b8f (~4.85:1) still read as too light on the
-          # #e1e2e7 background. Deepen to ~8.5:1 (AAA) while staying blue.
-          color4 = "1c3a6e";
-          color12 = "1c3a6e";
-          # "bright black"/dim slot: default #a8aecb is a pale lavender-blue at
-          # ~1.7:1 — unreadable for dim text (shell hints, comments). Use Tokyo
-          # Night's comment slate for ~4.8:1 while staying muted.
-          color8 = "565f89";
-          # "white"/"bright white" slots default to light blues (#6172b0/#3760bf)
-          # in tokyonight-day — but these are the slots used for normal/bold
-          # default text, so washed-out light-blue text shows up everywhere on
-          # the light background. Darken while keeping the blue identity.
-          color7 = "3f4a6b";
-          # bright-white slot: #34548a (~5.8:1) also read as too light; deepen.
-          color15 = "243b66";
-        };
-        # SemiBold body text (shared with dark via terminalFont). Fontconfig
-        # alias resolves for kitty and alacritty.
         fonts.monospace = terminalFont;
       };
 

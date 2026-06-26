@@ -64,12 +64,12 @@ let
       color6 = "7dcfff";
       color7 = "a9b1d6";
       color8 = "414868";
-      color9 = "f7768e";
-      color10 = "9ece6a";
-      color11 = "e0af68";
-      color12 = "7aa2f7";
-      color13 = "bb9af7";
-      color14 = "7dcfff";
+      color9 = "ff899d";
+      color10 = "9fe044";
+      color11 = "faba4a";
+      color12 = "8db0ff";
+      color13 = "c7a9ff";
+      color14 = "a4daff";
       color15 = "c0caf5";
     };
     fonts = {
@@ -103,7 +103,7 @@ let
       background = "e1e2e7";
       foreground = "3760bf";
       cursor = "3760bf";
-      color0 = "e1e2e7";
+      color0 = "b4b5b9";
       color1 = "f52a65";
       color2 = "587539";
       color3 = "8c6c3e";
@@ -111,13 +111,13 @@ let
       color5 = "9854f1";
       color6 = "007197";
       color7 = "6172b0";
-      color8 = "a8aecb";
-      color9 = "f52a65";
-      color10 = "587539";
-      color11 = "8c6c3e";
-      color12 = "2e7de9";
-      color13 = "9854f1";
-      color14 = "007197";
+      color8 = "a1a6c5";
+      color9 = "ff4774";
+      color10 = "5c8524";
+      color11 = "a27629";
+      color12 = "358aff";
+      color13 = "a463ff";
+      color14 = "007ea8";
       color15 = "3760bf";
     };
     fonts = {
@@ -141,7 +141,7 @@ let
       urgentForeground = "e1e2e7";
       selectedBackground = "2e7de9";
       selectedForeground = "e1e2e7";
-      borderColor = "a8aecb";
+      borderColor = "a1a6c5";
     };
     # Waybar background: near-solid (only consumer of backgroundAlpha).
     backgroundAlpha = "0.99";

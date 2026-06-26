@@ -149,19 +149,7 @@ let
       defaultPkg = if pkgs.stdenv.isDarwin then pkgs.btop else pkgs.btop-rocm;
       colors = config.jvf.theme.colors;
       darkPreset = config.jvf.theme.presets.tokyonight-night;
-      # Terminal-only contrast tweaks for the light theme: the default
-      # tokyonight-day colors are hard to read on the light background.
-      # Same overrides as terminal-artifacts.nix for consistency.
-      lightPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-day {
-        colors = {
-          foreground = "343b58";
-          color4 = "1c3a6e";
-          color12 = "1c3a6e";
-          color8 = "565f89";
-          color7 = "3f4a6b";
-          color15 = "243b66";
-        };
-      };
+      lightPreset = config.jvf.theme.presets.tokyonight-day;
 
       btopTheme = mkBtopThemeText colors;
 
