@@ -22,10 +22,11 @@ let
     theme[div_line]="#${colors.color8}"
   '';
   mkBtopOptions =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       defaultPackage = "btop";
@@ -137,42 +138,51 @@ let
     };
 
   btopModule =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.programs.btop;
       defaultPkg = if pkgs.stdenv.isDarwin then pkgs.btop else pkgs.btop-rocm;
       colors = config.jvf.theme.colors;
       darkPreset = config.jvf.theme.presets.tokyonight-night;
-      lightPreset = config.jvf.theme.presets.tokyonight-day;
+      # Terminal-only contrast tweaks for the light theme: the default
+      # tokyonight-day colors are hard to read on the light background.
+      # Same overrides as terminal-artifacts.nix for consistency.
+      lightPreset = lib.recursiveUpdate config.jvf.theme.presets.tokyonight-day {
+        colors = {
+          foreground = "343b58";
+          color4 = "1c3a6e";
+          color12 = "1c3a6e";
+          color8 = "565f89";
+          color7 = "3f4a6b";
+          color15 = "243b66";
+        };
+      };
 
       btopTheme = mkBtopThemeText colors;
-
-      themeName = config.jvf.theme.active;
 
       # Build merged btop config directory via symlinkJoin
       # Custom INI generator that handles Booleans (pkgs.formats.ini doesn't support them)
       toIni =
         attrs:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList
-            (
-              n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
-            )
-            attrs
+          lib.mapAttrsToList (
+            n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
+          ) attrs
         );
       btopConfigDir = pkgs.symlinkJoin {
         name = "btop-config";
         paths = [
-          (pkgs.writeTextDir "btop.conf" (toIni (cfg.settings // { color_theme = themeName; })))
+          (pkgs.writeTextDir "btop.conf" (toIni (cfg.settings // { color_theme = "jvf-active"; })))
           (pkgs.writeTextDir "vertical-compact.conf" (
             toIni (
               cfg.settings
               // {
-                color_theme = themeName;
+                color_theme = "jvf-active";
                 presets = "cpu:0:braille,mem:0:braille,gpu0:0:braille";
                 shown_boxes = "cpu mem gpu0";
                 show_disks = false;
@@ -180,7 +190,7 @@ let
               }
             )
           ))
-          (pkgs.writeTextDir "themes/${themeName}.theme" btopTheme)
+          (pkgs.writeTextDir "themes/jvf-active.theme" btopTheme)
         ];
       };
 

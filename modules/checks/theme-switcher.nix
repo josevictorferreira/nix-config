@@ -332,7 +332,7 @@
                 if [ -n "$btop_theme" ]; then
                   local btop_themes_dir="$HOME/.config/btop/themes"
                   mkdir -p "$btop_themes_dir"
-                  ln -sf "$btop_theme" "$btop_themes_dir/$(basename "$btop_theme")" 2>/dev/null \
+                  ln -sf "$btop_theme" "$btop_themes_dir/jvf-active.theme" 2>/dev/null \
                     && log "btop theme symlink: ok" || warn "btop theme symlink failed"
                 fi
               fi

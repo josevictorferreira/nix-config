@@ -187,22 +187,18 @@ let
                 warn "dconf color-scheme write failed"
               fi
 
-              # Btop — update color_theme in btop.conf + symlink theme file
+              # Btop — repoint the stable jvf-active.theme symlink so btop
+              # loads the current profile's theme. btop.conf keeps a fixed
+              # color_theme = "jvf-active": btop rewrites btop.conf on exit,
+              # so editing color_theme there at runtime gets clobbered.
               if [ -d "$profile_dir/btop" ]; then
                 local btop_theme
                 btop_theme=$(find "$profile_dir/btop" -name '*.theme' -type f 2>/dev/null | head -1)
                 if [ -n "$btop_theme" ]; then
                   local btop_themes_dir="$HOME/.config/btop/themes"
-                  local btop_theme_name="$(basename "$btop_theme" .theme)"
                   mkdir -p "$btop_themes_dir"
-                  ln -sf "$btop_theme" "$btop_themes_dir/$(basename "$btop_theme")" 2>/dev/null \
+                  ln -sf "$btop_theme" "$btop_themes_dir/jvf-active.theme" 2>/dev/null \
                     && log "btop theme symlink: ok" || warn "btop theme symlink failed"
-                  # Update color_theme in btop.conf so btop loads the right theme
-                  local btop_conf="$HOME/.config/btop/btop.conf"
-                  if [ -f "$btop_conf" ]; then
-                    sed -i "s/^color_theme *=.*/color_theme = \"$btop_theme_name\"/" "$btop_conf" 2>/dev/null \
-                      && log "btop color_theme: ok" || warn "btop color_theme update failed"
-                  fi
                 fi
               fi
               # Export JVF_THEME env var for other apps (neovim, etc)
@@ -299,10 +295,11 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-theme-switcher =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       username = config.jvf.core.username;

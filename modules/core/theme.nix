@@ -132,10 +132,6 @@ let
       cursorSize = 24;
       applicationPreferDarkTheme = false;
     };
-    qt = {
-      style = "kvantum";
-      colorScheme = "Kvantum";
-    };
     rofiSemantic = {
       activeBackground = "2e7de9";
       activeForeground = "e1e2e7";
