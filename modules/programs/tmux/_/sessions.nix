@@ -197,7 +197,7 @@
 
   work = {
     session_name = "work";
-    start_directory = "$HOME/Workspace/agrosmart/";
+    start_directory = "$HOME/Workspace/agrosmart/booster/boosteragro";
     windows = [
       {
         window_name = "BoosterAgro";
