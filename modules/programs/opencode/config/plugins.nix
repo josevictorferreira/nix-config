@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.14"
-        "oh-my-openagent@4.13.0"
+        "oh-my-openagent@4.14.0"
         "@vectorize-io/opencode-hindsight"
       ];
     };
@@ -17,12 +17,11 @@ _: {
         glmThinking = "omniroute/glm-5.2-max";
         qwen = "omniroute/qwen3.7-plus";
         qwenMax = "omniroute/qwen3.7-max";
-        gpt = "omniroute/gpt-5.5";
         gandalf = "omniroute/gandalf";
         radagast = "omniroute/radagast";
         saruman = "omniroute/saruman";
         legolas = "omniroute/legolas";
-        deepseekPro = "omniroute/deepseek-v4-pro";
+        # deepseekPro = "omniroute/deepseek-v4-pro";
         deepseek = "omniroute/deepseek-v4-flash";
         minimax = "omniroute/minimax-m3";
         mimo = "omniroute/mimo-v2.5-pro";
@@ -46,6 +45,10 @@ _: {
             alternative = radagast;
           };
           designer = {
+            default = qwenMax;
+            cheap = kimiCoder;
+            expensive = radagast;
+            alternative = qwen;
           };
           looker = {
             default = qwen;
@@ -181,13 +184,13 @@ _: {
             ];
           };
           ui-designer = {
-            model = models.looker.default;
+            model = models.designer.default;
             model_fallback = true;
             fallback_models = [
-              models.looker.default
-              models.looker.expensive
-              models.looker.alternative
-              models.looker.cheap
+              models.designer.default
+              models.designer.expensive
+              models.designer.alternative
+              models.designer.cheap
             ];
           };
           product-manager = {
