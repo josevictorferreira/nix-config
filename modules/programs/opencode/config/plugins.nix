@@ -22,14 +22,14 @@ _: {
         saruman = "omniroute/saruman";
         legolas = "omniroute/legolas";
         # deepseekPro = "omniroute/deepseek-v4-pro";
-        deepseek = "omniroute/deepseek-v4-flash";
+        # deepseek = "omniroute/deepseek-v4-flash";
         minimax = "omniroute/minimax-m3";
         mimo = "omniroute/mimo-v2.5-pro";
         models = {
           quick = {
             default = legolas;
             cheap = legolas;
-            expensive = deepseek;
+            expensive = minimax;
             alternative = minimax;
           };
           coder = {
