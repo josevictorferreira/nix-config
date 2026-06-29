@@ -97,6 +97,9 @@
           "qwen3.7-plus" = {
             name = "Qwen 3.7 Plus (OmniRoute)";
           };
+          "qwen3.7-max" = {
+            name = "Qwen 3.7 Max (OmniRoute)";
+          };
           "gandalf" = {
             name = "Gandalf (OmniRoute)";
           };

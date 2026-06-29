@@ -62,6 +62,7 @@ let
         # browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix; # Disabled: replaced by browser-dev-cycle
         browser-dev-cycle = mkSkill ./_/skills/browser/browser-dev-cycle.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
+        design-md = mkSkill ./_/skills/creative/design-md.nix;
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
         developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;
         creating-nix-modules = mkSkill ./_/skills/nix/creating-modules.nix;

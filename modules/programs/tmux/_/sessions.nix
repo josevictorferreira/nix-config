@@ -43,6 +43,7 @@
     windows = [
       {
         window_name = "Monitors";
+        layout = "tiled";
         panes = [
           "btop"
           "k9s"
@@ -61,6 +62,14 @@
         panes = [
           "clear"
           "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "Hermes";
+        layout = "tiled";
+        start_directory = "$HOME/Homelab/hermes";
+        panes = [
           "clear"
         ];
       }
@@ -179,6 +188,20 @@
     ];
   };
 
+  oratoria = {
+    session_name = "oratoria";
+    start_directory = "$HOME/Workspace/oratoria";
+    windows = [
+      {
+        window_name = "Oratoria";
+        layout = "tiled";
+        panes = [
+          "clear"
+        ];
+      }
+    ];
+  };
+
   local-researcher = {
     session_name = "local-researcher";
     start_directory = "$HOME/Workspace/local-researcher";
@@ -197,12 +220,11 @@
 
   work = {
     session_name = "work";
-    start_directory = "$HOME/Workspace/agrosmart/booster/boosteragro";
     windows = [
       {
         window_name = "BoosterAgro";
         layout = "tiled";
-        start_directory = "booster";
+        start_directory = "$HOME/Workspace/agrosmart/booster/boosteragro";
         panes = [
           "clear"
           "clear"
@@ -213,7 +235,7 @@
       {
         window_name = "Nexus";
         layout = "tiled";
-        start_directory = "nexus/nexus-backend";
+        start_directory = "$HOME/Workspace/agrosmart/nexus/nexus-backend";
         panes = [
           "clear"
           "clear"
@@ -224,7 +246,7 @@
       {
         window_name = "BoosterPro";
         layout = "main-vertical";
-        start_directory = "agrosmart-api";
+        start_directory = "$HOME/Workspace/agrosmart/agrosmart-api";
         panes = [
           "clear"
           "clear"

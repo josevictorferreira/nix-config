@@ -16,6 +16,7 @@ _: {
         glm = "omniroute/glm-5.2";
         glmThinking = "omniroute/glm-5.2-max";
         qwen = "omniroute/qwen3.7-plus";
+        qwenMax = "omniroute/qwen3.7-max";
         gpt = "omniroute/gpt-5.5";
         gandalf = "omniroute/gandalf";
         radagast = "omniroute/radagast";
@@ -44,6 +45,8 @@ _: {
             expensive = saruman;
             alternative = radagast;
           };
+          designer = {
+          };
           looker = {
             default = qwen;
             cheap = qwen;
@@ -68,6 +71,16 @@ _: {
           "dev-browser"
         ];
         agents = {
+          engineer = {
+            model = models.coder.default;
+            model_fallback = true;
+            fallback_models = [
+              models.coder.default
+              models.coder.alternative
+              models.coder.expensive
+              models.coder.cheap
+            ];
+          };
           hephaestus = {
             model = models.coder.expensive;
             model_fallback = true;

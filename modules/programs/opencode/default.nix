@@ -130,6 +130,8 @@ let
                     autoRecall = true;
                     autoRetain = true;
                     recallBudget = "mid";
+                    # Retain only the most recent user/assistant turn, not the whole session.
+                    retainMode = "last-turn";
                   }
                 );
               }
@@ -149,6 +151,13 @@ let
                     autoRecall = true;
                     autoRetain = true;
                     recallBudget = "mid";
+                    # Keep only user prompts and assistant outputs in the memory bank.
+                    retainRoles = [
+                      "user"
+                      "assistant"
+                    ];
+                    # Retain only the most recent user/assistant turn, not the whole session.
+                    retainMode = "last-turn";
                     enableKnowledgeTools = true;
                     # Exclude tool_use / tool_result blocks from retained transcripts.
                     # retain.py defaults to True when key is absent; must set explicitly.

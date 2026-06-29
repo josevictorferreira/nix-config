@@ -89,6 +89,7 @@ let
         mcp = args.mcp or { };
         references = args.references or { };
         scripts = args.scripts or { };
+        templates = args.templates or { };
         licence = args.licence or "";
         metadata = args.metadata or { };
         skillDefinition = {
@@ -100,6 +101,7 @@ let
             mcp
             references
             scripts
+            templates
             licence
             metadata
             ;
@@ -707,8 +709,19 @@ let
             skill.scripts
         else
           { };
+      # Template files
+      templates =
+        if skill ? templates && skill.templates != { } then
+          lib.mapAttrs'
+            (templateName: templateContent: {
+              name = "skill/${skillName}/templates/${templateName}";
+              value = templateContent;
+            })
+            skill.templates
+        else
+          { };
     in
-    skillMd // references // scripts;
+    skillMd // references // scripts // templates;
 
   mkSingleSkillsConfigs =
     skillName: skill:
@@ -741,8 +754,19 @@ let
             skill.scripts
         else
           { };
+      # Template files
+      templates =
+        if skill ? templates && skill.templates != { } then
+          lib.mapAttrs'
+            (templateName: templateContent: {
+              name = "skills/${skillName}/templates/${templateName}";
+              value = templateContent;
+            })
+            skill.templates
+        else
+          { };
     in
-    skillMd // references // scripts;
+    skillMd // references // scripts // templates;
 
   mkSkillConfigs =
     skills:
