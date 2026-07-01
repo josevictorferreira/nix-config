@@ -404,7 +404,7 @@ _: {
               aggressive = true;
             };
           };
-          preemptive_compaction = false; # disabled: rely on DCP plugin (dcp_for_compaction) as the sole compactor
+          preemptive_compaction = true; # enable: compact before hitting the model context window
           plugin_load_timeout_ms = 10000;
           safe_hook_creation = true;
           disable_omo_env = false;

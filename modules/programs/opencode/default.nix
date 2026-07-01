@@ -85,8 +85,9 @@ let
           ];
 
           compaction = {
-            prune = false;
             auto = true;
+            prune = true;
+            reserved = 10000;
           };
 
           watcher = {
