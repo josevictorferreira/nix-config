@@ -24,7 +24,8 @@ _: {
         # deepseekPro = "omniroute/deepseek-v4-pro";
         # deepseek = "omniroute/deepseek-v4-flash";
         minimax = "omniroute/minimax-m3";
-        mimo = "omniroute/mimo-v2.5-pro";
+        mimoPro = "omniroute/mimo-v2.5-pro";
+        mimo = "omniroute/mimo-v2.5";
         models = {
           quick = {
             default = legolas;
@@ -35,7 +36,7 @@ _: {
           coder = {
             default = kimiCoder;
             cheap = glm;
-            expensive = mimo;
+            expensive = mimoPro;
             alternative = qwen;
           };
           intelligent = {
@@ -51,16 +52,16 @@ _: {
             alternative = qwen;
           };
           looker = {
-            default = qwen;
-            cheap = qwen;
-            expensive = kimi;
-            alternative = kimi;
+            default = mimo;
+            cheap = mimo;
+            expensive = kimiCoder;
+            alternative = kimiCoder;
           };
           writer = {
             default = kimi;
             cheap = qwen;
             expensive = radagast;
-            alternative = mimo;
+            alternative = mimoPro;
           };
         };
       in
@@ -282,11 +283,11 @@ _: {
             ];
           };
           artistry = {
-            model = models.looker.expensive;
+            model = models.designer.expensive;
             fallback_models = [
-              models.looker.default
-              models.looker.alternative
-              models.looker.cheap
+              models.designer.default
+              models.designer.alternative
+              models.designer.cheap
             ];
           };
           deep = {
