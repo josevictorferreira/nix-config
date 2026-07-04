@@ -215,6 +215,12 @@ let
               ".nix-extensions.json"
               # pi-mcp-adapter runtime metadata cache (direct-tool registration).
               "mcp-cache.json"
+              # `pi install` materializes packages into these dirs at runtime.
+              # They are NOT in the nix store, so without preserving them jvf.home
+              # nukes installed extensions (e.g. pi-mcp-adapter) on every rebuild —
+              # leaving the sentinel stale so the install loop never reinstalls them.
+              "npm"
+              "git"
             ];
             postInstall = ''
               # Ensure the skills and prompts subdirectories exist

@@ -182,6 +182,170 @@ let
     }
   '';
 
+  # web_fetch Pi tool backed by the OmniRoute web-fetch API (POST /v1/web/fetch).
+  # Reads OMNIROUTE_API_KEY (exported from the sops omniroute_api_key secret).
+  # Cross-platform (pure fetch + process.env), so used by both nixos and darwin.
+  webFetchExtension = ''
+    import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+    import { Type } from "typebox";
+    import { StringEnum } from "@earendil-works/pi-ai";
+
+    const ENDPOINT = "https://omniroute.josevictor.me/v1/web/fetch";
+    const PROVIDERS = [
+      "serper-search",
+      "brave-search",
+      "perplexity-search",
+      "exa-search",
+      "tavily-search",
+      "google-pse-search",
+      "linkup-search",
+      "searchapi-search",
+      "searxng-search",
+    ] as const;
+
+    export default function (pi: ExtensionAPI) {
+      pi.registerTool({
+        name: "web_fetch",
+        label: "Web Fetch",
+        description:
+          "Fetch a single web page via the OmniRoute web-fetch API and return " +
+          "its content as markdown (or html). Use this to read the full text of " +
+          "a known URL, e.g. documentation, articles or search-result pages.",
+        promptSnippet:
+          "web_fetch: fetch and read the content of a specific web page URL.",
+        promptGuidelines: [
+          "Use web_fetch when you have a specific URL and need its full content " +
+            "(not a search). Pair it with web_search to read a result's page.",
+          "Prefer format \"markdown\" for reading; use \"html\" only when you need raw markup.",
+        ],
+        parameters: Type.Object({
+          url: Type.String({
+            minLength: 1,
+            description: "The absolute URL of the page to fetch.",
+          }),
+          format: Type.Optional(
+            StringEnum(["markdown", "html"] as const, {
+              description: "Output format (default \"markdown\").",
+            }),
+          ),
+          full_page: Type.Optional(
+            Type.Boolean({
+              description:
+                "Fetch the full rendered page instead of the main content (default false).",
+            }),
+          ),
+          provider: Type.Optional(
+            StringEnum(PROVIDERS, {
+              description:
+                "Optional fetch provider; omit to let OmniRoute auto-select.",
+            }),
+          ),
+        }),
+        async execute(_toolCallId, params, signal) {
+          const apiKey = process.env.OMNIROUTE_API_KEY;
+          if (!apiKey) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: "web_fetch error: OMNIROUTE_API_KEY is not set in the environment.",
+                },
+              ],
+              details: {},
+              isError: true,
+            };
+          }
+
+          const body: Record<string, unknown> = {
+            url: params.url,
+            format: params.format ?? "markdown",
+            full_page: params.full_page ?? false,
+          };
+          if (params.provider) body.provider = params.provider;
+
+          const timeout = AbortSignal.timeout(60000);
+          const abort = signal
+            ? AbortSignal.any([signal, timeout])
+            : timeout;
+
+          let response: Response;
+          try {
+            response = await fetch(ENDPOINT, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + apiKey,
+              },
+              body: JSON.stringify(body),
+              signal: abort,
+            });
+          } catch (err) {
+            return {
+              content: [
+                { type: "text", text: "web_fetch request failed: " + String(err) },
+              ],
+              details: {},
+              isError: true,
+            };
+          }
+
+          if (!response.ok) {
+            const errText = await response.text().catch(() => "");
+            return {
+              content: [
+                {
+                  type: "text",
+                  text:
+                    "web_fetch HTTP " + response.status + ": " + errText,
+                },
+              ],
+              details: { status: response.status },
+              isError: true,
+            };
+          }
+
+          const data = (await response.json()) as {
+            provider: string;
+            url: string;
+            content: string;
+            links: string[];
+            metadata: Record<string, unknown> | null;
+            screenshot_url: string | null;
+          };
+
+          const content = data.content ?? "";
+          const links = data.links ?? [];
+          const lines: string[] = [];
+          if (content.length === 0) {
+            lines.push("No content returned for: " + data.url);
+          } else {
+            lines.push(content);
+          }
+          lines.push("");
+          lines.push(
+            "[provider: " +
+              data.provider +
+              ", url: " +
+              data.url +
+              ", links: " +
+              links.length +
+              "]",
+          );
+
+          return {
+            content: [{ type: "text", text: lines.join("\n") }],
+            details: {
+              provider: data.provider,
+              url: data.url,
+              linkCount: links.length,
+              hasScreenshot: data.screenshot_url != null,
+            },
+          };
+        },
+      });
+    }
+  '';
+
   mkOptions =
     { config, lib, ... }:
     {
@@ -232,7 +396,6 @@ let
 
         # Pi extensions (declarative install via sentinel postInstall)
         jvf.programs.pi.extensions = [
-          "npm:pi-commandcode-provider"
           "npm:pi-mcp-adapter"
         ];
 
@@ -267,6 +430,9 @@ let
 
         # Local Pi extension: web_search tool (OmniRoute Search API).
         jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
+
+        # Local Pi extension: web_fetch tool (OmniRoute web-fetch API).
+        jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
@@ -324,7 +490,6 @@ let
 
         # Pi extensions (declarative install via sentinel postInstall)
         jvf.programs.pi.extensions = [
-          "npm:pi-commandcode-provider"
           "npm:pi-mcp-adapter"
         ];
 
@@ -352,6 +517,9 @@ let
 
         # Local Pi extension: web_search tool (OmniRoute Search API).
         jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
+
+        # Local Pi extension: web_fetch tool (OmniRoute web-fetch API).
+        jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
