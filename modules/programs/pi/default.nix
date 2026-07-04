@@ -8,11 +8,12 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    { config
-    , lib
-    , pkgs
-    , inputs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      inputs,
+      ...
     }:
     let
       cfg = config.jvf.programs.pi;
@@ -35,12 +36,10 @@ let
 
       mkPiPromptConfigs =
         attrset:
-        lib.mapAttrs'
-          (name: value: {
-            name = "${name}.md";
-            value = toPiPromptTemplate value;
-          })
-          attrset;
+        lib.mapAttrs' (name: value: {
+          name = "${name}.md";
+          value = toPiPromptTemplate value;
+        }) attrset;
 
       # Build pi agent config directory contents
       piAgentConfigs =
@@ -71,32 +70,35 @@ let
         })
         // (lib.optionalAttrs (cfg.models != { }) {
           "models.json" = cfg.models;
-        });
+        })
+        // (lib.optionalAttrs (cfg.mcps != { }) {
+          # Consumed by the pi-mcp-adapter extension. mcp.json precedence (low->high):
+          # ~/.config/mcp/mcp.json < ~/.pi/agent/mcp.json < .mcp.json < .pi/mcp.json.
+          "mcp.json".mcpServers = cfg.mcps;
+        })
+        // (lib.mapAttrs' (name: text: lib.nameValuePair "extensions/${name}" text) cfg.extensionFiles);
 
       piAgentDir = pkgs.linkFarm "pi-agent-config" (
-        lib.mapAttrsToList
-          (
-            fileName: fileValue:
-              let
-                filePath =
-                  if lib.isDerivation fileValue then
-                    fileValue
-                  else if builtins.isString fileValue then
-                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-                  else if builtins.isAttrs fileValue then
-                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
-                      (
-                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                      )
-                  else
-                    fileValue;
-              in
-              {
-                name = fileName;
-                path = filePath;
-              }
-          )
-          piAgentConfigs
+        lib.mapAttrsToList (
+          fileName: fileValue:
+          let
+            filePath =
+              if lib.isDerivation fileValue then
+                fileValue
+              else if builtins.isString fileValue then
+                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+              else if builtins.isAttrs fileValue then
+                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
+                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                )
+              else
+                fileValue;
+          in
+          {
+            name = fileName;
+            path = filePath;
+          }
+        ) piAgentConfigs
       );
 
       # Build the pi settings file that points to skills and prompts directories
@@ -171,6 +173,17 @@ let
             Installs happen during activation via a sentinel-tracked postInstall hook.
           '';
         };
+
+        extensionFiles = lib.mkOption {
+          type = lib.types.attrsOf lib.types.lines;
+          default = { };
+          description = ''
+            Local Pi extension source files (filename -> TS/JS source text),
+            materialized into ~/.pi/agent/extensions/<filename>. Unlike
+            `extensions` (which installs npm/git packages via `pi install`),
+            these are plain source files Pi auto-loads every session.
+          '';
+        };
       };
 
       imports = [
@@ -200,6 +213,8 @@ let
               "settings.json"
               "auth.json"
               ".nix-extensions.json"
+              # pi-mcp-adapter runtime metadata cache (direct-tool registration).
+              "mcp-cache.json"
             ];
             postInstall = ''
               # Ensure the skills and prompts subdirectories exist

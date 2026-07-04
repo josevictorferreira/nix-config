@@ -6,6 +6,182 @@ let
   nixosAspects = self.modules.nixos;
   darwinAspects = self.modules.darwin;
 
+  # web_search Pi tool backed by the OmniRoute Search API (POST /v1/search).
+  # Reads OMNIROUTE_API_KEY (exported from the sops omniroute_api_key secret).
+  # Cross-platform (pure fetch + process.env), so used by both nixos and darwin.
+  webSearchExtension = ''
+    import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+    import { Type } from "typebox";
+    import { StringEnum } from "@earendil-works/pi-ai";
+
+    const ENDPOINT = "https://omniroute.josevictor.me/v1/search";
+    const PROVIDERS = [
+      "serper-search",
+      "brave-search",
+      "perplexity-search",
+      "exa-search",
+      "tavily-search",
+      "google-pse-search",
+      "linkup-search",
+      "searchapi-search",
+      "searxng-search",
+    ] as const;
+
+    export default function (pi: ExtensionAPI) {
+      pi.registerTool({
+        name: "web_search",
+        label: "Web Search",
+        description:
+          "Search the live web (or news) via the OmniRoute Search API and " +
+          "return ranked results with titles, URLs and snippets. Use this to " +
+          "look up current information not in the model's training data.",
+        promptSnippet:
+          "web_search: search the live web/news for up-to-date information.",
+        promptGuidelines: [
+          "Use web_search when you need current or external information that " +
+            "may not be in your training data (recent events, docs, prices).",
+          "Prefer a focused query; set search_type to \"news\" for recent news.",
+        ],
+        parameters: Type.Object({
+          query: Type.String({
+            minLength: 1,
+            maxLength: 500,
+            description: "The search query (1-500 characters).",
+          }),
+          max_results: Type.Optional(
+            Type.Integer({
+              minimum: 1,
+              maximum: 20,
+              description: "Number of results to return (1-20, default 5).",
+            }),
+          ),
+          search_type: Type.Optional(
+            StringEnum(["web", "news"] as const, {
+              description: "Search category (default \"web\").",
+            }),
+          ),
+          provider: Type.Optional(
+            StringEnum(PROVIDERS, {
+              description:
+                "Optional search provider; omit to let OmniRoute auto-select.",
+            }),
+          ),
+        }),
+        async execute(_toolCallId, params, signal) {
+          const apiKey = process.env.OMNIROUTE_API_KEY;
+          if (!apiKey) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: "web_search error: OMNIROUTE_API_KEY is not set in the environment.",
+                },
+              ],
+              details: {},
+              isError: true,
+            };
+          }
+
+          const body: Record<string, unknown> = {
+            query: params.query,
+            max_results: params.max_results ?? 5,
+            search_type: params.search_type ?? "web",
+          };
+          if (params.provider) body.provider = params.provider;
+
+          const timeout = AbortSignal.timeout(60000);
+          const abort = signal
+            ? AbortSignal.any([signal, timeout])
+            : timeout;
+
+          let response: Response;
+          try {
+            response = await fetch(ENDPOINT, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + apiKey,
+              },
+              body: JSON.stringify(body),
+              signal: abort,
+            });
+          } catch (err) {
+            return {
+              content: [
+                { type: "text", text: "web_search request failed: " + String(err) },
+              ],
+              details: {},
+              isError: true,
+            };
+          }
+
+          if (!response.ok) {
+            const errText = await response.text().catch(() => "");
+            return {
+              content: [
+                {
+                  type: "text",
+                  text:
+                    "web_search HTTP " + response.status + ": " + errText,
+                },
+              ],
+              details: { status: response.status },
+              isError: true,
+            };
+          }
+
+          const data = (await response.json()) as {
+            provider: string;
+            query: string;
+            cached: boolean;
+            results: Array<{
+              title: string;
+              url: string;
+              display_url?: string;
+              snippet: string;
+              position: number;
+            }>;
+            usage: { queries_used: number; search_cost_usd: number };
+          };
+
+          const results = data.results ?? [];
+          const lines: string[] = [];
+          if (results.length === 0) {
+            lines.push("No results found for: " + data.query);
+          } else {
+            for (const r of results) {
+              lines.push(r.position + ". " + r.title);
+              lines.push("   " + (r.display_url ?? r.url));
+              if (r.snippet) lines.push("   " + r.snippet);
+              lines.push("");
+            }
+          }
+          lines.push(
+            "[provider: " +
+              data.provider +
+              ", cached: " +
+              data.cached +
+              ", queries_used: " +
+              data.usage.queries_used +
+              ", cost_usd: " +
+              data.usage.search_cost_usd +
+              "]",
+          );
+
+          return {
+            content: [{ type: "text", text: lines.join("\n") }],
+            details: {
+              provider: data.provider,
+              cached: data.cached,
+              usage: data.usage,
+              resultCount: results.length,
+            },
+          };
+        },
+      });
+    }
+  '';
+
   mkOptions =
     { config, lib, ... }:
     {
@@ -55,7 +231,42 @@ let
         jvf.aiTools.mcp.grafanaWork.enable = false;
 
         # Pi extensions (declarative install via sentinel postInstall)
-        jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
+        jvf.programs.pi.extensions = [
+          "npm:pi-commandcode-provider"
+          "npm:pi-mcp-adapter"
+        ];
+
+        # MCP servers glued into Pi via pi-mcp-adapter. codegraph is a
+        # Linux-only oh-my-openagent binary (absolute path required).
+        jvf.programs.pi.mcps = {
+          context7 = {
+            command = "npx";
+            args = [
+              "-y"
+              "@upstash/context7-mcp"
+            ];
+          };
+          codegraph = {
+            command = "/home/${cfg.username}/.omo/codegraph/bin/codegraph";
+            args = [
+              "serve"
+              "--mcp"
+            ];
+          };
+          grep_app = {
+            url = "https://mcp.grep.app";
+          };
+          lsp = {
+            command = "npx";
+            args = [
+              "-y"
+              "language-server-mcp"
+            ];
+          };
+        };
+
+        # Local Pi extension: web_search tool (OmniRoute Search API).
+        jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
@@ -112,7 +323,35 @@ let
         jvf.aiTools.mcp.grafanaWork.enable = false;
 
         # Pi extensions (declarative install via sentinel postInstall)
-        jvf.programs.pi.extensions = [ "npm:pi-commandcode-provider" ];
+        jvf.programs.pi.extensions = [
+          "npm:pi-commandcode-provider"
+          "npm:pi-mcp-adapter"
+        ];
+
+        # MCP servers glued into Pi via pi-mcp-adapter (codegraph is
+        # Linux-only, so it is omitted from the darwin block).
+        jvf.programs.pi.mcps = {
+          context7 = {
+            command = "npx";
+            args = [
+              "-y"
+              "@upstash/context7-mcp"
+            ];
+          };
+          grep_app = {
+            url = "https://mcp.grep.app";
+          };
+          lsp = {
+            command = "npx";
+            args = [
+              "-y"
+              "language-server-mcp"
+            ];
+          };
+        };
+
+        # Local Pi extension: web_search tool (OmniRoute Search API).
+        jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.theme = "tokyonight";
