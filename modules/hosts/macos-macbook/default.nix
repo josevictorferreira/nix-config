@@ -56,6 +56,7 @@ in
         system-nix-daemon
         system-security
         system-terminal-artifacts
+        system-terminal-apps
 
         # Roles (pull programs/services/system deps transitively)
         roles-base

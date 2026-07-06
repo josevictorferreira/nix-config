@@ -34,6 +34,7 @@ let
       ++ (with nixosAspects; [
         programs-alacritty
         programs-kitty
+        programs-ghostty
         programs-neovim
         programs-zsh
         programs-starship
@@ -101,6 +102,7 @@ let
       ++ (with darwinAspects; [
         programs-alacritty
         programs-kitty
+        programs-ghostty
         programs-neovim
         programs-zsh
         programs-starship
