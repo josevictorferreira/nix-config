@@ -295,11 +295,10 @@ let
 in
 {
   flake.modules.nixos.desktop-hyprland-theme-switcher =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       username = config.jvf.core.username;

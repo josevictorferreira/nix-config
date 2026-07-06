@@ -8,12 +8,11 @@ _:
 let
   mkConfig =
     { isDarwin }:
-    {
-      config,
-      lib,
-      pkgs,
-      inputs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , inputs
+    , ...
     }:
     let
       cfg = config.jvf.programs.pi;
@@ -36,10 +35,12 @@ let
 
       mkPiPromptConfigs =
         attrset:
-        lib.mapAttrs' (name: value: {
-          name = "${name}.md";
-          value = toPiPromptTemplate value;
-        }) attrset;
+        lib.mapAttrs'
+          (name: value: {
+            name = "${name}.md";
+            value = toPiPromptTemplate value;
+          })
+          attrset;
 
       # Build pi agent config directory contents
       piAgentConfigs =
@@ -79,26 +80,29 @@ let
         // (lib.mapAttrs' (name: text: lib.nameValuePair "extensions/${name}" text) cfg.extensionFiles);
 
       piAgentDir = pkgs.linkFarm "pi-agent-config" (
-        lib.mapAttrsToList (
-          fileName: fileValue:
-          let
-            filePath =
-              if lib.isDerivation fileValue then
-                fileValue
-              else if builtins.isString fileValue then
-                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
-              else if builtins.isAttrs fileValue then
-                pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" (
-                  inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
-                )
-              else
-                fileValue;
-          in
-          {
-            name = fileName;
-            path = filePath;
-          }
-        ) piAgentConfigs
+        lib.mapAttrsToList
+          (
+            fileName: fileValue:
+              let
+                filePath =
+                  if lib.isDerivation fileValue then
+                    fileValue
+                  else if builtins.isString fileValue then
+                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}" fileValue
+                  else if builtins.isAttrs fileValue then
+                    pkgs.writeText "pi-${builtins.replaceStrings [ "/" ] [ "-" ] fileName}"
+                      (
+                        inputs.lib.generators.toFileFormatStr (lib.last (lib.splitString "." fileName)) fileValue
+                      )
+                  else
+                    fileValue;
+              in
+              {
+                name = fileName;
+                path = filePath;
+              }
+          )
+          piAgentConfigs
       );
 
       # Build the pi settings file that points to skills and prompts directories

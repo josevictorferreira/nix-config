@@ -12,11 +12,10 @@ let
   k9sSkinFn = import ./../programs/k9s/_/skin.nix;
 
   terminalArtifactModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       # Heavier terminal body text (both themes) — Regular strokes look thin,

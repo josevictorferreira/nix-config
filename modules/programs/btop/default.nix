@@ -22,11 +22,10 @@ let
     theme[div_line]="#${colors.color8}"
   '';
   mkBtopOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       defaultPackage = "btop";
@@ -138,11 +137,10 @@ let
     };
 
   btopModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.btop;
@@ -158,9 +156,11 @@ let
       toIni =
         attrs:
         lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
-          ) attrs
+          lib.mapAttrsToList
+            (
+              n: v: "${n}=${if lib.isBool v then (if v then "true" else "false") else toString v}"
+            )
+            attrs
         );
       btopConfigDir = pkgs.symlinkJoin {
         name = "btop-config";

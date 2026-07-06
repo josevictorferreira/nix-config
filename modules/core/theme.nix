@@ -172,11 +172,10 @@ let
 in
 {
   flake.modules.nixos.core-theme =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.theme;
@@ -226,13 +225,15 @@ in
       };
 
       config.jvf.home.users.${username}.items = lib.mkMerge (
-        lib.mapAttrsToList (profileName: _: {
-          "${cfg.paths.artifactBase}/${profileName}" = {
-            kind = "dir";
-            mode = "copy";
-            source = mkProfileDir profileName;
-          };
-        }) cfg.profiles
+        lib.mapAttrsToList
+          (profileName: _: {
+            "${cfg.paths.artifactBase}/${profileName}" = {
+              kind = "dir";
+              mode = "copy";
+              source = mkProfileDir profileName;
+            };
+          })
+          cfg.profiles
       );
     };
 
