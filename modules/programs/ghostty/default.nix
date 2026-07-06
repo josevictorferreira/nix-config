@@ -6,11 +6,10 @@
 _:
 let
   mkGhosttyOptions =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     {
       options.jvf.programs.ghostty = {
@@ -20,7 +19,15 @@ let
           description = "Username for which to install the configuration";
         };
 
-        package = lib.mkPackageOption pkgs "ghostty-bin" { };
+        # ghostty-bin (Darwin DMG mirror) is darwin-only; the source-built
+        # `ghostty` supports Linux. Pick per platform so the NixOS user-env
+        # doesn't try to evaluate the unsupported binary distribution.
+        package = lib.mkOption {
+          type = lib.types.package;
+          default = if pkgs.stdenv.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
+          defaultText = lib.literalExpression "if pkgs.stdenv.isDarwin then pkgs.ghostty-bin else pkgs.ghostty";
+          description = "The ghostty package to use.";
+        };
 
         settings = lib.mkOption {
           type = lib.types.attrs;
@@ -40,21 +47,22 @@ let
   toConfigFormat =
     lib: settings:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        key: value:
-        if builtins.isBool value then
-          "${key} = ${if value then "true" else "false"}"
-        else
-          "${key} = ${toString value}"
-      ) settings
+      lib.mapAttrsToList
+        (
+          key: value:
+          if builtins.isBool value then
+            "${key} = ${if value then "true" else "false"}"
+          else
+            "${key} = ${toString value}"
+        )
+        settings
     );
 
   ghosttyModule =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       cfg = config.jvf.programs.ghostty;
@@ -132,10 +140,12 @@ let
       # Pre-render palette lines as "palette = N=#hex" because ghostty's
       # config schema uses key=`palette` and value=`N=#hex` (one line per index).
       paletteLines = lib.concatStringsSep "\n" (
-        map (
-          i:
-          "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
-        ) colorIndices
+        map
+          (
+            i:
+            "palette = ${toString i}=#${lib.getAttr "color${toString i}" config.jvf.theme.colors}"
+          )
+          colorIndices
       );
 
       themeOverrides = {

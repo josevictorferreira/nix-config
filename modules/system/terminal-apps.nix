@@ -12,11 +12,10 @@ let
   # We don't use jvf.core.username as default to keep this file standalone,
   # but we read primaryUser from system.primaryUser which the host sets.
   mkTerminalApps =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
+    { config
+    , lib
+    , pkgs
+    , ...
     }:
     let
       # Pull the package from each program module if exposed; otherwise fall
