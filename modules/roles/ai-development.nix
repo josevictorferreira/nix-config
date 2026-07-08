@@ -389,6 +389,7 @@ let
 
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
+        jvf.aiTools.mcp.jira.enable = true;
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
@@ -482,6 +483,7 @@ let
 
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
+        jvf.aiTools.mcp.jira.enable = true;
         jvf.aiTools.mcp.grafana.enable = false;
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
