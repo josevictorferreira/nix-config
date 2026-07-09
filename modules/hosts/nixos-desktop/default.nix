@@ -83,6 +83,7 @@ in
         hardware-bluetooth
         hardware-logitech
         hardware-openrgb
+        hardware-moonlander
 
         # Roles (pull programs/services/system deps transitively)
         roles-base

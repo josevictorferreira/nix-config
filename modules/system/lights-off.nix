@@ -9,6 +9,7 @@ let
       # Absolute store path so the passwordless-sudo rule below matches exactly
       # (a bare `liquidctl` resolves via a /run symlink and would not match).
       liquidctl = "${pkgs.liquidctl}/bin/liquidctl";
+      kontroll = "${pkgs.kontroll}/bin/kontroll";
 
       lights-off = pkgs.writeShellScriptBin "lights-off" ''
         # RGB (RAM, motherboard, Kraken ring): apply the committed all-dark
@@ -17,6 +18,15 @@ let
         # from ~/.config/OpenRGB (deployed by jvf.home below).
         if command -v openrgb >/dev/null 2>&1; then
             openrgb --profile lights-off > /dev/null 2>&1
+        fi
+
+        # Moonlander keyboard: OpenRGB can't reach it (stock Oryx firmware),
+        # so drive its LEDs through keymapp's API via kontroll. keymapp must be
+        # running with its API enabled (autostarted in the Hyprland session).
+        # connect-any is idempotent; --sustain 0 holds black until next change.
+        if [ -x ${kontroll} ]; then
+            ${kontroll} connect-any > /dev/null 2>&1
+            ${kontroll} set-rgb-all --color 000000 --sustain 0 > /dev/null 2>&1
         fi
 
         # Kraken LCD screen: not an RGB zone, so OpenRGB can't reach it.

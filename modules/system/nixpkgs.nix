@@ -25,6 +25,7 @@ let
             "chromium"
             "code-cursor"
             "cursor-cli"
+            "keymapp"
           ];
           description = "List of unfree packages to allow by name.";
         };
