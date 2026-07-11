@@ -4,7 +4,7 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.14"
-        "oh-my-openagent@4.16.2"
+        "oh-my-openagent@4.17.0"
         "@vectorize-io/opencode-hindsight"
       ];
     };
@@ -21,8 +21,6 @@ _: {
         radagast = "omniroute/radagast";
         saruman = "omniroute/saruman";
         legolas = "omniroute/legolas";
-        # deepseekPro = "omniroute/deepseek-v4-pro";
-        # deepseek = "omniroute/deepseek-v4-flash";
         minimax = "omniroute/minimax-m3";
         mimoPro = "omniroute/mimo-v2.5-pro";
         mimo = "omniroute/mimo-v2.5";
