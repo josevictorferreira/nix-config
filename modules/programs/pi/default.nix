@@ -192,6 +192,10 @@ let
       config = {
         jvf.wrappers.users.${cfg.username}.programs.pi = {
           packages = [ pkgs.pi-coding-agent ];
+          command = ''
+            export OMNIROUTE_API_KEY="$(cat ${config.sops.secrets.omniroute_api_key.path})"
+            exec ${pkgs.pi-coding-agent}/bin/pi "$@"
+          '';
         };
 
         jvf.home.users.${cfg.username}.items = {
