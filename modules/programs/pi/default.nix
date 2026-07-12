@@ -100,12 +100,16 @@ let
           piAgentConfigs
       );
 
-      # Build the pi settings file that points to skills and prompts directories
       piSettings = {
         skills = [ "skills" ];
         prompts = [ "prompts" ];
       }
       // cfg.settings;
+
+      piWrapperScript = pkgs.writeShellScriptBin "pi" ''
+        export OMNIROUTE_API_KEY="$(cat ${config.sops.secrets.omniroute_api_key.path})"
+        exec ${pkgs.pi-coding-agent}/bin/pi "$@"
+      '';
     in
     {
       options.jvf.programs.pi = {
@@ -192,10 +196,7 @@ let
       config = {
         jvf.wrappers.users.${cfg.username}.programs.pi = {
           packages = [ pkgs.pi-coding-agent ];
-          command = ''
-            export OMNIROUTE_API_KEY="$(cat ${config.sops.secrets.omniroute_api_key.path})"
-            exec ${pkgs.pi-coding-agent}/bin/pi "$@"
-          '';
+          command = "${piWrapperScript}/bin/pi";
         };
 
         jvf.home.users.${cfg.username}.items = {
