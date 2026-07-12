@@ -88,7 +88,7 @@ let
         jvf.programs.claudecode.baseRules = "# CLAUDE.md\n\n${cfg.content}";
         jvf.programs.gemini.baseRules = "# GEMINI.md\n\n${cfg.content}";
         jvf.programs.command-code.baseRules = "# AGENTS.md\n\n${cfg.content}";
-        jvf.programs.pi.baseRules = cfg.content;
+        jvf.programs.pi.baseRules = "# AGENTS.md\n\n${cfg.content}";
       };
     };
 in

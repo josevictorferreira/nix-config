@@ -57,14 +57,9 @@ let
           # tools like `explore`/`glob` produce client-side `ModelMessage`
           # validation errors before the request even leaves pi. The fan-out
           # via jvf.aiTools.baseRule.content is appended below.
-          "AGENTS.md" =
-            ""
-            + lib.optionalString (cfg.baseRules != "") ''
+          "AGENTS.md" = lib.optionalString (cfg.baseRules != "") cfg.baseRules;
+          "SYSTEM.md" = lib.optionalString (cfg.baseRules != "") cfg.baseRules;
 
-              ## Base Rules
-
-              ${cfg.baseRules}
-            '';
         }
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;
