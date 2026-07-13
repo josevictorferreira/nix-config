@@ -65,6 +65,11 @@ let
             default = [ "aarch64-linux" ];
             description = "Systems to emulate via binfmt (QEMU), enabling cross-building images (e.g. arm64).";
           };
+          preferStaticEmulators = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Use statically-linked QEMU emulators and set the binfmt 'F' (fix-binary) flag, so emulation works inside chroots/containers/build sandboxes.";
+          };
         };
 
         firmware = {
@@ -149,6 +154,7 @@ let
           };
 
           binfmt.emulatedSystems = cfg.binfmt.emulatedSystems;
+          binfmt.preferStaticEmulators = cfg.binfmt.preferStaticEmulators;
 
           binfmt.registrations = lib.mkIf cfg.binfmt.enable {
             appimage = {
