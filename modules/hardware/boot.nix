@@ -60,6 +60,11 @@ let
             default = true;
             description = "Enable binfmt for appimage support.";
           };
+          emulatedSystems = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ "aarch64-linux" ];
+            description = "Systems to emulate via binfmt (QEMU), enabling cross-building images (e.g. arm64).";
+          };
         };
 
         firmware = {
@@ -142,6 +147,8 @@ let
             useTmpfs = false;
             tmpfsSize = "30%";
           };
+
+          binfmt.emulatedSystems = cfg.binfmt.emulatedSystems;
 
           binfmt.registrations = lib.mkIf cfg.binfmt.enable {
             appimage = {
