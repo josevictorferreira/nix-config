@@ -105,11 +105,6 @@ let
         prompts = [ "prompts" ];
       }
       // cfg.settings;
-
-      piWrapperScript = pkgs.writeShellScriptBin "pi" ''
-        export OMNIROUTE_API_KEY="$(cat ${config.sops.secrets.omniroute_api_key.path})"
-        exec ${pkgs.pi-coding-agent}/bin/pi "$@"
-      '';
     in
     {
       options.jvf.programs.pi = {
@@ -194,11 +189,11 @@ let
       ];
 
       config = {
-        jvf.wrappers.users.${cfg.username}.programs.pi = {
-          packages = [ pkgs.pi-coding-agent ];
-          command = "${piWrapperScript}/bin/pi";
-        };
-
+        # pi is installed as the plain package (via roles/ai-development.nix),
+        # giving a single canonical `pi` on the profile PATH. No env-injecting
+        # wrapper: the OmniRoute key is resolved by pi itself at runtime (see
+        # _/provider.nix), so authentication no longer depends on how pi is
+        # launched.
         jvf.home.users.${cfg.username}.items = {
           ".pi/agent" = {
             kind = "dir";

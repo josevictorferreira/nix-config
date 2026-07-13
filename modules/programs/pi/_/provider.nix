@@ -61,8 +61,16 @@ let
       };
 
   omniroute = config.jvf.programs.opencode.settings.provider."omniroute" or null;
-  piProviders = lib.optionalAttrs (omniroute != null) {
-    "omniroute" = translateProvider "omniroute" omniroute;
+  translatedOmniroute = if omniroute != null then translateProvider "omniroute" omniroute else null;
+  piProviders = lib.optionalAttrs (translatedOmniroute != null) {
+    # Deliver the key by having pi read the sops secret at runtime. A "!cmd"
+    # apiKey is executed by pi (core/resolve-config-value.js) and its stdout
+    # used as the key -- independent of process env, PATH order, and launch
+    # context, which is what made env-var delivery flaky (intermittent 401s).
+    # The path (not the key) is all that lands in the nix store.
+    "omniroute" = translatedOmniroute // {
+      apiKey = "!cat ${config.sops.secrets.omniroute_api_key.path}";
+    };
   };
 in
 {
