@@ -46,6 +46,9 @@
           "kimi-k2.7-code" = {
             name = "Kimi K2.7 Code (OmniRoute)";
           };
+          "kimi-k3" = {
+            name = "Kimi K3 (OmniRoute)";
+          };
           "kimi-coding" = {
             name = "Kimi Coding (OmniRoute)";
           };

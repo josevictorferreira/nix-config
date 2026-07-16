@@ -4,14 +4,14 @@ _: {
     jvf.programs.opencode.settings = {
       plugin = [
         "@tarquinen/opencode-dcp@3.1.14"
-        "oh-my-openagent@4.17.1"
+        "oh-my-openagent@4.18.2"
         "@vectorize-io/opencode-hindsight"
       ];
     };
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "omniroute/kimi-k2.7-code";
+        kimi = "omniroute/kimi-k3";
         kimiCoder = "omniroute/kimi-coding";
         glm = "omniroute/glm-5.2";
         glmThinking = "omniroute/glm-5.2-max";
