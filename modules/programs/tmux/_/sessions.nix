@@ -43,10 +43,10 @@
     windows = [
       {
         window_name = "Monitors";
-        layout = "tiled";
+        layout = "main-vertical";
         panes = [
-          "btop"
           "k9s"
+          "btop"
         ];
       }
     ];
