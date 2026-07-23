@@ -159,7 +159,9 @@ in
 
           # Open port for OpenCode Web
           jvf.system.firewall.allowedTCPPorts = [
+            11434
             8000
+            8095
             8001
             5000
             8188
