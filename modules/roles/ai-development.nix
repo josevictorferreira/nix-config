@@ -372,6 +372,7 @@ let
       ]
       ++ (with nixosAspects; [
         programs-ck-search
+        programs-lsp-mcp
         programs-opencode
         programs-claudecode
         programs-rtk
@@ -466,6 +467,7 @@ let
       ]
       ++ (with darwinAspects; [
         programs-ck-search
+        programs-lsp-mcp
         programs-opencode
         programs-claudecode
         programs-rtk

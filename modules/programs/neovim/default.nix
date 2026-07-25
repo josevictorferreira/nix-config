@@ -44,6 +44,7 @@ let
         pkgs.rust-analyzer
         pkgs.bash-language-server
         pkgs.lua-language-server
+        pkgs.luau-lsp
         pkgs.vscode-langservers-extracted
         pkgs.dockerfile-language-server
         pkgs.docker-compose-language-service

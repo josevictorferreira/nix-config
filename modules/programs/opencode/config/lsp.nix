@@ -33,6 +33,15 @@
       };
     };
 
+    # Luau (.luau only -- .lua stays with emmylua-ls above).
+    luau-lsp = {
+      command = [
+        (lib.getExe pkgs.luau-lsp)
+        "lsp"
+      ];
+      extensions = [ ".luau" ];
+    };
+
     pyright = {
       disabled = true;
     };
