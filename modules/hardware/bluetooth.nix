@@ -62,7 +62,10 @@ in
           settings.General = {
             Enable = lib.mkDefault (lib.concatStringsSep "," cfg.profiles);
             Experimental = lib.mkDefault cfg.enableExperimental;
-            ControllerMode = lib.mkDefault "bredr";
+            ControllerMode = lib.mkDefault "dual";
+            # Spoof Apple's Bluetooth vendor ID (0x004C) so AirPods expose the
+            # extended AACP feature set to librepods (see hardware-airpods).
+            DeviceID = lib.mkDefault "bluetooth:004C:0000:0000";
           };
         };
 

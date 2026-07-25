@@ -81,6 +81,7 @@ in
         hardware-btrfs
         hardware-amd-gpu
         hardware-bluetooth
+        hardware-airpods
         hardware-logitech
         hardware-openrgb
         hardware-moonlander
