@@ -436,7 +436,6 @@ let
         jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
-        jvf.programs.claudecode.theme = "tokyonight";
         jvf.programs.claudecode.settings = {
           permissions = {
             defaultMode = "bypassPermissions";
@@ -524,7 +523,6 @@ let
         jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
-        jvf.programs.claudecode.theme = "tokyonight";
         jvf.programs.claudecode.settings = {
           permissions = {
             defaultMode = "bypassPermissions";

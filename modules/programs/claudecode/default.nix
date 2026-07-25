@@ -238,6 +238,32 @@ let
         }
       '';
 
+      # Statusline script rendering oh-my-claudecode's HUD (wired via settings.statusLine)
+      omcHudBin = pkgs.writeShellScriptBin "omc-hud" ''
+        set -euo pipefail
+
+        # Suppress Node.js deprecation warnings
+        export NODE_NO_WARNINGS=1
+
+        HUD_ENTRY="$HOME/.npm-global/lib/node_modules/oh-my-claude-sisyphus/dist/hud/index.js"
+
+        # Stay silent until `omc` has installed the npm package
+        if [ ! -f "$HUD_ENTRY" ]; then
+          exit 0
+        fi
+
+        ${
+          if (!isDarwin) then
+            ''
+              exec "${nodeFHS}/bin/node-fhs" node "$HUD_ENTRY"
+            ''
+          else
+            ''
+              exec ${pkgs.nodejs_22}/bin/node "$HUD_ENTRY"
+            ''
+        }
+      '';
+
       # Build .claude config directory as a derivation for jvf.home
       claudeConfigs =
         (inputs.lib.aiTools.mkClaudecodeMdConfigs "agents" cfg.agents)
@@ -291,6 +317,11 @@ let
 
         # Inject plugins and MCP servers into settings automatically
         jvf.programs.claudecode.settings = {
+          statusLine = lib.mkDefault {
+            type = "command";
+            command = "${omcHudBin}/bin/omc-hud";
+            padding = 0;
+          };
           enabledPlugins = lib.mkDefault {
             "hindsight-memory@hindsight" = true;
             "oh-my-claudecode@omc" = true;
