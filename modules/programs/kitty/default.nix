@@ -92,6 +92,22 @@ let
         fi
       '';
 
+      # A terminal cannot receive an image on its input stream, so pasting a
+      # screenshot into a shell/editor is impossible. Instead dump the clipboard
+      # image to a file and type its path into the focused window. Wayland-only.
+      clipImagePaste = pkgs.writeShellScriptBin "kitty-clip-image-paste" ''
+        set -euo pipefail
+
+        f="''${XDG_RUNTIME_DIR:-/tmp}/kitty-clip-$(date +%s%N).png"
+        if ${pkgs.wl-clipboard}/bin/wl-paste -n -t image/png > "$f" 2>/dev/null && [ -s "$f" ]; then
+          # --stdin sends the text verbatim; argv would be parsed for Python escapes.
+          printf '%s' "$f" | ${cfg.package}/bin/kitten @ send-text --stdin
+        else
+          rm -f "$f"
+          ${pkgs.libnotify}/bin/notify-send -u low "kitty" "No image on the clipboard"
+        fi
+      '';
+
       defaultSettings = {
         bold_font = "JetBrainsMonoNL Nerd Font Bold";
         italic_font = "JetBrainsMonoNL Nerd Font Italic";
@@ -116,6 +132,13 @@ let
         cursor_trail_start_threshold = 4;
         allow_remote_control = "socket-only";
         listen_on = "unix:\${XDG_RUNTIME_DIR}/jvf-kitty-remote";
+      }
+      # --allow-remote-control is required: launch --type=background goes through
+      # run_background_process(), which only exports KITTY_LISTEN_ON (as an fd:
+      # channel) when it is set. Note toConfigFormat is an attrset, so only one
+      # `map` binding can be expressed here.
+      // lib.optionalAttrs pkgs.stdenv.isLinux {
+        map = "ctrl+alt+v launch --type=background --allow-remote-control ${clipImagePaste}/bin/kitty-clip-image-paste";
       };
 
       colorIndices = lib.genList lib.id 16;

@@ -120,7 +120,7 @@ let
                 fi
                 # Restore operational lines from original config (set by nix, not in profile)
                 if [[ -f "$kitty_tmp" ]]; then
-                  grep -E '^(shell|allow_remote_control|listen_on) ' "$kitty_tmp" >> "$kitty_dst" || true
+                  grep -E '^(shell|allow_remote_control|listen_on|map) ' "$kitty_tmp" >> "$kitty_dst" || true
                 fi
                 rm -f "$kitty_tmp"
               fi
