@@ -62,7 +62,10 @@ in
           settings.General = {
             Enable = lib.mkDefault (lib.concatStringsSep "," cfg.profiles);
             Experimental = lib.mkDefault cfg.enableExperimental;
-            ControllerMode = lib.mkDefault "dual";
+            # Keep BR/EDR-only: AirPods audio (A2DP/AVRCP/HFP) is all Classic.
+            # "dual" + Experimental makes BlueZ advertise the Ranging Profile it
+            # cannot service, and the AirPods reconnect-loop every ~40s.
+            ControllerMode = lib.mkDefault "bredr";
             # Spoof Apple's Bluetooth vendor ID (0x004C) so AirPods expose the
             # extended AACP feature set to librepods (see hardware-airpods).
             DeviceID = lib.mkDefault "bluetooth:004C:0000:0000";
