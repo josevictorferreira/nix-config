@@ -130,7 +130,6 @@ _:
           pkgs.eog
           pkgs.gnome-system-monitor
           pkgs.file-roller
-          pkgs.gtk-engine-murrine
           pkgs.inxi
           pkgs.networkmanagerapplet
           pkgs.nwg-look
