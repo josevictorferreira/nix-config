@@ -72,6 +72,12 @@ in
           };
         };
 
+        # linux-zen compiles btusb with enable_autosuspend=Y (mainline defaults
+        # to N). The RTL8761BU dongle stops answering HCI_Create_Connection
+        # (0x0405) once suspended, so connects abort locally with
+        # br-connection-aborted-by-local and btusb USB-resets the adapter.
+        boot.extraModprobeConfig = "options btusb enable_autosuspend=0";
+
         services.blueman.enable = lib.mkDefault true;
       };
     };
