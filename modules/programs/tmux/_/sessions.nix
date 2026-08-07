@@ -149,19 +149,49 @@
         layout = "tiled";
         panes = [
           "clear"
+        ];
+      }
+      {
+        window_name = "Glyph";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/glyph";
+        panes = [
           "clear"
+        ];
+      }
+      {
+        window_name = "Axion";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/axion";
+        panes = [
+          "clear"
+        ];
+      }
+      {
+        window_name = "Mordren";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/mordren";
+        panes = [
+          "clear"
+        ];
+      }
+      {
+        window_name = "Dramaturge";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/dramaturge";
+        panes = [
           "clear"
         ];
       }
     ];
   };
 
-  personal-finance = {
-    session_name = "personal-finance";
-    start_directory = "$HOME/Workspace/personal-finance/dashboard";
+  wealtho = {
+    session_name = "wealtho";
+    start_directory = "$HOME/Workspace/wealtho";
     windows = [
       {
-        window_name = "Personal Finance";
+        window_name = "Wealtho";
         layout = "tiled";
         panes = [
           "clear"

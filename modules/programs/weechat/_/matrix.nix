@@ -70,9 +70,16 @@ let
     echo "/mute /secure set ${matrixSecureUsernameName} $matrixUser"
     echo "/mute /secure set ${matrixSecurePasswordName} $matrixPassword"
 
+    # NOTE: matrix-rust.conf must NOT contain a [server] section for homelab-matrix.
+    # /matrix server add has no duplicate guard: MatrixServer::new calls
+    # new_string_option(...).expect(...), which panics and aborts WeeChat if the
+    # option already exists (i.e. was loaded from the config file).
     echo "/matrix server add homelab-matrix $matrixUrl"
-    echo '/set matrix-rust.server.homelab-matrix.username \''${sec.data.${matrixSecureUsernameName}}'
-    echo '/set matrix-rust.server.homelab-matrix.password \''${sec.data.${matrixSecurePasswordName}}'
+    # No backslash before the sec.data reference: /exec -oc does not evaluate
+    # dollar-brace expressions, so a backslash is stored verbatim and the plugin
+    # ends up logging in as "\<username>".
+    echo '/set matrix-rust.server.homelab-matrix.username ''${sec.data.${matrixSecureUsernameName}}'
+    echo '/set matrix-rust.server.homelab-matrix.password ''${sec.data.${matrixSecurePasswordName}}'
     echo "/set matrix-rust.server.homelab-matrix.autoconnect on"
     echo "/matrix connect homelab-matrix"
   '';

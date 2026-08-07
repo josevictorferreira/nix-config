@@ -23,6 +23,13 @@
       "header": "Discord"
     },
     {
+      "name": "slack",
+      "order": 55,
+      "prefix": "  ",
+      "patterns": ["(SL)"],
+      "header": "Slack"
+    },
+    {
       "name": "scripts",
       "order": 70,
       "prefix": "",
@@ -37,8 +44,9 @@
     {
       "name": "matrix",
       "order": 30,
-      "prefix": "",
-      "patterns": ["matrix."]
+      "prefix": "  ",
+      "patterns": ["matrix."],
+      "header": "Matrix"
     },
     {
       "name": "relay",

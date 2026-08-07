@@ -435,8 +435,9 @@ class RealWeeChatAdapter(WeeChatAdapter):
         return False
 
     def config_get_plugin(self, option: str) -> str:
-        ptr = weechat.config_get_plugin(option)
-        return weechat.config_string(ptr) if ptr else ""
+        # config_get_plugin returns the value as a string, not an option pointer:
+        # passing it through config_string() always yields "".
+        return weechat.config_get_plugin(option) or ""
 
     def buffer_get_string(self, buffer: str, property: str) -> str:
         return weechat.buffer_get_string(buffer, property) or ""
@@ -535,7 +536,7 @@ def categorize_buffer(buffer_ptr: str, config: Dict[str, Any]) -> None:
     """
     adapter = get_adapter()
 
-    if adapter.buffer_get_string(buffer_ptr, "local_variables.bufcat_header") == "1":
+    if adapter.buffer_get_string(buffer_ptr, "localvar_bufcat_header") == "1":
         return
 
     # Get buffer name (fallback to full_name)
