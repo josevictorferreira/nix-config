@@ -1,16 +1,31 @@
-www.github.com/JaKooLit
+Originally from www.github.com/JaKooLit — Hyprland-Dots v2.2.2, since migrated
+from hyprlang to the Lua configuration introduced in Hyprland 0.55.
 
-Hyprland-Dots v2.2.2
+1.) These files are managed by Nix. They are copied into ~/.config/hypr from
+    modules/desktop/hyprland/assets/hypr in the nix config repo, so editing
+    them in place only lasts until the next rebuild. Edit the repo instead.
 
-1.) Suggest not to rename any files in this folder. As this is connected and being sourced from hyprland.conf in ~/.config/hypr
+2.) Every file here is a Lua module loaded by ../hyprland.lua via require().
+    Each require() is an isolated error scope: a syntax error in one file does
+    not stop the others from loading. Emergency binds (SUPER+Q/R/M) remain
+    available if hyprland.lua itself fails.
 
-2.) This folder, along with UserScripts folder will NOT be touch when running upgrade.sh
+3.) Do not rename these files without also updating the require() list in
+    ../hyprland.lua, and the scripts that read them by name:
+      - ../UserScripts/QuickEdit.sh      (menu of files to edit)
+      - ../scripts/SwitchKeyboardLayout.sh (greps kb_layout from user-settings.lua)
 
-3.) However, if hyprland has a big change in settings, i.e., blur section is moved into another group, you should managed the change.
+4.) Always check a change before rebuilding:
+      Hyprland --verify-config -c ~/.config/hypr/hyprland.lua
+    This validates far more than syntax: unknown option keys, wrong value
+    types, invalid keysyms, and bad dispatcher arguments are all reported.
+    Caveat: bind option tables ({ locked = true }) are not validated, so a
+    typo'd option name is silently ignored.
 
-4.) Guidance on the keybinds. Suggest NOT to assign a keybind which I set on the default Keybinds. Else will conflict. Once Hyprland decided to have a global keybinds, then I will adjust.
+5.) Guidance on keybinds: avoid assigning a keybind that already exists in
+    configs/keybinds.lua, else the two will conflict. Prefer adding
+    { description = "..." } to new binds — `hyprctl binds` exposes it and
+    ../scripts/KeyBinds.sh renders it.
 
-5.) If you think that the default keybinds SHOULD be adjusted, open an issue on my github page and present me a valid argument. Like conflicting to GLOBAL keybinds, etc etc etc.
-
-
-I will update the Hyprland-Dots wiki for guidance. Make sure to check out changelogs as well
+6.) Colours are not defined here. ../wallust/colors.lua is generated from
+    config.jvf.theme.colors and swapped at runtime by jvf-theme-switch.

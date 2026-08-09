@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 layout_file="$HOME/.cache/kb_layout"
-settings_file="$HOME/.config/hypr/UserConfigs/UserSettings.conf"
+# Lua config (Hyprland >= 0.55): the line reads `kb_layout = "us",`, so the
+# parsing below also strips quotes and the trailing comma.
+settings_file="$HOME/.config/hypr/UserConfigs/user-settings.lua"
 notif_icon="$HOME/.config/swaync/images/bell.png"
 
 # Refined ignore list with patterns or specific device names
@@ -16,7 +18,7 @@ ignore_patterns=(
 # Create layout file with default layout if it does not exist
 if [ ! -f "$layout_file" ]; then
   echo "Creating layout file..."
-  default_layout=$(grep 'kb_layout = ' "$settings_file" | cut -d '=' -f 2 | tr -d '[:space:]' | cut -d ',' -f 1 2>/dev/null)
+  default_layout=$(grep 'kb_layout = ' "$settings_file" | cut -d '=' -f 2 | tr -d '[:space:]"' | cut -d ',' -f 1 2>/dev/null)
   default_layout=${default_layout:-"us"} # Default to 'us' layout
   echo "$default_layout" > "$layout_file"
   echo "Default layout set to $default_layout"
@@ -29,7 +31,7 @@ echo "Current layout: $current_layout"
 if [ -f "$settings_file" ]; then
   kb_layout_line=$(grep 'kb_layout = ' "$settings_file" | cut -d '=' -f 2)
   # Remove leading and trailing spaces around each layout
-  kb_layout_line=$(echo "$kb_layout_line" | tr -d '[:space:]')
+  kb_layout_line=$(echo "$kb_layout_line" | tr -d '[:space:]"' | sed 's/,$//')
   IFS=',' read -r -a layout_mapping <<< "$kb_layout_line"
 else
   echo "Settings file not found!"

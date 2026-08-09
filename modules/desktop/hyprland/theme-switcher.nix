@@ -86,6 +86,9 @@ let
               }
 
               # Deploy each artifact to its app config path
+              # Hyprland reads colors.lua (Lua config, >= 0.55); hyprlock still
+              # sources the hyprlang variant. Both must follow the theme.
+              deploy_artifacts "$profile_dir/hypr/colors.lua" "$HOME/.config/hypr/wallust/colors.lua"
               deploy_artifacts "$profile_dir/hypr/wallust-hyprland.conf" "$HOME/.config/hypr/wallust/wallust-hyprland.conf"
               deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
               deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
