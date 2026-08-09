@@ -129,6 +129,83 @@
           };
         };
       };
+      # Velox is the Rust rewrite of OmniRoute: same OpenAI surface, static API
+      # keys only. Models below are the OmniRoute substitutes that were verified
+      # to answer a live request. OmniRoute-only models with no Velox equivalent
+      # (gpt-5.5, kimi-coding, kimi-highspeed, kimi-k2.6-thinking, glm-5,
+      # glm-4.7, gandalf, radagast, saruman, sauron) are OAuth-backed upstreams,
+      # which Velox does not support, so they stay on OmniRoute.
+      "velox" = {
+        npm = "@ai-sdk/openai-compatible";
+        id = "velox";
+        name = "Velox";
+        options = {
+          baseURL = "https://velox.josevictor.me/v1";
+          apiKey = "{env:VELOX_API_KEY}";
+        };
+        models = {
+          "mimo-v2-5-pro" = {
+            name = "Mimo V2.5 Pro (Velox)";
+          };
+          "mimo-v2-5" = {
+            name = "Mimo V2.5 (Velox)";
+          };
+          "kimi-k2-5" = {
+            name = "Kimi K2.5 (Velox)";
+          };
+          "kimi-k2-6" = {
+            name = "Kimi K2.6 (Velox)";
+          };
+          "kimi-k2-7-code" = {
+            name = "Kimi K2.7 Code (Velox)";
+          };
+          # The kimi-k3 combo leads with a dead credential, and an upstream 401
+          # is terminal in Velox, so address the working target directly.
+          "kimi-k3-openrouter" = {
+            name = "Kimi K3 (Velox)";
+          };
+          "deepseek-v4-flash" = {
+            name = "DeepSeek V4 Flash (Velox)";
+          };
+          "deepseek-v4-pro" = {
+            name = "DeepSeek V4 Pro (Velox)";
+          };
+          "glm-5-2" = {
+            name = "GLM-5.2 (Velox)";
+          };
+          "glm-5-1" = {
+            name = "GLM-5.1 (Velox)";
+          };
+          "glm-5-1-thinking" = {
+            name = "GLM-5.1 Thinking (Velox)";
+          };
+          "minimax-m3" = {
+            name = "MiniMax M3 (Velox)";
+          };
+          "minimax-m2-7" = {
+            name = "MiniMax M2.7 (Velox)";
+          };
+          "minimax-m2-5" = {
+            name = "MiniMax M2.5 (Velox)";
+          };
+          "qwen3-6-plus" = {
+            name = "Qwen 3.6 Plus (Velox)";
+          };
+          # Same dead-credential-first situation as kimi-k3.
+          "qwen3-7-max-ocgo" = {
+            name = "Qwen 3.7 Max (Velox)";
+          };
+          "haldir" = {
+            name = "Haldir (Velox)";
+          };
+          "pippin" = {
+            name = "Pippin (Velox)";
+          };
+          "samwise" = {
+            name = "Samwise (Velox)";
+          };
+        };
+      };
     };
   };
 }

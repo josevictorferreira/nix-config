@@ -37,6 +37,7 @@ let
             hugging_face_api_key = true;
             huggingface_api_key = true;
             omniroute_api_key = true;
+            velox_api_key = true;
             nvidia_api_key = true;
             command_code_api_key = true;
             civitai_api_key = true;
@@ -70,6 +71,7 @@ let
             hugging_face_api_key = true;
             huggingface_api_key = true;
             omniroute_api_key = true;
+            velox_api_key = true;
             nvidia_api_key = true;
             command_code_api_key = true;
             civitai_api_key = true;
