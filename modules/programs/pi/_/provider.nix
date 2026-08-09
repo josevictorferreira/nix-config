@@ -60,18 +60,34 @@ let
         models = lib.mapAttrsToList translateModel (provider.models or { });
       };
 
-  omniroute = config.jvf.programs.opencode.settings.provider."omniroute" or null;
-  translatedOmniroute = if omniroute != null then translateProvider "omniroute" omniroute else null;
-  piProviders = lib.optionalAttrs (translatedOmniroute != null) {
-    # Deliver the key by having pi read the sops secret at runtime. A "!cmd"
-    # apiKey is executed by pi (core/resolve-config-value.js) and its stdout
-    # used as the key -- independent of process env, PATH order, and launch
-    # context, which is what made env-var delivery flaky (intermittent 401s).
-    # The path (not the key) is all that lands in the nix store.
-    "omniroute" = translatedOmniroute // {
-      apiKey = "!cat ${config.sops.secrets.omniroute_api_key.path}";
-    };
+  # opencode providers pi should route, mapped to the sops secret holding the
+  # provider's key. A provider opencode doesn't define, or that translateProvider
+  # can't map (no api / no baseUrl), drops out.
+  secretPaths = {
+    omniroute = config.sops.secrets.omniroute_api_key.path;
+    velox = config.sops.secrets.velox_api_key.path;
   };
+
+  piProviders = lib.filterAttrs (_: v: v != null) (
+    lib.mapAttrs
+      (
+        name: secretPath:
+          let
+            provider = config.jvf.programs.opencode.settings.provider.${name} or null;
+            translated = if provider != null then translateProvider name provider else null;
+          in
+          if translated == null then
+            null
+          else
+          # Deliver the key by having pi read the sops secret at runtime. A "!cmd"
+          # apiKey is executed by pi (core/resolve-config-value.js) and its stdout
+          # used as the key -- independent of process env, PATH order, and launch
+          # context, which is what made env-var delivery flaky (intermittent 401s).
+          # The path (not the key) is all that lands in the nix store.
+            translated // { apiKey = "!cat ${secretPath}"; }
+      )
+      secretPaths
+  );
 in
 {
   config.jvf.programs.pi.models = lib.mkIf (piProviders != { }) {
