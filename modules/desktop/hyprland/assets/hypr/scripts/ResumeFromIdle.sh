@@ -2,7 +2,7 @@
 
 set -e
 
-hyprctl dispatch dpms on
+hyprctl dispatch 'hl.dsp.dpms("on")'
 
 if [[ "$HOSTNAME" == *"desktop" ]]; then
   sleep 2

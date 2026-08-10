@@ -27,8 +27,8 @@ if ! quick_note_running; then
 fi
 
 # Toggle the special workspace
-hyprctl dispatch togglespecialworkspace quick-note
+hyprctl dispatch 'hl.dsp.workspace.toggle_special("quick-note")'
 
 # Focus the window after toggling
 sleep 0.05
-hyprctl dispatch focuswindow "class:^($QUICK_NOTE_CLASS)$"
+hyprctl dispatch "hl.dsp.focus({window = 'class:^($QUICK_NOTE_CLASS)\$'})"

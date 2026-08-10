@@ -134,5 +134,19 @@ alongside any renaming of the Lua files:
 - `scripts/KeyBinds.sh` — reads `hyprctl -j binds` (not files) and renders the
   `description` field of each bind.
 - `scripts/{ChangeBlur,ChangeLayout,GameMode,TouchPad}.sh`,
-  `UserScripts/RainbowBorders.sh` — mutate live config via `hyprctl keyword`,
-  which is format-independent.
+  `UserScripts/RainbowBorders.sh` — mutate live config via `hyprctl eval`.
+
+**`hyprctl` is NOT format-independent.** Under a Lua config:
+- `hyprctl dispatch <args>` is evaluated as **Lua**, wrapped as
+  `return hl.dispatch(<args>)`. Legacy syntax (`dispatch exec waybar`,
+  `dispatch workspace e+1`) is a silent Lua syntax error — the message goes to
+  hyprctl's stdout, which callers like Waybar and keybinds discard. Write
+  `hyprctl dispatch 'hl.dsp.exec_cmd("waybar")'` instead.
+- `hyprctl keyword ...` fails outright: *"keyword can't work with non-legacy
+  parsers. Use eval."* Use `hyprctl eval 'hl.config({...})'`; colon paths become
+  nested tables (`decoration:blur:size` → `{decoration={blur={size=…}}}`).
+- `hyprctl setprop ...` is gone entirely (*"unknown request"*) — use the
+  `hl.dsp.window.set_prop` dispatcher.
+
+This applies to every caller, not just the Lua files: Waybar module JSON,
+swaync config, hypridle, and any shell script.

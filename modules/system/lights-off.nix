@@ -29,7 +29,7 @@ let
         # Displays: blank the monitors via Hyprland DPMS. They wake on any
         # keyboard/mouse input. Runs last so the RGB commands complete first.
         if command -v hyprctl >/dev/null 2>&1; then
-            hyprctl dispatch dpms off > /dev/null 2>&1
+            hyprctl dispatch 'hl.dsp.dpms("off")' > /dev/null 2>&1
         fi
       '';
     in

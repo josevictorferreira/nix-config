@@ -26,8 +26,14 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close active 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(), { description = "Fullscreen" })
 hl.bind(mainMod .. " + SHIFT + Q", sh(scriptsDir .. "/KillActiveProcess.sh"), { description = "Kill active process" })
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
--- No Lua dispatcher for workspaceopt yet; keep the hyprctl call as before.
-hl.bind(mainMod .. " + ALT + F", sh("hyprctl dispatch workspaceopt allfloat"), { description = "Float all windows on workspace" })
+-- No Lua dispatcher for workspaceopt, and `hyprctl dispatch` now evaluates its
+-- argument as Lua, so the old shell fallback cannot reach it either. Toggling
+-- float on every window of the active workspace reproduces allfloat.
+hl.bind(mainMod .. " + ALT + F", function()
+    for _, w in ipairs(hl.get_workspace_windows(hl.get_active_workspace())) do
+        hl.dispatch(hl.dsp.window.float({ window = w, action = "toggle" }))
+    end
+end, { description = "Float all windows on workspace" })
 hl.bind("CTRL + ALT + L", sh(scriptsDir .. "/LockScreen.sh"), { description = "Lock screen" })
 hl.bind("CTRL + ALT + P", sh(scriptsDir .. "/Wlogout.sh"), { description = "Power menu" })
 
@@ -50,11 +56,16 @@ hl.bind(mainMod .. " + SHIFT + M", sh(UserScripts .. "/RofiBeats.sh"), { descrip
 hl.bind(mainMod .. " + W", sh(UserScripts .. "/WallpaperSelect.sh"), { description = "Select wallpaper" })
 hl.bind(mainMod .. " + SHIFT + W", sh(UserScripts .. "/WallpaperEffects.sh"), { description = "Wallpaper effects" })
 hl.bind("CTRL + ALT + W", sh(UserScripts .. "/WallpaperRandom.sh"), { description = "Random wallpaper" })
-hl.bind(mainMod .. " + ALT + O", sh("hyprctl setprop active opaque toggle"), { description = "Toggle opacity on active window" })
+-- `hyprctl setprop` was removed along with the legacy parser; set_prop defaults
+-- to the active window, which is what `setprop active ...` meant.
+hl.bind(mainMod .. " + ALT + O", hl.dsp.window.set_prop({ prop = "opaque", value = "toggle" }), { description = "Toggle opacity on active window" })
 hl.bind(mainMod .. " + SHIFT + K", sh(scriptsDir .. "/KeyBinds.sh"), { description = "Searchable keybinds" })
 
 -- Waybar / bar related
-hl.bind(mainMod .. " + SHIFT + R", sh("hyprctl reload; pkill waybar; sleep 0.3; hyprctl dispatch exec waybar"), { description = "Reload Hyprland + restart Waybar" })
+-- `hyprctl dispatch` evaluates its argument as Lua under a Lua config, so the
+-- restart must be spelled as a dispatcher call. Long-bracket string keeps the
+-- inner quotes readable.
+hl.bind(mainMod .. " + SHIFT + R", sh([[hyprctl reload; pkill waybar; sleep 0.3; hyprctl dispatch 'hl.dsp.exec_cmd("waybar")']]), { description = "Reload Hyprland + restart Waybar" })
 hl.bind(mainMod .. " + B", sh("pkill -SIGUSR1 waybar"), { description = "Toggle waybar" })
 hl.bind(mainMod .. " + CTRL + B", sh(scriptsDir .. "/WaybarStyles.sh"), { description = "Waybar styles menu" })
 hl.bind(mainMod .. " + ALT + B", sh(scriptsDir .. "/WaybarLayout.sh"), { description = "Waybar layout menu" })
@@ -69,9 +80,9 @@ hl.bind(mainMod .. " + I", hl.dsp.layout("addmaster"), { description = "Add mast
 hl.bind(mainMod .. " + CTRL + Return", hl.dsp.layout("swapwithmaster"), { description = "Swap with master" })
 
 -- Works in either layout (master/dwindle).
--- splitratio has no hl.dsp entry; keep dispatching it through hyprctl.
-hl.bind(mainMod .. " + M", sh("hyprctl dispatch splitratio -0.5"), { description = "Shrink split ratio" })
-hl.bind(mainMod .. " + V", sh("hyprctl dispatch splitratio 0.5"), { description = "Grow split ratio" })
+-- splitratio is a layoutmsg, so it goes through hl.dsp.layout like togglesplit.
+hl.bind(mainMod .. " + M", hl.dsp.layout("splitratio -0.5"), { description = "Shrink split ratio" })
+hl.bind(mainMod .. " + V", hl.dsp.layout("splitratio 0.5"), { description = "Grow split ratio" })
 
 -- Group
 hl.bind(mainMod .. " + G", hl.dsp.group.toggle(), { description = "Toggle group" })

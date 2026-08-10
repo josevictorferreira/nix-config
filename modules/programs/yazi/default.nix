@@ -631,7 +631,7 @@ let
               desc = "Open";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; xdg-open "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open "$@"'';
             orphan = true;
             desc = "Open";
             for = "unix";
@@ -643,7 +643,7 @@ let
               desc = "Reveal in Finder";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; xdg-open "$(dirname "$0")"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open "$(dirname "$0")"'';
             desc = "Reveal in file manager";
             for = "unix";
           };
@@ -655,7 +655,7 @@ let
         ];
         play = [
           {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; mpv "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; mpv "$@"'';
             orphan = true;
             for = "unix";
           }
@@ -665,8 +665,8 @@ let
             for = "windows";
           }
         ];
-        image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; eog "$@"''; orphan = true; for = "unix"; }];
-        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch togglespecialworkspace yazi; file-roller "$@"''; orphan = true; for = "unix"; }];
+        image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; eog "$@"''; orphan = true; for = "unix"; }];
+        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; file-roller "$@"''; orphan = true; for = "unix"; }];
       };
 
       settingsPlugin = {
@@ -1139,7 +1139,10 @@ let
             }
             {
               on = "<Esc>";
-              run = "shell 'hyprctl dispatch togglespecialworkspace yazi'";
+              # Three quoting layers: yazi's '...', the shell's "...", and the
+              # Lua string. [[yazi]] is a Lua long-bracket string, so it needs
+              # no quote characters of its own.
+              run = "shell 'hyprctl dispatch \"hl.dsp.workspace.toggle_special([[yazi]])\"'";
               desc = "Hide scratchpad";
             }
           ]

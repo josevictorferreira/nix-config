@@ -21,8 +21,8 @@ if ! yazi_running; then
 fi
 
 # Toggle the special workspace
-hyprctl dispatch togglespecialworkspace yazi
+hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'
 
 # Focus the window after toggling
 sleep 0.05
-hyprctl dispatch focuswindow "class:^($YAZI_CLASS)$"
+hyprctl dispatch "hl.dsp.focus({window = 'class:^($YAZI_CLASS)\$'})"
