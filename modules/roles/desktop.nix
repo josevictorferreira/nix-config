@@ -35,6 +35,7 @@ let
         system-xdg
         system-flatpak
         programs-pomodoro
+        programs-firefox
       ]);
 
       config = {

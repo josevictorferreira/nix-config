@@ -371,7 +371,6 @@ let
         mkOptions
       ]
       ++ (with nixosAspects; [
-        programs-ck-search
         programs-lsp-mcp
         programs-opencode
         programs-claudecode
@@ -465,7 +464,6 @@ let
         mkOptions
       ]
       ++ (with darwinAspects; [
-        programs-ck-search
         programs-lsp-mcp
         programs-opencode
         programs-claudecode

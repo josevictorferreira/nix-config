@@ -57,6 +57,7 @@ let
         karpathy-guidelines = mkSkill ./_/skills/meta/karpathy-guidelines.nix;
         self-learning = mkSkill ./_/skills/meta/self-learning.nix;
         research-tools = mkSkill ./_/skills/research/research-tools.nix;
+        implementation-plan-best-practices = mkSkill ./_/skills/planning/implementation-plan-best-practices.nix;
         oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;
         grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
         # openclaw-nix-upgrade = mkSkill ./_/skills/infrastructure/openclaw-nix-upgrade.nix;
@@ -64,6 +65,7 @@ let
         # browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix; # Disabled: replaced by browser-dev-cycle
         browser-dev-cycle = mkSkill ./_/skills/browser/browser-dev-cycle.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
+        adversarial-ux-test = mkSkill ./_/skills/qa/adversarial-ux-test.nix;
         design-md = mkSkill ./_/skills/creative/design-md.nix;
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
         developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;

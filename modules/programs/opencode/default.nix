@@ -100,7 +100,6 @@ let
               "build/**"
               ".bundle/**"
               "__pycache__/**"
-              ".ck/**"
               ".bun_cache/**"
               "tui.json"
             ];
