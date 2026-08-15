@@ -152,6 +152,30 @@
         ];
       }
       {
+        window_name = "Velox";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/velox";
+        panes = [
+          "clear"
+        ];
+      }
+      {
+        window_name = "Poise";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/poise";
+        panes = [
+          "clear"
+        ];
+      }
+      {
+        window_name = "LiterSearch";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/litersearch";
+        panes = [
+          "clear"
+        ];
+      }
+      {
         window_name = "Glyph";
         layout = "tiled";
         start_directory = "$HOME/Workspace/glyph";

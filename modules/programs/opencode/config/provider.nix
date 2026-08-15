@@ -67,6 +67,9 @@
           "deepseek-v4-pro" = {
             name = "DeepSeek V4 Pro (OmniRoute)";
           };
+          "glm-5.3" = {
+            name = "GLM-5.3 (OmniRoute)";
+          };
           "glm-5.2" = {
             name = "GLM-5.2 (OmniRoute)";
           };
@@ -169,6 +172,9 @@
           };
           "deepseek-v4-pro" = {
             name = "DeepSeek V4 Pro (Velox)";
+          };
+          "glm-5-3" = {
+            name = "GLM-5.3 (Velox)";
           };
           "glm-5-2" = {
             name = "GLM-5.2 (Velox)";
