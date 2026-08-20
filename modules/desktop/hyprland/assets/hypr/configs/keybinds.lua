@@ -125,10 +125,15 @@ hl.bind("ALT + Print", sh(scriptsDir .. "/ScreenShot.sh --active"), { descriptio
 hl.bind(mainMod .. " + SHIFT + S", sh(scriptsDir .. "/ScreenShot.sh --swappy"), { description = "Screenshot via swappy" })
 
 -- Resize windows
-hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.resize({ x = -50, y = 0 }), { repeating = true, description = "Resize left" })
-hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.resize({ x = 50, y = 0 }), { repeating = true, description = "Resize right" })
-hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.resize({ x = 0, y = -50 }), { repeating = true, description = "Resize up" })
-hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.resize({ x = 0, y = 50 }), { repeating = true, description = "Resize down" })
+-- `relative = true` is REQUIRED. hyprlang's `resizeactive -50 0` was always a
+-- delta, but hl.dsp.window.resize treats { x, y } as an absolute size, so a
+-- literal translation throws "Invalid size" at press time. It fails silently:
+-- the bind still registers, --verify-config still passes (the size is parsed on
+-- dispatch, not on load), and bind callback errors are never logged.
+hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.resize({ x = -50, y = 0, relative = true }), { repeating = true, description = "Resize left" })
+hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.resize({ x = 50, y = 0, relative = true }), { repeating = true, description = "Resize right" })
+hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.resize({ x = 0, y = -50, relative = true }), { repeating = true, description = "Resize up" })
+hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.resize({ x = 0, y = 50, relative = true }), { repeating = true, description = "Resize down" })
 
 -- Move windows / move focus (vim keys)
 local directions = { h = "l", l = "r", k = "u", j = "d" }

@@ -68,6 +68,8 @@ let
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
         adversarial-ux-test = mkSkill ./_/skills/qa/adversarial-ux-test.nix;
         design-md = mkSkill ./_/skills/creative/design-md.nix;
+        humanize-text-ptbr = mkSkill ./_/skills/creative/humanize-text-ptbr.nix;
+        humanize-text-en = mkSkill ./_/skills/creative/humanize-text-en.nix;
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
         developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;
         creating-nix-modules = mkSkill ./_/skills/nix/creating-modules.nix;
