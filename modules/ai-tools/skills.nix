@@ -58,6 +58,7 @@ let
         self-learning = mkSkill ./_/skills/meta/self-learning.nix;
         research-tools = mkSkill ./_/skills/research/research-tools.nix;
         implementation-plan-best-practices = mkSkill ./_/skills/planning/implementation-plan-best-practices.nix;
+        brainstorming = mkSkill ./_/skills/planning/brainstorming.nix;
         oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;
         grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
         # openclaw-nix-upgrade = mkSkill ./_/skills/infrastructure/openclaw-nix-upgrade.nix;

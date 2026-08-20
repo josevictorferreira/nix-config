@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
-sed '1,/^# # DATA # #$/d' "$0" | \
+# The emoji table lives in this same file, after the `# # DATA # #` marker.
+emoji=$(sed '1,/^# # DATA # #$/d' "$0" | \
 rofi -i -dmenu -config ~/.config/rofi/config-emoji.rasi | \
 awk -F'\t' '{print $1}' | \
-tr -d '\n' | \
-wl-copy
+tr -d '\n')
+
+[ -z "$emoji" ] && exit 0
+
+printf '%s' "$emoji" | wl-copy
+wtype "$emoji"
 
 exit
 

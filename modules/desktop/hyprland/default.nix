@@ -124,6 +124,7 @@ _:
           pkgs.libappindicator
           pkgs.slurp
           pkgs.wl-clipboard
+          pkgs.wtype
           pkgs.wl-clip-persist
           pkgs.brightnessctl
           pkgs.cliphist
