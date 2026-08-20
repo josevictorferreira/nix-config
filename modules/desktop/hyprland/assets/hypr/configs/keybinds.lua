@@ -42,7 +42,8 @@ hl.bind("CTRL + ALT + P", sh(scriptsDir .. "/Wlogout.sh"), { description = "Powe
 -- real keysym name (`question`), it rejects "?" as an unknown keysym.
 hl.bind(mainMod .. " + question", sh(scriptsDir .. "/KeyHints.sh"), { description = "Keybind hints" })
 hl.bind(mainMod .. " + ALT + R", sh(scriptsDir .. "/Refresh.sh"), { description = "Refresh waybar, swaync, rofi" })
-hl.bind(mainMod .. " + ALT + E", sh(scriptsDir .. "/RofiEmoji.sh"), { description = "Emoji picker" })
+-- Mirrors macOS Character Viewer (CTRL + CMD + SPACE); SUPER stands in for CMD.
+hl.bind("CTRL + " .. mainMod .. " + space", sh(scriptsDir .. "/RofiEmoji.sh"), { description = "Emoji picker" })
 hl.bind(mainMod .. " + S", sh(scriptsDir .. "/RofiSearch.sh"), { description = "Web search via rofi" })
 hl.bind(mainMod .. " + SHIFT + B", sh(scriptsDir .. "/ChangeBlur.sh"), { description = "Toggle blur settings" })
 hl.bind(mainMod .. " + SHIFT + G", sh(scriptsDir .. "/GameMode.sh"), { description = "Game mode (animations on/off)" })
