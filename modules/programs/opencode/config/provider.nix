@@ -201,6 +201,12 @@
           "qwen3-7-max-ocgo" = {
             name = "Qwen 3.7 Max (Velox)";
           };
+          "radagast" = {
+            name = "Radagast (Velox)";
+          };
+          "gandalf" = {
+            name = "Gandalf (Velox)";
+          };
           "haldir" = {
             name = "Haldir (Velox)";
           };
