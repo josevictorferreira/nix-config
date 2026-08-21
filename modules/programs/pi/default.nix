@@ -57,9 +57,16 @@ let
           # tools like `explore`/`glob` produce client-side `ModelMessage`
           # validation errors before the request even leaves pi. The fan-out
           # via jvf.aiTools.baseRule.content is appended below.
+          #
+          # AGENTS.md only — deliberately NOT SYSTEM.md as well. Pi loads both
+          # (buildSystemPrompt in core/system-prompt.js takes SYSTEM.md as
+          # `customPrompt` and still appends every context file inside
+          # <project_context>), so writing baseRules to both sent it twice.
+          # AGENTS.md is the one to keep: a SYSTEM.md *replaces* pi's built-in
+          # system prompt, which drops the Available tools list, the guidelines
+          # section, and every registered tool's promptSnippet/promptGuidelines
+          # (e.g. the hindsight_* tools).
           "AGENTS.md" = lib.optionalString (cfg.baseRules != "") cfg.baseRules;
-          "SYSTEM.md" = lib.optionalString (cfg.baseRules != "") cfg.baseRules;
-
         }
         // (lib.optionalAttrs (cfg.settings != { }) {
           "settings.json" = cfg.settings;

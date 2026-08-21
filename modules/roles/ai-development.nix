@@ -6,340 +6,248 @@ let
   nixosAspects = self.modules.nixos;
   darwinAspects = self.modules.darwin;
 
-  # web_search Pi tool backed by the OmniRoute Search API (POST /v1/search).
-  # Reads OMNIROUTE_API_KEY (exported from the sops omniroute_api_key secret).
-  # Cross-platform (pure fetch + process.env), so used by both nixos and darwin.
-  webSearchExtension = ''
-    import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+  # Hindsight long-term memory tools for Pi, talking straight to the Hindsight
+  # REST API (there is no MCP server and no pi integration upstream — only
+  # claude-code/opencode plugins, so the HTTP contract is reimplemented here).
+  #
+  # The bank id is the git project basename, which is exactly what the opencode
+  # plugin produces with dynamicBankGranularity=["gitProject"]: pi therefore
+  # reads and writes the same per-project bank as the other agents.
+  #
+  # recall + retain only. The upstream plugins also expose `reflect`
+  # (POST /reflect, LLM-synthesized answer), but that endpoint never returns on
+  # hindsight-api.josevictor.me — a one-memory bank at budget "low" was still
+  # hanging after 10 minutes — so a reflect tool would only ever hand the model
+  # a timeout. Re-add it if that deployment's reflection backend starts working.
+  #
+  # Cross-platform (fetch + node builtins), so used by both nixos and darwin.
+  hindsightExtension = ''
+    import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
     import { Type } from "typebox";
-    import { StringEnum } from "@earendil-works/pi-ai";
+    import { basename, dirname } from "node:path";
+    import { execFileSync } from "node:child_process";
 
-    const ENDPOINT = "https://omniroute.josevictor.me/v1/search";
-    const PROVIDERS = [
-      "serper-search",
-      "brave-search",
-      "perplexity-search",
-      "exa-search",
-      "tavily-search",
-      "google-pse-search",
-      "linkup-search",
-      "searchapi-search",
-      "searxng-search",
-    ] as const;
+    const DEFAULT_API_URL = "https://hindsight-api.josevictor.me";
+
+    interface RecallResult {
+      text: string;
+      type?: string | null;
+      context?: string | null;
+      mentioned_at?: string | null;
+    }
+
+    // cwd -> bank id. `git rev-parse` is cheap but not free, and cwd rarely
+    // changes within a session.
+    const bankCache = new Map<string, string>();
+
+    /**
+     * Main-worktree basename for a directory, so linked worktrees of one repo
+     * share a bank. Falls back to the cwd basename outside git.
+     */
+    function deriveBankId(cwd: string): string {
+      const cached = bankCache.get(cwd);
+      if (cached) return cached;
+
+      let bankId = cwd ? basename(cwd) : "unknown";
+      try {
+        const commonDir = execFileSync(
+          "git",
+          ["rev-parse", "--path-format=absolute", "--git-common-dir"],
+          {
+            cwd,
+            encoding: "utf-8",
+            stdio: ["ignore", "pipe", "ignore"],
+            timeout: 1000,
+          },
+        ).trim();
+        if (commonDir) {
+          // Ordinary clones and `git worktree add` report `<root>/.git`; a bare
+          // repo reports the bare dir itself.
+          bankId = basename(commonDir) === ".git" ? basename(dirname(commonDir)) : basename(commonDir);
+        }
+      } catch {
+        // git missing or not a repo — keep the cwd basename.
+      }
+
+      bankCache.set(cwd, bankId);
+      return bankId;
+    }
+
+    function apiUrl(): string {
+      return (process.env.HINDSIGHT_API_URL || DEFAULT_API_URL).replace(/\/+$/, "");
+    }
+
+    /** POST a JSON body to a bank endpoint. Returns the parsed body or an error string. */
+    async function callApi(
+      tool: string,
+      bankId: string,
+      path: string,
+      body: unknown,
+      signal: AbortSignal | undefined,
+    ): Promise<{ data?: any; error?: string; status?: number }> {
+      const url = apiUrl() + "/v1/default/banks/" + encodeURIComponent(bankId) + path;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const token = process.env.HINDSIGHT_API_TOKEN;
+      if (token) headers.Authorization = "Bearer " + token;
+
+      const timeout = AbortSignal.timeout(60000);
+      const abort = signal ? AbortSignal.any([signal, timeout]) : timeout;
+
+      let response: Response;
+      try {
+        response = await fetch(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: abort,
+        });
+      } catch (err) {
+        return { error: tool + " request failed: " + String(err) };
+      }
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => "");
+        return {
+          error: tool + " HTTP " + response.status + ": " + errText,
+          status: response.status,
+        };
+      }
+
+      return { data: await response.json() };
+    }
+
+    function errorResult(text: string, status?: number) {
+      return {
+        content: [{ type: "text" as const, text }],
+        details: status !== undefined ? { status } : {},
+        isError: true,
+      };
+    }
 
     export default function (pi: ExtensionAPI) {
       pi.registerTool({
-        name: "web_search",
-        label: "Web Search",
+        name: "hindsight_recall",
+        label: "Recall Memory",
         description:
-          "Search the live web (or news) via the OmniRoute Search API and " +
-          "return ranked results with titles, URLs and snippets. Use this to " +
-          "look up current information not in the model's training data.",
+          "Search long-term memory for relevant information. Use this proactively " +
+          "before answering questions about past sessions, user preferences, project " +
+          "history or earlier decisions. When in doubt, recall first.",
         promptSnippet:
-          "web_search: search the live web/news for up-to-date information.",
+          "hindsight_recall: search long-term memory of past sessions for this project.",
         promptGuidelines: [
-          "Use web_search when you need current or external information that " +
-            "may not be in your training data (recent events, docs, prices).",
-          "Prefer a focused query; set search_type to \"news\" for recent news.",
+          "Call hindsight_recall before answering questions about prior sessions, " +
+            "user preferences or past decisions — your context window does not carry them.",
         ],
         parameters: Type.Object({
           query: Type.String({
             minLength: 1,
-            maxLength: 500,
-            description: "The search query (1-500 characters).",
+            description: "Natural language search query; be specific about what you need.",
           }),
-          max_results: Type.Optional(
+          max_tokens: Type.Optional(
             Type.Integer({
-              minimum: 1,
-              maximum: 20,
-              description: "Number of results to return (1-20, default 5).",
-            }),
-          ),
-          search_type: Type.Optional(
-            StringEnum(["web", "news"] as const, {
-              description: "Search category (default \"web\").",
-            }),
-          ),
-          provider: Type.Optional(
-            StringEnum(PROVIDERS, {
-              description:
-                "Optional search provider; omit to let OmniRoute auto-select.",
+              minimum: 128,
+              maximum: 16384,
+              description: "Token budget for the returned memories (default 4096).",
             }),
           ),
         }),
-        async execute(_toolCallId, params, signal) {
-          const apiKey = process.env.OMNIROUTE_API_KEY;
-          if (!apiKey) {
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: "web_search error: OMNIROUTE_API_KEY is not set in the environment.",
-                },
-              ],
-              details: {},
-              isError: true,
-            };
-          }
-
-          const body: Record<string, unknown> = {
-            query: params.query,
-            max_results: params.max_results ?? 5,
-            search_type: params.search_type ?? "web",
-          };
-          if (params.provider) body.provider = params.provider;
-
-          const timeout = AbortSignal.timeout(60000);
-          const abort = signal
-            ? AbortSignal.any([signal, timeout])
-            : timeout;
-
-          let response: Response;
-          try {
-            response = await fetch(ENDPOINT, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + apiKey,
-              },
-              body: JSON.stringify(body),
-              signal: abort,
-            });
-          } catch (err) {
-            return {
-              content: [
-                { type: "text", text: "web_search request failed: " + String(err) },
-              ],
-              details: {},
-              isError: true,
-            };
-          }
-
-          if (!response.ok) {
-            const errText = await response.text().catch(() => "");
-            return {
-              content: [
-                {
-                  type: "text",
-                  text:
-                    "web_search HTTP " + response.status + ": " + errText,
-                },
-              ],
-              details: { status: response.status },
-              isError: true,
-            };
-          }
-
-          const data = (await response.json()) as {
-            provider: string;
-            query: string;
-            cached: boolean;
-            results: Array<{
-              title: string;
-              url: string;
-              display_url?: string;
-              snippet: string;
-              position: number;
-            }>;
-            usage: { queries_used: number; search_cost_usd: number };
-          };
-
-          const results = data.results ?? [];
-          const lines: string[] = [];
-          if (results.length === 0) {
-            lines.push("No results found for: " + data.query);
-          } else {
-            for (const r of results) {
-              lines.push(r.position + ". " + r.title);
-              lines.push("   " + (r.display_url ?? r.url));
-              if (r.snippet) lines.push("   " + r.snippet);
-              lines.push("");
-            }
-          }
-          lines.push(
-            "[provider: " +
-              data.provider +
-              ", cached: " +
-              data.cached +
-              ", queries_used: " +
-              data.usage.queries_used +
-              ", cost_usd: " +
-              data.usage.search_cost_usd +
-              "]",
+        async execute(_toolCallId, params, signal, _onUpdate, ctx: ExtensionContext) {
+          const bankId = deriveBankId(ctx.cwd);
+          const { data, error, status } = await callApi(
+            "hindsight_recall",
+            bankId,
+            "/memories/recall",
+            {
+              query: params.query,
+              budget: "mid",
+              max_tokens: params.max_tokens ?? 4096,
+            },
+            signal,
           );
+          if (error) return errorResult(error, status);
+
+          const results: RecallResult[] = data.results ?? [];
+          if (results.length === 0) {
+            return {
+              content: [{ type: "text" as const, text: "No relevant memories found in bank " + bankId + "." }],
+              details: { bankId, resultCount: 0 },
+            };
+          }
+
+          const lines = results.map((r) => {
+            const typeStr = r.type ? " [" + r.type + "]" : "";
+            const dateStr = r.mentioned_at ? " (" + r.mentioned_at + ")" : "";
+            return "- " + r.text + typeStr + dateStr;
+          });
 
           return {
-            content: [{ type: "text", text: lines.join("\n") }],
-            details: {
-              provider: data.provider,
-              cached: data.cached,
-              usage: data.usage,
-              resultCount: results.length,
-            },
+            content: [
+              {
+                type: "text" as const,
+                text:
+                  "Found " + results.length + " memories in bank " + bankId + ":\n\n" +
+                  lines.join("\n"),
+              },
+            ],
+            details: { bankId, resultCount: results.length },
           };
         },
       });
-    }
-  '';
 
-  # web_fetch Pi tool backed by the OmniRoute web-fetch API (POST /v1/web/fetch).
-  # Reads OMNIROUTE_API_KEY (exported from the sops omniroute_api_key secret).
-  # Cross-platform (pure fetch + process.env), so used by both nixos and darwin.
-  webFetchExtension = ''
-    import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-    import { Type } from "typebox";
-    import { StringEnum } from "@earendil-works/pi-ai";
-
-    const ENDPOINT = "https://omniroute.josevictor.me/v1/web/fetch";
-    const PROVIDERS = [
-      "serper-search",
-      "brave-search",
-      "perplexity-search",
-      "exa-search",
-      "tavily-search",
-      "google-pse-search",
-      "linkup-search",
-      "searchapi-search",
-      "searxng-search",
-    ] as const;
-
-    export default function (pi: ExtensionAPI) {
       pi.registerTool({
-        name: "web_fetch",
-        label: "Web Fetch",
+        name: "hindsight_retain",
+        label: "Retain Memory",
         description:
-          "Fetch a single web page via the OmniRoute web-fetch API and return " +
-          "its content as markdown (or html). Use this to read the full text of " +
-          "a known URL, e.g. documentation, articles or search-result pages.",
+          "Store information in long-term memory. Use this to remember important " +
+          "facts, user preferences, project context and decisions worth recalling in " +
+          "future sessions. Be specific — include who, what, when and why.",
         promptSnippet:
-          "web_fetch: fetch and read the content of a specific web page URL.",
+          "hindsight_retain: store a fact in long-term memory for future sessions.",
         promptGuidelines: [
-          "Use web_fetch when you have a specific URL and need its full content " +
-            "(not a search). Pair it with web_search to read a result's page.",
-          "Prefer format \"markdown\" for reading; use \"html\" only when you need raw markup.",
+          "Call hindsight_retain when you learn something durable — a preference, a " +
+            "convention, a decision and its reason — not for transient task state.",
         ],
         parameters: Type.Object({
-          url: Type.String({
+          content: Type.String({
             minLength: 1,
-            description: "The absolute URL of the page to fetch.",
+            description: "The information to remember. Be specific and self-contained.",
           }),
-          format: Type.Optional(
-            StringEnum(["markdown", "html"] as const, {
-              description: "Output format (default \"markdown\").",
-            }),
-          ),
-          full_page: Type.Optional(
-            Type.Boolean({
-              description:
-                "Fetch the full rendered page instead of the main content (default false).",
-            }),
-          ),
-          provider: Type.Optional(
-            StringEnum(PROVIDERS, {
-              description:
-                "Optional fetch provider; omit to let OmniRoute auto-select.",
+          context: Type.Optional(
+            Type.String({
+              description: "Optional context about where this information came from.",
             }),
           ),
         }),
-        async execute(_toolCallId, params, signal) {
-          const apiKey = process.env.OMNIROUTE_API_KEY;
-          if (!apiKey) {
-            return {
-              content: [
+        async execute(_toolCallId, params, signal, _onUpdate, ctx: ExtensionContext) {
+          const bankId = deriveBankId(ctx.cwd);
+          const { data, error, status } = await callApi(
+            "hindsight_retain",
+            bankId,
+            "/memories",
+            {
+              items: [
                 {
-                  type: "text",
-                  text: "web_fetch error: OMNIROUTE_API_KEY is not set in the environment.",
+                  content: params.content,
+                  context: params.context,
                 },
               ],
-              details: {},
-              isError: true,
-            };
-          }
-
-          const body: Record<string, unknown> = {
-            url: params.url,
-            format: params.format ?? "markdown",
-            full_page: params.full_page ?? false,
-          };
-          if (params.provider) body.provider = params.provider;
-
-          const timeout = AbortSignal.timeout(60000);
-          const abort = signal
-            ? AbortSignal.any([signal, timeout])
-            : timeout;
-
-          let response: Response;
-          try {
-            response = await fetch(ENDPOINT, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + apiKey,
-              },
-              body: JSON.stringify(body),
-              signal: abort,
-            });
-          } catch (err) {
-            return {
-              content: [
-                { type: "text", text: "web_fetch request failed: " + String(err) },
-              ],
-              details: {},
-              isError: true,
-            };
-          }
-
-          if (!response.ok) {
-            const errText = await response.text().catch(() => "");
-            return {
-              content: [
-                {
-                  type: "text",
-                  text:
-                    "web_fetch HTTP " + response.status + ": " + errText,
-                },
-              ],
-              details: { status: response.status },
-              isError: true,
-            };
-          }
-
-          const data = (await response.json()) as {
-            provider: string;
-            url: string;
-            content: string;
-            links: string[];
-            metadata: Record<string, unknown> | null;
-            screenshot_url: string | null;
-          };
-
-          const content = data.content ?? "";
-          const links = data.links ?? [];
-          const lines: string[] = [];
-          if (content.length === 0) {
-            lines.push("No content returned for: " + data.url);
-          } else {
-            lines.push(content);
-          }
-          lines.push("");
-          lines.push(
-            "[provider: " +
-              data.provider +
-              ", url: " +
-              data.url +
-              ", links: " +
-              links.length +
-              "]",
+              // Synchronous ingestion runs LLM extraction inline and blows past
+              // any sane tool timeout (measured >60s against the live API), so
+              // queue it instead: the memory becomes recallable shortly after.
+              async: true,
+            },
+            signal,
           );
+          if (error) return errorResult(error, status);
 
           return {
-            content: [{ type: "text", text: lines.join("\n") }],
-            details: {
-              provider: data.provider,
-              url: data.url,
-              linkCount: links.length,
-              hasScreenshot: data.screenshot_url != null,
-            },
+            content: [
+              {
+                type: "text" as const,
+                text: "Memory queued for bank " + bankId + " (extraction runs asynchronously).",
+              },
+            ],
+            details: { bankId, itemsCount: data.items_count ?? 1, operationId: data.operation_id },
           };
         },
       });
@@ -394,45 +302,11 @@ let
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
 
-        # Pi extensions (declarative install via sentinel postInstall)
-        jvf.programs.pi.extensions = [
-          "npm:pi-mcp-adapter"
-        ];
-
-        # MCP servers glued into Pi via pi-mcp-adapter. codegraph is a
-        # Linux-only oh-my-openagent binary (absolute path required).
-        jvf.programs.pi.mcps = {
-          context7 = {
-            command = "npx";
-            args = [
-              "-y"
-              "@upstash/context7-mcp"
-            ];
-          };
-          codegraph = {
-            command = "/home/${cfg.username}/.omo/codegraph/bin/codegraph";
-            args = [
-              "serve"
-              "--mcp"
-            ];
-          };
-          grep_app = {
-            url = "https://mcp.grep.app";
-          };
-          lsp = {
-            command = "npx";
-            args = [
-              "-y"
-              "language-server-mcp"
-            ];
-          };
-        };
-
-        # Local Pi extension: web_search tool (OmniRoute Search API).
-        jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
-
-        # Local Pi extension: web_fetch tool (OmniRoute web-fetch API).
-        jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
+        # Local Pi extension: hindsight_recall / hindsight_retain tools
+        # (Hindsight long-term memory API). Pi's only extra tools: the
+        # pi-mcp-adapter bridge, its MCP servers, and the web_search /
+        # web_fetch extensions were all removed.
+        jvf.programs.pi.extensionFiles."hindsight.ts" = hindsightExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {
@@ -487,38 +361,11 @@ let
 
         jvf.aiTools.mcp.grafanaWork.enable = false;
 
-        # Pi extensions (declarative install via sentinel postInstall)
-        jvf.programs.pi.extensions = [
-          "npm:pi-mcp-adapter"
-        ];
-
-        # MCP servers glued into Pi via pi-mcp-adapter (codegraph is
-        # Linux-only, so it is omitted from the darwin block).
-        jvf.programs.pi.mcps = {
-          context7 = {
-            command = "npx";
-            args = [
-              "-y"
-              "@upstash/context7-mcp"
-            ];
-          };
-          grep_app = {
-            url = "https://mcp.grep.app";
-          };
-          lsp = {
-            command = "npx";
-            args = [
-              "-y"
-              "language-server-mcp"
-            ];
-          };
-        };
-
-        # Local Pi extension: web_search tool (OmniRoute Search API).
-        jvf.programs.pi.extensionFiles."web-search.ts" = webSearchExtension;
-
-        # Local Pi extension: web_fetch tool (OmniRoute web-fetch API).
-        jvf.programs.pi.extensionFiles."web-fetch.ts" = webFetchExtension;
+        # Local Pi extension: hindsight_recall / hindsight_retain tools
+        # (Hindsight long-term memory API). Pi's only extra tools: the
+        # pi-mcp-adapter bridge, its MCP servers, and the web_search /
+        # web_fetch extensions were all removed.
+        jvf.programs.pi.extensionFiles."hindsight.ts" = hindsightExtension;
 
         # Claude Code settings (YOLO mode — bypass all permission prompts)
         jvf.programs.claudecode.settings = {

@@ -103,15 +103,6 @@ let
         # Suppress Node.js deprecation warnings
         export NODE_NO_WARNINGS=1
 
-        # Hindsight memory configuration. Per-project granularity lives in
-        # ~/.hindsight/claude-code.json (dynamicBankGranularity=["project"]
-        # with resolveWorktrees=true). Granularity isn't an env-var knob.
-        export HINDSIGHT_API_URL="https://hindsight-api.josevictor.me"
-        export HINDSIGHT_DYNAMIC_BANK_ID="true"
-        export HINDSIGHT_AUTO_RECALL="true"
-        export HINDSIGHT_AUTO_RETAIN="true"
-        export HINDSIGHT_RECALL_BUDGET="mid"
-
         NPM_GLOBAL_DIR="$HOME/.npm-global"
         NPM_GLOBAL_BIN="$NPM_GLOBAL_DIR/bin"
         CLAUDE_BIN="$NPM_GLOBAL_BIN/claude"
@@ -129,20 +120,6 @@ let
         # Auto-install plugins once
         PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v3"
         if [ ! -f "$PLUGINS_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
-          echo "Installing hindsight-memory plugin..."
-          ${
-            if (!isDarwin) then
-              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
-            else
-              ''"$CLAUDE_BIN"''
-          } plugin marketplace add vectorize-io/hindsight 2>/dev/null || true
-          ${
-            if (!isDarwin) then
-              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
-            else
-              ''"$CLAUDE_BIN"''
-          } plugin install hindsight-memory 2>/dev/null || true
-
           echo "Installing oh-my-claudecode plugin..."
           ${
             if (!isDarwin) then
@@ -323,16 +300,9 @@ let
             padding = 0;
           };
           enabledPlugins = lib.mkDefault {
-            "hindsight-memory@hindsight" = true;
             "oh-my-claudecode@omc" = true;
           };
           extraKnownMarketplaces = lib.mkDefault {
-            hindsight = {
-              source = {
-                source = "github";
-                repo = "vectorize-io/hindsight";
-              };
-            };
             omc = {
               source = {
                 source = "git";

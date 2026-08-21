@@ -124,13 +124,13 @@
     If a coherent, repeatable workflow emerged this session that is NOT covered by any existing skill, you MAY create a new skill.
 
     **Hard preconditions before creating any new skill:**
-    1. **You MUST manually load and read the `skill-creator` skill first** — invoke `skill(name="skill-creator")` and follow its instructions verbatim. Do not skip this step.
+    1. **You MUST manually load and read the `creating-skills` skill first** — invoke `skill(name="creating-skills")` and follow its instructions verbatim. Do not skip this step.
     2. The workflow must be plausibly reusable across future sessions (not a one-off).
     3. It must not significantly overlap with an existing skill — prefer extending an existing skill over creating a new one.
 
     **Implementation steps for a new skill:**
     1. Choose a category directory under `~/.config/nix/modules/ai-tools/_/skills/` (or create a new one if no fit exists).
-    2. Create `<category>/<kebab-name>.nix` following the patterns in sibling skills (e.g. `meta/skill-creator.nix`, `research/research-tools.nix`).
+    2. Create `<category>/<kebab-name>.nix` following the patterns in sibling skills (e.g. `meta/creating-skills.nix`, `research/research-tools.nix`).
     3. Register the skill in `~/.config/nix/modules/ai-tools/skills.nix` inside the `skills = { ... }` attrset, kebab-case key matching the skill name.
     4. If the skill bundles helper scripts/agents/references, place them in a co-located `_/<skill-name>/` directory (the `_/` prefix excludes them from import-tree auto-discovery) and follow the pattern documented in `~/.config/nix/AGENTS.md` (see "Adding Skills with Bundled Resources to ai-tools").
     5. Verify with `nix flake check` (or at minimum `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.aiTools.skills.<new-skill-name>.name`).

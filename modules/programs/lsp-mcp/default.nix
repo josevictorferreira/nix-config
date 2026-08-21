@@ -1,6 +1,7 @@
 # Aspect: programs-lsp-mcp
-# User-level config for `language-server-mcp` (the `lsp` MCP server wired into
-# Pi via pi-mcp-adapter, see roles/ai-development.nix).
+# User-level config for `language-server-mcp` (the `lsp` MCP server). Nothing
+# consumes it right now: Pi used to reach it through pi-mcp-adapter, and that
+# bridge was removed from roles/ai-development.nix.
 #
 # The MCP server resolves a language-server command in this order:
 #   configured `command` -> system PATH -> cached managed install -> download.

@@ -120,11 +120,11 @@ let
                 path = pkgs.writeText "hindsight-opencode.json" (
                   builtins.toJSON {
                     hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                    # Per-project memory isolation, shared with Claude Code.
+                    # Per-project memory isolation, shared with pi.
                     # gitProject = basename of the main worktree root from
                     # `git rev-parse --git-common-dir`; falls back to cwd
-                    # basename when not in a repo. Matches Claude Code's
-                    # `project` field with resolveWorktrees=true.
+                    # basename when not in a repo. Pi's hindsight_* tools
+                    # (see roles/ai-development.nix) derive the same string.
                     dynamicBankId = true;
                     dynamicBankGranularity = [ "gitProject" ];
                     autoRecall = true;
@@ -132,36 +132,6 @@ let
                     recallBudget = "mid";
                     # Retain only the most recent user/assistant turn, not the whole session.
                     retainMode = "last-turn";
-                  }
-                );
-              }
-              {
-                name = "claude-code.json";
-                path = pkgs.writeText "hindsight-claude-code.json" (
-                  builtins.toJSON {
-                    hindsightApiUrl = "https://hindsight-api.josevictor.me";
-                    # Per-project memory isolation, shared with opencode.
-                    # Claude Code's `project` field uses git-common-dir
-                    # resolution when resolveWorktrees=true (the default),
-                    # so it produces the same string as opencode's
-                    # `gitProject` for any given repo.
-                    dynamicBankId = true;
-                    dynamicBankGranularity = [ "project" ];
-                    resolveWorktrees = true;
-                    autoRecall = true;
-                    autoRetain = true;
-                    recallBudget = "mid";
-                    # Keep only user prompts and assistant outputs in the memory bank.
-                    retainRoles = [
-                      "user"
-                      "assistant"
-                    ];
-                    # Retain only the most recent user/assistant turn, not the whole session.
-                    retainMode = "last-turn";
-                    enableKnowledgeTools = true;
-                    # Exclude tool_use / tool_result blocks from retained transcripts.
-                    # retain.py defaults to True when key is absent; must set explicitly.
-                    retainToolCalls = false;
                   }
                 );
               }
