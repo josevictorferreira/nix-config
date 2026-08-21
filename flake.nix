@@ -11,6 +11,8 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     bun2nix.url = "github:nix-community/bun2nix";
+    pi-plugins.url = "github:josevictorferreira/my-pi-agent-plugins";
+    pi-plugins.flake = false;
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";

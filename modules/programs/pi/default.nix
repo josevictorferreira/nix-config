@@ -79,7 +79,18 @@ let
           # ~/.config/mcp/mcp.json < ~/.pi/agent/mcp.json < .mcp.json < .pi/mcp.json.
           "mcp.json".mcpServers = cfg.mcps;
         })
-        // (lib.mapAttrs' (name: text: lib.nameValuePair "extensions/${name}" text) cfg.extensionFiles);
+        // (lib.mapAttrs' (name: text: lib.nameValuePair "extensions/${name}" text) cfg.extensionFiles)
+        // (lib.mapAttrs'
+          (
+            name: dir:
+              lib.nameValuePair "extensions/${name}" (
+                # Wrap in a derivation so the linkFarm builder below takes the
+                # isDerivation branch (a "${input}/sub" path is a plain string,
+                # which would otherwise be materialized via writeText).
+                pkgs.runCommandLocal "pi-extension-${name}" { } "cp -r ${dir} $out"
+              )
+          )
+          cfg.extensionDirs);
 
       piAgentDir = pkgs.linkFarm "pi-agent-config" (
         lib.mapAttrsToList
@@ -187,6 +198,21 @@ let
             materialized into ~/.pi/agent/extensions/<filename>. Unlike
             `extensions` (which installs npm/git packages via `pi install`),
             these are plain source files Pi auto-loads every session.
+          '';
+        };
+
+        extensionDirs = lib.mkOption {
+          type = lib.types.attrsOf lib.types.path;
+          default = { };
+          example = {
+            hindsight = "\${inputs.pi-plugins}/extensions/hindsight";
+          };
+          description = ''
+            Directory-form Pi extensions (name -> source directory),
+            materialized into ~/.pi/agent/extensions/<name>/. Pi auto-loads
+            extensions/*/index.ts. Like `extensionFiles` but for multi-file
+            extensions sourced from the nix store (e.g. a flake input), so
+            they stay pinned in flake.lock instead of installed at activation.
           '';
         };
       };

@@ -193,6 +193,22 @@
         "type": "indirect"
       }
     },
+    "pi-plugins": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787339235,
+        "narHash": "sha256-XojRRvPLzwEMceSqeHQH+I7kltpFaojsoYTdD+9mqMI=",
+        "owner": "josevictorferreira",
+        "repo": "my-pi-agent-plugins",
+        "rev": "339f7a4c760293aab522a1a670e79f9432b5f7d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "josevictorferreira",
+        "repo": "my-pi-agent-plugins",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -202,6 +218,7 @@
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-darwin": "nixpkgs-darwin",
+        "pi-plugins": "pi-plugins",
         "sops-nix": "sops-nix"
       }
     },
