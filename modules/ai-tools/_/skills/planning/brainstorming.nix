@@ -4,11 +4,11 @@ let
 in
 {
   name = "brainstorming";
-  description = "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.";
+  description = "Collaborative dialogue that turns a still-undecided idea into an agreed design or spec. Use ONLY when the user is explicitly brainstorming what to build: they say \"brainstorm\", \"ideate\", \"let's think through\", \"explore options\", \"help me decide\", \"what should we build\", or they float a new feature or project whose requirements and shape are genuinely open and ask for help settling them. Do NOT use for implementation work, even when it produces something new: writing, fixing, refactoring or reviewing code; config, module or infrastructure changes; adding a package, tool or dependency; debugging; or answering a question — all of those proceed directly. If the user has already decided what they want, it is not brainstorming.";
   license = "MIT";
   metadata = {
     category = "planning";
-    triggers = "brainstorm, design, spec, idea, feature, new project, requirements, approach, tradeoffs, mockup, wireframe, architecture, scope, decompose";
+    triggers = "brainstorm, ideate, explore options, help me decide, what should we build, new feature idea, requirements still open, undecided scope";
     source = "https://github.com/obra/superpowers/tree/main/skills/brainstorming";
   };
   prompt = builtins.readFile (skillDir + "/_body.md");

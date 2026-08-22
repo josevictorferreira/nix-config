@@ -2,22 +2,37 @@
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-Start by classifying how much process the request needs, then work
-through your path: understand the context, refine the idea, present a
-design, and get your human partner's approval.
+Start by checking SCOPE below — most requests are not brainstorming. If it
+is, classify how much process it needs, then work through your path:
+understand the context, refine the idea, present a design, and get your
+human partner's approval.
+
+<SCOPE>
+This skill decides WHAT to build, for a new feature, subsystem or project
+whose shape is still open. It does not cover carrying out work that has
+already been decided.
+
+Check this before anything else. If the request is implementation — a
+defined change, a fix, a refactor, a config or module edit, a dependency
+bump, a debugging session, or a question that has an answer — this skill
+does not apply. Say so in one line and hand the task back to the normal
+development workflow. Do not classify it, do not run the process below,
+and do not ask for design approval the request never called for.
+</SCOPE>
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any
-project, or take any implementation action until you have told your
-human partner what you intend and they have approved it. This applies
-to EVERY task on EVERY path below — the ceremony scales with the task;
-the approval gate never does.
+Once you are brainstorming, do NOT invoke any implementation skill, write
+any code, scaffold any project, or take any implementation action until
+you have told your human partner what you intend and they have approved
+it. This applies to EVERY path below — the ceremony scales with the task;
+the approval gate never does. It governs only the idea this skill is
+shaping; it is not licence to gate a request that was never brainstorming.
 </HARD-GATE>
 
 ## Three Paths
 
-Before your first question, classify the request and say the
-classification out loud — "this looks bounded, so I'll present a short
+Once SCOPE says this is brainstorming, classify the request before your
+first question and say the classification out loud — "this looks bounded, so I'll present a short
 design here rather than write a spec" — so your human partner can
 override it:
 
@@ -49,16 +64,21 @@ stop, say so, and step up. Nothing downgrades mid-task.
 ## Anti-Pattern: "Too Simple To Need Approval"
 
 Every path ends with your human partner approving your intent before
-implementation. A todo list, a single-function utility, a config
-change — the design may be two sentences in chat, but you MUST present
-it and get approval. "Simple" tasks are where unexamined assumptions
-cause the most wasted work. What scales with simplicity is the
+implementation. For an idea you are brainstorming — a small feature, a
+utility you are still shaping — the design may be two sentences in chat,
+but you MUST present it and get approval. Small ideas are where unexamined
+assumptions cause the most wasted work. What scales with smallness is the
 artifact, never the approval.
+
+This is not a reason to widen SCOPE. A change the user has already
+specified is not a small idea needing approval — it is implementation, and
+it never entered this skill.
 
 ## Red Flags
 
 | Thought | Reality |
 |---------|---------|
+| "They asked me to implement/fix/refactor X, so I'll brainstorm it first" | Already-decided work is out of SCOPE. Say so in one line and hand it back — no classification, no approval gate. |
 | "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
 | "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
 | "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
