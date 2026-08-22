@@ -184,6 +184,14 @@
         ];
       }
       {
+        window_name = "Ideator";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/ideator";
+        panes = [
+          "clear"
+        ];
+      }
+      {
         window_name = "Axion";
         layout = "tiled";
         start_directory = "$HOME/Workspace/axion";
