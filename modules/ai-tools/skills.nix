@@ -61,7 +61,6 @@ let
         oh-my-claudecode = mkSkill ./_/skills/claudecode/oh-my-claudecode.nix;
         grafana = mkSkill ./_/skills/infrastructure/grafana.nix;
         # openclaw-nix-upgrade = mkSkill ./_/skills/infrastructure/openclaw-nix-upgrade.nix;
-        openclaw-upgrade = mkSkill ./_/skills/infrastructure/openclaw-upgrade.nix;
         # browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix; # Disabled: replaced by browser-dev-cycle
         browser-dev-cycle = mkSkill ./_/skills/browser/browser-dev-cycle.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
