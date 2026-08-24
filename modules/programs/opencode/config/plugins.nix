@@ -3,27 +3,27 @@ _: {
   config = {
     jvf.programs.opencode.settings = {
       plugin = [
-        "@tarquinen/opencode-dcp@3.1.14"
-        "oh-my-openagent@4.19.2"
+        "@tarquinen/opencode-dcp@3.1.15"
+        "oh-my-openagent@5.0.0-beta.7"
         "@vectorize-io/opencode-hindsight"
       ];
     };
 
     jvf.programs.opencode.ohMyOpenCodeSettings =
       let
-        kimi = "omniroute/kimi-k3";
-        kimiCoder = "omniroute/kimi-coding";
-        glm = "omniroute/glm-5.2";
-        glmThinking = "omniroute/glm-5.2-max";
-        qwen = "omniroute/qwen3.7-plus";
-        qwenMax = "omniroute/qwen3.7-max";
-        gandalf = "omniroute/gandalf";
-        radagast = "omniroute/radagast";
-        saruman = "omniroute/saruman";
-        legolas = "omniroute/legolas";
-        minimax = "omniroute/minimax-m3";
-        mimoPro = "omniroute/mimo-v2.5-pro";
-        mimo = "omniroute/mimo-v2.5";
+        kimi = "velox/kimi-k3";
+        kimiCoder = "velox/kimi-coding";
+        glm = "velox/glm-5.2";
+        glmThinking = "velox/glm-5.2-max";
+        qwen = "velox/qwen3.7-plus";
+        qwenMax = "velox/qwen3.7-max";
+        gandalf = "velox/gandalf";
+        radagast = "velox/radagast";
+        saruman = "velox/saruman";
+        legolas = "velox/legolas";
+        minimax = "velox/minimax-m3";
+        mimoPro = "velox/mimo-v2.5-pro";
+        mimo = "velox/mimo-v2.5";
         models = {
           quick = {
             default = legolas;
@@ -360,7 +360,7 @@ _: {
           defaultConcurrency = 8;
           staleTimeoutMs = 180000;
           providerConcurrency = {
-            "omniroute" = 8;
+            "velox" = 8;
           };
           maxDepth = 10;
           maxDescendants = 50;
