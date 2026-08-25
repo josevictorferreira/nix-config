@@ -50,7 +50,6 @@ let
         };
 
       skills = {
-        auditing-security = mkSkill ./_/skills/auditing/security.nix;
         creating-skills = mkSkill ./_/skills/meta/creating-skills.nix;
         xlsx = mkSkill ./_/skills/meta/xlsx.nix;
         self-learning = mkSkill ./_/skills/meta/self-learning.nix;
