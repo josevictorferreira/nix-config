@@ -53,7 +53,6 @@ let
         auditing-security = mkSkill ./_/skills/auditing/security.nix;
         creating-skills = mkSkill ./_/skills/meta/creating-skills.nix;
         xlsx = mkSkill ./_/skills/meta/xlsx.nix;
-        karpathy-guidelines = mkSkill ./_/skills/meta/karpathy-guidelines.nix;
         self-learning = mkSkill ./_/skills/meta/self-learning.nix;
         research-tools = mkSkill ./_/skills/research/research-tools.nix;
         implementation-plan-best-practices = mkSkill ./_/skills/planning/implementation-plan-best-practices.nix;
@@ -66,8 +65,7 @@ let
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
         adversarial-ux-test = mkSkill ./_/skills/qa/adversarial-ux-test.nix;
         design-md = mkSkill ./_/skills/creative/design-md.nix;
-        humanize-text-ptbr = mkSkill ./_/skills/creative/humanize-text-ptbr.nix;
-        humanize-text-en = mkSkill ./_/skills/creative/humanize-text-en.nix;
+        humanize-text = mkSkill ./_/skills/creative/humanize-text.nix;
         kubernetes-tools = mkSkill ./_/skills/infrastructure/kubernetes-tools.nix;
         developing-containers = mkSkill ./_/skills/containers/developing-containers.nix;
       };

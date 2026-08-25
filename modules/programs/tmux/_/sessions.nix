@@ -152,7 +152,7 @@
         ];
       }
       {
-        window_name = "Velox";
+        window_name = "💫Velox";
         layout = "tiled";
         start_directory = "$HOME/Workspace/velox";
         panes = [
@@ -160,7 +160,7 @@
         ];
       }
       {
-        window_name = "Poise";
+        window_name = "👦Poise";
         layout = "tiled";
         start_directory = "$HOME/Workspace/poise";
         panes = [
@@ -168,7 +168,7 @@
         ];
       }
       {
-        window_name = "LiterSearch";
+        window_name = "📖LiterSearch";
         layout = "tiled";
         start_directory = "$HOME/Workspace/litersearch";
         panes = [
@@ -176,7 +176,7 @@
         ];
       }
       {
-        window_name = "Glyph";
+        window_name = "🪄Glyph";
         layout = "tiled";
         start_directory = "$HOME/Workspace/glyph";
         panes = [
@@ -184,7 +184,7 @@
         ];
       }
       {
-        window_name = "Ideator";
+        window_name = "💡Ideator";
         layout = "tiled";
         start_directory = "$HOME/Workspace/ideator";
         panes = [
@@ -192,7 +192,7 @@
         ];
       }
       {
-        window_name = "Axion";
+        window_name = "🚘Axion";
         layout = "tiled";
         start_directory = "$HOME/Workspace/axion";
         panes = [
@@ -200,7 +200,7 @@
         ];
       }
       {
-        window_name = "Mordren";
+        window_name = "🧝🏼Mordren";
         layout = "tiled";
         start_directory = "$HOME/Workspace/mordren";
         panes = [
@@ -208,7 +208,7 @@
         ];
       }
       {
-        window_name = "Dramaturge";
+        window_name = "✏️Dramaturge";
         layout = "tiled";
         start_directory = "$HOME/Workspace/dramaturge";
         panes = [
