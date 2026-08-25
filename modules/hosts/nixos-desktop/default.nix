@@ -209,6 +209,21 @@ in
           networking.defaultGateway = "10.10.10.1";
           networking.nameservers = [ "10.10.10.100" ];
 
+          # Self-hosted Attic binary cache (homelab, see nix_homelab_plan.md).
+          # TODO(phase-2): add "homelab:<public-key>" to trustedPublicKeys once
+          # the cache exists (`attic cache info homelab`).
+          jvf.system.nix-daemon.substituters = [
+            "https://hyprland.cachix.org"
+            "http://10.10.10.161:8080/homelab"
+          ];
+          jvf.system.nix-daemon.trustedSubstituters = [
+            "https://hyprland.cachix.org"
+            "http://10.10.10.161:8080/homelab"
+          ];
+          jvf.system.nix-daemon.trustedPublicKeys = [
+            "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+          ];
+
           # Open port for OpenCode Web
           jvf.system.firewall.allowedTCPPorts = [
             3000
