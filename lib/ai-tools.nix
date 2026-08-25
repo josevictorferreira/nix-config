@@ -29,8 +29,10 @@ let
       let
         inherit (args) skillOptions;
         skillName = skillOptions.name or (throw "mkSkillModule: skillOptions.name is required");
+        # `programs` narrows which agents get the skill; it is not part of the skill itself
+        skillDefinition = builtins.removeAttrs skillOptions [ "programs" ];
         defaultPrograms =
-          args.programs or (
+          skillOptions.programs or args.programs or (
             if
               (skillOptions ? mcp && skillOptions.mcp != { }) || (skillOptions ? mcps && skillOptions.mcps != { })
             then
@@ -72,7 +74,7 @@ let
             lib.mkMerge (
               map
                 (program: {
-                  jvf.programs.${program}.skills.${skillName} = lib.mkIf (lib.elem program cfg.programs) skillOptions;
+                  jvf.programs.${program}.skills.${skillName} = lib.mkIf (lib.elem program cfg.programs) skillDefinition;
                 })
                 allPrograms
             )

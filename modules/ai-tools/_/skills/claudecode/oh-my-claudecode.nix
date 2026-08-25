@@ -1,6 +1,7 @@
 { lib, pkgs, isDarwin, npx, defaultBrowser, kebabToHuman, ... }:
 {
   name = "oh-my-claudecode";
+  programs = [ "claudecode" ];
   description = "Multi-agent orchestration layer for Claude Code. Enhances Claude Code with 'Magic Keywords' for advanced execution modes like autopilot, deep-interview, and ultrawork. Use this skill when the user wants to perform complex tasks that require high autonomy, parallel execution, or requirement clarification.";
   allowed-tools = [
     "Bash"
