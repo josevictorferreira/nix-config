@@ -72,6 +72,13 @@ let
             trusted-substituters = cfg.trustedSubstituters;
             trusted-public-keys = cfg.trustedPublicKeys;
             netrc-file = "/home/${config.jvf.core.username}/.netrc";
+            # Keep dev-shell/build-time deps across GC so direnv shells
+            # and repeated builds don't re-download after every collection.
+            keep-outputs = true;
+            keep-derivations = true;
+            # Let remote builders fetch deps from caches instead of
+            # copying everything from this machine.
+            builders-use-substitutes = true;
           };
           optimise = {
             automatic = cfg.autoOptimiseStore;
