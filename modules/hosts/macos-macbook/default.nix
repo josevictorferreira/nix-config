@@ -4,21 +4,10 @@
 let
   system = "aarch64-darwin";
 
-  # Fix libfyaml pkg-config leaking " none required" into linker args (nixpkgs#514566)
-  libfyamlOverlay = final: prev: {
-    libfyaml = prev.libfyaml.overrideAttrs (previousAttrs: {
-      postInstall = (previousAttrs.postInstall or "") + ''
-        substituteInPlace "$dev/lib/pkgconfig/libfyaml.pc" \
-          --replace-fail " none required" ""
-      '';
-    });
-  };
-
   pkgs = import inputs.nixpkgs-darwin {
     inherit system;
     overlays = [
       inputs.bun2nix.overlays.default
-      libfyamlOverlay
     ];
   };
 
@@ -81,7 +70,6 @@ in
           nixpkgs.hostPlatform = system;
           nixpkgs.overlays = [
             inputs.bun2nix.overlays.default
-            libfyamlOverlay
           ];
         }
 
