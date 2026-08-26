@@ -282,15 +282,15 @@ let
               if [ "$DESIRED" != "$CURRENT" ]; then
                 PI=${lib.escapeShellArg "${pkgs.pi-coding-agent}/bin/pi"}
                 if [ -x "$PI" ]; then
-                  if [ "$(id -u)" -eq 0 ] && command -v runuser >/dev/null 2>&1; then
-                    run_pi() { runuser -u "$USER_NAME" -- env "HOME=$HOME_DIR" "$PI" "$@"; }
-                  else
-                    run_pi() { env "HOME=$HOME_DIR" "$PI" "$@"; }
-                  fi
                   ${lib.concatMapStringsSep "\n" (ext: ''
                     echo "[pi] Installing extension: ${ext}"
-                    run_pi install ${lib.escapeShellArg ext} \
-                      || echo "[pi] WARN: failed to install ${ext}"
+                    if [ "$(id -u)" -eq 0 ] && command -v runuser >/dev/null 2>&1; then
+                      runuser -u "$USER_NAME" -- env "HOME=$HOME_DIR" "$PI" install ${lib.escapeShellArg ext} \
+                        || echo "[pi] WARN: failed to install ${ext}"
+                    else
+                      env "HOME=$HOME_DIR" "$PI" install ${lib.escapeShellArg ext} \
+                        || echo "[pi] WARN: failed to install ${ext}"
+                    fi
                   '') cfg.extensions}
                   echo "$DESIRED" > "$EXT_STATE"
                   chown "$USER_NAME:$GROUP_NAME" "$EXT_STATE"
