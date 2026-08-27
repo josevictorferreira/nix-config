@@ -61,6 +61,8 @@ let
         # openclaw-nix-upgrade = mkSkill ./_/skills/infrastructure/openclaw-nix-upgrade.nix;
         # browser-debug-tools = mkSkill ./_/skills/browser/debug-tools.nix; # Disabled: replaced by browser-dev-cycle
         browser-dev-cycle = mkSkill ./_/skills/browser/browser-dev-cycle.nix;
+        ultimate-browsing = mkSkill ./_/skills/browser/ultimate-browsing.nix;
+        remove-ai-slops = mkSkill ./_/skills/qa/remove-ai-slops.nix;
         vision-tools = mkSkill ./_/skills/vision/vision-tools.nix;
         adversarial-ux-test = mkSkill ./_/skills/qa/adversarial-ux-test.nix;
         design-md = mkSkill ./_/skills/creative/design-md.nix;
