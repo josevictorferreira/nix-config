@@ -109,7 +109,20 @@ skill_mcp(mcp_name="chrome-devtools", tool_name="<TOOL>", arguments='<JSON>')
 
 For programmatic control: loops, conditionals, mocking, recording, viewport matrix testing.
 
-### Setup
+
+### Installed Launchers
+
+The rebuild installs Nix-backed launchers for the bundled scripts. Use these commands instead of invoking files from the skill directory:
+
+```bash
+browser-dev-cycle-network-mock <command> [args...]
+browser-dev-cycle-playwright-helper <command> [args...]
+browser-dev-cycle-viewport-test <url> [output-dir]
+```
+
+For a custom script, run it with `browser-dev-cycle-node <script.mjs>`. The launcher provides Node.js and the Nix-packaged Playwright Core module.
+
+### Custom Script Example
 
 Write `.mjs` scripts that use Playwright-core to connect via CDP:
 

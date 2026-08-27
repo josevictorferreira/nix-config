@@ -10,11 +10,29 @@ let
   readReference =
     path:
     builtins.replaceStrings
-      [ "engine/" "python3 -m engine" "python3 engine/" ]
       [
+        "python3 engine/bias_check.py"
+        "python3 -m engine"
+        "engine/"
+        "python3 -c \"import curl_cffi\" 2>/dev/null || pip install curl_cffi -q"
+        "python3 -c \"import feedparser\" 2>/dev/null || pip install feedparser -q"
+        "python3 -c \"import curl_cffi, bs4, yaml\" 2>/dev/null || pip install curl_cffi beautifulsoup4 pyyaml -q"
+        "which yt-dlp || python3 -m yt_dlp --version"
+        "- 미설치 시: `pip install yt-dlp`"
+        "npm i -g agent-browser@0.33.2 && agent-browser install"
+        "npm i -g agent-browser@0.33.2"
+      ]
+      [
+        "ultimate-browsing-bias-check"
+        "ultimate-browsing"
         "scripts/engine/"
-        "PYTHONPATH=scripts python3 -m engine"
-        "python3 scripts/engine/"
+        "python3 -c \"import curl_cffi\""
+        "python3 -c \"import feedparser\""
+        "python3 -c \"import curl_cffi, bs4, yaml\""
+        "yt-dlp --version"
+        "- yt-dlp is provided by the Nix rebuild."
+        "# agent-browser is provided by the Nix rebuild; no npm install is needed."
+        "# agent-browser is provided by the Nix rebuild; no npm install is needed."
       ]
       (builtins.readFile path);
 in

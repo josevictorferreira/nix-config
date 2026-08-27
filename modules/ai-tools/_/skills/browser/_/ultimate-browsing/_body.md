@@ -32,15 +32,14 @@ Read the matching reference before acting: [`references/insane-search/README.md`
 ## Tier 1 — insane-search (headless extraction)
 
 **When**: content extraction, blocked-URL bypass, media metadata — no browser UI needed.
-**Why first**: ~10x faster than a browser, no process spin-up; handles most "fetch this blocked page" requests via curl_cffi TLS impersonation, yt-dlp (1858 sites), official public APIs, mobile URL transforms, **Phase-2.5 surrogate archives** (Wayback / archive.today snapshots, provenance-tagged — see [`references/insane-search/cache-archive.md`](references/insane-search/cache-archive.md)), a key-gated Jina Reader (`JINA_API_KEY`), and a Playwright real-Chrome fallback. The engine lives **inside this skill** at `scripts/engine/` and is invoked as a module. Surrogate results are dated COPIES: a result whose `provenance` is `snapshot` must be reported with its `snapshot_timestamp`, never presented as the live page.
+**Why first**: ~10x faster than a browser, no process spin-up; handles most "fetch this blocked page" requests via curl_cffi TLS impersonation, yt-dlp (1858 sites), official public APIs, mobile URL transforms, **Phase-2.5 surrogate archives** (Wayback / archive.today snapshots, provenance-tagged — see [`references/insane-search/cache-archive.md`](references/insane-search/cache-archive.md)), a key-gated Jina Reader (`JINA_API_KEY`), and a Playwright real-Chrome fallback. The engine is installed by Nix and invoked through the `ultimate-browsing` launcher. Surrogate results are dated COPIES: a result whose `provenance` is `snapshot` must be reported with its `snapshot_timestamp`, never presented as the live page.
 
 ```bash
-# Core command — auto-detects WAF, runs the full fetch grid (run from the skill dir):
-PYTHONPATH=scripts python3 -m engine "https://example.com/blocked-page"
+# Nix-installed launcher; no skill-directory or PYTHONPATH setup is needed
+ultimate-browsing "https://example.com/blocked-page"
 #   add --selector "<CSS>" for positive-proof validation, --device auto|desktop|mobile,
 #   --trace to inspect every attempt, --json for machine-readable output.
-
-# YouTube subtitles / metadata (no browser):
+# YouTube subtitles / metadata (yt-dlp is installed by the rebuild):
 yt-dlp --write-sub --write-auto-sub --sub-lang "en,ko" --skip-download -o "/tmp/%(id)s" "<URL>"
 
 # Reddit / HN / Bluesky / arXiv etc. use official public endpoints — see the Phase 0 index in
@@ -79,7 +78,7 @@ Routing table, per-platform auth (set `TWITTER_*` env vars, `gh auth login`, a t
 
 **When**: real interaction is needed (clicks, forms, screenshots, video, persistent login), or Tier 1/1.5 failed.
 
-CloakBrowser is a stealth Chromium with source-level fingerprint patches that passes Cloudflare Turnstile, FingerprintJS, BrowserScan, and 30+ detectors; agent-browser is the CDP automation CLI that drives it. Both are runtime-installed tools (not vendored here). Full setup, version pins, launch flow, cookie login, and cross-platform notes are in [references/chrome-stealth.md](references/chrome-stealth.md).
+CloakBrowser is a stealth Chromium with source-level fingerprint patches that passes Cloudflare Turnstile, FingerprintJS, BrowserScan, and 30+ detectors; `agent-browser` and `mcporter` are installed by Nix and available on PATH. CloakBrowser itself is not packaged by nixpkgs, so Tier 2 stealth requires the external CloakBrowser installation described in [references/chrome-stealth.md](references/chrome-stealth.md).
 
 ```bash
 # 1. Launch CloakBrowser with CDP on :9242 (see chrome-stealth.md for install + venv).
@@ -94,14 +93,14 @@ agent-browser --cdp 9242 close
 
 ### Cookie login (cross-platform)
 
-`scripts/extract_cookies.py` reads cookies from a local Chromium-family or Firefox-family browser and optionally injects them into the running CDP session. It resolves browser profile paths and decrypts cookie values per-OS (macOS Keychain, Linux libsecret, Windows DPAPI):
+`ultimate-browsing-cookies` runs the bundled cookie extractor with the Nix-provided Python dependencies. It reads cookies from a local Chromium-family or Firefox-family browser and optionally injects them into the running CDP session. It resolves browser profile paths and decrypts cookie values per-OS (macOS Keychain, Linux libsecret, Windows DPAPI):
 
 ```bash
 # Extract cookies to a file:
 mkdir -p ~/.local/state/omo-cookies
-python3 scripts/extract_cookies.py --browser chrome --domain youtube.com --output ~/.local/state/omo-cookies/youtube.cookies.json
+ultimate-browsing-cookies --browser chrome --domain youtube.com --output ~/.local/state/omo-cookies/youtube.cookies.json
 # Extract and inject into the running CDP session:
-python3 scripts/extract_cookies.py --browser chrome --domain youtube.com --inject --cdp 9242
+ultimate-browsing-cookies --browser chrome --domain youtube.com --inject --cdp 9242
 ```
 
 Cookie export files are written with owner-only `0600` permissions. Do not place live auth cookies in shared temp directories or commit them to a repo. Cookie injection sends values to CDP over stdin rather than argv. Cookies apply on next navigation — reload after injecting. Google services use fingerprint-bound tokens that may not transfer across browser profiles. Full detail in [references/chrome-stealth.md](references/chrome-stealth.md).
@@ -121,7 +120,7 @@ CLOAK_CDP_PORT=9242              # CloakBrowser CDP port (default 9242)
 AGENT_BROWSER_USER_AGENT="..."   # override UA to hide HeadlessChrome
 AGENT_BROWSER_HEADED=1           # show the browser window
 # agent-reach auth: set the channel-specific env vars from each tool's docs only if you have access
-# insane-search needs no env vars — it auto-installs deps on first run
+# insane-search needs no manual dependency installation
 ```
 
 ## Anti-patterns
