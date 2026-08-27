@@ -16,6 +16,24 @@ let
       npx = lib.getExe' pkgs.nodejs "npx";
       defaultBrowser = lib.getExe pkgs.brave;
 
+      pythonEnv = pkgs.python3.withPackages (
+        ps: with ps; [
+          ps."curl-cffi"
+          ps.beautifulsoup4
+          ps.cryptography
+          ps.pyyaml
+          ps.secretstorage
+        ]
+      );
+      browserSkillPackages = [
+        pkgs.nodejs
+        pkgs.curl
+        pkgs.gh
+        pkgs.yt-dlp
+        pythonEnv
+        pkgs.playwright
+      ];
+
       kebabToHuman =
         s:
         lib.concatStringsSep " " (
@@ -76,7 +94,15 @@ let
     {
       options.jvf.aiTools.skills = lib.mapAttrs (name: skill: skill.options) skills;
 
-      config = lib.mkMerge (lib.mapAttrsToList (name: skill: skill.config { inherit config; }) skills);
+      config = lib.mkMerge (
+        [
+          (lib.mkIf (cfg."browser-dev-cycle".enable || cfg."ultimate-browsing".enable) {
+            jvf.wrappers.users.${config.jvf.core.username}.programs.browser-skills-runtime.packages =
+              browserSkillPackages;
+          })
+        ]
+        ++ (lib.mapAttrsToList (name: skill: skill.config { inherit config; }) skills)
+      );
     };
 in
 {

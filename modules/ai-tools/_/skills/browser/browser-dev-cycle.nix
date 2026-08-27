@@ -6,6 +6,17 @@
 , kebabToHuman
 , ...
 }:
+let
+  playwrightImport = "${pkgs.playwright}/index.mjs";
+  readScript =
+    path:
+    builtins.replaceStrings [ "from 'playwright-core';" ] [ "from '${playwrightImport}';" ] (
+      builtins.readFile path
+    );
+  generatedPrompt =
+    builtins.replaceStrings [ "from 'playwright-core';" ] [ "from '${playwrightImport}';" ]
+      (builtins.readFile ./_/browser-dev-cycle/_body.md);
+in
 {
   name = "browser-dev-cycle";
   description = "Full development cycle browser automation - viewing, debugging, testing, and visual inspection of web apps. Three-tier strategy using @playwright/mcp (MCP tools), Chrome DevTools MCP (performance), and Playwright-core (scripting). Triggers on \"browse\", \"browser\", \"screenshot\", \"viewport\", \"performance trace\", \"network debug\", \"visual QA\", \"responsive test\".";
@@ -44,15 +55,15 @@
     "pi"
   ];
   scripts = {
-    "network-mock.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/network-mock.mjs;
-    "playwright-helper.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/playwright-helper.mjs;
-    "viewport-test.mjs" = builtins.readFile ./_/browser-dev-cycle/scripts/viewport-test.mjs;
+    "network-mock.mjs" = readScript ./_/browser-dev-cycle/scripts/network-mock.mjs;
+    "playwright-helper.mjs" = readScript ./_/browser-dev-cycle/scripts/playwright-helper.mjs;
+    "viewport-test.mjs" = readScript ./_/browser-dev-cycle/scripts/viewport-test.mjs;
   };
   references = {
     "tool-comparison" = builtins.readFile ./_/browser-dev-cycle/references/tool-comparison.md;
     "workbook-patterns" = builtins.readFile ./_/browser-dev-cycle/references/workbook-patterns.md;
   };
 
-  prompt = builtins.readFile ./_/browser-dev-cycle/_body.md;
+  prompt = generatedPrompt;
 
 }
