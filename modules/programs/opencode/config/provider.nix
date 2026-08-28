@@ -48,6 +48,9 @@ _: {
           "deepseek-v4-pro" = {
             name = "DeepSeek V4 Pro (Velox)";
           };
+          "glm-5-3-flash" = {
+            name = "GLM-5.3 Flash (Velox)";
+          };
           "glm-5-3" = {
             name = "GLM-5.3 (Velox)";
           };
