@@ -57,7 +57,7 @@ let
 
   mkConfig =
     { isDarwin }:
-    { config, lib, ... }:
+    { config, lib, pkgs, ... }:
     let
       cfg = config.jvf.system.nix-daemon;
     in
@@ -91,6 +91,8 @@ let
       }
       // lib.optionalAttrs (!isDarwin) {
         programs.nix-ld.enable = true;
+        # CLI for pushing to the self-hosted Attic binary cache (homelab).
+        environment.systemPackages = [ pkgs.attic-client ];
       };
     };
 in
