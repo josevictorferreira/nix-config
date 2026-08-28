@@ -135,7 +135,7 @@
     3. Register the skill in `~/.config/nix/modules/ai-tools/skills.nix` inside the `skills = { ... }` attrset, kebab-case key matching the skill name.
     4. If the skill bundles helper scripts/agents/references, place them in a co-located `_/<skill-name>/` directory (the `_/` prefix excludes them from import-tree auto-discovery) and follow the pattern documented in `~/.config/nix/AGENTS.md` (see "Adding Skills with Bundled Resources to ai-tools").
     5. `git add` the new file — flakes only see git-tracked files, so evaluation fails with "path does not exist / to make it visible run git add" until you do.
-    6. Verify with `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.programs.claudecode.skills.<new-skill-name>.name`.
+    6. Verify with `nix eval .#nixosConfigurations.zeh-pc.config.jvf.programs.claudecode.skills.<new-skill-name>.name`.
 
     If preconditions are not met, do NOT create a new skill — note the idea in the output instead.
 
@@ -159,7 +159,7 @@
     Before declaring done:
     - `nix-instantiate --parse <each-edited-file>` passes for every modified `.nix` file.
     - For new skills: confirm registration evaluates with
-      `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.programs.claudecode.skills --apply builtins.attrNames`.
+      `nix eval .#nixosConfigurations.zeh-pc.config.jvf.programs.claudecode.skills --apply builtins.attrNames`.
       Note `jvf.aiTools.skills.<name>` only carries `enable`/`programs` — the skill body lives under `jvf.programs.<program>.skills.<name>`.
 
     ---

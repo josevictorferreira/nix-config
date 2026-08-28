@@ -136,7 +136,7 @@ in {
   (flakes use pure eval; untracked files are invisible).
 - After module changes, verify with:
   ```bash
-  nix eval .#nixosConfigurations.nixos-desktop.config.system.build.toplevel
+  nix eval .#nixosConfigurations.zeh-pc.config.system.build.toplevel
   nix flake check
   ```
 - Darwin configs only fully validate on macOS. On Linux, use:

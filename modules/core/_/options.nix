@@ -5,7 +5,7 @@
 # Set these in each host's config.nix:
 #   jvf.core = {
 #     username = "josevictor";
-#     host = "nixos-desktop";
+#     host = "zeh-pc";
 #     os = "nixos";
 #   };
 
@@ -19,7 +19,7 @@
 
     host = lib.mkOption {
       type = lib.types.str;
-      description = "Hostname identifier (e.g. nixos-desktop, macos-macbook).";
+      description = "Hostname identifier (e.g. zeh-pc, zeh-mac).";
     };
 
     os = lib.mkOption {

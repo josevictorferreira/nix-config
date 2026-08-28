@@ -1,4 +1,4 @@
-# Host configuration: nixos-desktop
+# Host configuration: zeh-pc
 # Single source of truth — selector + identity + machine-specific config.
 { inputs, self, ... }:
 let
@@ -80,7 +80,7 @@ let
   };
 in
 {
-  flake.nixosConfigurations.nixos-desktop = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations.zeh-pc = inputs.nixpkgs.lib.nixosSystem {
     inherit specialArgs;
     modules =
       # Dendritic aspects (all NixOS modules via import-tree)
@@ -173,7 +173,7 @@ in
           # Core identity
           jvf.core = {
             username = "josevictor";
-            host = "nixos-desktop";
+            host = "zeh-pc";
             os = "nixos";
           };
           jvf.programs.tmuxp.enable = true;
@@ -182,7 +182,7 @@ in
           jvf.users.josevictor = {
             description = "Jose Victor Ferreira";
             authorizedKeys = [
-              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@macos-macbook"
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOVNsxVT6rzeyqZVlJVdQgKEzK2z0fOFNRZMAvQvBxbX josevictorferreira@zeh-mac"
             ];
           };
 

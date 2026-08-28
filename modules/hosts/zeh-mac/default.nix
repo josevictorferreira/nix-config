@@ -1,4 +1,4 @@
-# Host configuration: macos-macbook
+# Host configuration: zeh-mac
 # Single source of truth — selector + identity + machine-specific config.
 { inputs, self, ... }:
 let
@@ -23,7 +23,7 @@ let
   };
 in
 {
-  flake.darwinConfigurations.macos-macbook = inputs.darwin.lib.darwinSystem {
+  flake.darwinConfigurations.zeh-mac = inputs.darwin.lib.darwinSystem {
     inherit specialArgs;
     modules =
       # Dendritic aspects (all Darwin modules via import-tree)
@@ -78,7 +78,7 @@ in
           # Core identity
           jvf.core = {
             username = "josevictorferreira";
-            host = "macos-macbook";
+            host = "zeh-mac";
             os = "macos";
           };
 

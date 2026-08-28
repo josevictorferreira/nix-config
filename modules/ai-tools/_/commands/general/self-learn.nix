@@ -133,7 +133,7 @@
     2. Create `<category>/<kebab-name>.nix` following the patterns in sibling skills (e.g. `meta/creating-skills.nix`, `research/research-tools.nix`).
     3. Register the skill in `~/.config/nix/modules/ai-tools/skills.nix` inside the `skills = { ... }` attrset, kebab-case key matching the skill name.
     4. If the skill bundles helper scripts/agents/references, place them in a co-located `_/<skill-name>/` directory (the `_/` prefix excludes them from import-tree auto-discovery) and follow the pattern documented in `~/.config/nix/AGENTS.md` (see "Adding Skills with Bundled Resources to ai-tools").
-    5. Verify with `nix flake check` (or at minimum `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.aiTools.skills.<new-skill-name>.name`).
+    5. Verify with `nix flake check` (or at minimum `nix eval .#nixosConfigurations.zeh-pc.config.jvf.aiTools.skills.<new-skill-name>.name`).
 
     If preconditions are not met, do NOT create a new skill — note the idea in the output instead.
 
@@ -156,8 +156,8 @@
 
     Before declaring done:
     - `nix-instantiate --parse <each-edited-file>` passes for every modified `.nix` file.
-    - Run `nix flake check` (or, if too slow, `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.aiTools.skills` to ensure skill registration still evaluates).
-    - For new skills: confirm the skill name appears in `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.aiTools.skills --apply 'lib.attrNames'`.
+    - Run `nix flake check` (or, if too slow, `nix eval .#nixosConfigurations.zeh-pc.config.jvf.aiTools.skills` to ensure skill registration still evaluates).
+    - For new skills: confirm the skill name appears in `nix eval .#nixosConfigurations.zeh-pc.config.jvf.aiTools.skills --apply 'lib.attrNames'`.
 
     ---
 

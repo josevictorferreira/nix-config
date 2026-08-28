@@ -13,10 +13,10 @@ Based on: KooL's NixOS-Hyprland.
 ./
 ├── modules/
 │   ├── hosts/               # Host configurations (single source of truth)
-│   │   ├── nixos-desktop/
+│   │   ├── zeh-pc/
 │   │   │   ├── default.nix  # Selector + identity + config (merged)
 │   │   │   └── _/hardware.nix  # Machine-specific filesystems/UUIDs
-│   │   └── macos-macbook/
+│   │   └── zeh-mac/
 │   │       └── default.nix  # Selector + identity + config (merged)
 │   ├── programs/            # Per-program modules (each in own folder)
 │   │   ├── kitty/
@@ -153,7 +153,7 @@ imports = with nixosAspects; [ programs-my-new ... ];
 
 Or directly to host selector if not role-appropriate:
 ```nix
-# modules/hosts/nixos-desktop/default.nix
+# modules/hosts/zeh-pc/default.nix
 (with self.modules.nixos; [ ... programs-my-new ... ])
 ```
 
@@ -384,8 +384,8 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ### Host Selectors Import Roles + Infra, Not Leaf Aspects
 **Lesson:** After P0, host files (`modules/hosts/<hostname>/default.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) ai-tools, (5) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
-**Context:** nixos-desktop went from 133 → 146 lines (merged selector+config), macos-macbook from 109+19 → 91 lines. Programs come via roles.
-**Verify:** `grep -c 'programs-' modules/hosts/nixos-desktop/default.nix` should return 0 (programs come via roles).
+**Context:** zeh-pc went from 133 → 146 lines (merged selector+config), zeh-mac from 109+19 → 91 lines. Programs come via roles.
+**Verify:** `grep -c 'programs-' modules/hosts/zeh-pc/default.nix` should return 0 (programs come via roles).
 
 ### Host Consolidation: Single Directory Per Host (P7)
 **Lesson:** Each host lives in `modules/hosts/<hostname>/default.nix` — selector + identity + config merged into one file. Machine-specific hardware goes in `modules/hosts/<hostname>/_/hardware.nix` (the `/_` prefix excludes it from import-tree auto-discovery).
@@ -394,7 +394,7 @@ Critical lessons from past sessions to avoid repeated friction.
 
 ### hardware.nix Must Be in `/_` to Avoid import-tree
 **Lesson:** Plain NixOS hardware modules (containing `modulesPath` in `_module.args`) MUST be placed in `_/hardware.nix` under the host directory. import-tree treats all `.nix` files as flake-parts modules — a plain NixOS module causes infinite recursion during eval.
-**Context:** First P7 attempt placed `hardware.nix` directly in `modules/hosts/nixos-desktop/` — import-tree picked it up, tried to eval as flake-parts module, and hit infinite recursion from `modulesPath`. Moving to `_/hardware.nix` fixed it.
+**Context:** First P7 attempt placed `hardware.nix` directly in `modules/hosts/zeh-pc/` — import-tree picked it up, tried to eval as flake-parts module, and hit infinite recursion from `modulesPath`. Moving to `_/hardware.nix` fixed it.
 **Verify:** `find modules/hosts -name 'hardware.nix' -not -path '*/_/*'` should return 0 results.
 
 ### Verify Flake Input Names When Merging Host Files
@@ -472,7 +472,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### jvf.home Item API
 **Lesson:** Items require `kind` ("file"/"dir"), optional `mode` ("copy"/"link"/"seed", default "copy"). Content: use `source` (path/derivation), `text` (string), or structured (`json`/`yaml`/`toml`/`ini` attrs). Dir items support `preserve` (list of subpaths) and `postInstall` (bash script with env vars: `TARGET_PATH`, `HOME_DIR`, `USER_NAME`, `GROUP_NAME`, `IS_DARWIN`, `BACKUP_DIR`).
 **Context:** The API is defined in `modules/home/default.nix`. Sugar shortcuts: `jvf.home.files.*` → `~/*`, `jvf.home.xdg.config.*` → `~/.config/*`.
-**Verify:** `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled --show-trace` to inspect compiled items.
+**Verify:** `nix eval .#nixosConfigurations.zeh-pc.config.jvf.home._compiled --show-trace` to inspect compiled items.
 
 ### Migration Complete — No Translation Layer
 **Lesson:** All 27 modules have been migrated from wrappers configs to jvf.home. The wrappers translation layer has been removed. Wrappers options are now: `packages`, `command`, `env` only.
@@ -504,7 +504,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Verify Incrementally During Batch Migrations
 **Lesson:** After completing each module migration in a batch, run targeted `nix eval` on that module's config before proceeding to the next. Don't wait until all 5 modules are done to verify.
 **Context:** Batch 1C built all 5 modules before verifying. When btop failed, had to debug in isolation while other modules were already correct. Incremental verification catches errors faster.
-**Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.home._compiled.users.<user>.items` and check for errors.
+**Verify:** After each migration: `nix eval .#nixosConfigurations.zeh-pc.config.jvf.home._compiled.users.<user>.items` and check for errors.
 
 ### Use lib.mkMerge for Multiple jvf.home.items Paths
 **Lesson:** When setting multiple `jvf.home.users.${cfg.username}.items."path"` in same module, wrap each in `lib.mkMerge [{ items."path1" = ...; } { items."path2" = ...; }]`. Direct assignments cause "dynamic attribute already defined" errors.
@@ -529,7 +529,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Verify with nix eval Early
 **Lesson:** Run `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel` after each module migration, not just at end. Catches dynamic attribute conflicts immediately.
 **Context:** Assumed `nix flake check` would catch all errors. Dynamic attribute conflicts only appear during NixOS module eval.
-**Verify:** After each migration: `nix eval .#nixosConfigurations.nixos-desktop` — should return derivation path.
+**Verify:** After each migration: `nix eval .#nixosConfigurations.zeh-pc` — should return derivation path.
 
 
 
@@ -594,7 +594,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Use _body.md and builtins.readFile for Skill Files with Frontmatter
 **Lesson:** When adding a skill from an external SKILL.md with YAML frontmatter, pre-extract the body with `awk 'BEGIN{sep=0} /^---$/{sep++; next} sep>=2{print}' SKILL.md > _body.md` and load via `builtins.readFile`. Place all bundled files (scripts, agents, assets, eval-viewer) in a co-located `_/<skill-name>/` directory (prefixed with `_/` so import-tree ignores it).
 **Context:** Nix lacks clean YAML frontmatter stripping — pre-extraction avoids complex string manipulation at eval time. Files in `_/<name>/` won't be auto-discovered by import-tree.
-**Verify:** `nix eval .#nixosConfigurations.nixos-desktop.config.jvf.programs.opencode.skills.<name>.name` returns the skill name.
+**Verify:** `nix eval .#nixosConfigurations.zeh-pc.config.jvf.programs.opencode.skills.<name>.name` returns the skill name.
 
 ### Map Non-Standard Skill Directories to scripts/ Attribute
 **Lesson:** The skill system only materializes `scripts/` and `references/` subdirectories. Map agents/, eval-viewer/, assets/ into the `scripts` attribute with path separators in keys (e.g., `scripts."agents/grader.md"`), then use `builtins.replaceStrings` to adjust file path references in the prompt from `agents/grader.md` to `scripts/agents/grader.md`.

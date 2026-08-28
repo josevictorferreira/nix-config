@@ -39,7 +39,7 @@ in {
 }
 ```
 
-See `modules/hosts/nixos-desktop/` and `modules/hosts/macos-macbook/` for full host examples.
+See `modules/hosts/zeh-pc/` and `modules/hosts/zeh-mac/` for full host examples.
 
 ## Structure
 
@@ -47,8 +47,8 @@ See `modules/hosts/nixos-desktop/` and `modules/hosts/macos-macbook/` for full h
 ./
 ├── modules/
 │   ├── hosts/             # Host configurations (merged selector + identity + config)
-│   │   ├── nixos-desktop/
-│   │   └── macos-macbook/
+│   │   ├── zeh-pc/
+│   │   └── zeh-mac/
 │   ├── programs/          # Per-program modules (own folders)
 │   │   ├── kitty/
 │   │   ├── neovim/
@@ -94,13 +94,13 @@ $ nix-shell -p ssh-to-age --run "ssh-to-age < ~/.ssh/id_ed25519.pub"
 
 To activate the MacOS flake run for the first time:
 ```console
-$ nix build .#darwinConfigurations.macos-macbook.system
-./result/sw/bin/darwin-rebuild switch --flake .#macos-macbook
+$ nix build .#darwinConfigurations.zeh-mac.system
+./result/sw/bin/darwin-rebuild switch --flake .#zeh-mac
 ```
 
 For updates after initial setup:
 ```console
-$ darwin-rebuild switch --flake .#macos-macbook
+$ darwin-rebuild switch --flake .#zeh-mac
 ```
 
 In case you receive the error similar to `error: Build user group has mismatching GID, aborting activation`, run the following commands to fix:
@@ -112,7 +112,7 @@ $ sudo dscl . -change /Groups/nixbld PrimaryGroupID 350 30000
 
 To build and switch:
 ```console
-$ sudo nixos-rebuild switch --flake .#nixos-desktop
+$ sudo nixos-rebuild switch --flake .#zeh-pc
 ```
 
 ## Known Issues

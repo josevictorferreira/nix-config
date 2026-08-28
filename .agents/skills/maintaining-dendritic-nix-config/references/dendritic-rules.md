@@ -10,7 +10,7 @@ This is the exhaustive rule set for maintaining this repository. Refer to this w
 - `flake.nix` uses **exactly one** `(inputs.import-tree ./modules)` call.
 - import-tree recursively discovers ALL `.nix` files under its root.
 - Paths containing `/_` are excluded from auto-import.
-- Use `/_` for helper modules that shouldn't be flake-parts modules (e.g., `modules/core/_/options.nix`, `modules/hosts/nixos-desktop/_/hardware.nix`).
+- Use `/_` for helper modules that shouldn't be flake-parts modules (e.g., `modules/core/_/options.nix`, `modules/hosts/zeh-pc/_/hardware.nix`).
 
 ### Export Pattern
 Every aspect file MUST export as:

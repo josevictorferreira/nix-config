@@ -10,7 +10,7 @@
   perSystem =
     { system, pkgs, ... }:
     let
-      evalSystem = inputs.self.nixosConfigurations.nixos-desktop;
+      evalSystem = inputs.self.nixosConfigurations.zeh-pc;
       cfg = evalSystem.config.jvf.theme;
 
       # ── Contract validation ──────────────────────────────────────────────

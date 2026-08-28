@@ -30,22 +30,22 @@ update: ## Update flake
 	nix flake update
 
 boot: ## Rebuild boot NixOS configuration.
-	sudo nixos-rebuild boot --upgrade --flake .#nixos-desktop
+	sudo nixos-rebuild boot --upgrade --flake .#zeh-pc
 
 rebuild: ## Rebuild NixOS configuration.
 	@if [ "$(shell uname)" = "Darwin" ]; then \
-		sudo -H darwin-rebuild switch --flake .#macos-macbook --show-trace; \
+		sudo -H darwin-rebuild switch --flake .#zeh-mac --show-trace; \
 	else \
-		sudo -H nixos-rebuild switch --flake .#nixos-desktop --show-trace && \
+		sudo -H nixos-rebuild switch --flake .#zeh-pc --show-trace && \
       (if [ -n "$${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then hyprctl reload >/dev/null 2>&1 || echo "ℹ️  Skipping hyprctl reload (Hyprland not reachable from this shell)"; else echo "ℹ️  Skipping hyprctl reload (Hyprland not reachable from this shell)"; fi) && \
       (notify-send "󱄅 NixOS Rebuild" "Rebuild finished with success\!  " 2>/dev/null || echo "✅ Rebuild completed"); \
 	fi
 
 rollback: ## Rollback NixOS configuration.
-	sudo nixos-rebuild switch --rollback --flake .#nixos-desktop
+	sudo nixos-rebuild switch --rollback --flake .#zeh-pc
 
 rebuildd: ## Rebuild only Nix Darwin config
-	nix build .#darwinConfigurations.macos-macbook.system
+	nix build .#darwinConfigurations.zeh-mac.system
 
 clean: ## Clean up the Nix store.
 	nix-collect-garbage -d
