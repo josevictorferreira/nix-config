@@ -21,6 +21,19 @@ _: {
       "opencode-go"
     ];
     provider = {
+      "local" = {
+        npm = "@ai-sdk/openai-compatible";
+        id = "local";
+        name = "Local";
+        options = {
+          baseURL = "http://10.10.10.10:11434/v1";
+        };
+        models = {
+          "Ornith-1.5-9B-Q4_K_M" = {
+            name = "Ornith 1.5 9B (Local)";
+          };
+        };
+      };
       "velox" = {
         npm = "@ai-sdk/openai-compatible";
         id = "velox";

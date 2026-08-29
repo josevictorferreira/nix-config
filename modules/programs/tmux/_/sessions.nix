@@ -266,6 +266,34 @@
     ];
   };
 
+  foyer = {
+    session_name = "foyer";
+    start_directory = "$HOME/Workspace/foyer";
+    windows = [
+      {
+        window_name = "✏️Foyer";
+        layout = "tiled";
+        panes = [
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  domus = {
+    session_name = "domus";
+    start_directory = "$HOME/Workspace/domus";
+    windows = [
+      {
+        window_name = "✏️Domus";
+        layout = "tiled";
+        panes = [
+          "clear"
+        ];
+      }
+    ];
+  };
+
   wealtho = {
     session_name = "wealtho";
     start_directory = "$HOME/Workspace/wealtho";
