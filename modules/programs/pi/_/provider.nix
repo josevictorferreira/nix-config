@@ -61,11 +61,14 @@ let
       };
 
   # opencode providers pi should route, mapped to the sops secret holding the
-  # provider's key. A provider opencode doesn't define, or that translateProvider
-  # can't map (no api / no baseUrl), drops out.
+  # provider's key, or null for auth-less providers (a LAN server needs no key,
+  # so it keeps the placeholder translateProvider supplies). A provider opencode
+  # doesn't define, or that translateProvider can't map (no api / no baseUrl),
+  # drops out.
   secretPaths = {
     omniroute = config.sops.secrets.omniroute_api_key.path;
     velox = config.sops.secrets.velox_api_key.path;
+    local = null;
   };
 
   piProviders = lib.filterAttrs (_: v: v != null) (
@@ -78,6 +81,8 @@ let
           in
           if translated == null then
             null
+          else if secretPath == null then
+            translated
           else
           # Deliver the key by having pi read the sops secret at runtime. A "!cmd"
           # apiKey is executed by pi (core/resolve-config-value.js) and its stdout
