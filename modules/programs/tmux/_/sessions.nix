@@ -151,66 +151,114 @@
           "clear"
         ];
       }
+    ];
+  };
+
+  velox = {
+    session_name = "💫Velox";
+    start_directory = "$HOME/Workspace/velox";
+    windows = [
       {
         window_name = "💫Velox";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/velox";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  poise = {
+    session_name = "👦Poise";
+    start_directory = "$HOME/Workspace/poise";
+    windows = [
       {
         window_name = "👦Poise";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/poise";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  litersearch = {
+    session_name = "📖LiterSearch";
+    start_directory = "$HOME/Workspace/litersearch";
+    windows = [
       {
         window_name = "📖LiterSearch";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/litersearch";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  glyph = {
+    session_name = "🪄Glyph";
+    start_directory = "$HOME/Workspace/glyph";
+    windows = [
       {
         window_name = "🪄Glyph";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/glyph";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  ideator = {
+    session_name = "💡Ideator";
+    start_directory = "$HOME/Workspace/ideator";
+    windows = [
       {
         window_name = "💡Ideator";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/ideator";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  axion = {
+    session_name = "🚘Axion";
+    start_directory = "$HOME/Workspace/axion";
+    windows = [
       {
         window_name = "🚘Axion";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/axion";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  mordren = {
+    session_name = "🧝🏼Mordren";
+    start_directory = "$HOME/Workspace/mordren";
+    windows = [
       {
         window_name = "🧝🏼Mordren";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/mordren";
         panes = [
           "clear"
         ];
       }
+    ];
+  };
+
+  dramaturge = {
+    session_name = "✏️Dramaturge";
+    start_directory = "$HOME/Workspace/dramaturge";
+    windows = [
       {
         window_name = "✏️Dramaturge";
         layout = "tiled";
-        start_directory = "$HOME/Workspace/dramaturge";
         panes = [
           "clear"
         ];
