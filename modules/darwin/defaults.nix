@@ -39,7 +39,7 @@ _: {
         };
         dock = {
           autohide = true;
-          orientation = "bottom";
+          orientation = "left";
           show-recents = false;
           tilesize = 48;
         };
