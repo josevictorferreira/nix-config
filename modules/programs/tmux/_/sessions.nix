@@ -1,8 +1,9 @@
 # tmuxp session definitions
 # Pure data exports - no module boilerplate
 
-{
-  monitoring = {
+[
+  {
+    name = "monitoring";
     session_name = "📈 Monitoring";
     start_directory = "$HOME/.config/nix";
     windows = [
@@ -15,9 +16,10 @@
         ];
       }
     ];
-  };
+  }
 
-  homelab = {
+  {
+    name = "homelab";
     session_name = "🏠 Homelab";
     start_directory = "$HOME/Workspace/homelab";
     windows = [
@@ -39,9 +41,10 @@
         ];
       }
     ];
-  };
+  }
 
-  work = {
+  {
+    name = "work";
     session_name = "👨🏻‍🌾 Work";
     windows = [
       {
@@ -77,9 +80,10 @@
         ];
       }
     ];
-  };
+  }
 
-  projects = {
+  {
+    name = "projects";
     session_name = "👨🏻‍💻 Projects";
     start_directory = "$HOME/Workspace";
     windows = [
@@ -91,9 +95,10 @@
         ];
       }
     ];
-  };
+  }
 
-  aiWorkspace = {
+  {
+    name = "aiWorkspace";
     session_name = "🤖 AI Workspace";
     start_directory = "$HOME/Workspace/ai-workspace";
     windows = [
@@ -107,9 +112,10 @@
         ];
       }
     ];
-  };
+  }
 
-  chat = {
+  {
+    name = "chat";
     session_name = "🗨 Chat";
     start_directory = "$HOME/Workspace";
     windows = [
@@ -118,9 +124,10 @@
         panes = [ "weechat" ];
       }
     ];
-  };
+  }
 
-  valoris = {
+  {
+    name = "valoris";
     session_name = "🏘 Valoris";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
@@ -134,9 +141,10 @@
         ];
       }
     ];
-  };
+  }
 
-  valorisBackend = {
+  {
+    name = "valorisBackend";
     session_name = "🏘 Valoris - Backend Sandbox $SESSION_ID";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
@@ -150,9 +158,10 @@
         ];
       }
     ];
-  };
+  }
 
-  valorisFrontend = {
+  {
+    name = "valorisFrontend";
     session_name = "🏘 Valoris - Frontend";
     start_directory = "$HOME/Workspace/valoris/frontend";
     windows = [
@@ -166,9 +175,10 @@
         ];
       }
     ];
-  };
+  }
 
-  velox = {
+  {
+    name = "velox";
     session_name = "💫 Velox";
     start_directory = "$HOME/Workspace/velox";
     windows = [
@@ -180,9 +190,10 @@
         ];
       }
     ];
-  };
+  }
 
-  poise = {
+  {
+    name = "poise";
     session_name = "👦 Poise";
     start_directory = "$HOME/Workspace/poise";
     windows = [
@@ -194,9 +205,10 @@
         ];
       }
     ];
-  };
+  }
 
-  litersearch = {
+  {
+    name = "litersearch";
     session_name = "📖 LiterSearch";
     start_directory = "$HOME/Workspace/litersearch";
     windows = [
@@ -208,9 +220,10 @@
         ];
       }
     ];
-  };
+  }
 
-  glyph = {
+  {
+    name = "glyph";
     session_name = "🪄 Glyph";
     start_directory = "$HOME/Workspace/glyph";
     windows = [
@@ -222,9 +235,10 @@
         ];
       }
     ];
-  };
+  }
 
-  ideator = {
+  {
+    name = "ideator";
     session_name = "💡 Ideator";
     start_directory = "$HOME/Workspace/ideator";
     windows = [
@@ -236,9 +250,10 @@
         ];
       }
     ];
-  };
+  }
 
-  axion = {
+  {
+    name = "axion";
     session_name = "🚘 Axion";
     start_directory = "$HOME/Workspace/axion";
     windows = [
@@ -250,9 +265,10 @@
         ];
       }
     ];
-  };
+  }
 
-  mordren = {
+  {
+    name = "mordren";
     session_name = "🧝🏼 Mordren";
     start_directory = "$HOME/Workspace/mordren";
     windows = [
@@ -264,9 +280,10 @@
         ];
       }
     ];
-  };
+  }
 
-  dramaturge = {
+  {
+    name = "dramaturge";
     session_name = "✏️ Dramaturge";
     start_directory = "$HOME/Workspace/dramaturge";
     windows = [
@@ -278,9 +295,10 @@
         ];
       }
     ];
-  };
+  }
 
-  foyer = {
+  {
+    name = "foyer";
     session_name = "🌐 Foyer";
     start_directory = "$HOME/Workspace/foyer";
     windows = [
@@ -292,9 +310,10 @@
         ];
       }
     ];
-  };
+  }
 
-  domus = {
+  {
+    name = "domus";
     session_name = "🏚️ Domus";
     start_directory = "$HOME/Workspace/domus";
     windows = [
@@ -306,9 +325,10 @@
         ];
       }
     ];
-  };
+  }
 
-  wealtho = {
+  {
+    name = "wealtho";
     session_name = "🏦 Wealtho";
     start_directory = "$HOME/Workspace/wealtho";
     windows = [
@@ -322,9 +342,10 @@
         ];
       }
     ];
-  };
+  }
 
-  serve-analyzer = {
+  {
+    name = "serve-analyzer";
     session_name = "🎾 Serve Analyzer";
     start_directory = "$HOME/Workspace/serve-analyzer";
     windows = [
@@ -338,9 +359,10 @@
         ];
       }
     ];
-  };
+  }
 
-  oratoria = {
+  {
+    name = "oratoria";
     session_name = "💬 Oratoria";
     start_directory = "$HOME/Workspace/oratoria";
     windows = [
@@ -352,9 +374,10 @@
         ];
       }
     ];
-  };
+  }
 
-  local-researcher = {
+  {
+    name = "local-researcher";
     session_name = "📚 Local Researcher";
     start_directory = "$HOME/Workspace/local-researcher";
     windows = [
@@ -368,9 +391,10 @@
         ];
       }
     ];
-  };
+  }
 
-  main = {
+  {
+    name = "main";
     session_name = "main";
     start_directory = "$HOME/.config/nix";
     windows = [
@@ -392,5 +416,5 @@
         ];
       }
     ];
-  };
-}
+  }
+]

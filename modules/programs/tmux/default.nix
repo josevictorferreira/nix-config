@@ -27,6 +27,18 @@ let
       # tmuxp sessions
       dynamicSessions = [ "valorisBackend" ];
 
+      # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
+      toKebab =
+        name:
+        lib.removePrefix "-" (
+          lib.concatMapStrings (c: if c >= "A" && c <= "Z" then "-${lib.toLower c}" else c) (
+            lib.stringToCharacters name
+          )
+        );
+
+      # Session names in the order they are defined in _/sessions.nix
+      orderedSessionNames = map (session: toKebab session.name) sessions;
+
       tmuxpPicker = pkgs.writeShellScriptBin "tmuxp-picker" ''
         set -euo pipefail
 
@@ -38,8 +50,8 @@ let
           exit 1
         fi
 
-        # List available sessions (strip .yaml extension)
-        sessions=$(find "$TMUXP_DIR" -maxdepth 1 -name "*.yaml" -type f 2>/dev/null | xargs -n1 basename | sed 's/\.yaml$//' | sort)
+        # Available sessions, in the order defined in _/sessions.nix
+        sessions='${lib.concatStringsSep "\n" orderedSessionNames}'
 
         if [ -z "$sessions" ]; then
           echo "No tmuxp sessions found in $TMUXP_DIR" >&2
@@ -49,6 +61,7 @@ let
         # Use fzf to select a session
         selected=$(echo "$sessions" | ${lib.getExe pkgs.fzf} \
           --prompt="tmuxp session> " \
+          --no-sort \
           --height=40% \
           --reverse \
           --border \
@@ -91,20 +104,15 @@ let
       '';
       yamlFmt = pkgs.formats.yaml { };
       tmuxpConfigDir = pkgs.linkFarm "tmuxp-sessions" (
-        lib.mapAttrsToList
+        map
           (
-            name: session:
+            session:
               let
-                # Convert CamelCase to kebab-case for yaml filename (e.g. valorisBackend -> valoris-backend)
-                yamlName = lib.removePrefix "-" (
-                  lib.concatMapStrings (c: if c >= "A" && c <= "Z" then "-${lib.toLower c}" else c) (
-                    lib.stringToCharacters name
-                  )
-                );
+                yamlName = toKebab session.name;
               in
               {
                 name = "${yamlName}.yaml";
-                path = yamlFmt.generate yamlName session;
+                path = yamlFmt.generate yamlName (removeAttrs session [ "name" ]);
               }
           )
           sessions
