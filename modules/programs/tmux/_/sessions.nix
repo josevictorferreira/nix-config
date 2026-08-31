@@ -3,11 +3,11 @@
 
 {
   chat = {
-    session_name = "chat";
+    session_name = "🗨 Chat";
     start_directory = "$HOME/Workspace";
     windows = [
       {
-        window_name = "Chat";
+        window_name = "🗨 Chat";
         panes = [ "weechat" ];
       }
     ];
@@ -38,7 +38,7 @@
   };
 
   monitoring = {
-    session_name = "monitoring";
+    session_name = "📈 Monitoring";
     start_directory = "$HOME/.config/nix";
     windows = [
       {
@@ -53,11 +53,11 @@
   };
 
   homelab = {
-    session_name = "homelab";
+    session_name = "🏠 Homelab";
     start_directory = "$HOME/Workspace/homelab";
     windows = [
       {
-        window_name = "Homelab";
+        window_name = "🏠 Homelab";
         layout = "tiled";
         panes = [
           "clear"
@@ -66,7 +66,7 @@
         ];
       }
       {
-        window_name = "Hermes";
+        window_name = "🧑🏻 Hermes";
         layout = "tiled";
         start_directory = "$HOME/Homelab/hermes";
         panes = [
@@ -77,11 +77,11 @@
   };
 
   valoris = {
-    session_name = "valoris";
+    session_name = "🏘 Valoris";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
       {
-        window_name = "Valoris Main";
+        window_name = "🏘 Valoris Main";
         layout = "tiled";
         panes = [
           "clear"
@@ -93,7 +93,7 @@
   };
 
   valorisBackend = {
-    session_name = "Valoris - Backend Sandbox $SESSION_ID";
+    session_name = "🏘 Valoris - Backend Sandbox $SESSION_ID";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
       {
@@ -109,7 +109,7 @@
   };
 
   valorisFrontend = {
-    session_name = "Valoris - Frontend";
+    session_name = "🏘 Valoris - Frontend";
     start_directory = "$HOME/Workspace/valoris/frontend";
     windows = [
       {
@@ -125,11 +125,11 @@
   };
 
   aiWorkspace = {
-    session_name = "ai-workspace";
+    session_name = "🤖 AI Workspace";
     start_directory = "$HOME/Workspace/ai-workspace";
     windows = [
       {
-        window_name = "AI Workspace";
+        window_name = "🤖 AI Workspace";
         layout = "tiled";
         panes = [
           "clear"
@@ -141,11 +141,11 @@
   };
 
   projects = {
-    session_name = "projects";
+    session_name = "👨🏻‍💻 Projects";
     start_directory = "$HOME/Workspace";
     windows = [
       {
-        window_name = "Projects";
+        window_name = "👨🏻‍💻 Projects";
         layout = "tiled";
         panes = [
           "clear"
@@ -155,11 +155,11 @@
   };
 
   velox = {
-    session_name = "💫Velox";
+    session_name = "💫 Velox";
     start_directory = "$HOME/Workspace/velox";
     windows = [
       {
-        window_name = "💫Velox";
+        window_name = "💫 Velox";
         layout = "tiled";
         panes = [
           "clear"
@@ -169,11 +169,11 @@
   };
 
   poise = {
-    session_name = "👦Poise";
+    session_name = "👦 Poise";
     start_directory = "$HOME/Workspace/poise";
     windows = [
       {
-        window_name = "👦Poise";
+        window_name = "👦 Poise";
         layout = "tiled";
         panes = [
           "clear"
@@ -183,11 +183,11 @@
   };
 
   litersearch = {
-    session_name = "📖LiterSearch";
+    session_name = "📖 LiterSearch";
     start_directory = "$HOME/Workspace/litersearch";
     windows = [
       {
-        window_name = "📖LiterSearch";
+        window_name = "📖 LiterSearch";
         layout = "tiled";
         panes = [
           "clear"
@@ -197,11 +197,11 @@
   };
 
   glyph = {
-    session_name = "🪄Glyph";
+    session_name = "🪄 Glyph";
     start_directory = "$HOME/Workspace/glyph";
     windows = [
       {
-        window_name = "🪄Glyph";
+        window_name = "🪄 Glyph";
         layout = "tiled";
         panes = [
           "clear"
@@ -211,11 +211,11 @@
   };
 
   ideator = {
-    session_name = "💡Ideator";
+    session_name = "💡 Ideator";
     start_directory = "$HOME/Workspace/ideator";
     windows = [
       {
-        window_name = "💡Ideator";
+        window_name = "💡 Ideator";
         layout = "tiled";
         panes = [
           "clear"
@@ -225,11 +225,11 @@
   };
 
   axion = {
-    session_name = "🚘Axion";
+    session_name = "🚘 Axion";
     start_directory = "$HOME/Workspace/axion";
     windows = [
       {
-        window_name = "🚘Axion";
+        window_name = "🚘 Axion";
         layout = "tiled";
         panes = [
           "clear"
@@ -239,11 +239,11 @@
   };
 
   mordren = {
-    session_name = "🧝🏼Mordren";
+    session_name = "🧝🏼 Mordren";
     start_directory = "$HOME/Workspace/mordren";
     windows = [
       {
-        window_name = "🧝🏼Mordren";
+        window_name = "🧝🏼 Mordren";
         layout = "tiled";
         panes = [
           "clear"
@@ -253,11 +253,11 @@
   };
 
   dramaturge = {
-    session_name = "✏️Dramaturge";
+    session_name = "✏️ Dramaturge";
     start_directory = "$HOME/Workspace/dramaturge";
     windows = [
       {
-        window_name = "✏️Dramaturge";
+        window_name = "✏️ Dramaturge";
         layout = "tiled";
         panes = [
           "clear"
@@ -267,11 +267,11 @@
   };
 
   foyer = {
-    session_name = "foyer";
+    session_name = "🌐 Foyer";
     start_directory = "$HOME/Workspace/foyer";
     windows = [
       {
-        window_name = "✏️Foyer";
+        window_name = "🌐 Foyer";
         layout = "tiled";
         panes = [
           "clear"
@@ -281,11 +281,11 @@
   };
 
   domus = {
-    session_name = "domus";
+    session_name = "🏚️ Domus";
     start_directory = "$HOME/Workspace/domus";
     windows = [
       {
-        window_name = "✏️Domus";
+        window_name = "🏚️ Domus";
         layout = "tiled";
         panes = [
           "clear"
@@ -295,11 +295,11 @@
   };
 
   wealtho = {
-    session_name = "wealtho";
+    session_name = "🏦 Wealtho";
     start_directory = "$HOME/Workspace/wealtho";
     windows = [
       {
-        window_name = "Wealtho";
+        window_name = "🏦 Wealtho";
         layout = "tiled";
         panes = [
           "clear"
@@ -311,11 +311,11 @@
   };
 
   serve-analyzer = {
-    session_name = "serve-analyzer";
+    session_name = "🎾 Serve Analyzer";
     start_directory = "$HOME/Workspace/serve-analyzer";
     windows = [
       {
-        window_name = "Serve Analyzer";
+        window_name = "🎾 Serve Analyzer";
         layout = "tiled";
         panes = [
           "clear"
@@ -327,11 +327,11 @@
   };
 
   oratoria = {
-    session_name = "oratoria";
+    session_name = "💬 Oratoria";
     start_directory = "$HOME/Workspace/oratoria";
     windows = [
       {
-        window_name = "Oratoria";
+        window_name = "💬 Oratoria";
         layout = "tiled";
         panes = [
           "clear"
@@ -341,11 +341,11 @@
   };
 
   local-researcher = {
-    session_name = "local-researcher";
+    session_name = "📚 Local Researcher";
     start_directory = "$HOME/Workspace/local-researcher";
     windows = [
       {
-        window_name = "Local Researcher";
+        window_name = "📚 Local Researcher";
         layout = "tiled";
         panes = [
           "clear"
@@ -357,7 +357,7 @@
   };
 
   work = {
-    session_name = "work";
+    session_name = "👨🏻‍🌾 Work";
     windows = [
       {
         window_name = "BoosterAgro";
