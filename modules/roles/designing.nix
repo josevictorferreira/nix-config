@@ -16,9 +16,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;
@@ -33,14 +34,16 @@ let
           pkgs.freecad
           pkgs.orca-slicer
           pkgs.kicad
+          pkgs.openshot-qt
         ];
       };
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.designing;

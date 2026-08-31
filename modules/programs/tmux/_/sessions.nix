@@ -2,41 +2,6 @@
 # Pure data exports - no module boilerplate
 
 {
-  chat = {
-    session_name = "🗨 Chat";
-    start_directory = "$HOME/Workspace";
-    windows = [
-      {
-        window_name = "🗨 Chat";
-        panes = [ "weechat" ];
-      }
-    ];
-  };
-
-  main = {
-    session_name = "main";
-    start_directory = "$HOME/.config/nix";
-    windows = [
-      {
-        window_name = "NixConfig";
-        layout = "main-vertical";
-        panes = [
-          "fastfetch"
-          "clear"
-          "clear"
-        ];
-      }
-      {
-        window_name = "Neovim";
-        start_directory = "$HOME/.config/nvim";
-        panes = [
-          "clear"
-          "clear"
-        ];
-      }
-    ];
-  };
-
   monitoring = {
     session_name = "📈 Monitoring";
     start_directory = "$HOME/.config/nix";
@@ -72,6 +37,85 @@
         panes = [
           "clear"
         ];
+      }
+    ];
+  };
+
+  work = {
+    session_name = "👨🏻‍🌾 Work";
+    windows = [
+      {
+        window_name = "BoosterAgro";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/agrosmart/booster/boosteragro";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "Nexus";
+        layout = "tiled";
+        start_directory = "$HOME/Workspace/agrosmart/nexus/nexus-backend";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "BoosterPro";
+        layout = "main-vertical";
+        start_directory = "$HOME/Workspace/agrosmart/agrosmart-api";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  projects = {
+    session_name = "👨🏻‍💻 Projects";
+    start_directory = "$HOME/Workspace";
+    windows = [
+      {
+        window_name = "👨🏻‍💻 Projects";
+        layout = "tiled";
+        panes = [
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  aiWorkspace = {
+    session_name = "🤖 AI Workspace";
+    start_directory = "$HOME/Workspace/ai-workspace";
+    windows = [
+      {
+        window_name = "🤖 AI Workspace";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  };
+
+  chat = {
+    session_name = "🗨 Chat";
+    start_directory = "$HOME/Workspace";
+    windows = [
+      {
+        window_name = "🗨 Chat";
+        panes = [ "weechat" ];
       }
     ];
   };
@@ -119,36 +163,6 @@
           "nix develop"
           "sleep 2 && nix develop"
           "sleep 4 && nix develop"
-        ];
-      }
-    ];
-  };
-
-  aiWorkspace = {
-    session_name = "🤖 AI Workspace";
-    start_directory = "$HOME/Workspace/ai-workspace";
-    windows = [
-      {
-        window_name = "🤖 AI Workspace";
-        layout = "tiled";
-        panes = [
-          "clear"
-          "clear"
-          "clear"
-        ];
-      }
-    ];
-  };
-
-  projects = {
-    session_name = "👨🏻‍💻 Projects";
-    start_directory = "$HOME/Workspace";
-    windows = [
-      {
-        window_name = "👨🏻‍💻 Projects";
-        layout = "tiled";
-        panes = [
-          "clear"
         ];
       }
     ];
@@ -356,37 +370,23 @@
     ];
   };
 
-  work = {
-    session_name = "👨🏻‍🌾 Work";
+  main = {
+    session_name = "main";
+    start_directory = "$HOME/.config/nix";
     windows = [
       {
-        window_name = "BoosterAgro";
-        layout = "tiled";
-        start_directory = "$HOME/Workspace/agrosmart/booster/boosteragro";
-        panes = [
-          "clear"
-          "clear"
-          "clear"
-          "clear"
-        ];
-      }
-      {
-        window_name = "Nexus";
-        layout = "tiled";
-        start_directory = "$HOME/Workspace/agrosmart/nexus/nexus-backend";
-        panes = [
-          "clear"
-          "clear"
-          "clear"
-          "clear"
-        ];
-      }
-      {
-        window_name = "BoosterPro";
+        window_name = "NixConfig";
         layout = "main-vertical";
-        start_directory = "$HOME/Workspace/agrosmart/agrosmart-api";
         panes = [
+          "fastfetch"
           "clear"
+          "clear"
+        ];
+      }
+      {
+        window_name = "Neovim";
+        start_directory = "$HOME/.config/nvim";
+        panes = [
           "clear"
           "clear"
         ];
