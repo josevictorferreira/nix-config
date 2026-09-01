@@ -66,18 +66,30 @@ _: {
           };
           "glm-5-3-flash" = {
             name = "GLM-5.3 Flash (Velox)";
+            # z.ai reports [1,131072] and opencode-go accepts the same;
+            # without it pi sends its 16384 default and truncates.
+            limit.output = 131072;
           };
           "glm-5-3" = {
             name = "GLM-5.3 (Velox)";
+            # z.ai reports [1,131072] and opencode-go accepts the same;
+            # without it pi sends its 16384 default and truncates.
+            limit.output = 131072;
           };
           "glm-5-2" = {
             name = "GLM-5.2 (Velox)";
           };
           "glm-5-1" = {
             name = "GLM-5.1 (Velox)";
+            # z.ai reports [1,131072] and opencode-go accepts the same;
+            # without it pi sends its 16384 default and truncates.
+            limit.output = 131072;
           };
           "glm-5-1-thinking" = {
             name = "GLM-5.1 Thinking (Velox)";
+            # z.ai reports [1,131072] and opencode-go accepts the same;
+            # without it pi sends its 16384 default and truncates.
+            limit.output = 131072;
           };
           "minimax-m3" = {
             name = "MiniMax M3 (Velox)";
