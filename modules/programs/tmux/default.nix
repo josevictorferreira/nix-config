@@ -36,8 +36,9 @@ let
           )
         );
 
-      # Session names in the order they are defined in _/sessions.nix
-      orderedSessionNames = map (session: toKebab session.name) sessions;
+      # "<display name>\t<config name>" rows, in the order defined in _/sessions.nix
+      # fzf shows the first column; the second is what tmuxp loads.
+      sessionRows = map (session: "${session.session_name}\t${toKebab session.name}") sessions;
 
       tmuxpPicker = pkgs.writeShellScriptBin "tmuxp-picker" ''
         set -euo pipefail
@@ -51,7 +52,7 @@ let
         fi
 
         # Available sessions, in the order defined in _/sessions.nix
-        sessions='${lib.concatStringsSep "\n" orderedSessionNames}'
+        sessions='${lib.concatStringsSep "\n" sessionRows}'
 
         if [ -z "$sessions" ]; then
           echo "No tmuxp sessions found in $TMUXP_DIR" >&2
@@ -62,6 +63,8 @@ let
         selected=$(echo "$sessions" | ${lib.getExe pkgs.fzf} \
           --prompt="tmuxp session> " \
           --no-sort \
+          --delimiter='\t' \
+          --with-nth=1 \
           --height=40% \
           --reverse \
           --border \
@@ -70,6 +73,9 @@ let
         if [ -z "$selected" ]; then
           exit 0
         fi
+
+        # Drop the display name, keep the tmuxp config name
+        selected=$(printf '%s' "$selected" | cut -f2)
 
         # Check if this is a dynamic session
         is_dynamic=false
