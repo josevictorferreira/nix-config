@@ -32,6 +32,9 @@ _: {
           "Ornith-1.5-9B-Q4_K_M" = {
             name = "Ornith 1.5 9B (Local)";
           };
+          "Qwen3.8-27B-Uncensored-IQ2_M" = {
+            name = "Qwen 3.8 27B Uncensored IQ2 M (Local)";
+          };
         };
       };
       "velox" = {
