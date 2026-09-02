@@ -206,7 +206,8 @@ let
               connection.register_object(
                 "/org/freedesktop/FileManager1",
                 nodeInfo.interfaces[0],
-                { method_call: handleMethodCall },
+                handleMethodCall,
+                null,
                 null
               );
             },
