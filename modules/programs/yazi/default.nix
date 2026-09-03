@@ -180,6 +180,24 @@ let
             return GLib.path_get_dirname(path);
           }
 
+          // The yazi-fm window rule sends every window to the hidden
+          // "special:yazi" scratchpad, so spawning alone is invisible.
+          function revealScratchpad() {
+            try {
+              const [, stdout] = GLib.spawn_command_line_sync("hyprctl monitors -j");
+              if (new TextDecoder().decode(stdout).includes('"special:yazi"')) {
+                return;
+              }
+            } catch (error) {
+              return;
+            }
+
+            Gio.Subprocess.new(
+              ["hyprctl", "dispatch", 'hl.dsp.workspace.toggle_special("yazi")'],
+              Gio.SubprocessFlags.NONE
+            );
+          }
+
           function openInYazi(path) {
             if (!path) {
               return;
@@ -189,6 +207,7 @@ let
               ["${kittyBin}", "--class=yazi-fm", "-e", "${yaziBin}", path],
               Gio.SubprocessFlags.NONE
             );
+            revealScratchpad();
           }
 
           function handleMethodCall(_connection, _sender, _objectPath, _interfaceName, methodName, parameters, invocation) {
@@ -424,7 +443,7 @@ let
       settingsOpen = {
         rules = [
           {
-            name = "*.zip";
+            url = "*.zip";
             use = [
               "archive"
               "extract"
@@ -432,7 +451,7 @@ let
             ];
           }
           {
-            name = "*.tar";
+            url = "*.tar";
             use = [
               "archive"
               "extract"
@@ -440,7 +459,7 @@ let
             ];
           }
           {
-            name = "*.tar.gz";
+            url = "*.tar.gz";
             use = [
               "archive"
               "extract"
@@ -448,7 +467,7 @@ let
             ];
           }
           {
-            name = "*.tar.bz2";
+            url = "*.tar.bz2";
             use = [
               "archive"
               "extract"
@@ -456,7 +475,7 @@ let
             ];
           }
           {
-            name = "*.tar.xz";
+            url = "*.tar.xz";
             use = [
               "archive"
               "extract"
@@ -464,7 +483,7 @@ let
             ];
           }
           {
-            name = "*.tar.zst";
+            url = "*.tar.zst";
             use = [
               "archive"
               "extract"
@@ -472,7 +491,7 @@ let
             ];
           }
           {
-            name = "*.gz";
+            url = "*.gz";
             use = [
               "archive"
               "extract"
@@ -480,7 +499,7 @@ let
             ];
           }
           {
-            name = "*.bz2";
+            url = "*.bz2";
             use = [
               "archive"
               "extract"
@@ -488,7 +507,7 @@ let
             ];
           }
           {
-            name = "*.7z";
+            url = "*.7z";
             use = [
               "archive"
               "extract"
@@ -496,7 +515,7 @@ let
             ];
           }
           {
-            name = "*.rar";
+            url = "*.rar";
             use = [
               "archive"
               "extract"
@@ -504,7 +523,7 @@ let
             ];
           }
           {
-            name = "*.xz";
+            url = "*.xz";
             use = [
               "archive"
               "extract"
@@ -673,21 +692,21 @@ let
       settingsPlugin = {
         prepend_fetchers = [
           {
-            id = "git";
-            name = "*/";
+            url = "*/";
             run = "git";
+            group = "git";
           }
           {
-            id = "git";
-            name = "*";
+            url = "*";
             run = "git";
+            group = "git";
           }
         ];
         prepend_previewers = [ ];
         prepend_preloaders = [ ];
         previewers = [
           {
-            name = "*/";
+            url = "*/";
             run = "folder";
             sync = true;
           }
@@ -716,7 +735,7 @@ let
             run = "hexyl";
           }
           {
-            name = "*";
+            url = "*";
             run = "file";
           }
         ];
