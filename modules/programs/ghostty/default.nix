@@ -67,45 +67,6 @@ let
     let
       cfg = config.jvf.programs.ghostty;
 
-      # Local tmuxp-init wrapper (mirrors programs-kitty/default.nix).
-      # Falls back to zsh if tmuxp 'main' session fails to load.
-      tmuxpInitScript = pkgs.writeShellScriptBin "tmuxp-init" ''
-        set -euo pipefail
-
-        # Ensure we have a proper PATH on Darwin
-        ${lib.optionalString pkgs.stdenv.isDarwin ''
-          # Additional common paths for nix-darwin
-          export PATH="/run/current-system/sw/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-          if [ -d "/etc/profiles/per-user/$USER/bin" ]; then
-            export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
-          fi
-        ''}
-
-        # Set TMUXP_CONFIGDIR explicitly as it's often missing in GUI environments
-        export TMUXP_CONFIGDIR="$HOME/.config/tmuxp"
-
-        # Ensure tmux and zsh are available in PATH for tmuxp
-        export PATH="${
-          lib.makeBinPath [
-            pkgs.tmux
-            pkgs.zsh
-          ]
-        }:$PATH"
-
-        # Avoid nested tmux sessions if somehow launched from within tmux
-        if [ -n "''${TMUX-}" ]; then
-          exec ${lib.getExe pkgs.zsh}
-        fi
-
-        # Attempt to load the 'main' session.
-        # We use a fallback to zsh to ensure the terminal remains usable if tmuxp fails.
-        if ! ${lib.getExe pkgs.tmuxp} load -y main; then
-          echo "Error: tmuxp failed to load 'main' session." >&2
-          echo "Falling back to ${pkgs.zsh.name}..." >&2
-          exec ${lib.getExe pkgs.zsh}
-        fi
-      '';
-
       defaultSettings = {
         font-family = "JetBrainsMonoNL Nerd Font";
         font-size = 11;
@@ -130,7 +91,6 @@ let
         gtk-titlebar = false;
         custom-shader-animation = true;
         shell-integration = "zsh";
-        command = "${tmuxpInitScript}/bin/tmuxp-init";
       };
 
       # Map theme palette colors to ghostty's `palette = N=#hex` syntax.
