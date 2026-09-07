@@ -24,6 +24,12 @@ let
           default = "1";
           description = "Enable Ozone-Wayland support for NixOS applications.";
         };
+
+        ttsAutoSpeak = lib.mkOption {
+          type = lib.types.str;
+          default = "1";
+          description = "Enable automatic text-to-speech playback for AI agent responses.";
+        };
       };
     };
 
@@ -41,6 +47,7 @@ let
             STEAM_EXTRA_COMPAT_TOOLS_PATHS = cfg.steamExtraCompatToolsPath;
             XDG_CONFIG_HOME = cfg.xdgConfigHome;
             NIXOS_OZONE_WL = cfg.nixosOzoneWl;
+            TTS_AUTO_SPEAK = cfg.ttsAutoSpeak;
           };
         };
       };
