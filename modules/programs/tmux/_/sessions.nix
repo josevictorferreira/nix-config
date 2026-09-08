@@ -116,7 +116,7 @@
 
   {
     name = "chat";
-    session_name = "🗨 Chat";
+    session_name = "🗨  Chat";
     start_directory = "$HOME/Workspace";
     windows = [
       {
@@ -128,7 +128,7 @@
 
   {
     name = "valoris";
-    session_name = "🏘 Valoris";
+    session_name = "🏘  Valoris";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
       {
@@ -145,7 +145,7 @@
 
   {
     name = "valorisBackend";
-    session_name = "🏘 Valoris - Backend Sandbox $SESSION_ID";
+    session_name = "🏘  Valoris - Backend Sandbox $SESSION_ID";
     start_directory = "$HOME/Workspace/valoris";
     windows = [
       {
@@ -162,7 +162,7 @@
 
   {
     name = "valorisFrontend";
-    session_name = "🏘 Valoris - Frontend";
+    session_name = "🏘  Valoris - Frontend";
     start_directory = "$HOME/Workspace/valoris/frontend";
     windows = [
       {
