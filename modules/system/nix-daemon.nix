@@ -52,6 +52,17 @@ let
           default = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
           description = "Public keys for trusted binary caches.";
         };
+
+        atticPushCache = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "homelab";
+          description = ''
+            Name of an Attic cache to push every locally built path to via a
+            post-build-hook. Requires `attic login` to have been run for the
+            primary user. Null disables the hook.
+          '';
+        };
       };
     };
 
@@ -60,6 +71,24 @@ let
     { config, lib, pkgs, ... }:
     let
       cfg = config.jvf.system.nix-daemon;
+
+      # The nix daemon runs post-build hooks as root, so attic would look for
+      # its token in root's home; point it at the primary user's config. The
+      # hook must never fail or stall a build, hence the timeout and exit 0.
+      atticPushHook = pkgs.writeShellScript "attic-push-hook" ''
+        set -f # $OUT_PATHS is space-separated; never glob it
+        export IFS=' '
+        export HOME="/home/${config.jvf.core.username}"
+        export XDG_CONFIG_HOME="$HOME/.config"
+
+        if [ -n "$OUT_PATHS" ]; then
+          ${pkgs.coreutils}/bin/timeout 30m \
+            ${pkgs.attic-client}/bin/attic push ${toString cfg.atticPushCache} $OUT_PATHS \
+            || echo "attic-push-hook: push failed, continuing" >&2
+        fi
+
+        exit 0
+      '';
     in
     {
       imports = [ mkNixDaemonOptions ];
@@ -79,6 +108,9 @@ let
             # Let remote builders fetch deps from caches instead of
             # copying everything from this machine.
             builders-use-substitutes = true;
+          }
+          // lib.optionalAttrs (cfg.atticPushCache != null) {
+            post-build-hook = atticPushHook;
           };
           optimise = {
             automatic = cfg.autoOptimiseStore;

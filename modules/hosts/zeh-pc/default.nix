@@ -223,6 +223,11 @@ in
             "homelab:6mcMiciTmo9ql8grx9u5ldKLsoscq3zS4KUQ6V6mVy8="
           ];
 
+          # This machine builds the homelab's custom derivations (OCI images,
+          # gen-manifests, host closures), so push everything it builds to the
+          # cache; nodes then substitute instead of rebuilding.
+          jvf.system.nix-daemon.atticPushCache = "homelab";
+
           # Open port for OpenCode Web
           jvf.system.firewall.allowedTCPPorts = [
             3000
