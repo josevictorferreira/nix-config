@@ -28,6 +28,10 @@ let
           path = yamlFmt.generate "aliases.yaml" { aliases = cfg.aliases; };
         }
         {
+          name = "views.yaml";
+          path = yamlFmt.generate "views.yaml" { views = cfg.views; };
+        }
+        {
           name = "skins/tokyonight.yaml";
           path = yamlFmt.generate "tokyonight.yaml" { k9s = cfg.skins.tokyonight; };
         }
@@ -48,6 +52,7 @@ let
         programs.k9s = {
           settings = lib.mkDefault defaultSettings.settings;
           aliases = lib.mkDefault defaultSettings.aliases;
+          views = lib.mkDefault defaultSettings.views;
           skins = lib.mkDefault {
             tokyonight = themeSkin;
           };

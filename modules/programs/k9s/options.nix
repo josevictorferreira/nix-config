@@ -32,5 +32,11 @@
       default = { };
       description = lib.mdDoc "Theme/skin definitions for k9s.";
     };
+
+    views = lib.mkOption {
+      type = lib.types.attrsOf lib.types.attrs;
+      default = { };
+      description = lib.mdDoc "Per-resource column layouts, written to views.yaml.";
+    };
   };
 }

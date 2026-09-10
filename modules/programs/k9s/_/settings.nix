@@ -74,4 +74,24 @@ _:
     cm = "configmap";
     ss = "statefulset";
   };
+
+  views = {
+    "v1/pods" = {
+      sortColumn = "AGE:desc";
+      columns = [
+        "NAME"
+        "NODE"
+        "AGE"
+        "RESTARTS"
+        "MEM"
+        "CPU"
+        "READY"
+        "STATUS"
+        "NAMESPACE"
+        "LAST RESTART|W"
+        "IP|W"
+        "QOS|W"
+      ];
+    };
+  };
 }
