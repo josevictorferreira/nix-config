@@ -47,8 +47,10 @@ let
       Notes:
         - Manual light/dark overrides stick until auto is run again.
         - All reload hooks are safe and best-effort: failures are logged, not fatal.
-        - Live retheming works for Hyprland, Waybar, Kitty, GTK (via gsettings),
-          and Btop. Other apps may need a restart.
+        - Live retheming works for Hyprland, Waybar, Kitty, Btop, and GTK
+          (via the org.freedesktop.portal.Settings portal, which serves the
+          org.gnome.desktop.interface dconf keys written on each switch).
+          Other apps may need a restart.
       HELP
               exit 1
             }
@@ -93,6 +95,12 @@ let
               deploy_artifacts "$profile_dir/waybar/colors-waybar.css" "$HOME/.config/waybar/wallust/colors-waybar.css"
               deploy_artifacts "$profile_dir/rofi/colors-rofi.rasi" "$HOME/.config/rofi/wallust/colors-rofi.rasi"
               deploy_artifacts "$profile_dir/gtk/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+              # gtk.css raises separator/border contrast on top of the base
+              # theme. GTK4/libadwaita apps ignore gtk-theme-name but still read
+              # this file, so it is the only contrast lever that reaches them.
+              mkdir -p "$HOME/.config/gtk-4.0"
+              deploy_artifacts "$profile_dir/gtk/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+              deploy_artifacts "$profile_dir/gtk/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
               # Starship prompt colors. NixOS's programs.starship defers to
               # ~/.config/starship.toml when it exists, so swapping it here makes
               # the prompt follow the active theme (light's blue is unreadable
@@ -190,6 +198,39 @@ let
                 warn "dconf color-scheme write failed"
               fi
 
+              # On Wayland, GTK reads gtk-theme/icon-theme/font-name from the
+              # org.freedesktop.portal.Settings portal, which proxies these
+              # dconf keys — NOT from gtk-3.0/settings.ini (that path is
+              # X11-era). Writing only settings.ini leaves the theme pinned to
+              # whatever last touched dconf (e.g. nwg-look), which is why the
+              # light profile never actually changed the GTK theme. Mirror the
+              # profile's settings.ini into dconf so the portal serves it; the
+              # portal's SettingChanged signal retheres running apps live.
+              local gtk_ini="$profile_dir/gtk/settings.ini"
+              if [ -f "$gtk_ini" ]; then
+                dconf_from_ini() {
+                  local ini_key="$1"
+                  local dconf_key="$2"
+                  local value
+                  value=$(sed -n "s/^$ini_key=//p" "$gtk_ini" | head -1)
+                  if [ -z "$value" ]; then
+                    warn "dconf: $ini_key missing from profile settings.ini"
+                    return 0
+                  fi
+                  if dconf write "/org/gnome/desktop/interface/$dconf_key" "'$value'" 2>/dev/null; then
+                    log "dconf $dconf_key: $value"
+                  else
+                    warn "dconf $dconf_key write failed"
+                  fi
+                }
+                dconf_from_ini gtk-theme-name      gtk-theme
+                dconf_from_ini gtk-icon-theme-name icon-theme
+                dconf_from_ini gtk-font-name       font-name
+                dconf_from_ini gtk-cursor-theme-name cursor-theme
+              else
+                warn "dconf: profile settings.ini not found: $gtk_ini"
+              fi
+
               # Btop — repoint the stable jvf-active.theme symlink so btop
               # loads the current profile's theme. btop.conf keeps a fixed
               # color_theme = "jvf-active": btop rewrites btop.conf on exit,
@@ -272,7 +313,7 @@ let
                 echo "Reload warnings: $warnings"
                 echo ""
                 echo "Limitations:"
-                echo "  - Running GTK/Qt apps may need restart for full theme change"
+                echo "  - Running Qt apps may need restart for full theme change"
                 echo "  - KDE Plasma/GNOME Shell/Tk live theming not supported"
                 echo "  - Wallpaper switching deferred (see wallust)"
                 echo "  - Qt5ct/Qt6ct color schemes deferred (hardcoded Catppuccin)"

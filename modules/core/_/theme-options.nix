@@ -121,8 +121,12 @@ let
     options = {
       theme = mkOption {
         type = types.str;
-        default = "Andromeda-dark";
-        description = "GTK theme name.";
+        default = "adw-gtk3-dark";
+        description = ''
+          GTK theme name. This is a bare string, so setting it does not pull
+          the theme package in — install it alongside, or GTK falls back to
+          its built-in theme silently.
+        '';
       };
       iconTheme = mkOption {
         type = types.str;
@@ -143,6 +147,16 @@ let
         type = types.bool;
         default = true;
         description = "Whether GTK apps should prefer dark theme variant.";
+      };
+      borderColor = mkOption {
+        type = types.str;
+        default = "737aa2";
+        description = ''
+          Hex color (no leading #) for separators, frame borders and button
+          outlines, applied via the generated gtk.css override. Base themes
+          draw these at ~1.8:1 against the background, which is effectively
+          invisible; pick a value at or above 3:1 for legible separators.
+        '';
       };
     };
   };

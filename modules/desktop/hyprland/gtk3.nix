@@ -105,13 +105,60 @@ _: {
           gtk-application-prefer-dark-theme=${if gtkPreset.applicationPreferDarkTheme then "1" else "0"}
         '';
 
+      # Theme adapter: user CSS override raising separator/border contrast.
+      # Base themes draw separators at ~1.8:1 against the background, which is
+      # effectively invisible. Same file serves GTK3 and GTK4 — libadwaita apps
+      # ignore gtk-theme-name entirely but still honor this override, so it is
+      # the only contrast lever that reaches them.
+      mkGtkCss =
+        preset:
+        pkgs.writeText "gtk.css" ''
+          @define-color jvf_border #${preset.gtk.borderColor};
+
+          separator {
+            background-color: @jvf_border;
+            min-width: 1px;
+            min-height: 1px;
+          }
+
+          paned > separator {
+            background-color: @jvf_border;
+          }
+
+          headerbar,
+          .titlebar,
+          toolbar {
+            border-bottom: 1px solid @jvf_border;
+          }
+
+          .sidebar,
+          placessidebar,
+          stacksidebar {
+            border-right: 1px solid @jvf_border;
+          }
+
+          frame > border,
+          .frame,
+          notebook > header {
+            border-color: @jvf_border;
+          }
+
+          entry,
+          spinbutton,
+          button:not(.flat) {
+            border-color: @jvf_border;
+          }
+        '';
+
       # Current active config (for jvf.home deployment)
       generatedSettingsIni = mkGtkConf config.jvf.theme;
+      generatedGtkCss = mkGtkCss config.jvf.theme;
 
       # Build the config directory with generated settings.ini and optional bookmarks
       configDir = pkgs.runCommand "gtk-3.0-config" { } ''
         mkdir -p $out
         cp ${generatedSettingsIni} $out/settings.ini
+        cp ${generatedGtkCss} $out/gtk.css
         ${lib.optionalString (cfg.bookmarks != [ ]) ''
             cat > $out/bookmarks << 'EOF'
           ${bookmarksContent}
@@ -123,10 +170,19 @@ _: {
       darkGtkArtifact = pkgs.runCommand "theme-gtk-dark" { } ''
         mkdir -p $out
         cp ${mkGtkConf darkPreset} $out/settings.ini
+        cp ${mkGtkCss darkPreset} $out/gtk.css
       '';
       lightGtkArtifact = pkgs.runCommand "theme-gtk-light" { } ''
         mkdir -p $out
         cp ${mkGtkConf lightPreset} $out/settings.ini
+        cp ${mkGtkCss lightPreset} $out/gtk.css
+      '';
+
+      # GTK4 reads only gtk.css from its own config dir; settings.ini there is
+      # ignored (GTK4 takes those from the settings portal instead).
+      gtk4ConfigDir = pkgs.runCommand "gtk-4.0-config" { } ''
+        mkdir -p $out
+        cp ${generatedGtkCss} $out/gtk.css
       '';
     in
     {
@@ -177,11 +233,19 @@ _: {
           packages = [ ];
         };
 
-        jvf.home.users.${cfg.username}.items.".config/gtk-3.0" = {
-          kind = "dir";
-          mode = "copy";
-          source = configDir;
-          postInstall = lib.mkIf (allFolderIcons != { }) folderIconCommands;
+        jvf.home.users.${cfg.username}.items = {
+          ".config/gtk-3.0" = {
+            kind = "dir";
+            mode = "copy";
+            source = configDir;
+            postInstall = lib.mkIf (allFolderIcons != { }) folderIconCommands;
+          };
+
+          ".config/gtk-4.0" = {
+            kind = "dir";
+            mode = "copy";
+            source = gtk4ConfigDir;
+          };
         };
 
         # Profile artifacts for dual-theme runtime switching

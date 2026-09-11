@@ -31,10 +31,12 @@ let
       size = 14;
     };
     gtk = {
-      theme = "Andromeda-dark";
+      theme = "adw-gtk3-dark";
       iconTheme = "Flat-Remix-Blue-Dark";
       cursorTheme = "Bibata-Modern-Ice";
       cursorSize = 24;
+      # color8. ~3.3:1 against the 251E2D background.
+      borderColor = "806A89";
     };
     rofiSemantic = {
       activeBackground = "784CA0";
@@ -78,10 +80,13 @@ let
       size = 11;
     };
     gtk = {
-      theme = "Andromeda-dark";
+      theme = "adw-gtk3-dark";
       iconTheme = "Flat-Remix-Blue-Dark";
       cursorTheme = "Bibata-Modern-Ice";
       cursorSize = 24;
+      # tokyonight dark5. color8 (414868) sits at 1.8:1 against the 1a1b26
+      # background — separators disappear. This lands at ~4:1.
+      borderColor = "737aa2";
     };
     rofiSemantic = {
       activeBackground = "7aa2f7";
@@ -126,11 +131,14 @@ let
       size = 11;
     };
     gtk = {
-      theme = "Adwaita";
-      iconTheme = "Adwaita";
+      theme = "adw-gtk3";
+      iconTheme = "Flat-Remix-Blue-Light";
       cursorTheme = "Bibata-Modern-Ice";
       cursorSize = 24;
       applicationPreferDarkTheme = false;
+      # color7. color8 (a1a6c5) sits at 1.9:1 against the e1e2e7
+      # background; this lands at ~3.6:1.
+      borderColor = "6172b0";
     };
     rofiSemantic = {
       activeBackground = "2e7de9";

@@ -134,6 +134,13 @@ _:
           pkgs.inxi
           pkgs.networkmanagerapplet
           pkgs.nwg-look
+          # Themes referenced by name from jvf.theme.presets. These are plain
+          # strings there, so nothing makes Nix pull them in — when a package
+          # goes missing the toolkit falls back silently instead of failing the
+          # build (which is how Andromeda-dark disappeared). Keep them here.
+          pkgs.adw-gtk3 # adw-gtk3, adw-gtk3-dark
+          pkgs.flat-remix-icon-theme # Flat-Remix-Blue-{Dark,Light}
+          pkgs.bibata-cursors # Bibata-Modern-Ice
           pkgs.nvtopPackages.full
           pkgs.pamixer
           pkgs.pavucontrol
