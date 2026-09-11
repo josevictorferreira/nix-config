@@ -131,6 +131,12 @@ in
   bind -n C-left swap-window -t -1
   bind -n C-right swap-window -t +1
 
+  # k9s column nav: k9s hardcodes S-Left/S-Right for column select and has no
+  # rebind config. S-Left/S-Right are taken by prev/next above, so translate
+  # M-h/M-l into them while k9s is focused; pass through everywhere else.
+  bind -n M-h if-shell -F '#{m:*k9s*,#{pane_current_command}}' 'send-keys S-Left' 'send-keys M-h'
+  bind -n M-l if-shell -F '#{m:*k9s*,#{pane_current_command}}' 'send-keys S-Right' 'send-keys M-l'
+
   # tmuxp session picker (prefix + t, replaces default time display)
   bind t display-popup -E -w 60% -h 60% "tmuxp-picker"
 

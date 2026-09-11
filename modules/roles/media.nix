@@ -18,9 +18,10 @@ let
     };
 
   nixosModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.media;
@@ -35,6 +36,7 @@ let
         pkgs.vlc
         pkgs.spotifywm
         pkgs.hplip
+        pkgs.tuxguitar
       ];
     in
     {
@@ -51,9 +53,10 @@ let
     };
 
   darwinModule =
-    { config
-    , pkgs
-    , ...
+    {
+      config,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.roles.media;
