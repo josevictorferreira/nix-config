@@ -28,7 +28,7 @@ let
         set -u
         export PATH=${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.bluez}/bin:${pkgs.systemd}/bin:${pkgs.util-linux}/bin:${pkgs.procps}/bin:$PATH
 
-        ICON="󱫓"
+        ICON="󱡏"  # nf-md-earbuds (U+F184F)
 
         # Echoes "<bus-name> <object-path>" of LibrePods' tray item, else fails.
         sni_item() {

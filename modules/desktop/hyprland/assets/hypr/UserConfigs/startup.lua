@@ -39,6 +39,12 @@ hl.on("hyprland.start", function()
     -- once in the keymapp UI; the setting persists across launches.
     hl.exec_cmd("keymapp")
 
+    -- Repaint the Moonlander LEDs, so a previous `lights-off` does not leave the
+    -- keyboard dark forever. Waits for keymapp's socket, then sets an explicit
+    -- colour -- the firmware's own default is dark on this board. See
+    -- modules/hardware/moonlander.nix.
+    hl.exec_cmd("moonlander-leds")
+
     -- Clipboard manager
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
