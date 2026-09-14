@@ -77,7 +77,7 @@ _:
 
   views = {
     "v1/pods" = {
-      sortColumn = "AGE:desc";
+      sortColumn = "NAMESPACE:asc";
       columns = [
         "NAME"
         "NODE"
