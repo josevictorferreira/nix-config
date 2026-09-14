@@ -43,11 +43,13 @@
 	"network#speed",
 	"group/connections",
 	"custom/separator#line",
+	"custom/airpods",
 	"tray",
 	"mpris", 
 	"group/audio",
 	"custom/separator#dot-line",
 	"custom/cctv",
+	"keyboard-state",
 	"group/status",
 	],
 }

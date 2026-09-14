@@ -116,6 +116,7 @@ window#waybar.empty #window {
 #window,
 #wireplumber,
 #workspaces,
+#custom-airpods,
 #custom-backlight,
 #custom-browser,
 #custom-cava_mviz,
@@ -217,8 +218,20 @@ window#waybar.empty #window {
   -gtk-icon-effect: highlight;
 }
 
+/* Caps Lock indicator: the module renders an empty label when unlocked, so the
+   padding lives on the .locked label instead of the box -- otherwise an empty
+   but padded box would leave a visible gap in the bar whenever Caps is off. */
 #keyboard-state {
-  color: @color15;
+  padding: 0;
+  margin: 0;
+}
+
+#keyboard-state label.capslock.locked {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-right: 6px;
+  padding-left: 6px;
+  color: @color11;
 }
 
 #custom-cava_mviz {

@@ -216,11 +216,11 @@
 	"capslock": true,
 	"format": {
 		"numlock": "N {icon}",
-		"capslock": "󰪛 {icon}",
+		"capslock": "{icon}",
 	},
 	"format-icons": {
-		"locked": "",
-		"unlocked": ""
+		"locked": "󰪛",
+		"unlocked": ""
 	},
 },
 "memory": {

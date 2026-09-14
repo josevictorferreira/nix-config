@@ -88,7 +88,6 @@
 	"modules": [
 		"custom/power",
 		"custom/lock",
-		"keyboard-state",
 		"custom/keyboard",
 	]
 },

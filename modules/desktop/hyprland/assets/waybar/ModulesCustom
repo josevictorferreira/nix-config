@@ -212,6 +212,15 @@
 	"tooltip": true,
 	"tooltip-format": "Open CCTV Stream",
 },
+"custom/airpods": {
+	"format": "{}",
+	"exec": "$HOME/.local/bin/airpods-waybar-status",
+	"interval": 5,
+	"return-type": "json",
+	"on-click": "$HOME/.local/bin/airpods-open",
+	"tooltip": true,
+},
+
 "custom/pomodoro": {
 		"format": "{}",
 		"exec": "$HOME/.local/bin/pomodoro-waybar-status",

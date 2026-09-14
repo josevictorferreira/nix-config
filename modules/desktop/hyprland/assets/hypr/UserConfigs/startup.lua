@@ -29,6 +29,11 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("ags")
     hl.exec_cmd("blueman-applet")
 
+    -- LibrePods: AirPods battery/ANC control. Must be the /run/wrappers entry
+    -- (plain `librepods` on PATH resolves there) — the unwrapped store binary
+    -- lacks cap_net_admin and cannot open the AAP L2CAP channel.
+    hl.exec_cmd("librepods --hide")
+
     -- keymapp: holds the Moonlander connection + API socket so `lights-off` can
     -- blank the keyboard LEDs via kontroll. Enable its API (and Start minimized)
     -- once in the keymapp UI; the setting persists across launches.
