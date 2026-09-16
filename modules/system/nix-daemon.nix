@@ -108,6 +108,13 @@ let
             # Let remote builders fetch deps from caches instead of
             # copying everything from this machine.
             builders-use-substitutes = true;
+            # The homelab cache is a LAN host that is often down. Without
+            # `fallback`, an unreachable substituter is a hard error; with it,
+            # Nix logs a warning and moves on to the next cache or builds
+            # locally. `connect-timeout` bounds how long a dead host can stall
+            # each attempt (the default is curl's 300 seconds).
+            fallback = true;
+            connect-timeout = 5;
           }
           // lib.optionalAttrs (cfg.atticPushCache != null) {
             post-build-hook = atticPushHook;

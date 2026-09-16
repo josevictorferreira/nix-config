@@ -35,10 +35,20 @@ let
         done
         [ -S "$sock" ] || exit 0
 
-        # Idempotent: exits non-zero with "keyboard already connected" when
-        # keymapp's own autoconnect got there first, which is fine.
-        ${kontroll} connect-any > /dev/null 2>&1 || true
-        ${kontroll} set-rgb-all --color "$color" --sustain 0 > /dev/null 2>&1
+        # The socket is created before keymapp has finished negotiating with
+        # the board, so a single shot here loses a race it cannot see: for up to
+        # ~20s set-rgb-all fails with "no keyboard is connected" or the
+        # misleading "keyboard requires an updated firmware" (which does NOT
+        # mean the firmware is old -- keymapp just has not read its version
+        # yet). Retry until the paint takes, re-running connect-any each round
+        # in case keymapp's own autoconnect has not landed either. connect-any
+        # exits non-zero with "keyboard already connected" once it has, which is
+        # fine.
+        for _ in $(seq 60); do
+            ${kontroll} connect-any > /dev/null 2>&1 || true
+            ${kontroll} set-rgb-all --color "$color" --sustain 0 > /dev/null 2>&1 && exit 0
+            sleep 1
+        done
       '';
     in
     {
