@@ -207,16 +207,20 @@ in
           ];
           networking.interfaces.enp4s0.useDHCP = false;
           networking.defaultGateway = "10.10.10.1";
-          networking.nameservers = [ "10.10.10.100" ];
+          networking.nameservers = [
+            "10.10.10.100"
+            "1.1.1.1"
+            "8.8.8.8"
+          ];
 
           # Self-hosted Attic binary cache (homelab, see nix_homelab_plan.md).
           jvf.system.nix-daemon.substituters = [
-            "https://hyprland.cachix.org"
             "http://10.10.10.161:8080/homelab"
+            "https://hyprland.cachix.org"
           ];
           jvf.system.nix-daemon.trustedSubstituters = [
-            "https://hyprland.cachix.org"
             "http://10.10.10.161:8080/homelab"
+            "https://hyprland.cachix.org"
           ];
           jvf.system.nix-daemon.trustedPublicKeys = [
             "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
