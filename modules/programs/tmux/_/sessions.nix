@@ -362,6 +362,40 @@
   }
 
   {
+    name = "my-pi-agent";
+    session_name = "🤖 My Pi Agent";
+    start_directory = "$HOME/Workspace/my-pi-agent-plugins";
+    windows = [
+      {
+        window_name = "🤖 My Pi Agent";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "clear"
+          "clear"
+        ];
+      }
+    ];
+  }
+
+  {
+    name = "3d-models";
+    session_name = "🖨 3D Models";
+    start_directory = "$HOME/Workspace/3d-models";
+    windows = [
+      {
+        window_name = "🖨 3D Models";
+        layout = "tiled";
+        panes = [
+          "clear"
+          "cd ~/Homelab/3d-models/ && pwd;"
+          "clear"
+        ];
+      }
+    ];
+  }
+
+  {
     name = "oratoria";
     session_name = "💬 Oratoria";
     start_directory = "$HOME/Workspace/oratoria";
