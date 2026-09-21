@@ -97,6 +97,9 @@ let
         )
         cfg.mcps;
 
+      # How the wrapper invokes the npm-installed claude binary (FHS on Linux, direct on Darwin)
+      runClaude = if (!isDarwin) then ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"'' else ''"$CLAUDE_BIN"'';
+
       claudeCodeBin = pkgs.writeShellScriptBin "claude" ''
         set -euo pipefail
 
@@ -118,21 +121,15 @@ let
         fi
 
         # Auto-install plugins once
-        PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v3"
+        PLUGINS_SENTINEL="$HOME/.claude/.plugins-installed-v4"
         if [ ! -f "$PLUGINS_SENTINEL" ] && [ -x "$CLAUDE_BIN" ]; then
           echo "Installing oh-my-claudecode plugin..."
-          ${
-            if (!isDarwin) then
-              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
-            else
-              ''"$CLAUDE_BIN"''
-          } plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode 2>/dev/null || true
-          ${
-            if (!isDarwin) then
-              ''"${nodeFHS}/bin/node-fhs" "$CLAUDE_BIN"''
-            else
-              ''"$CLAUDE_BIN"''
-          } plugin install oh-my-claudecode 2>/dev/null || true
+          ${runClaude} plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode 2>/dev/null || true
+          ${runClaude} plugin install oh-my-claudecode 2>/dev/null || true
+
+          echo "Installing my-claude-plugins (voice)..."
+          ${runClaude} plugin marketplace add josevictorferreira/my-claude-plugins 2>/dev/null || true
+          ${runClaude} plugin install voice@my-claude-plugins 2>/dev/null || true
 
           mkdir -p "$HOME/.claude"
           touch "$PLUGINS_SENTINEL"
@@ -301,12 +298,19 @@ let
           };
           enabledPlugins = lib.mkDefault {
             "oh-my-claudecode@omc" = true;
+            "voice@my-claude-plugins" = true;
           };
           extraKnownMarketplaces = lib.mkDefault {
             omc = {
               source = {
                 source = "git";
                 url = "https://github.com/Yeachan-Heo/oh-my-claudecode.git";
+              };
+            };
+            my-claude-plugins = {
+              source = {
+                source = "github";
+                repo = "josevictorferreira/my-claude-plugins";
               };
             };
           };
