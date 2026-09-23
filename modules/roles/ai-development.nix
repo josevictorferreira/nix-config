@@ -52,9 +52,7 @@ let
         programs-rtk
         programs-gemini
         programs-hermes-agent
-        programs-forgecode
         programs-pi
-        programs-vix
         programs-crush
       ]);
 
@@ -111,9 +109,7 @@ let
         programs-rtk
         programs-gemini
         programs-hermes-agent
-        programs-forgecode
         programs-pi
-        programs-vix
         programs-crush
       ]);
 
