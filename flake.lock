@@ -196,11 +196,11 @@
     "pi-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1789659913,
-        "narHash": "sha256-kwA3amL0kS9Hlb6CC8MgMfawaV8nlFRh9TpvvybCEUg=",
+        "lastModified": 1790172874,
+        "narHash": "sha256-q+WZRcfmEa19psNZfIq4vwLSRV4OqhipqGCHgxRMa7I=",
         "owner": "josevictorferreira",
         "repo": "my-pi-agent-plugins",
-        "rev": "48ca3fefc28718b16784cef7c2febf209859a87a",
+        "rev": "18d3db618b3ef8e3725026d37aebb35ce25afa2c",
         "type": "github"
       },
       "original": {

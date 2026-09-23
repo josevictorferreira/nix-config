@@ -35,6 +35,8 @@ let
           pkgs.orca-slicer
           pkgs.kicad
           pkgs.openshot-qt
+          pkgs.shotcut
+          pkgs.losslesscut
         ];
       };
     };

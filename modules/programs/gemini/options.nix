@@ -9,8 +9,6 @@ let
 in
 {
   options.jvf.programs.gemini = {
-    antigravity.enable = lib.mkEnableOption "Install Antigravity Tools (Gemini CLI companion)";
-
     username = lib.mkOption {
       type = lib.types.str;
       default = config.jvf.core.username;

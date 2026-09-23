@@ -58,9 +58,9 @@ let
           default = null;
           example = "homelab";
           description = ''
-            Name of an Attic cache to push every locally built path to via a
-            post-build-hook. Requires `attic login` to have been run for the
-            primary user. Null disables the hook.
+            Name of an Attic cache to push new store paths to from a background
+            `attic watch-store` service (NixOS only). Requires `attic login` to
+            have been run for the primary user. Null disables the service.
           '';
         };
       };
@@ -71,24 +71,6 @@ let
     { config, lib, pkgs, ... }:
     let
       cfg = config.jvf.system.nix-daemon;
-
-      # The nix daemon runs post-build hooks as root, so attic would look for
-      # its token in root's home; point it at the primary user's config. The
-      # hook must never fail or stall a build, hence the timeout and exit 0.
-      atticPushHook = pkgs.writeShellScript "attic-push-hook" ''
-        set -f # $OUT_PATHS is space-separated; never glob it
-        export IFS=' '
-        export HOME="/home/${config.jvf.core.username}"
-        export XDG_CONFIG_HOME="$HOME/.config"
-
-        if [ -n "$OUT_PATHS" ]; then
-          ${pkgs.coreutils}/bin/timeout 30m \
-            ${pkgs.attic-client}/bin/attic push ${toString cfg.atticPushCache} $OUT_PATHS \
-            || echo "attic-push-hook: push failed, continuing" >&2
-        fi
-
-        exit 0
-      '';
     in
     {
       imports = [ mkNixDaemonOptions ];
@@ -115,9 +97,6 @@ let
             # each attempt (the default is curl's 300 seconds).
             fallback = true;
             connect-timeout = 5;
-          }
-          // lib.optionalAttrs (cfg.atticPushCache != null) {
-            post-build-hook = atticPushHook;
           };
           optimise = {
             automatic = cfg.autoOptimiseStore;
@@ -132,6 +111,26 @@ let
         programs.nix-ld.enable = true;
         # CLI for pushing to the self-hosted Attic binary cache (homelab).
         environment.systemPackages = [ pkgs.attic-client ];
+
+        # Upload new store paths in the background. A post-build-hook runs
+        # synchronously and stalls the build loop on every slow upload;
+        # watch-store decouples pushing from building entirely. Runs as the
+        # primary user so attic finds its token in ~/.config/attic.
+        systemd.services.attic-watch-store = lib.mkIf (cfg.atticPushCache != null) {
+          description = "Push new Nix store paths to the Attic cache";
+          wantedBy = [ "multi-user.target" ];
+          wants = [ "network-online.target" ];
+          after = [ "network-online.target" ];
+          serviceConfig = {
+            User = config.jvf.core.username;
+            ExecStart = "${pkgs.attic-client}/bin/attic watch-store ${cfg.atticPushCache}";
+            # The homelab cache is often down; keep retrying instead of giving up.
+            Restart = "always";
+            RestartSec = 30;
+            Nice = 10;
+            IOSchedulingClass = "idle";
+          };
+        };
       };
     };
 in

@@ -59,9 +59,6 @@ let
       ]);
 
       config = {
-        # Sub-feature enables
-        jvf.programs.gemini.antigravity.enable = true;
-
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
         jvf.aiTools.mcp.jira.enable = true;
@@ -121,9 +118,6 @@ let
       ]);
 
       config = {
-        # Sub-feature enables
-        jvf.programs.gemini.antigravity.enable = true;
-
         # AI Tools enables
         jvf.aiTools.mcp.chrome-devtools.enable = true;
         jvf.aiTools.mcp.jira.enable = true;

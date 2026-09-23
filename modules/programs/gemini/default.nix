@@ -142,7 +142,6 @@ let
         jvf.wrappers.users.${cfg.username}.programs.gemini = {
           packages = [
             shellScriptBin
-            pkgs.antigravity
           ];
           env = {
             GEMINI_YOLO_MODE = "true";
