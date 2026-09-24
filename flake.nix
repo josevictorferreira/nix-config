@@ -13,6 +13,8 @@
     bun2nix.url = "github:nix-community/bun2nix";
     pi-plugins.url = "github:josevictorferreira/my-pi-agent-plugins";
     pi-plugins.flake = false;
+    sol-pi.url = "github:NVlabs/SoL-Pi";
+    sol-pi.flake = false;
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";

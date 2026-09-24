@@ -79,6 +79,7 @@ let
           # ~/.config/mcp/mcp.json < ~/.pi/agent/mcp.json < .mcp.json < .pi/mcp.json.
           "mcp.json".mcpServers = cfg.mcps;
         })
+        // cfg.files
         // (lib.mapAttrs' (name: text: lib.nameValuePair "extensions/${name}" text) cfg.extensionFiles)
         // (lib.mapAttrs'
           (
@@ -175,6 +176,23 @@ let
             Pi models.json contents. Custom providers and models loaded by pi at
             startup (see pi-coding-agent docs/models.md). Top-level shape:
             `{ providers = { name = { baseUrl, api, apiKey, models = [...]; }; }; }`.
+          '';
+        };
+
+        files = lib.mkOption {
+          type = lib.types.attrsOf json.type;
+          default = { };
+          example = {
+            "sol-pi.json" = {
+              version = 1;
+              actionFusion = true;
+            };
+          };
+          description = ''
+            Extra files materialized into ~/.pi/agent/<name>. Attribute sets are
+            serialized by file extension (e.g. `.json`), strings are written
+            verbatim. For configuration owned by an extension, such as SoL-Pi's
+            `sol-pi.json`.
           '';
         };
 
