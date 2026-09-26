@@ -74,7 +74,6 @@ let
         programs-gemini
         programs-hermes-agent
         programs-pi
-        programs-crush
       ]);
 
       config = {
@@ -132,7 +131,6 @@ let
         programs-gemini
         programs-hermes-agent
         programs-pi
-        programs-crush
       ]);
 
       config = {
