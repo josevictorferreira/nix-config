@@ -30,6 +30,12 @@ let
           default = "1";
           description = "Enable automatic text-to-speech playback for AI agent responses.";
         };
+
+        ttsVoice = lib.mkOption {
+          type = lib.types.str;
+          default = "gwen";
+          description = "Canonical Velox voice name for text-to-speech (resolved per provider and language).";
+        };
       };
     };
 
@@ -48,6 +54,7 @@ let
             XDG_CONFIG_HOME = cfg.xdgConfigHome;
             NIXOS_OZONE_WL = cfg.nixosOzoneWl;
             TTS_AUTO_SPEAK = cfg.ttsAutoSpeak;
+            TTS_VOICE = cfg.ttsVoice;
           };
         };
       };
