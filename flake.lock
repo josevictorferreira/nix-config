@@ -209,6 +209,22 @@
         "type": "indirect"
       }
     },
+    "nvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784992599,
+        "narHash": "sha256-44gV5gLhACiCJve3DX600Ad/RsVDGCNITsPEg1o7HrU=",
+        "owner": "josevictorferreira",
+        "repo": ".nvim",
+        "rev": "b920507331e2c950e7245b38d13c5c81d724203c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "josevictorferreira",
+        "repo": ".nvim",
+        "type": "github"
+      }
+    },
     "pi-plugins": {
       "flake": false,
       "locked": {
@@ -235,6 +251,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-ceph": "nixpkgs-ceph",
         "nixpkgs-darwin": "nixpkgs-darwin",
+        "nvim-config": "nvim-config",
         "pi-plugins": "pi-plugins",
         "sol-pi": "sol-pi",
         "sops-nix": "sops-nix"

@@ -1,7 +1,9 @@
 # Aspect: programs-neovim
 # Installs neovim + development tooling (LSP servers, formatters, languages).
 # NixOS-only: glibc, glibc.dev.
-# Clones .nvim config repo via jvf.repositories.
+# The .nvim config repo is pinned via the nvim-config flake input and copied to
+# ~/.config/nvim by jvf.home (copy mode so lazy.nvim can write lazy-lock.json).
+# To pick up config changes: push upstream, `nix flake update nvim-config`, rebuild.
 _:
 let
   mkNeovimOptions =
@@ -20,6 +22,7 @@ let
     { config
     , lib
     , pkgs
+    , inputs
     , ...
     }:
     let
@@ -104,8 +107,10 @@ let
           pkgs.glibc.dev
         ]);
 
-        jvf.repositories.users.${cfg.username}.clonedDirs = {
-          ".config/nvim" = "git@github.com:josevictorferreira/.nvim.git";
+        jvf.home.users.${cfg.username}.items.".config/nvim" = {
+          kind = "dir";
+          mode = "copy";
+          source = inputs.nvim-config;
         };
       };
     };
