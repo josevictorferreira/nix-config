@@ -4,60 +4,13 @@
 let
   system = "x86_64-linux";
 
-  # openldap-2.6.13 fails with syncreplication tests after nixpkgs update.
-  # This is a common transient build failure; disable tests as a workaround.
-  openldapFixOverlay = final: prev: {
-    openldap = prev.openldap.overrideAttrs (old: {
-      doCheck = false;
-    });
-  };
-
-  # ceph 20.2.2 fails to build on this nixpkgs revision for four unrelated reasons:
-  # three inside its embedded Python environment, one in the RGW C++ code. The
-  # Python fixes are confined to ceph's own scope and interpreter — patching the
-  # global python package set instead would invalidate the binary cache for
-  # rocblas, steam, freecad and everything else using python.
-  cephFixOverlay = _: prev: {
-    ceph =
-      (prev.ceph.overrideScope (
-        _: scopePrev: {
-          # setup.py declares name='ceph' version='1.0.0', but nixpkgs builds it as
-          # pname='ceph-common' version=20.2.2, so pythonMetadataCheckPhase can't
-          # find the dist-info. The package itself is fine.
-          ceph-python-common = scopePrev.ceph-python-common.overrideAttrs (_: {
-            dontCheckPythonMetadata = true;
-          });
-
-          ceph-python = prev.python312.override {
-            packageOverrides = _: pyPrev: {
-              # Upstream tagged 0.29.37.1 without bumping setup.py, so the built
-              # METADATA says 0.29.37 and pythonMetadataCheckPhase rejects it.
-              cython_0 = pyPrev.cython_0.overrideAttrs (_: {
-                dontCheckPythonMetadata = true;
-              });
-
-              # Flaky hypothesis property test: fails on some random seeds with a
-              # ~2e-9 discrepancy. Same class as the exclusions scipy already ships.
-              scipy = pyPrev.scipy.overrideAttrs (old: {
-                disabledTests = (old.disabledTests or [ ]) ++ [ "test_support_moments_sample" ];
-              });
-            };
-          };
-        }
-      )).ceph.overrideAttrs
-        (old: {
-          # s3select picks its encryption backend on ARROW_VERSION_MAJOR: >= 20
-          # selects encryption_internal_20.h, which includes "arrow/util/span.h".
-          # nixpkgs' arrow-cpp is 24.0.0 and dropped that header (superseded by
-          # C++20 std::span), so rgw_s3select.cc fails to compile. The header's own
-          # __has_include guard only probes arrow/api.h, so it doesn't catch this.
-          # The entire parquet path is gated behind -D_ARROW_EXIST, which CMake only
-          # defines when this flag is on. Costs S3-Select-on-Parquet in radosgw,
-          # which this host never runs — it only consumes ceph-client for cephfs.
-          cmakeFlags = old.cmakeFlags ++ [
-            (prev.lib.cmakeBool "WITH_RADOSGW_SELECT_PARQUET" false)
-          ];
-        });
+  # cephfs only needs ceph-client (mount.ceph). Hydra builds ceph rarely and the
+  # nixos-unstable channel doesn't wait for it, so at most revisions ceph is a
+  # cache miss and a multi-hour local build. Take it from a pinned nixpkgs whose
+  # ceph Hydra has already built, so it's a download regardless of main bumps.
+  # ceph-client is ceph's `client` output, so pinning ceph covers it.
+  cephPinOverlay = _: _: {
+    inherit (inputs.nixpkgs-ceph.legacyPackages.${system}) ceph;
   };
 
   pkgs = import inputs.nixpkgs {
@@ -164,10 +117,8 @@ in
 
         # Host identity & overrides
         (_: {
-          # Fix: arrow-cpp 19.0.1 fails to build with boost 1.89.0; force boost188.
           nixpkgs.overlays = [
-            openldapFixOverlay
-            cephFixOverlay
+            cephPinOverlay
           ];
           system.stateVersion = "26.05";
           # Core identity

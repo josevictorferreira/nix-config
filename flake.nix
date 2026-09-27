@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "nixpkgs/nixpkgs-unstable";
+    # Pinned to the newest nixos-unstable revision whose ceph Hydra has built and
+    # cached; zeh-pc takes ceph from here. Bump only after confirming the new
+    # ceph-client is on cache.nixos.org (see modules/hosts/zeh-pc/default.nix).
+    nixpkgs-ceph.url = "github:NixOS/nixpkgs/60f402c45f5cf7c200060bfbd959b626ce088cf2";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     distro-grub-themes.url = "github:AdisonCavani/distro-grub-themes";

@@ -150,6 +150,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-ceph": {
+      "locked": {
+        "lastModified": 1788106574,
+        "narHash": "sha256-1TsYougq+z4wNjXuMyHpZHbwIs7+j6kBqcAmDmzeh80=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "60f402c45f5cf7c200060bfbd959b626ce088cf2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "60f402c45f5cf7c200060bfbd959b626ce088cf2",
+        "type": "github"
+      }
+    },
     "nixpkgs-darwin": {
       "locked": {
         "lastModified": 1790238896,
@@ -217,6 +233,7 @@
         "flake-parts": "flake-parts_2",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-ceph": "nixpkgs-ceph",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "pi-plugins": "pi-plugins",
         "sol-pi": "sol-pi",
