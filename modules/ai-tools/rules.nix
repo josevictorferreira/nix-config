@@ -88,7 +88,10 @@ let
         jvf.programs.claudecode.baseRules = "# CLAUDE.md\n\n${cfg.content}";
         jvf.programs.gemini.baseRules = "# GEMINI.md\n\n${cfg.content}";
         jvf.programs.command-code.baseRules = "# AGENTS.md\n\n${cfg.content}";
-        jvf.programs.pi.baseRules = "# AGENTS.md\n\n${cfg.content}";
+        # Pi-only addendum: pi's built-in prompt says "Use bash for file operations
+        # like ls, rg, find", which bash-first models (GLM, radagast) read as
+        # licence to grep past codegraph_explore. This overrides it explicitly.
+        jvf.programs.pi.baseRules = "# AGENTS.md\n\n${cfg.content}\n\n## Code exploration\n\nWhen codegraph_explore is available it overrides the default \"use bash for ls, rg, find\" rule for understanding code: answer how/where/what-calls questions with codegraph_explore (or codegraph_node for one symbol) first, and use grep/rg only for literal text (error messages, config keys) or after codegraph reports a missing index.\n";
       };
     };
 in

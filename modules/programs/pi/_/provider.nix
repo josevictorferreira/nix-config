@@ -93,9 +93,14 @@ let
       )
       secretPaths
   );
+
+  # Pi's built-in providers only need a key: pi already knows their baseUrl,
+  # models, and compat quirks. An apiKey-only entry keeps that catalog intact.
+  builtinProviderKeys = {
+    # GLM Coding Plan (api.z.ai/api/coding/paas/v4), direct -- not via Velox.
+    zai.apiKey = "!cat ${config.sops.secrets.z_ai_api_key.path}";
+  };
 in
 {
-  config.jvf.programs.pi.models = lib.mkIf (piProviders != { }) {
-    providers = piProviders;
-  };
+  config.jvf.programs.pi.models.providers = piProviders // builtinProviderKeys;
 }
