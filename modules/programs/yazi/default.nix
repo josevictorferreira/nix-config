@@ -639,7 +639,7 @@ let
       settingsOpener = {
         edit = [
           {
-            run = ''$EDITOR "$@"'';
+            run = ''$EDITOR %s'';
             block = true;
             desc = "$EDITOR";
           }
@@ -647,11 +647,11 @@ let
         open =
           lib.optional isDarwin
             {
-              run = ''open "$@"'';
+              run = ''open %s'';
               desc = "Open";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open %s1'';
             orphan = true;
             desc = "Open";
             for = "unix";
@@ -659,34 +659,34 @@ let
         reveal =
           lib.optional isDarwin
             {
-              run = ''open -R "$@"'';
+              run = ''open -R %s1'';
               desc = "Reveal in Finder";
             }
           ++ lib.optional (!isDarwin) {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open "$(dirname "$0")"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; xdg-open %d1'';
             desc = "Reveal in file manager";
             for = "unix";
           };
         extract = [
           {
-            run = ''ya pub extract --list "$@"'';
+            run = ''ya pub extract --list %s'';
             desc = "Extract here";
           }
         ];
         play = [
           {
-            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; mpv "$@"'';
+            run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; mpv %s'';
             orphan = true;
             for = "unix";
           }
           {
-            run = ''mpv "$@"'';
+            run = ''mpv %s'';
             orphan = true;
             for = "windows";
           }
         ];
-        image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; eog "$@"''; orphan = true; for = "unix"; }];
-        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; ark "$@"''; orphan = true; for = "unix"; }];
+        image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; eog %s''; orphan = true; for = "unix"; }];
+        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; ark %s''; orphan = true; for = "unix"; }];
       };
 
       settingsPlugin = {
@@ -731,8 +731,16 @@ let
             run = "pdf";
           }
           {
-            mime = "application/*";
-            run = "hexyl";
+            mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
+            run = "archive";
+          }
+          {
+            mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}";
+            run = "archive";
+          }
+          {
+            mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}";
+            run = "archive";
           }
           {
             url = "*";
