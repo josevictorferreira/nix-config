@@ -140,6 +140,12 @@ in
   # tmuxp session picker (prefix + t, replaces default time display)
   bind t display-popup -E -w 60% -h 60% "tmuxp-picker"
 
+  # tmux 3.7 regression (tmux/tmux#5493): choose-tree hides grouped sessions
+  # and draws a blank pane when every session is grouped (e.g. main + main-5).
+  # -G shows all group members, which avoids the empty tree.
+  bind s choose-tree -ZsG
+  bind w choose-tree -ZwG
+
   set -g status-position bottom
   set -g status-right-length 60
   set -g status-left-length 40
