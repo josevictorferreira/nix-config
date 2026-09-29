@@ -669,8 +669,8 @@ let
           };
         extract = [
           {
-            run = ''ouch decompress "$@"'';
-            desc = "Extract with ouch";
+            run = ''ya pub extract --list "$@"'';
+            desc = "Extract here";
           }
         ];
         play = [
@@ -686,7 +686,7 @@ let
           }
         ];
         image = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; eog "$@"''; orphan = true; for = "unix"; }];
-        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; file-roller "$@"''; orphan = true; for = "unix"; }];
+        archive = [{ run = ''hyprctl activewindow | grep -q "class: yazi-fm" && hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'; ark "$@"''; orphan = true; for = "unix"; }];
       };
 
       settingsPlugin = {

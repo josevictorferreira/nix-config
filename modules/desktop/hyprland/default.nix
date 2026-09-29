@@ -130,7 +130,7 @@ _:
           pkgs.cliphist
           pkgs.eog
           pkgs.gnome-system-monitor
-          pkgs.file-roller
+          pkgs.kdePackages.ark
           pkgs.inxi
           pkgs.networkmanagerapplet
           pkgs.nwg-look
