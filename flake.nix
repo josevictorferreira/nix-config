@@ -17,8 +17,6 @@
     bun2nix.url = "github:nix-community/bun2nix";
     pi-plugins.url = "github:josevictorferreira/my-pi-agent-plugins";
     pi-plugins.flake = false;
-    sol-pi.url = "github:NVlabs/SoL-Pi";
-    sol-pi.flake = false;
     nvim-config.url = "github:josevictorferreira/.nvim";
     nvim-config.flake = false;
     darwin = {

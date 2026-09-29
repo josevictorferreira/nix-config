@@ -253,24 +253,7 @@
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nvim-config": "nvim-config",
         "pi-plugins": "pi-plugins",
-        "sol-pi": "sol-pi",
         "sops-nix": "sops-nix"
-      }
-    },
-    "sol-pi": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1790059929,
-        "narHash": "sha256-crpD2+D51FhsXGtwqRJeRyDHfqsmRNvYeyvjvDVLg2w=",
-        "owner": "NVlabs",
-        "repo": "SoL-Pi",
-        "rev": "1559b5cb12c72da4a485bc50fe326586b216fb19",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NVlabs",
-        "repo": "SoL-Pi",
-        "type": "github"
       }
     },
     "sops-nix": {
