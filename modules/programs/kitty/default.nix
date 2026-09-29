@@ -124,6 +124,9 @@ let
         input_delay = 0;
         sync_to_monitor = false;
         wayland_enable_ime = false;
+        # Tiling WM owns geometry; remembering a maximized state makes every new
+        # kitty request set_maximized, which Hyprland honors (no tiling).
+        remember_window_size = false;
         term = "xterm-256color";
         background_opacity = "0.95";
         shell = "${tmuxpInitScript}/bin/tmuxp-init";
