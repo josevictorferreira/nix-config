@@ -111,10 +111,38 @@ let
         }
       ];
 
+      # Fixed DDS client ID of the scratchpad yazi, so other entry points can
+      # steer the running instance instead of stacking a second window in
+      # special:yazi. Keep in sync with hypr/scripts/ToggleYazi.sh.
+      scratchpadClientId = "4242";
+
+      # Open a path in the scratchpad yazi: reuse the running instance
+      # (`ya emit-to` exits non-zero when the receiver is missing), otherwise
+      # spawn it, then make sure the scratchpad is visible.
+      scratchpadOpen = pkgs.writeShellScriptBin "yazi-scratchpad-open" ''
+        target="''${1:-}"
+        if [ -n "$target" ] && [ -d "$target" ]; then
+          action="cd"
+        else
+          action="reveal"
+        fi
+
+        if [ -n "$target" ] && ${cfg.package}/bin/ya emit-to ${scratchpadClientId} "$action" "$target"; then
+          : # the running scratchpad yazi navigated there
+        elif ! hyprctl clients -j | grep -q '"class": "yazi-fm"'; then
+          setsid -f ${kittyBin} --class=yazi-fm -e ${yaziBin} --client-id ${scratchpadClientId} ''${target:+"$target"} >/dev/null 2>&1
+        fi
+
+        # hl.dsp.workspace only offers toggle_special, so check it is hidden first.
+        if ! hyprctl monitors -j | grep -q '"special:yazi"'; then
+          hyprctl dispatch 'hl.dsp.workspace.toggle_special("yazi")'
+        fi
+      '';
+
       yaziDesktopItem = pkgs.makeDesktopItem {
         name = "yazi-fm";
         desktopName = "Yazi File Manager";
-        exec = "${kittyBin} --class=yazi-fm -e ${yaziBin} %F";
+        exec = "${lib.getExe scratchpadOpen} %f";
         icon = "system-file-manager";
         terminal = false;
         type = "Application";
@@ -159,60 +187,17 @@ let
             }
           }
 
-          function targetPath(path, methodName) {
-            if (!path) {
-              return null;
-            }
-
-            if (methodName === "ShowFolders") {
-              return path;
-            }
-
-            try {
-              const file = Gio.File.new_for_path(path);
-              if (file.query_file_type(Gio.FileQueryInfoFlags.NONE, null) === Gio.FileType.DIRECTORY) {
-                return path;
-              }
-            } catch (error) {
-              return GLib.path_get_dirname(path);
-            }
-
-            return GLib.path_get_dirname(path);
-          }
-
-          // The yazi-fm window rule sends every window to the hidden
-          // "special:yazi" scratchpad, so spawning alone is invisible.
-          function revealScratchpad() {
-            try {
-              const [, stdout] = GLib.spawn_command_line_sync("hyprctl monitors -j");
-              if (new TextDecoder().decode(stdout).includes('"special:yazi"')) {
-                return;
-              }
-            } catch (error) {
-              return;
-            }
-
-            Gio.Subprocess.new(
-              ["hyprctl", "dispatch", 'hl.dsp.workspace.toggle_special("yazi")'],
-              Gio.SubprocessFlags.NONE
-            );
-          }
-
           function openInYazi(path) {
             if (!path) {
               return;
             }
 
-            Gio.Subprocess.new(
-              ["${kittyBin}", "--class=yazi-fm", "-e", "${yaziBin}", path],
-              Gio.SubprocessFlags.NONE
-            );
-            revealScratchpad();
+            Gio.Subprocess.new(["${lib.getExe scratchpadOpen}", path], Gio.SubprocessFlags.NONE);
           }
 
-          function handleMethodCall(_connection, _sender, _objectPath, _interfaceName, methodName, parameters, invocation) {
+          function handleMethodCall(_connection, _sender, _objectPath, _interfaceName, _methodName, parameters, invocation) {
             const [uris] = parameters.deepUnpack();
-            const path = uris.length > 0 ? targetPath(uriToPath(uris[0]), methodName) : null;
+            const path = uris.length > 0 ? uriToPath(uris[0]) : null;
             openInYazi(path);
             invocation.return_value(new GLib.Variant("()", []));
           }

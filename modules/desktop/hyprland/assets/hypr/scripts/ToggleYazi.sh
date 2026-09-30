@@ -3,7 +3,8 @@
 # If yazi-fm is not running, start it before toggling the special workspace
 
 YAZI_CLASS="yazi-fm"
-YAZI_CMD="kitty --class=yazi-fm -e yazi"
+# --client-id must match scratchpadClientId in modules/programs/yazi/default.nix
+YAZI_CMD="kitty --class=yazi-fm -e yazi --client-id 4242"
 
 yazi_running() {
     hyprctl clients -j | jq -e '.[] | select(.class == "'"$YAZI_CLASS"'")' > /dev/null 2>&1
