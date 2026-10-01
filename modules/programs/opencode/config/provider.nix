@@ -93,7 +93,7 @@ _: {
           "saruman" = {
             name = "Saruman (Velox)";
           };
-          "Sauron" = {
+          "sauron" = {
             name = "Sauron (Velox)";
           };
           "haldir" = {
