@@ -30,6 +30,13 @@ let
 
         # Displays: blank the monitors via Hyprland DPMS. They wake on any
         # keyboard/mouse input. Runs last so the RGB commands complete first.
+        # Shells outside Hyprland (SSH, TTY) lack the instance signature, so
+        # fall back to the newest running instance's socket dir.
+        if [ -z "''${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+            hypr_dir="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr"
+            HYPRLAND_INSTANCE_SIGNATURE=$(ls -t "$hypr_dir" 2>/dev/null | head -n1)
+            export HYPRLAND_INSTANCE_SIGNATURE
+        fi
         if command -v hyprctl >/dev/null 2>&1; then
             hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' > /dev/null 2>&1
         fi
