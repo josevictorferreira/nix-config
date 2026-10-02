@@ -16,8 +16,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     bun2nix.url = "github:nix-community/bun2nix";
     # AI tooling monorepo (skills, agents, commands, plugins, coding-agent installs).
-    # Local checkout until it is pushed; then: github:josevictorferreira/zeh-ai-tooling
-    zeh-ai-tooling.url = "git+file:///home/josevictor/Workspace/zeh-ai-tooling";
+    # Local development: --override-input zeh-ai-tooling ~/Workspace/zeh-ai-tooling
+    zeh-ai-tooling.url = "github:josevictorferreira/zeh-ai-tooling";
     zeh-ai-tooling.inputs.nixpkgs.follows = "nixpkgs";
     nvim-config.url = "github:josevictorferreira/.nvim";
     nvim-config.flake = false;

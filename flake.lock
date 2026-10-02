@@ -354,15 +354,15 @@
       "locked": {
         "lastModified": 1790966616,
         "narHash": "sha256-qMhtCZtkKNL1MRyhnEcqy39Htu4+cMD8SYBTFvPcx6E=",
-        "ref": "refs/heads/main",
+        "owner": "josevictorferreira",
+        "repo": "zeh-ai-tooling",
         "rev": "5d6289bfab6e52ab1907dd2ad2d826b20b0a5016",
-        "revCount": 53,
-        "type": "git",
-        "url": "file:///home/josevictor/Workspace/zeh-ai-tooling"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/josevictor/Workspace/zeh-ai-tooling"
+        "owner": "josevictorferreira",
+        "repo": "zeh-ai-tooling",
+        "type": "github"
       }
     }
   },
