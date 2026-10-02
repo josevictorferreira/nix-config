@@ -55,9 +55,6 @@ Based on: KooL's NixOS-Hyprland.
 │   │   ├── boot.nix         # Kernel, grub, plymouth, binfmt
 │   │   ├── btrfs.nix        # Btrfs autoScrub
 │   │   └── ... (6 modules)
-│   ├── ai-tools/            # AI tools DSL modules
-│   │   ├── agents.nix, commands.nix, mcp.nix, ...
-│   │   └── ... (6 modules)
 │   ├── boot/                # Boot configuration
 │   │   └── grub-theme.nix
 │   ├── core/                # Core option definitions
@@ -89,7 +86,7 @@ Based on: KooL's NixOS-Hyprland.
 | **New Role** | `modules/roles/<name>.nix` | Feature bundles |
 | **Desktop Configs** | `modules/desktop/hyprland/assets/` | Co-located static configs |
 | **Hardware/Boot** | `modules/hardware/boot.nix` | Kernel, grub, plymouth, binfmt |
-| **AI Agents** | `modules/ai-tools/*.nix` | 7 dendritic modules |
+| **AI tooling** | `modules/roles/ai-development.nix` → `zeh-ai-tooling` flake input | Skills/agents/commands/MCP/coding agents live in `~/Workspace/zeh-ai-tooling`; this repo only enables `zeh.ai.*` and maps outputs onto `jvf.home`/`jvf.wrappers` |
 | **Home File Config** | `modules/home/default.nix` | `jvf.home.users.<u>.items`, `jvf.home.xdg.config.*` |
 | **Home Checks** | `modules/checks/home.nix` | eval + VM integration tests |
 | **Migrate Config to jvf.home** | See wrappers migration pattern | packages stay in wrappers; configs → jvf.home |
@@ -194,7 +191,7 @@ make clean        # GC
 ```
 
 ## NOTES
-- `modules/ai-tools/` is a complex module with its own DSL.
+- AI tooling (skills, agents, commands, rules, MCP servers, claude-code/opencode/pi/gemini/command-code/hermes-agent, rtk, lsp-mcp) comes from the `zeh-ai-tooling` flake input (`~/Workspace/zeh-ai-tooling`). Edit content there; `modules/roles/ai-development.nix` only picks what to enable.
 - `roles` are import closures that pull in program/service/system aspects transitively.
 - Hosts import roles; roles import leaf aspects. No enable toggles.
 - `modules/home/default.nix` owns all home file/dir materialization. `modules/wrappers.nix` only handles wrapper scripts + packages.
@@ -202,7 +199,6 @@ make clean        # GC
 
 ## HIERARCHY
 Subdirectory AGENTS.md for complex modules:
-- [modules/ai-tools/AGENTS.md](modules/ai-tools/AGENTS.md) — AI tools DSL
 - [modules/desktop/hyprland/AGENTS.md](modules/desktop/hyprland/AGENTS.md) — Hyprland desktop
 - No sub-AGENTS.md needed for home/ or checks/ (they're single files, not complex multi-module dirs)
 
@@ -295,7 +291,7 @@ Critical lessons from past sessions to avoid repeated friction.
 ### Modules Active by Inclusion (Post-P0)
 **Lesson:** Leaf modules no longer have `mkEnableOption`. Importing an aspect = activating it. To disable, remove it from the host selector's import list (or from the role that imports it).
 **Context:** P0 stripped `mkEnableOption` from ~65 leaf modules. The old pattern required both importing AND setting `enable = true` — a violation of the dendritic "import = active" principle.
-**Verify:** `grep -rn 'mkEnableOption' modules/programs/ modules/system/ modules/hardware/ modules/services/` should return 0 results (except ai-tools DSL internals and sub-feature enables like `lfs.enable`, `matrix.enable`).
+**Verify:** `grep -rn 'mkEnableOption' modules/programs/ modules/system/ modules/hardware/ modules/services/` should return 0 results (except sub-feature enables like `lfs.enable`, `matrix.enable`).
 
 ---
 
@@ -377,13 +373,13 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Sub-features toggle optional heavyweight dependencies or protocol support within an active module. The module itself is active by inclusion; the sub-feature is opt-in within it.
 **Verify:** Sub-feature enables should be nested under the module's option namespace, not at the top level.
 
-### ai-tools DSL Enables Are Intentional Exceptions
-**Lesson:** The 6 ai-tools modules (`agents.nix`, `commands.nix`, `mcp.nix`, etc.) keep `mkEnableOption` for per-agent, per-command, per-server toggles. These are **DSL-internal** controls, not module-level enables.
-**Context:** ai-tools is a complex DSL where each agent/command/server is independently toggleable. Path: `jvf.aiTools.*`. This is a data-driven pattern, not the old import+enable pattern.
-**Verify:** ai-tools enables should all be under `jvf.aiTools.*`, never `jvf.programs.*` or `jvf.system.*`.
+### zeh.ai Enables Are an External Flake's Interface
+**Lesson:** `zeh.ai.*` options (`harnesses.<h>.enable`, `tools.<t>.enable`, `mcp.<s>.enable`, per-item `enable`) come from the `zeh-ai-tooling` flake, which uses enable toggles by design. They are not violations of the import = active pattern here.
+**Context:** The AI tooling moved out of `modules/ai-tools/` + `modules/programs/{claudecode,opencode,pi,gemini,command-code,rtk,hermes-agent,lsp-mcp}` into `~/Workspace/zeh-ai-tooling` (2026-10-02). `roles-ai-development` imports its module and sets the enables.
+**Verify:** `grep -rn 'zeh.ai' modules/` should only hit `modules/roles/ai-development.nix`.
 
 ### Host Selectors Import Roles + Infra, Not Leaf Aspects
-**Lesson:** After P0, host files (`modules/hosts/<hostname>/default.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) ai-tools, (5) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
+**Lesson:** After P0, host files (`modules/hosts/<hostname>/default.nix`) import: (1) core infra aspects (locale, security, nixpkgs, nix-daemon), (2) hardware aspects, (3) roles, (4) desktop sub-aspects. They do NOT import individual program/service/system aspects — those come transitively via roles.
 **Context:** zeh-pc went from 133 → 146 lines (merged selector+config), zeh-mac from 109+19 → 91 lines. Programs come via roles.
 **Verify:** `grep -c 'programs-' modules/hosts/zeh-pc/default.nix` should return 0 (programs come via roles).
 
@@ -589,17 +585,9 @@ Critical lessons from past sessions to avoid repeated friction.
 **Context:** Droid's `.factory` item was absent from `_compiled` — spent time debugging before realizing droid isn't imported by any host/role (pre-existing orphan module).
 **Verify:** `grep -r '<module-name>' modules/roles/ modules/hosts/` — if no hits, the module is orphaned and its items won't appear in compiled output.
 
-## Adding Skills with Bundled Resources to ai-tools
+## Adding Skills, Agents, Commands or MCP Servers
 
-### Use _body.md and builtins.readFile for Skill Files with Frontmatter
-**Lesson:** When adding a skill from an external SKILL.md with YAML frontmatter, pre-extract the body with `awk 'BEGIN{sep=0} /^---$/{sep++; next} sep>=2{print}' SKILL.md > _body.md` and load via `builtins.readFile`. Place all bundled files (scripts, agents, assets, eval-viewer) in a co-located `_/<skill-name>/` directory (prefixed with `_/` so import-tree ignores it).
-**Context:** Nix lacks clean YAML frontmatter stripping — pre-extraction avoids complex string manipulation at eval time. Files in `_/<name>/` won't be auto-discovered by import-tree.
-**Verify:** `nix eval .#nixosConfigurations.zeh-pc.config.jvf.programs.opencode.skills.<name>.name` returns the skill name.
-
-### Map Non-Standard Skill Directories to scripts/ Attribute
-**Lesson:** The skill system only materializes `scripts/` and `references/` subdirectories. Map agents/, eval-viewer/, assets/ into the `scripts` attribute with path separators in keys (e.g., `scripts."agents/grader.md"`), then use `builtins.replaceStrings` to adjust file path references in the prompt from `agents/grader.md` to `scripts/agents/grader.md`.
-**Context:** `mkSingleSkillConfigs` writes scripts as `skills/<name>/scripts/<key>` — keys with `/` create nested directories. References stay as `references/<key>.md`.
-**Verify:** Check prompt references match: `grep 'agents/' <skill-nix-file>` should show `scripts/agents/` prefix.
+They live in the `zeh-ai-tooling` repo (`~/Workspace/zeh-ai-tooling`) as Markdown files under `catalog/` (see its README). Build against a local checkout without committing there: `nix build .#nixosConfigurations.zeh-pc.config.system.build.toplevel --override-input zeh-ai-tooling ~/Workspace/zeh-ai-tooling`.
 
 ## Hyprland & Desktop Integrations
 

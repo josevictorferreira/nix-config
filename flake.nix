@@ -15,8 +15,10 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     bun2nix.url = "github:nix-community/bun2nix";
-    pi-plugins.url = "github:josevictorferreira/my-pi-agent-plugins";
-    pi-plugins.flake = false;
+    # AI tooling monorepo (skills, agents, commands, plugins, coding-agent installs).
+    # Local checkout until it is pushed; then: github:josevictorferreira/zeh-ai-tooling
+    zeh-ai-tooling.url = "git+file:///home/josevictor/Workspace/zeh-ai-tooling";
+    zeh-ai-tooling.inputs.nixpkgs.follows = "nixpkgs";
     nvim-config.url = "github:josevictorferreira/.nvim";
     nvim-config.flake = false;
     darwin = {

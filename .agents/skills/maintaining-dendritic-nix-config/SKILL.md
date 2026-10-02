@@ -179,7 +179,7 @@ the sub-feature is opt-in within it.
 ## Before You Start Editing
 
 1. Read the full reference rules: `references/dendritic-rules.md`
-2. Check `modules/ai-tools/AGENTS.md` for ai-tools DSL specifics
+2. AI tooling lives in the `zeh-ai-tooling` flake input (`~/Workspace/zeh-ai-tooling`), not in this repo
 3. Check `modules/desktop/hyprland/AGENTS.md` for desktop-specific rules
 4. Verify with `nix flake check` after every change
 

@@ -21,7 +21,7 @@ let
     ];
   };
 
-  # Minimal specialArgs: only inputs (needed by sops, ai-tools, etc.)
+  # Minimal specialArgs: only inputs (needed by sops, zeh-ai-tooling, etc.)
   specialArgs = {
     inputs = inputs // {
       inherit (inputs) self;
@@ -103,13 +103,6 @@ in
         roles-documenting
         roles-privacy
 
-        # AI tools DSL
-        ai-tools-skills
-        ai-tools-agents
-        ai-tools-commands
-        ai-tools-mcp
-        ai-tools-rules
-        ai-tools-scripts
       ])
       ++ [
         # Machine-specific hardware (filesystems, UUIDs, swap)
