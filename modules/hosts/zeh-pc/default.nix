@@ -157,25 +157,6 @@ in
             "8.8.8.8"
           ];
 
-          # Self-hosted Attic binary cache (homelab, see nix_homelab_plan.md).
-          jvf.system.nix-daemon.substituters = [
-            "http://10.10.10.161:8080/homelab"
-            "https://hyprland.cachix.org"
-          ];
-          jvf.system.nix-daemon.trustedSubstituters = [
-            "http://10.10.10.161:8080/homelab"
-            "https://hyprland.cachix.org"
-          ];
-          jvf.system.nix-daemon.trustedPublicKeys = [
-            "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-            "homelab:6mcMiciTmo9ql8grx9u5ldKLsoscq3zS4KUQ6V6mVy8="
-          ];
-
-          # This machine builds the homelab's custom derivations (OCI images,
-          # gen-manifests, host closures), so push everything it builds to the
-          # cache; nodes then substitute instead of rebuilding.
-          jvf.system.nix-daemon.atticPushCache = "homelab";
-
           # Open port for OpenCode Web
           jvf.system.firewall.allowedTCPPorts = [
             3000

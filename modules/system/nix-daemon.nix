@@ -52,23 +52,12 @@ let
           default = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
           description = "Public keys for trusted binary caches.";
         };
-
-        atticPushCache = lib.mkOption {
-          type = lib.types.nullOr lib.types.str;
-          default = null;
-          example = "homelab";
-          description = ''
-            Name of an Attic cache to push new store paths to from a background
-            `attic watch-store` service (NixOS only). Requires `attic login` to
-            have been run for the primary user. Null disables the service.
-          '';
-        };
       };
     };
 
   mkConfig =
     { isDarwin }:
-    { config, lib, pkgs, ... }:
+    { config, lib, ... }:
     let
       cfg = config.jvf.system.nix-daemon;
     in
@@ -90,11 +79,10 @@ let
             # Let remote builders fetch deps from caches instead of
             # copying everything from this machine.
             builders-use-substitutes = true;
-            # The homelab cache is a LAN host that is often down. Without
-            # `fallback`, an unreachable substituter is a hard error; with it,
-            # Nix logs a warning and moves on to the next cache or builds
-            # locally. `connect-timeout` bounds how long a dead host can stall
-            # each attempt (the default is curl's 300 seconds).
+            # Without `fallback`, an unreachable substituter is a hard error;
+            # with it, Nix logs a warning and moves on to the next cache or
+            # builds locally. `connect-timeout` bounds how long a dead host can
+            # stall each attempt (the default is curl's 300 seconds).
             fallback = true;
             connect-timeout = 5;
           };
@@ -109,28 +97,6 @@ let
       }
       // lib.optionalAttrs (!isDarwin) {
         programs.nix-ld.enable = true;
-        # CLI for pushing to the self-hosted Attic binary cache (homelab).
-        environment.systemPackages = [ pkgs.attic-client ];
-
-        # Upload new store paths in the background. A post-build-hook runs
-        # synchronously and stalls the build loop on every slow upload;
-        # watch-store decouples pushing from building entirely. Runs as the
-        # primary user so attic finds its token in ~/.config/attic.
-        systemd.services.attic-watch-store = lib.mkIf (cfg.atticPushCache != null) {
-          description = "Push new Nix store paths to the Attic cache";
-          wantedBy = [ "multi-user.target" ];
-          wants = [ "network-online.target" ];
-          after = [ "network-online.target" ];
-          serviceConfig = {
-            User = config.jvf.core.username;
-            ExecStart = "${pkgs.attic-client}/bin/attic watch-store ${cfg.atticPushCache}";
-            # The homelab cache is often down; keep retrying instead of giving up.
-            Restart = "always";
-            RestartSec = 30;
-            Nice = 10;
-            IOSchedulingClass = "idle";
-          };
-        };
       };
     };
 in
