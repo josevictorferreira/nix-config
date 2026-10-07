@@ -225,7 +225,7 @@
   {
     name = "glyph";
     session_name = "🪄 Glyph";
-    start_directory = "$HOME/Workspace/glyph";
+    start_directory = "$HOME/Workspace/glyph-v2";
     windows = [
       {
         window_name = "🪄 Glyph";
