@@ -1,13 +1,13 @@
 # Aspect: desktop-hyprland (NixOS only)
 # Main Hyprland desktop orchestrator. Enables all sub-aspects when active.
 # Sub-modules (hypr, ags, cava, etc.) are standalone dendritic aspects.
-_:
-{
+_: {
   flake.modules.nixos.desktop-hyprland =
-    { config
-    , lib
-    , pkgs
-    , ...
+    {
+      config,
+      lib,
+      pkgs,
+      ...
     }:
     let
       cfg = config.jvf.desktop.hyprland;
@@ -58,6 +58,11 @@ _:
                 icon = "folder-cloud";
               }
               {
+                path = "/home/${cfg.username}/Homelab/3d-models";
+                name = "3D Models";
+                icon = "folder-cloud";
+              }
+              {
                 path = "/home/${cfg.username}/.config/nix";
                 name = "NixConfig";
                 icon = "folder-orange-script";
@@ -74,7 +79,7 @@ _:
               }
               {
                 path = "/home/${cfg.username}/Workspace/homelab";
-                name = "Homelab";
+                name = "Homelab Config";
                 icon = "folder-blue-cloud";
               }
               {
