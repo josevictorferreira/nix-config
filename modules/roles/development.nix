@@ -82,6 +82,7 @@ let
           pkgs.bat
           pkgs.p7zip
           pkgs.unrar
+          pkgs.android-tools
         ];
       };
     };
