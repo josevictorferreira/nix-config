@@ -66,36 +66,6 @@
     neededForBoot = false;
   };
 
-  fileSystems."/mnt/external_storage" = {
-    device = "/dev/disk/by-partlabel/file-storage";
-    fsType = "btrfs";
-    options = [
-      "defaults"
-      "noatime"
-      "compress=zstd"
-      "autodefrag"
-      "x-systemd.automount"
-      "x-systemd.idle-timeout=380"
-      "noauto"
-    ];
-    depends = [ "/" ];
-    neededForBoot = false;
-  };
-
-  fileSystems."/home/${config.jvf.core.username}/Downloads" = {
-    device = "/mnt/external_storage/Downloads";
-    fsType = "none";
-    options = [
-      "bind"
-      "x-systemd.automount"
-      "x-systemd.idle-timeout=380"
-      "noauto"
-      "nofail"
-    ];
-    neededForBoot = false;
-    depends = [ "/mnt/external_storage/Downloads" ];
-  };
-
   systemd.tmpfiles.rules = [
     "d /home/${config.jvf.core.username}/Downloads 0755 ${config.jvf.core.username} users -"
   ];

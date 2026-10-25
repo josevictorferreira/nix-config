@@ -122,6 +122,9 @@ in
           };
           jvf.programs.tmuxp.enable = true;
 
+          # No other OSes installed (Windows SSD removed)
+          jvf.hardware.boot.grub.useOSProber = false;
+
           # User configuration
           jvf.users.josevictor = {
             description = "Jose Victor Ferreira";
