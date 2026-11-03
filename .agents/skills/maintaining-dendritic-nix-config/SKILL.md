@@ -164,6 +164,33 @@ the sub-feature is opt-in within it.
 - `pkgs.runCommand` requires exactly 3 args: `name: {}: script:`.
 - `pkgs.symlinkJoin` (not `runCommand` with `cp -rL`) for merging symlink trees.
 
+## zeh-ai-tooling Changes Don't Reach the System (rebuild chain)
+
+**Rule:** `make rebuild` runs `nixos-rebuild switch --flake .#zeh-pc`, which
+evaluates the **locked GitHub rev** of zeh-ai-tooling. A local checkout
+(`~/Workspace/zeh-ai-tooling`) is invisible to it. The full chain to land a
+change: **commit → push → `nix flake update zeh-ai-tooling` → rebuild**.
+Any missing link silently deploys the OLD tooling.
+
+**Why** (2026-11-03 session): fixed `mkPiPromptConfigs` locally, rebuilt, and
+the deleted stale files **reappeared** — the rebuild had re-materialized the
+old layout from the locked rev. Diagnosis: compare
+`grep -A8 '"zeh-ai-tooling"' flake.lock` against
+`git -C ~/Workspace/zeh-ai-tooling log origin/main..HEAD` — local commits
+ahead of the locked rev (or uncommitted) never shipped. Note "pushed" is not
+enough: the LOCK must be bumped too.
+
+**Fast iteration without the chain:** build against the local checkout
+without committing:
+```bash
+nix build ~/.config/nix#nixosConfigurations.zeh-pc.config.system.build.toplevel \
+  --override-input zeh-ai-tooling ~/Workspace/zeh-ai-tooling
+```
+
+**Verify:** `python3 -c "import json; print(json.load(open('flake.lock'))['nodes']['zeh-ai-tooling']['locked']['rev'])"`
+shows the rev you pushed; then `make rebuild` and confirm the materialized
+files changed (e.g. `ls ~/.pi/agent/prompts/`).
+
 ## Common Error Signatures & Fixes
 
 | Error | Likely Cause | Fix |
