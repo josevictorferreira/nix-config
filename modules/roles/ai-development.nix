@@ -5,7 +5,7 @@
 # lsp-mcp and the prompt scripts. This aspect imports it, picks what to
 # enable, and maps its outputs (zeh.ai.home / zeh.ai.wrappers) onto jvf.home
 # and jvf.wrappers.
-_:
+{ self, ... }:
 let
   mkModule =
     { isDarwin }:
@@ -15,6 +15,7 @@ let
     in
     {
       imports = [
+        self.modules.${if isDarwin then "darwin" else "nixos"}.programs-ccapi
         inputs.zeh-ai-tooling.modules.${if isDarwin then "darwin" else "nixos"}.default
       ];
 
