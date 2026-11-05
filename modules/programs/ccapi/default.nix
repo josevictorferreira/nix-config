@@ -1,8 +1,8 @@
 # Aspect: programs-ccapi
 # `ccapi` - a second Claude Code entrypoint aimed at a third-party Anthropic-compatible
-# proxy (REDACTED-PROXY). The wrapper exports ANTHROPIC_BASE_URL / ANTHROPIC_AUTH_TOKEN (token
-# read at runtime from sops, never stored in the nix store) and then execs the regular
-# `claude` binary from PATH. The normal `claude` login is left completely untouched.
+# proxy. The wrapper exports ANTHROPIC_BASE_URL / ANTHROPIC_AUTH_TOKEN (both read at
+# runtime from sops, never stored in the nix store) and then execs the regular `claude`
+# binary from PATH. The normal `claude` login is left completely untouched.
 _:
 let
   ccapiModule =
@@ -17,25 +17,20 @@ let
           default = config.jvf.core.username;
           description = "Username for which to install the ccapi wrapper.";
         };
-
-        baseUrl = lib.mkOption {
-          type = lib.types.str;
-          default = "REDACTED-CCAPI-ENDPOINT";
-          description = "ANTHROPIC_BASE_URL the ccapi wrapper points Claude Code at.";
-        };
       };
 
       config = {
-        # Owned by the user so the wrapper can `cat` it at runtime.
+        # Owned by the user so the wrapper can `cat` them at runtime.
         # Deliberately NOT registered in jvf.secrets.environment.keys:
-        # that would export ANTHROPIC_AUTH_TOKEN to every shell and leak
-        # these credentials into the regular `claude` too.
+        # that would export ANTHROPIC_* to every shell and leak these
+        # credentials into the regular `claude` too.
+        sops.secrets.ccapi_base_url.owner = cfg.username;
         sops.secrets.ccapi_auth_token.owner = cfg.username;
 
         jvf.wrappers.users.${cfg.username}.programs.ccapi.command =
           "${lib.getExe (pkgs.writeShellScriptBin "ccapi" ''
             set -euo pipefail
-            export ANTHROPIC_BASE_URL='${cfg.baseUrl}'
+            export ANTHROPIC_BASE_URL="$(cat ${config.sops.secrets.ccapi_base_url.path})"
             export ANTHROPIC_AUTH_TOKEN="$(cat ${config.sops.secrets.ccapi_auth_token.path})"
             exec claude "$@"
           '')}";
