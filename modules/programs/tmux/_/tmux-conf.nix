@@ -18,6 +18,7 @@ let
   accent_fg = colors.background; # 1a1b26 — dark background
   dim = colors.color8; # 414868 — muted gray
   muted = colors.color0; # 15161e — darker shade
+  activity = colors.color2; # 9ece6a — green (recent-activity indicator)
 
   # Powerline-style status segments
   statusLeft = ''
@@ -30,8 +31,15 @@ let
     set -g status-right-length 60
   '';
 
+  # ● before the window name = input/output in the last 5 minutes
+  # (window_activity tracks any window, focused or not; branches are
+  # fixed-width — "● " vs "  " — so the list never shifts)
+  # NOTE: BOTH comparison operands must be e|-wrapped — a bare literal on the
+  # right of #{<:} makes tmux compare as strings ("4" > "3"). The &&: guard
+  # masks the 1-frame empty-#() artifact at each job restart (empty → negative
+  # diff → no dot) and >= keeps diff==0 (activity this second) counted as fresh.
   windowStatus = ''
-    set -g window-status-format "#[bg=#${dim},fg=#${bg}]${sep_full}#[bg=#${dim},fg=#${fg}] #I ${sep_thin} #W #[bg=#${bg},fg=#${dim}]${sep_full}"
+    set -g window-status-format "#[bg=#${dim},fg=#${bg}]${sep_full}#[bg=#${dim},fg=#${fg}] #I ${sep_thin} #{?#{&&:#{e|>=:#{e|-:#(date +%s),#{window_activity}},0},#{e|<:#{e|-:#(date +%s),#{window_activity}},#{e|+:300,0}}},#[fg=#${activity}]● #[fg=#${fg}],  }#W #[bg=#${bg},fg=#${dim}]${sep_full}"
     set -g window-status-current-format "#[bg=#${accent},fg=#${bg}]${sep_full}#[bg=#${accent},fg=#${accent_fg},bold] #I ${sep_thin} #W #[bg=#${bg},fg=#${accent}]${sep_full}"
     set -g window-status-separator ""
   '';
