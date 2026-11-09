@@ -9,25 +9,39 @@
       "patterns": ["core."]
     },
     {
-      "name": "whatsapp",
-      "order": 40,
+      "name": "irc",
+      "order": 20,
+      "prefix": "",
+      "patterns": ["irc.", "server."]
+    },
+    {
+      "name": "mel-dynamics",
+      "order": 30,
       "prefix": "  ",
-      "patterns": ["(WA)", "whatsapp."],
-      "header": "WhatsApp"
+      "exact": true,
+      "patterns": ["Mel", "Luna", "Kira", "Ted", "Spike", "#CCTV", "#Homelab Alerts", "#Valoris · Agentes"],
+      "header": "The Mel Dynamics Corp."
+    },
+    {
+      "name": "slack",
+      "order": 50,
+      "prefix": "  ",
+      "patterns": ["(SL)"],
+      "header": "Slack"
     },
     {
       "name": "discord",
-      "order": 50,
+      "order": 60,
       "prefix": "  ",
       "patterns": ["discord.", "(DC)"],
       "header": "Discord"
     },
     {
-      "name": "slack",
-      "order": 55,
+      "name": "whatsapp",
+      "order": 40,
       "prefix": "  ",
-      "patterns": ["(SL)"],
-      "header": "Slack"
+      "patterns": ["(WA)", "whatsapp.", "matrix."],
+      "header": "WhatsApp"
     },
     {
       "name": "scripts",
@@ -36,21 +50,8 @@
       "patterns": ["python.", "perl.", "lua.", "ruby."]
     },
     {
-      "name": "irc",
-      "order": 20,
-      "prefix": "",
-      "patterns": ["irc.", "server."]
-    },
-    {
-      "name": "matrix",
-      "order": 30,
-      "prefix": "  ",
-      "patterns": ["matrix."],
-      "header": "Matrix"
-    },
-    {
       "name": "relay",
-      "order": 60,
+      "order": 80,
       "prefix": "",
       "patterns": ["relay."]
     }

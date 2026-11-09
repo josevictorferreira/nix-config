@@ -26,6 +26,9 @@ class FakeWeeChatAdapter(bufcat.WeeChatAdapter):
         self.command_hooks: List[Dict[str, str]] = []
         self.printed: List[Tuple[str, str]] = []
         self.signals_sent: List[Tuple[str, str, Any]] = []
+        self.print_hooks: List[Tuple[str, str]] = []
+        self.lines: Dict[str, List[Tuple[int, List[str]]]] = {}  # ptr -> [(date, tags)] oldest first
+        self.commands: List[Tuple[str, str]] = []
         self._infolist_items: List[str] = []  # buffer ptrs for iteration
         self._infolist_cursor: int = -1
 
@@ -46,7 +49,13 @@ class FakeWeeChatAdapter(bufcat.WeeChatAdapter):
         return self.buffers.get(buffer, {}).get(prop, "")
 
     def buffer_set(self, buffer: str, prop: str, value: str) -> bool:
-        self.buffers.setdefault(buffer, {})[prop] = value
+        props = self.buffers.setdefault(buffer, {})
+        props[prop] = value
+        # Mirror WeeChat: localvar_set_x / localvar_del_x are readable as localvar_x
+        if prop.startswith("localvar_set_"):
+            props["localvar_" + prop[len("localvar_set_"):]] = value
+        elif prop.startswith("localvar_del_"):
+            props.pop("localvar_" + prop[len("localvar_del_"):], None)
         return True
 
     def buffer_search(self, plugin: str, name: str) -> str:
@@ -84,6 +93,13 @@ class FakeWeeChatAdapter(bufcat.WeeChatAdapter):
         self.signal_hooks.append((signal, callback, callback_data))
         return f"hook_{signal}"
 
+    def hook_print(self, callback: str, callback_data: str = "") -> Any:
+        self.print_hooks.append((callback, callback_data))
+        return "hook_print"
+
+    def buffer_lines(self, buffer: str, max_lines: int) -> List[Tuple[int, List[str]]]:
+        return list(reversed(self.lines.get(buffer, [])))[:max_lines]
+
     def hook_command(
         self,
         command: str,
@@ -98,6 +114,9 @@ class FakeWeeChatAdapter(bufcat.WeeChatAdapter):
         return f"hook_cmd_{command}"
 
     def command(self, buffer: str, command: str) -> bool:
+        self.commands.append((buffer, command))
+        if command == "/buffer close":
+            self.buffers.pop(buffer, None)
         return True
 
     def print_buffer(self, buffer: str, message: str) -> None:
@@ -209,6 +228,24 @@ class TestChooseCategory(unittest.TestCase):
             buffer_short_name="#introductions (DC)",
         )
         self.assertEqual(result["name"], "discord")
+
+    def test_exact_category_matches_whole_field_only(self):
+        config = _make_config(
+            categories=[
+                {"name": "mel", "order": 30, "patterns": ["Mel"], "exact": True},
+                {"name": "wa", "order": 40, "patterns": ["matrix."]},
+            ]
+        )
+        full = "matrix.homelab-matrix.!x:josevictor.me"
+        self.assertEqual(bufcat.choose_category(full, config, full, "Mel")["name"], "mel")
+        self.assertEqual(bufcat.choose_category(full, config, full, "#Mel (WA)")["name"], "wa")
+        self.assertEqual(bufcat.choose_category(full, config, full, "#Mel Dynamics Corp.")["name"], "wa")
+
+    def test_exact_must_be_bool(self):
+        config = _make_config(categories=[{"name": "x", "order": 1, "patterns": ["a"], "exact": "yes"}])
+        valid, err = bufcat._validate_config(config)
+        self.assertFalse(valid)
+        self.assertIn("exact", err)
 
     def test_empty_name_and_full_name(self):
         """All name fields empty → default category."""
@@ -411,9 +448,9 @@ class TestBuflistPatchAndRestore(unittest.TestCase):
 
         # Sort should be overridden
         self.assertEqual(
-            self.adapter.config_values["buflist.look.sort"],
-            "local_variables.bufcat_order,number,name",
+            self.adapter.config_values["buflist.look.sort"], bufcat.BUFLIST_SORT
         )
+        self.assertIn("-local_variables.bufcat_last", bufcat.BUFLIST_SORT)
         # Format should be prefixed
         fmt = self.adapter.config_values["buflist.format.buffer"]
         self.assertIn("bufcat_prefix", fmt)
@@ -443,6 +480,38 @@ class TestBuflistPatchAndRestore(unittest.TestCase):
         bufcat.restore_buflist_config()
         self.assertEqual(bufcat._saved_buflist, {})
 
+    def test_current_format_not_double_prefixed(self):
+        """buffer_current embeds ${format_buffer}, which already carries the prefix."""
+        self.adapter.config_values["buflist.format.buffer_current"] = "${color:,17}${format_buffer}"
+        bufcat.apply_buflist_config()
+        self.assertEqual(
+            self.adapter.config_values["buflist.format.buffer_current"],
+            "${color:,17}${format_buffer}",
+        )
+
+    def test_current_format_prefixed_when_standalone(self):
+        self.adapter.config_values["buflist.format.buffer_current"] = "${color:,17}${name}"
+        bufcat.apply_buflist_config()
+        fmt = self.adapter.config_values["buflist.format.buffer_current"]
+        self.assertTrue(fmt.startswith("${if:${buffer.local_variables.bufcat_prefix}"))
+        self.assertTrue(fmt.endswith("${color:,17}${name}"))
+
+    def test_apply_is_idempotent_on_saved_patched_config(self):
+        """A buflist.conf saved with the old double-prefix patch is healed, not stacked."""
+        bufcat.apply_buflist_config()
+        patched = self.adapter.config_values["buflist.format.buffer"]
+        self.adapter.config_values["buflist.format.buffer_current"] = (
+            "${if:${buffer.local_variables.bufcat_prefix}?${buffer.local_variables.bufcat_prefix}:}"
+            "${color:,17}${format_buffer}"
+        )
+        bufcat._saved_buflist = {}
+        bufcat.apply_buflist_config()
+        self.assertEqual(self.adapter.config_values["buflist.format.buffer"], patched)
+        self.assertEqual(
+            self.adapter.config_values["buflist.format.buffer_current"],
+            "${color:,17}${format_buffer}",
+        )
+
 
 class TestCategorizeBuffer(unittest.TestCase):
     """Tests for categorize_buffer()."""
@@ -465,6 +534,146 @@ class TestCategorizeBuffer(unittest.TestCase):
         localvars = self.adapter.buffers["buf_1"]
         self.assertEqual(localvars["localvar_set_bufcat_order"], "020_1")
         self.assertEqual(localvars["localvar_set_bufcat_prefix"], "  ")
+        self.assertEqual(localvars["localvar_set_bufcat_last"], bufcat.NO_MESSAGE_YET)
+
+    def test_keeps_existing_last_message_time(self):
+        self.adapter.buffers["buf_1"]["localvar_bufcat_last"] = "1700000000"
+        bufcat.categorize_buffer("buf_1", _make_config())
+        self.assertNotIn("localvar_set_bufcat_last", self.adapter.buffers["buf_1"])
+
+    def test_backfills_from_existing_lines(self):
+        """Reload / logger backlog: newest message-like line seeds bufcat_last."""
+        self.adapter.lines["buf_1"] = [
+            (1700000100, ["notify_message"]),
+            (1700000200, ["logger_backlog", "notify_none"]),
+            (1700000300, []),  # membership event, newest but ignored
+        ]
+        bufcat.categorize_buffer("buf_1", _make_config())
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], "1700000200")
+
+    def test_backfill_without_messages_is_zero(self):
+        self.adapter.lines["buf_1"] = [(1700000300, ["irc_join"])]
+        bufcat.categorize_buffer("buf_1", _make_config())
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], bufcat.NO_MESSAGE_YET)
+
+
+class TestRecency(unittest.TestCase):
+    """Tests for on_print() — most-recent-message tracking."""
+
+    def setUp(self):
+        self.adapter = FakeWeeChatAdapter()
+        bufcat._adapter = self.adapter
+        self.adapter.buffers["buf_1"] = {"name": "#Cibelle (WA)"}
+
+    def tearDown(self):
+        bufcat._adapter = None
+
+    def _print(self, date, tags):
+        return bufcat.on_print("", "buf_1", str(date), tags, 1, 0, "nick", "hi")
+
+    def test_message_sets_zero_padded_time(self):
+        self._print(1700000000, "matrix_text,notify_message,nick_mel")
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], "1700000000")
+
+    def test_own_message_counts(self):
+        self._print(5, "notify_none,no_highlight,self_msg")
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], "0000000005")
+
+    def test_logger_backlog_counts(self):
+        self._print(1700000000, "logger_backlog,notify_none,no_highlight")
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], "1700000000")
+
+    def test_untagged_membership_line_ignored(self):
+        self._print(1700000000, "")
+        self._print(1700000001, "irc_join,log4")
+        self.assertNotIn("localvar_set_bufcat_last", self.adapter.buffers["buf_1"])
+
+    def test_older_backlog_does_not_regress(self):
+        self._print(1700000100, "notify_message")
+        self._print(1700000050, "notify_message")
+        self.assertEqual(self.adapter.buffers["buf_1"]["localvar_set_bufcat_last"], "1700000100")
+
+    def test_init_registers_print_hook(self):
+        bufcat._saved_buflist = {}
+        bufcat._last_good_config = None
+        with mock.patch.object(bufcat, "load_config", return_value=None):
+            bufcat.bufcat_init()
+        self.assertEqual(self.adapter.print_hooks, [("on_print", "")])
+
+
+class TestManageHeaders(unittest.TestCase):
+    """Tests for manage_headers()."""
+
+    def setUp(self):
+        self.adapter = FakeWeeChatAdapter()
+        bufcat._adapter = self.adapter
+
+    def tearDown(self):
+        bufcat._adapter = None
+
+    def _config(self, header):
+        return _make_config(
+            categories=[
+                {"name": "matrix", "order": 30, "prefix": "  ", "patterns": ["matrix."], "header": header},
+            ]
+        )
+
+    def test_creates_header_above_its_rooms(self):
+        bufcat.manage_headers(self._config("The Mel Dynamics Corp."))
+        hdr = self.adapter.buffers["ptr_The Mel Dynamics Corp."]
+        self.assertEqual(hdr["localvar_set_bufcat_header"], "1")
+        self.assertEqual(hdr["localvar_set_bufcat_order"], "030_0")
+
+    def test_renamed_header_closes_stale_one(self):
+        bufcat.manage_headers(self._config("Matrix"))
+        self.assertIn("ptr_Matrix", self.adapter.buffers)
+        bufcat.manage_headers(self._config("The Mel Dynamics Corp."))
+        self.assertNotIn("ptr_Matrix", self.adapter.buffers)
+        self.assertIn(("ptr_Matrix", "/buffer close"), self.adapter.commands)
+        self.assertIn("ptr_The Mel Dynamics Corp.", self.adapter.buffers)
+
+    def test_rerun_keeps_current_header(self):
+        cfg = self._config("WhatsApp")
+        bufcat.manage_headers(cfg)
+        bufcat.manage_headers(cfg)
+        self.assertEqual(self.adapter.commands, [])
+
+
+class TestShippedConfig(unittest.TestCase):
+    """The bufcat.json next to the script matches the wanted buflist layout."""
+
+    def setUp(self):
+        self.config = bufcat.load_config(bufcat._bundled_config_path(), lambda m: self.fail(m))
+
+    def test_four_sections_in_order(self):
+        headers = [
+            (c["order"], c["header"]) for c in self.config["categories"] if "header" in c
+        ]
+        self.assertEqual(
+            [h for _, h in sorted(headers)],
+            ["The Mel Dynamics Corp.", "WhatsApp", "Slack", "Discord"],
+        )
+
+    def test_rooms_route_to_sections(self):
+        def section(short):
+            return bufcat.choose_category(
+                short, self.config, buffer_full_name=f"matrix.homelab-matrix.!x:josevictor.me",
+                buffer_short_name=short,
+            )["header"]
+
+        self.assertEqual(section("#Cibelle (WA)"), "WhatsApp")
+        self.assertEqual(section("#general (SL)"), "Slack")
+        self.assertEqual(section("#agents (DC)"), "Discord")
+        for name in ("Mel", "Luna", "Kira", "Ted", "Spike", "#CCTV", "#Homelab Alerts", "#Valoris · Agentes"):
+            self.assertEqual(section(name), "The Mel Dynamics Corp.")
+        # Untagged matrix rooms are WhatsApp groups; "Mel" must not catch look-alikes.
+        for name in ("#Patrulha Canina", "#Open Tênis 🎾", "#Mel (WA)", "#Mel Dynamics Corp.", "WhatsApp Bridge Bot"):
+            self.assertEqual(section(name), "WhatsApp")
+
+    def test_sections_are_indented(self):
+        for c in self.config["categories"]:
+            if "header" in c:
+                self.assertEqual(c["prefix"], "  ")
 
 
 class TestCategorizeAllBuffers(unittest.TestCase):

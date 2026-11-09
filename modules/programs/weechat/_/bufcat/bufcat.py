@@ -14,6 +14,7 @@ Category object (in `categories` array):
   order: int (required, 0-999) - Sort order; lower = higher in buflist
   prefix: string (optional, default "") - Prefix prepended in buflist display
   patterns: array of strings (required) - Substring patterns to match buffer `name`
+  exact: bool (optional, default false) - Patterns must equal the whole field instead
 
 Default category object:
   name: string (required) - Category display name
@@ -23,13 +24,19 @@ Default category object:
 Matching rules:
 - Target: substring search on `name`, then `short_name`, then `full_name` (each distinct
   non-empty value is tried; plugin tags like ``(DC)`` often live only in ``short_name``)
-- Type: literal substring search (no regex/glob)
+- Type: literal substring search (no regex/glob); with exact=true, whole-field equality
 - Precedence: first match wins (iterate categories top-to-bottom)
 - Case: case-sensitive by default unless case_insensitive=true
 
 Sort behavior:
-- Primary: category.order (zero-padded to 3 digits as localvar `bufcat_order`)
-- Secondary: buffer.number
+- Primary: category.order (zero-padded to 3 digits as localvar `bufcat_order`);
+  header buffers get suffix `_0`, rooms `_1`, so each header stays above its rooms
+- Secondary: most recent message first (localvar `bufcat_last`, zero-padded unix time,
+  sorted descending). Only lines tagged `notify_message`, `self_msg` or `logger_backlog`
+  (history replayed by the logger plugin at startup) count, so join/leave/avatar events
+  do not reorder rooms. Buffers without messages sort last. When the script loads into
+  a buffer that already has lines, the newest matching line seeds the value.
+- Tertiary: buffer.number
 
 Example config:
 {
@@ -71,6 +78,14 @@ _last_good_config: Optional[Dict[str, Any]] = None
 SCHEMA_VERSION = 1
 DEFAULT_CASE_INSENSITIVE = False
 
+# Sorting
+BUFLIST_SORT = "local_variables.bufcat_order,-local_variables.bufcat_last,number,name"
+NO_MESSAGE_YET = "0000000000"
+# Tags marking a real message (others' / own) or history replayed by the logger plugin.
+RECENCY_TAGS = frozenset({"notify_message", "self_msg", "logger_backlog"})
+# How many lines back to look when seeding bufcat_last for a buffer that already has lines.
+BACKFILL_MAX_LINES = 200
+
 
 def zero_pad_order(order: int) -> str:
     """Convert order integer to 3-digit zero-padded string.
@@ -110,6 +125,10 @@ def _validate_category(cat: Any, is_default: bool = False) -> Tuple[bool, str]:
     # Optional: prefix (string, default "")
     if "prefix" in cat and not isinstance(cat["prefix"], str):
         return False, "category.prefix must be string"
+
+    # Optional: exact (bool, default false)
+    if "exact" in cat and not isinstance(cat["exact"], bool):
+        return False, "category.exact must be boolean"
 
     # Required for non-default: patterns (array of strings)
     if not is_default:
@@ -292,12 +311,12 @@ def choose_category(
     case_insensitive = config.get("case_insensitive", DEFAULT_CASE_INSENSITIVE)
 
     for cat in config.get("categories", []):
-        patterns = cat.get("patterns", [])
-        for pattern in patterns:
+        exact = cat.get("exact", False)
+        for pattern in cat.get("patterns", []):
             search_pattern = pattern.lower() if case_insensitive else pattern
             for field in fields:
                 target = field.lower() if case_insensitive else field
-                if search_pattern in target:
+                if (search_pattern == target) if exact else (search_pattern in target):
                     return cat
 
     return config.get("default_category", {"name": "other", "order": 99, "prefix": ""})
@@ -380,6 +399,14 @@ class WeeChatAdapter:
 
     def hook_signal(self, signal: str, callback: str, callback_data: str = "") -> Any:
         """Hook a signal."""
+        raise NotImplementedError
+
+    def hook_print(self, callback: str, callback_data: str = "") -> Any:
+        """Hook every printed line (all buffers, all tags)."""
+        raise NotImplementedError
+
+    def buffer_lines(self, buffer: str, max_lines: int) -> List[Tuple[int, List[str]]]:
+        """(date, tags) of up to ``max_lines`` most recent lines, newest first."""
         raise NotImplementedError
 
     def hook_command(
@@ -470,6 +497,26 @@ class RealWeeChatAdapter(WeeChatAdapter):
     def hook_signal(self, signal: str, callback: str, callback_data: str = "") -> Any:
         return weechat.hook_signal(signal, callback, callback_data)
 
+    def hook_print(self, callback: str, callback_data: str = "") -> Any:
+        return weechat.hook_print("", "", "", 0, callback, callback_data)
+
+    def buffer_lines(self, buffer: str, max_lines: int) -> List[Tuple[int, List[str]]]:
+        h_buffer = weechat.hdata_get("buffer")
+        h_lines = weechat.hdata_get("lines")
+        h_line = weechat.hdata_get("line")
+        h_data = weechat.hdata_get("line_data")
+        out: List[Tuple[int, List[str]]] = []
+        lines = weechat.hdata_pointer(h_buffer, buffer, "own_lines")
+        line = weechat.hdata_pointer(h_lines, lines, "last_line") if lines else ""
+        while line and len(out) < max_lines:
+            data = weechat.hdata_pointer(h_line, line, "data")
+            if data:
+                count = weechat.hdata_integer(h_data, data, "tags_count")
+                tags = [weechat.hdata_string(h_data, data, f"{i}|tags_array") for i in range(count)]
+                out.append((weechat.hdata_time(h_data, data, "date"), tags))
+            line = weechat.hdata_pointer(h_line, line, "prev_line")
+        return out
+
     def hook_command(
         self,
         command: str,
@@ -553,11 +600,38 @@ def categorize_buffer(buffer_ptr: str, config: Dict[str, Any]) -> None:
 
     adapter.buffer_set(buffer_ptr, "localvar_set_bufcat_order", order_str)
     adapter.buffer_set(buffer_ptr, "localvar_set_bufcat_prefix", prefix)
+    if not adapter.buffer_get_string(buffer_ptr, "localvar_bufcat_last"):
+        adapter.buffer_set(
+            buffer_ptr, "localvar_set_bufcat_last", f"{last_message_time(buffer_ptr):010d}"
+        )
+
+
+def last_message_time(buffer_ptr: str) -> int:
+    """Date of the newest line already in the buffer that counts as a message, else 0.
+
+    Seeds `bufcat_last` when the script (re)loads after lines were printed, e.g. the
+    logger backlog shown at startup or a live `/python reload`.
+    """
+    for date, tags in get_adapter().buffer_lines(buffer_ptr, BACKFILL_MAX_LINES):
+        if RECENCY_TAGS.intersection(tags):
+            return date
+    return 0
 
 
 def manage_headers(config: Dict[str, Any]) -> None:
-    """Ensure dummy buffers exist for categories that define a 'header'."""
+    """Ensure dummy buffers exist for categories that define a 'header'.
+
+    Header buffers left over from a previous config (e.g. a renamed header) are closed.
+    """
     adapter = get_adapter()
+    wanted = {cat["header"] for cat in config.get("categories", []) if isinstance(cat.get("header"), str)}
+    for ptr in _all_buffer_pointers():
+        if (
+            adapter.buffer_get_string(ptr, "localvar_bufcat_header") == "1"
+            and adapter.buffer_get_string(ptr, "name") not in wanted
+        ):
+            adapter.command(ptr, "/buffer close")
+
     for cat in config.get("categories", []):
         header = cat.get("header")
         if not header or not isinstance(header, str):
@@ -576,6 +650,21 @@ def manage_headers(config: Dict[str, Any]) -> None:
             adapter.buffer_set(ptr, "localvar_set_bufcat_header", "1")
             adapter.buffer_set(ptr, "localvar_set_bufcat_order", f"{zero_pad_order(cat.get('order', 99))}_0")
             adapter.buffer_set(ptr, "localvar_set_bufcat_prefix", "")
+
+
+def _all_buffer_pointers() -> List[str]:
+    """Pointers of all open buffers (snapshot, safe to close buffers while iterating)."""
+    adapter = get_adapter()
+    infolist = adapter.infolist_get("buffer", "", "")
+    if not infolist:
+        return []
+    ptrs: List[str] = []
+    try:
+        while adapter.infolist_next(infolist):
+            ptrs.append(adapter.infolist_pointer(infolist, "pointer"))
+    finally:
+        adapter.infolist_free(infolist)
+    return ptrs
 
 
 def categorize_all_buffers(config: Dict[str, Any]) -> None:
@@ -631,27 +720,23 @@ def apply_buflist_config() -> None:
     # Save originals first
     save_buflist_config()
 
-    # Set sort order (category -> number -> name)
-    adapter.config_set("buflist.look.sort", "local_variables.bufcat_order,number,name")
+    # Set sort order (category -> most recent message -> number -> name)
+    adapter.config_set("buflist.look.sort", BUFLIST_SORT)
 
-    # Patch format to include prefix (idempotent)
-    original_format = _saved_buflist.get("buflist.format.buffer", "${format_buffer}")
-    original_format_current = _saved_buflist.get(
-        "buflist.format.buffer_current", "${format_buffer}"
-    )
-
+    # Patch formats to include the prefix. Strip any previous patch first so this is
+    # idempotent even when buflist.conf was saved with the patch already applied.
     prefix_expr = "${if:${buffer.local_variables.bufcat_prefix}?${buffer.local_variables.bufcat_prefix}:}"
-    
-    # Only patch if not already patched
-    current_format = adapter.config_get("buflist.format.buffer")
-    if prefix_expr not in current_format:
-        adapter.config_set("buflist.format.buffer", prefix_expr + original_format)
-    
-    current_format_current = adapter.config_get("buflist.format.buffer_current")
-    if prefix_expr not in current_format_current:
-        adapter.config_set(
-            "buflist.format.buffer_current", prefix_expr + original_format_current
-        )
+
+    base = adapter.config_get("buflist.format.buffer").replace(prefix_expr, "")
+    adapter.config_set("buflist.format.buffer", prefix_expr + base)
+
+    # buffer_current usually embeds ${format_buffer}, which already carries the prefix;
+    # prefixing it again would indent the current buffer twice.
+    base_current = adapter.config_get("buflist.format.buffer_current").replace(prefix_expr, "")
+    if "${format_buffer}" in base_current:
+        adapter.config_set("buflist.format.buffer_current", base_current)
+    else:
+        adapter.config_set("buflist.format.buffer_current", prefix_expr + base_current)
 
     # Add bufcat signal to refresh triggers
     signals = adapter.config_get("buflist.look.signals_refresh")
@@ -688,6 +773,7 @@ def clear_buffer_localvars() -> None:
             adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_order", "")
             adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_prefix", "")
             adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_header", "")
+            adapter.buffer_set(buffer_ptr, "localvar_del_bufcat_last", "")
     finally:
         adapter.infolist_free(infolist)
 
@@ -803,6 +889,34 @@ def on_buffer_renamed(data: str, signal: str, signal_data: str) -> int:
     return 0
 
 
+def on_print(
+    data: str,
+    buffer: str,
+    date: str,
+    tags: str,
+    displayed: Any,
+    highlight: Any,
+    prefix: str,
+    message: str,
+) -> int:
+    """Handle every printed line: track the most recent message time per buffer.
+
+    ``date`` is the line's own timestamp, so backlog replayed by a plugin (e.g. matrix
+    sync) keeps its real order and never moves a room above newer ones.
+    """
+    if not RECENCY_TAGS.intersection(tags.split(",")):
+        return 0
+    try:
+        ts = int(date)
+    except ValueError:
+        return 0
+    adapter = get_adapter()
+    current = adapter.buffer_get_string(buffer, "localvar_bufcat_last")
+    if not current or ts > int(current):
+        adapter.buffer_set(buffer, "localvar_set_bufcat_last", f"{ts:010d}")
+    return 0
+
+
 # --- WeeChat registration ---
 
 
@@ -867,6 +981,7 @@ def bufcat_init() -> bool:
 
     adapter.hook_signal("buffer_opened", "on_buffer_opened", "")
     adapter.hook_signal("buffer_renamed", "on_buffer_renamed", "")
+    adapter.hook_print("on_print", "")
 
     if config:
         apply_buflist_config()

@@ -125,6 +125,8 @@
     buflist = {
       format = {
         indent = "";
+        # Section headers at column 0, rooms indented by bufcat; numbers would eat the 25-col bar.
+        number = "";
       };
     };
     plugins.var.python = {
