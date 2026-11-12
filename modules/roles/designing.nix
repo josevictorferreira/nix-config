@@ -1,7 +1,8 @@
 # Aspect: roles-designing
-# Bundles design and creative tools (inkscape, blender, orca-slicer).
-_:
+# Bundles design and creative tools (inkscape, blender, orca-slicer, mitcad).
+{ self, ... }:
 let
+  nixosAspects = self.modules.nixos;
 
   mkOptions =
     { config, lib, ... }:
@@ -25,7 +26,7 @@ let
       cfg = config.jvf.roles.designing;
     in
     {
-      imports = [ mkOptions ];
+      imports = [ mkOptions nixosAspects.programs-mitcad ];
 
       config = {
         users.users."${cfg.username}".packages = [

@@ -352,11 +352,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793729429,
-        "narHash": "sha256-OGvppyCUZQv2jE4I78EBs57B+uaknUPr1/QRrMJAjUs=",
+        "lastModified": 1794491531,
+        "narHash": "sha256-2dYnBAIaPSBhgCRbaq6Ze7UO6jxhm3o6jq037x8Z3aQ=",
         "owner": "josevictorferreira",
         "repo": "zeh-ai-tooling",
-        "rev": "dd4752f35fca9dc31c31ccb517a35baa2d5267db",
+        "rev": "6773e5d85c4b3a4dfdcf82ed82eb7d3e8d2f29fc",
         "type": "github"
       },
       "original": {
