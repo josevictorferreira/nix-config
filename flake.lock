@@ -65,11 +65,11 @@
     "easyeffects-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1768567449,
-        "narHash": "sha256-FFDKArUt+stS2UXpCfaLsTd8VtQ9ZLohB+TnGzO/LYQ=",
+        "lastModified": 1794666856,
+        "narHash": "sha256-BxskmBskDXuFa/QkjNI4EOUB7xcJKsfxlVGi8bsTcyQ=",
         "owner": "josevictorferreira",
         "repo": ".easyeffects",
-        "rev": "0b479013d0b7e76374bee50e81c5da7435dc22f8",
+        "rev": "11866428413ac07aa03a0463bd7bd402310865f4",
         "type": "github"
       },
       "original": {
