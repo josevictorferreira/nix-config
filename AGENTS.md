@@ -67,7 +67,6 @@ Based on: KooL's NixOS-Hyprland.
 │   ├── flake/               # Flake-parts configuration
 │   │   └── default.nix
 │   ├── overlays.nix         # Custom package overlays
-│   ├── repositories.nix     # Nix repository config
 │   ├── users.nix            # User definitions
 │   └── wrappers.nix         # Wrapper scripts + PATH/env (config → jvf.home)
 ├── pkgs/                    # Custom packages overlay

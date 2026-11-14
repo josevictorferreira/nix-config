@@ -43,7 +43,6 @@ in
         core-theme
         users
         wrappers
-        repositories
         secrets-sops
         secrets-environment
         home

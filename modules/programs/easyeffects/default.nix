@@ -1,3 +1,10 @@
+# Aspect: programs-easyeffects
+# Installs easyeffects and materializes ~/.config/easyeffects from the
+# .easyeffects config repo, pinned via the easyeffects-config flake input and
+# copied by jvf.home (copy mode so easyeffects can keep writing runtime state).
+# Runtime state dirs (db/, autoload/, irs/, rnnoise/) are preserved across
+# rebuilds. To pick up config changes: push upstream, `nix flake update
+# easyeffects-config`, rebuild.
 { lib, ... }:
 let
   mkOptions =
@@ -11,7 +18,7 @@ let
     };
 
   easyeffectsModule =
-    { pkgs, config, ... }:
+    { config, pkgs, inputs, ... }:
     let
       cfg = config.jvf.programs.easyeffects;
     in
@@ -23,8 +30,16 @@ let
           pkgs.easyeffects
         ];
 
-        jvf.repositories.users.${cfg.username}.clonedDirs = {
-          ".config/easyeffects" = "git@github.com:josevictorferreira/.easyeffects.git";
+        jvf.home.users.${cfg.username}.items.".config/easyeffects" = {
+          kind = "dir";
+          mode = "copy";
+          source = inputs.easyeffects-config;
+          preserve = [
+            "db"
+            "autoload"
+            "irs"
+            "rnnoise"
+          ];
         };
       };
     };

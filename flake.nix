@@ -21,6 +21,8 @@
     zeh-ai-tooling.inputs.nixpkgs.follows = "nixpkgs";
     nvim-config.url = "github:josevictorferreira/.nvim";
     nvim-config.flake = false;
+    easyeffects-config.url = "github:josevictorferreira/.easyeffects";
+    easyeffects-config.flake = false;
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
