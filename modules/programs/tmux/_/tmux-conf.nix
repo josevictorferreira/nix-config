@@ -44,6 +44,16 @@ let
     set -g window-status-separator ""
   '';
 
+  # Session list (prefix + s): ● = some window had input/output in the last
+  # 5 minutes — same rule as the status-bar dot, minus windows on screen right
+  # now (the active window of an attached session). #{T:@now} is the current
+  # epoch: @now holds "%s" and T: runs it through strftime, so no #() job.
+  # tmux draws "name: " itself, so the dot can only go right after it.
+  recentWindow = "#{&&:#{!:#{&&:#{window_active},#{session_attached}}},#{e|<:#{e|-:#{T:@now},#{window_activity}},#{e|+:300,0}}}";
+  sessionDot = "#{?#{||:#{pane_format},#{window_format}},,#{?#{W:#{?${recentWindow},1,}},#[fg=#${activity}]● #[default],  }}";
+  # choose-tree's built-in format (tmux 3.7), verbatim: -F replaces it wholesale
+  treeDefaultFormat = ''#{?pane_format,#{?pane_marked,#[reverse],}#{?pane_floating_flag,#[italics],}#{pane_current_command}#{pane_flags}#{?#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}},: "#{pane_title}",},window_format,#{?window_marked_flag,#[reverse],}#{window_name}#{window_flags}#{?#{&&:#{==:#{window_panes},1},#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}}},: "#{pane_title}",},#{session_windows} windows#{?session_grouped, (group #{session_group}: #{session_group_list}),}#{?session_attached, (attached),}}'';
+
   # tmux-fingers customization
   fingersConfig = ''
     # Match opencode session resume command (e.g. `opencode -s ses_1c97...`)
@@ -151,7 +161,8 @@ in
   # tmux 3.7 regression (tmux/tmux#5493): choose-tree hides grouped sessions
   # and draws a blank pane when every session is grouped (e.g. main + main-5).
   # -G shows all group members, which avoids the empty tree.
-  bind s choose-tree -ZsG
+  set -g @now "%s"
+  bind s choose-tree -ZsG -F '${sessionDot}${treeDefaultFormat}'
   bind w choose-tree -ZwG
 
   set -g status-position bottom
