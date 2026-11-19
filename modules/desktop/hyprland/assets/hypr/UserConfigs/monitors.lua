@@ -1,9 +1,14 @@
 -- Monitors.
 -- Wiki: https://wiki.hypr.land/Configuring/Basics/Monitors/
 
-hl.monitor({ output = "DP-1", mode = "3440x1440@165", position = "auto", scale = 1 })
-hl.monitor({ output = "DP-3", mode = "1920x1080@144", position = "-1080x0", scale = 1 })
--- hl.monitor({ output = "DP-3", mode = "1920x1080@144", position = "-1080x0", scale = 1, transform = 3 })
+-- Matched by EDID description (not connector name) so swapping cables between
+-- ports doesn't swap the monitor settings. List with: hyprctl monitors
+local ultrawide = "desc:Samsung Electric Company LC34G55T"
+local side = "desc:Philips Consumer Electronics Company 27M2N3200L"
+
+hl.monitor({ output = ultrawide, mode = "3440x1440@165", position = "auto", scale = 1 })
+hl.monitor({ output = side, mode = "1920x1080@144", position = "-1080x0", scale = 1 })
+-- hl.monitor({ output = side, mode = "1920x1080@144", position = "-1080x0", scale = 1, transform = 3 })
 
 -- NOTE: for laptops, see the notes in laptop.lua regarding display handling.
 -- Created so that the monitor display does not wake up when not intended.
