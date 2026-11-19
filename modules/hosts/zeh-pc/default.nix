@@ -85,6 +85,7 @@ in
         hardware-logitech
         hardware-openrgb
         hardware-moonlander
+        hardware-ryzen-smu
 
         # Roles (pull programs/services/system deps transitively)
         roles-base
