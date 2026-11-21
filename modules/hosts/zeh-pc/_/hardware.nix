@@ -66,6 +66,17 @@
     neededForBoot = false;
   };
 
+  # Secondary SATA SSD (Kingston SA400 480G)
+  fileSystems."/mnt/storage" = {
+    device = "/dev/disk/by-partlabel/file-storage";
+    fsType = "btrfs";
+    options = [
+      "compress=zstd:3"
+      "noatime"
+      "nofail"
+    ];
+  };
+
   systemd.tmpfiles.rules = [
     "d /home/${config.jvf.core.username}/Downloads 0755 ${config.jvf.core.username} users -"
   ];
