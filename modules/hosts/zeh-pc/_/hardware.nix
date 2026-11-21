@@ -67,7 +67,7 @@
   };
 
   # Secondary SATA SSD (Kingston SA400 480G)
-  fileSystems."/mnt/storage" = {
+  fileSystems."/mnt/external_storage" = {
     device = "/dev/disk/by-partlabel/file-storage";
     fsType = "btrfs";
     options = [
