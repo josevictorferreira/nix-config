@@ -78,7 +78,7 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /home/${config.jvf.core.username}/Downloads 0755 ${config.jvf.core.username} users -"
+    "L+ /home/${config.jvf.core.username}/Downloads - - - - /mnt/external_storage/Downloads"
   ];
 
   swapDevices = [{ device = "/dev/disk/by-partlabel/swap"; }];
